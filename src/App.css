@@ -4,9 +4,9 @@ body {
 
 .appContainer {
   max-width: 40rem;
-  padding: 2rem;
-  border-radius: 1.6rem;
-  box-shadow: 20px 20px 48px #cecece, -20px -20px 48px #f2f2f2;
+  padding: 1.6rem;
+  border-radius: 1rem;
+  box-shadow: 0 0 48px #cecece;
 }
 
 .mainTitle {

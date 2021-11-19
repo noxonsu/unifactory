@@ -11,6 +11,7 @@ import {
 } from 'react-bootstrap'
 import { deploy } from './utils'
 import { Header } from './Header'
+import { TokenList } from './TokenList'
 
 function App() {
   const web3React = useWeb3React()
@@ -175,6 +176,8 @@ function App() {
             </ListGroup>
           </section>
         ) : null}
+
+        <TokenList />
       </main>
     </Container>
   )

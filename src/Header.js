@@ -45,10 +45,10 @@ export function Header(props) {
       <div className="mb-3">
         {web3React.active ? (
           <ListGroup>
-            <ListGroup.Item variant="info">
+            <ListGroup.Item variant="light">
               Network: {networks[web3React.chainId]?.name}
             </ListGroup.Item>
-            <ListGroup.Item variant="info">
+            <ListGroup.Item variant="light">
               Account: {web3React.account}
             </ListGroup.Item>
           </ListGroup>
