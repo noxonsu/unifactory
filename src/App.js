@@ -1,6 +1,6 @@
-import './App.css';
-import { useState, useEffect, useCallback } from 'react';
-import { useWeb3React } from '@web3-react/core';
+import './App.css'
+import { useState, useEffect, useCallback } from 'react'
+import { useWeb3React } from '@web3-react/core'
 import {
   Container,
   Button,
@@ -8,29 +8,30 @@ import {
   FormControl,
   Form,
   ListGroup,
-} from 'react-bootstrap';
-import { deploy } from './utils';
-import { Header } from './Header';
+} from 'react-bootstrap'
+import { deploy } from './utils'
+import { Header } from './Header'
+import { TokenList } from './TokenList'
 
 function App() {
-  const web3React = useWeb3React();
-  const [pending, setPending] = useState(false);
-  const [error, setError] = useState(false);
-  const [canDeploy, setCanDeploy] = useState(false);
+  const web3React = useWeb3React()
+  const [pending, setPending] = useState(false)
+  const [error, setError] = useState(false)
+  const [canDeploy, setCanDeploy] = useState(false)
 
   const activateWallet = async (connector) => {
-    setPending(true);
-    setError(false);
+    setPending(true)
+    setError(false)
 
     web3React
       .activate(connector, undefined, true)
       .catch(setError)
-      .finally(() => setPending(false));
-  };
+      .finally(() => setPending(false))
+  }
 
-  const [adminAddress, setAdminAddress] = useState('');
-  const [useAdminAsFeeRecipient, setUseAdminAsFeeRecipient] = useState(false);
-  const [feeAddress, setFeeAddress] = useState('');
+  const [adminAddress, setAdminAddress] = useState('')
+  const [useAdminAsFeeRecipient, setUseAdminAsFeeRecipient] = useState(false)
+  const [feeAddress, setFeeAddress] = useState('')
   // const [logoAddress, setLogoAddress] = useState('');
   // const [tokenList, setTokenList] = useState('');
 
@@ -38,34 +39,34 @@ function App() {
     (address) => {
       // TODO: check a contract address and warn about it
       if (web3React?.active) {
-        return web3React.library.utils.isAddress(address);
+        return web3React.library.utils.isAddress(address)
       }
     },
     [web3React?.active, web3React?.library?.utils]
-  );
+  )
 
   const onAdminChange = (event) => {
-    if (useAdminAsFeeRecipient) setFeeAddress(event.target.value);
+    if (useAdminAsFeeRecipient) setFeeAddress(event.target.value)
 
-    setAdminAddress(event.target.value);
-  };
+    setAdminAddress(event.target.value)
+  }
 
   const onFeeRecipientChange = (event) => {
-    setFeeAddress(event.target.value);
-  };
+    setFeeAddress(event.target.value)
+  }
 
   const changeAdminAsFeeRecipient = () => {
-    setUseAdminAsFeeRecipient(!useAdminAsFeeRecipient);
+    setUseAdminAsFeeRecipient(!useAdminAsFeeRecipient)
 
     if (!useAdminAsFeeRecipient && adminAddress) {
-      setFeeAddress(adminAddress);
+      setFeeAddress(adminAddress)
     }
-  };
+  }
 
-  const deployedData = [];
+  const deployedData = []
 
   const startDeploy = async () => {
-    setPending(true);
+    setPending(true)
 
     try {
       const result = await deploy({
@@ -75,29 +76,29 @@ function App() {
         onFactoryDeploy: (receipt) => {
           deployedData.push(
             `Factory transaction hash: ${receipt?.transactionHash}`
-          );
-          deployedData.push(`Factory: ${receipt?.contractAddress}`);
+          )
+          deployedData.push(`Factory: ${receipt?.contractAddress}`)
         },
         onRouterDeploy: (receipt) => {
           deployedData.push(
             `Router transaction hash: ${receipt?.transactionHash}`
-          );
-          deployedData.push(`Router: ${receipt?.contractAddress}`);
+          )
+          deployedData.push(`Router: ${receipt?.contractAddress}`)
         },
-      });
+      })
     } catch (error) {
-      setError(error);
+      setError(error)
     } finally {
-      setPending(false);
+      setPending(false)
     }
-  };
+  }
 
   useEffect(() => {
     const validAddresses =
-      isValidAddress(adminAddress) && isValidAddress(feeAddress);
+      isValidAddress(adminAddress) && isValidAddress(feeAddress)
 
-    setCanDeploy(web3React?.active && validAddresses);
-  }, [isValidAddress, adminAddress, feeAddress, web3React?.active]);
+    setCanDeploy(web3React?.active && validAddresses)
+  }, [isValidAddress, adminAddress, feeAddress, web3React?.active])
 
   return (
     <Container className="appContainer">
@@ -170,14 +171,16 @@ function App() {
                   <ListGroup.Item key={index} variant="success">
                     {item}
                   </ListGroup.Item>
-                );
+                )
               })}
             </ListGroup>
           </section>
         ) : null}
+
+        <TokenList />
       </main>
     </Container>
-  );
+  )
 }
 
-export default App;
+export default App

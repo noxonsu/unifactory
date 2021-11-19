@@ -1,11 +1,11 @@
-import { useWeb3React } from '@web3-react/core';
-import { networks } from './constants';
-import { Button, ListGroup, Alert, Row, Col } from 'react-bootstrap';
-import { injected, walletconnect } from './utils';
+import { useWeb3React } from '@web3-react/core'
+import { networks } from './constants'
+import { Button, ListGroup, Alert, Row, Col } from 'react-bootstrap'
+import { injected, walletconnect } from './utils'
 
 export function Header(props) {
-  const { activateWallet, error, pending } = props;
-  const web3React = useWeb3React();
+  const { activateWallet, error, pending } = props
+  const web3React = useWeb3React()
 
   const connectionButtons = [
     {
@@ -16,13 +16,13 @@ export function Header(props) {
       connector: walletconnect,
       name: 'WalletConnect',
     },
-  ];
+  ]
 
   return (
     <section className="mb-4">
       <Row className="mb-3">
         {connectionButtons.map((data, index) => {
-          const { name, connector } = data;
+          const { name, connector } = data
 
           return (
             <Col key={index} className="d-grid">
@@ -38,17 +38,17 @@ export function Header(props) {
                   : name}
               </Button>
             </Col>
-          );
+          )
         })}
       </Row>
 
       <div className="mb-3">
         {web3React.active ? (
           <ListGroup>
-            <ListGroup.Item variant="info">
+            <ListGroup.Item variant="light">
               Network: {networks[web3React.chainId]?.name}
             </ListGroup.Item>
-            <ListGroup.Item variant="info">
+            <ListGroup.Item variant="light">
               Account: {web3React.account}
             </ListGroup.Item>
           </ListGroup>
@@ -63,5 +63,5 @@ export function Header(props) {
         </div>
       )}
     </section>
-  );
+  )
 }
