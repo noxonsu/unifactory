@@ -29,7 +29,7 @@ export const networks = {
     rpc: 'https://rpc-mumbai.maticvigil.com',
     chainId: 80001,
   },
-};
+}
 
 export const wrapperCurrencies = {
   1: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
@@ -38,4 +38,4 @@ export const wrapperCurrencies = {
   4: '0xc778417e063141139fce010982780140aa0cd5ab',
   97: '0xae13d989dac2f0debff460ac112a837c89baa7cd',
   80001: '0x9c3c9283d3e44854697cd22d3faa240cfb032889',
-};
+}
