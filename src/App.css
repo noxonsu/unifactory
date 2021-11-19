@@ -1,0 +1,19 @@
+body {
+  padding: 5vh 5vw;
+}
+
+.appContainer {
+  max-width: 40rem;
+  padding: 2rem;
+  border-radius: 1.6rem;
+  box-shadow: 20px 20px 48px #cecece, -20px -20px 48px #f2f2f2;
+}
+
+.mainTitle {
+  font-size: 1.8rem;
+}
+
+.disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
