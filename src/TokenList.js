@@ -12,13 +12,9 @@ import { getData } from './utils'
 
 export function TokenList(props) {
   const [pending, setPending] = useState(false)
-  const [publicKey, setPublicKey] = useState('')
-  const [privateKey, setPrivateKey] = useState('')
   const [tokensDataHash, setTokensDataHash] = useState('')
   const [tokensData, setTokensData] = useState([])
 
-  const updatePublicKey = (event) => setPublicKey(event.target.value)
-  const updatePrivateKey = (event) => setPrivateKey(event.target.value)
   const updateListHash = (event) => setTokensDataHash(event.target.value)
 
   const loadTokenList = async () => {
@@ -39,29 +35,34 @@ export function TokenList(props) {
     }
   }
 
+  // logo https://image.pngaaa.com/860/1534860-middle.png
   // token list QmaY1fN5KFL3CKk39YbTj6zU6Q5Sv4yaq7p3iQoHgey287
+
+  /*
+    {
+      "name": "",
+      "timestamp": "",
+      "version": {
+        "major": 1,
+        "minor": 0,
+        "patch": 0
+      },
+      "logoURI": "",
+      "keywords": [""],
+      "tokens": [
+        {
+          "name": "",
+          "symbol": "",
+          "address": "",
+          "chainId": -42,
+          "decimals": 18,
+        },
+      ],
+    }
+  */
 
   return (
     <section>
-      <Row className="mb-3">
-        <Col className="d-grid">
-          <InputGroup className="mb-2">
-            <FormControl
-              onChange={updatePublicKey}
-              placeholder="Pinata public key"
-            />
-          </InputGroup>
-        </Col>
-        <Col className="d-grid">
-          <InputGroup className="mb-2">
-            <FormControl
-              onChange={updatePrivateKey}
-              placeholder="Pinata private key"
-            />
-          </InputGroup>
-        </Col>
-      </Row>
-
       <InputGroup className="mb-3" disabled={pending}>
         <FormControl
           placeholder="Token list CID"
@@ -92,7 +93,7 @@ export function TokenList(props) {
           })}
         </ListGroup>
       ) : (
-        <Alert>No token list</Alert>
+        <Alert variant="secondary">No token list</Alert>
       )}
     </section>
   )

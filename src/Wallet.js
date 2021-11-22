@@ -27,7 +27,7 @@ export function Wallet(props) {
           return (
             <Col key={index} className="d-grid">
               <Button
-                variant="primary"
+                variant={web3React?.active ? 'secondary' : 'primary'}
                 onClick={() => activateWallet(connector)}
                 disabled={pending || web3React?.active}
               >
@@ -45,10 +45,10 @@ export function Wallet(props) {
       <div className="mb-3">
         {web3React.active ? (
           <ListGroup>
-            <ListGroup.Item variant="light">
+            <ListGroup.Item variant="info">
               Network: {networks[web3React.chainId]?.name}
             </ListGroup.Item>
-            <ListGroup.Item variant="light">
+            <ListGroup.Item variant="info">
               Account: {web3React.account}
             </ListGroup.Item>
           </ListGroup>

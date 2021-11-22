@@ -47,4 +47,7 @@ export const pinataEndpoints = {
   authentication: `${pinataApi}/data/`,
   ipfs: `${pinataGateway}/ipfs`,
   pinJSONToIPFS: `${pinataApi}/pinning/pinJSONToIPFS`,
+  pinList: `${pinataApi}/data/pinList`,
 }
+
+export const MAIN_FILE_NAME = 'swapProject.json'
