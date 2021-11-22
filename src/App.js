@@ -8,10 +8,11 @@ import {
   FormControl,
   Form,
   ListGroup,
+  Tabs,
+  Tab,
 } from 'react-bootstrap'
 import { deploy } from './utils'
 import { Header } from './Header'
-import { TokenList } from './TokenList'
 
 function App() {
   const web3React = useWeb3React()
@@ -109,6 +110,15 @@ function App() {
           pending={pending}
         />
 
+        <Tabs defaultActiveKey="deploy" id="uncontrolled-tab-example" className="mb-3">
+          <Tab eventKey="deployment" title="Deployment">
+            Deployment
+          </Tab>
+          <Tab eventKey="options" title="Interface Options">
+            Interface Options
+          </Tab>
+        </Tabs>
+
         <section className={`mb-4 ${web3React?.active ? '' : 'disabled'}`}>
           <Form.Label htmlFor="adminAddress">Admin address</Form.Label>
           <InputGroup className="mb-3">
@@ -130,24 +140,6 @@ function App() {
               onChange={onFeeRecipientChange}
               disabled={useAdminAsFeeRecipient}
               id="feeRecipientAddress"
-            />
-          </InputGroup>
-
-          <InputGroup className="mb-2">
-            <FormControl placeholder="Logo url" />
-          </InputGroup>
-
-          <InputGroup className="mb-2">
-            <FormControl placeholder="Token list url" />
-          </InputGroup>
-
-          <Form.Label htmlFor="brandColorInput">Brand color</Form.Label>
-          <InputGroup>
-            <Form.Control
-              type="color"
-              id="brandColorInput"
-              defaultValue="#3268a8"
-              title="Choose your color"
             />
           </InputGroup>
         </section>
@@ -176,8 +168,6 @@ function App() {
             </ListGroup>
           </section>
         ) : null}
-
-        <TokenList />
       </main>
     </Container>
   )

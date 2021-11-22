@@ -39,6 +39,8 @@ export function TokenList(props) {
     }
   }
 
+  // token list QmaY1fN5KFL3CKk39YbTj6zU6Q5Sv4yaq7p3iQoHgey287
+
   return (
     <section>
       <Row className="mb-3">
@@ -62,8 +64,8 @@ export function TokenList(props) {
 
       <InputGroup className="mb-3" disabled={pending}>
         <FormControl
-          placeholder="Token list hash"
-          aria-label="Token list hash"
+          placeholder="Token list CID"
+          aria-label="Token list CID"
           onChange={updateListHash}
         />
         <Button
@@ -76,7 +78,7 @@ export function TokenList(props) {
       </InputGroup>
 
       {tokensData?.tokens?.length ? (
-        <ListGroup>
+        <ListGroup className={`${tokensData.tokens.length > 8 ? 'scrollableList' : ''}`}>
           {tokensData.tokens.map((item, index) => {
             const { name, address } = item
 

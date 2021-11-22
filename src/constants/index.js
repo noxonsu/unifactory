@@ -39,3 +39,12 @@ export const wrapperCurrencies = {
   97: '0xae13d989dac2f0debff460ac112a837c89baa7cd',
   80001: '0x9c3c9283d3e44854697cd22d3faa240cfb032889',
 }
+
+export const pinataGateway = 'https://gateway.pinata.cloud'
+export const pinataApi = 'https://api.pinata.cloud'
+export const pinataEndpoints = {
+  generateApiKeys: `${pinataApi}/users/generateApiKey`,
+  authentication: `${pinataApi}/data/`,
+  ipfs: `${pinataGateway}/ipfs`,
+  pinJSONToIPFS: `${pinataApi}/pinning/pinJSONToIPFS`,
+}
