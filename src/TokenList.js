@@ -78,7 +78,9 @@ export function TokenList(props) {
       </InputGroup>
 
       {tokensData?.tokens?.length ? (
-        <ListGroup className={`${tokensData.tokens.length > 8 ? 'scrollableList' : ''}`}>
+        <ListGroup
+          className={`${tokensData.tokens.length > 8 ? 'scrollableList' : ''}`}
+        >
           {tokensData.tokens.map((item, index) => {
             const { name, address } = item
 

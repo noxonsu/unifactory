@@ -3,8 +3,8 @@ import { networks } from './constants'
 import { Button, ListGroup, Alert, Row, Col } from 'react-bootstrap'
 import { injected, walletconnect } from './utils'
 
-export function Header(props) {
-  const { activateWallet, error, pending } = props
+export function Wallet(props) {
+  const { activateWallet, pending } = props
   const web3React = useWeb3React()
 
   const connectionButtons = [
@@ -19,7 +19,7 @@ export function Header(props) {
   ]
 
   return (
-    <section className="mb-4">
+    <section className="mb-3">
       <Row className="mb-3">
         {connectionButtons.map((data, index) => {
           const { name, connector } = data
@@ -56,12 +56,6 @@ export function Header(props) {
           <Alert variant="warning">Your account is not connected</Alert>
         )}
       </div>
-
-      {error && (
-        <div className="mb-3">
-          <Alert variant="danger">{error.message}</Alert>
-        </div>
-      )}
     </section>
   )
 }

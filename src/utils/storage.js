@@ -2,7 +2,7 @@ import axios from 'axios'
 import { pinataEndpoints } from '../constants'
 
 // ! ADMIN api keys
-// TODO: we have to use all logic, that related to 
+// TODO: we have to use all logic, that related to
 // these keys, on the server
 // const pinata = pinataSDK(
 //   process.env.REACT_APP_PINATA_API_KEY,
@@ -25,9 +25,9 @@ export const generateApiKey = (adminApiKey, adminSecretApiKey) => {
           pinJobs: true,
           unpin: true,
           userPinPolicy: true,
-        }
-      }
-    }
+        },
+      },
+    },
   }
 
   return new Promise((resolve, reject) => {
@@ -36,7 +36,7 @@ export const generateApiKey = (adminApiKey, adminSecretApiKey) => {
         headers: {
           pinata_api_key: adminApiKey,
           pinata_secret_api_key: adminSecretApiKey,
-        }
+        },
       })
       .then((response) => resolve(response.data))
       .catch(reject)
@@ -74,7 +74,7 @@ export const pinJson = async (apiKey, secretApiKey, body) => {
         headers: {
           pinata_api_key: apiKey,
           pinata_secret_api_key: secretApiKey,
-        }
+        },
       })
       .then((response) => resolve(response.data))
       .catch(reject)

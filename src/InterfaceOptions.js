@@ -9,16 +9,17 @@ import {
 import { TokenList } from './TokenList'
 
 export function InterfaceOptions(props) {
-  const {} = props
+  const { pending, setPending, setError } = props
 
   return (
     <section>
-      <InputGroup className="mb-2">
-        <FormControl placeholder="Logo url" />
+      <Form.Label htmlFor="logoUrlInput">Logo url</Form.Label>
+      <InputGroup className="mb-3">
+        <FormControl id="logoUrlInput" />
       </InputGroup>
 
       <Form.Label htmlFor="brandColorInput">Brand color</Form.Label>
-      <InputGroup>
+      <InputGroup className="mb-5">
         <Form.Control
           type="color"
           id="brandColorInput"
@@ -26,6 +27,8 @@ export function InterfaceOptions(props) {
           title="Choose your color"
         />
       </InputGroup>
+
+      <h5 className="mb-3">Token list settings</h5>
 
       <TokenList />
     </section>
