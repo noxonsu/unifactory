@@ -21,8 +21,13 @@ export function InterfaceOptions(props) {
   const updatePublicKey = (event) => setPublicKey(event.target.value)
   const updatePrivateKey = (event) => setPrivateKey(event.target.value)
 
+  const [projectName, setProjectName] = useState('')
   const [logoUrl, setLogoUrl] = useState('')
   const [brandColor, setBrandColor] = useState('')
+
+  const updateProjectName = (event) => setProjectName(event.target.value)
+  const updateLogoUrl = (event) => setLogoUrl(event.target.value)
+  const updateBrandColor = (event) => setBrandColor(event.target.value)
 
   const fetchAvailableOptions = async () => {
     if (!publicKey || !privateKey) return
@@ -33,13 +38,17 @@ export function InterfaceOptions(props) {
       const userOptions = await getAllData(publicKey, privateKey)
       console.log('userOptions: ', userOptions)
 
-      window.localStorage.setItem('userProjectOptions', userOptions)
+      window.localStorage.setItem(
+        'userProjectOptions',
+        JSON.stringify(userOptions)
+      )
 
       if (userOptions && !Object.keys(userOptions).length) {
         setNotification('You do not have any saved options')
       } else {
-        const { logoUrl, brandColor } = userOptions
+        const { logoUrl, brandColor, projectName } = userOptions
 
+        setProjectName(projectName)
         setLogoUrl(logoUrl)
         setBrandColor(brandColor)
       }
@@ -50,40 +59,74 @@ export function InterfaceOptions(props) {
     }
   }
 
-  const updateOptions = () => {
+  const returnCurrentOptions = () => ({
+    projectName,
+    logoUrl,
+    brandColor,
+    // tokenLists: [],
+  })
+
+  const updateOptions = async () => {
     if (!publicKey || !privateKey) return
 
     const oldOptions = window.localStorage.getItem('userProjectOptions')
-    console.log('oldOptions: ', oldOptions)
-
-    // build current options somehow
-    const currentOptions = {}
+    const currentOptions = returnCurrentOptions()
 
     // if we have at least one token list, there is timestamp value
     // with this value we always will get false in this expression
     if (JSON.stringify(oldOptions) === JSON.stringify(currentOptions)) {
       setNotification('You did not change anything')
     } else {
-      pinJson(publicKey, privateKey, currentOptions)
+      setPending(true)
+
+      try {
+        const result = await pinJson(publicKey, privateKey, currentOptions)
+
+        console.log('pinned result: ', result)
+      } catch (error) {
+        console.error(error)
+      } finally {
+        setPending(false)
+      }
     }
   }
 
   /*
 {
-    projectName: string
-    logoUrl: string (https://...)
+    projectName: TopScamSwap
+    logoUrl: https://image.pngaaa.com/860/1534860-middle.png
     brandColor: string (#fefefe)
-    tokenLists: array
+    tokenLists: [{
+      "name": "",
+      "timestamp": "",
+      "version": {
+        "major": 1,
+        "minor": 0,
+        "patch": 0
+      },
+      "logoURI": "",
+      "keywords": [""],
+      "tokens": [
+        {
+          "name": "",
+          "symbol": "",
+          "address": "",
+          "chainId": -42,
+          "decimals": 18,
+        },
+      ],
+    }]
 }
 */
 
-  const [updateButtonIsAvailable, setUpdateButtonIsAvailable] = useState(true)
+  const [updateButtonIsAvailable, setUpdateButtonIsAvailable] = useState(false)
 
   useEffect(() => {
-    const buttonIsAvailable = publicKey && privateKey && (logoUrl || brandColor)
+    const buttonIsAvailable =
+      publicKey && privateKey && (logoUrl || brandColor || projectName)
 
     setUpdateButtonIsAvailable(!!buttonIsAvailable)
-  }, [logoUrl, brandColor, publicKey, privateKey])
+  }, [projectName, logoUrl, brandColor, publicKey, privateKey])
 
   return (
     <section>
@@ -131,9 +174,24 @@ export function InterfaceOptions(props) {
         </Col>
       </Row>
 
+      <Form.Label htmlFor="projectNameInput">Project name</Form.Label>
+      <InputGroup className="mb-3">
+        <FormControl
+          type="text"
+          id="projectNameInput"
+          defaultValue={projectName}
+          onChange={updateProjectName}
+        />
+      </InputGroup>
+
       <Form.Label htmlFor="logoUrlInput">Logo url</Form.Label>
       <InputGroup className="mb-3">
-        <FormControl id="logoUrlInput" defaultValue={logoUrl} />
+        <FormControl
+          type="text"
+          id="logoUrlInput"
+          defaultValue={logoUrl}
+          onChange={updateLogoUrl}
+        />
       </InputGroup>
 
       <Form.Label htmlFor="brandColorInput">Brand color</Form.Label>
@@ -142,7 +200,8 @@ export function InterfaceOptions(props) {
           type="color"
           id="brandColorInput"
           defaultValue={brandColor}
-          title="Choose your color"
+          title="Brand color"
+          onChange={updateBrandColor}
         />
       </InputGroup>
 
@@ -155,7 +214,6 @@ export function InterfaceOptions(props) {
           variant="primary"
           onClick={updateOptions}
           disabled={!updateButtonIsAvailable || pending}
-          // || no keys || no options (need at least one of them) || options weren't changed
         >
           {pending ? 'Pending...' : 'Update options'}
         </Button>

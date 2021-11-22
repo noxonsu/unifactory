@@ -35,32 +35,6 @@ export function TokenList(props) {
     }
   }
 
-  // logo https://image.pngaaa.com/860/1534860-middle.png
-  // token list QmaY1fN5KFL3CKk39YbTj6zU6Q5Sv4yaq7p3iQoHgey287
-
-  /*
-    {
-      "name": "",
-      "timestamp": "",
-      "version": {
-        "major": 1,
-        "minor": 0,
-        "patch": 0
-      },
-      "logoURI": "",
-      "keywords": [""],
-      "tokens": [
-        {
-          "name": "",
-          "symbol": "",
-          "address": "",
-          "chainId": -42,
-          "decimals": 18,
-        },
-      ],
-    }
-  */
-
   return (
     <section>
       <InputGroup className="mb-3" disabled={pending}>

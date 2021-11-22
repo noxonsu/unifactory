@@ -1,4 +1,5 @@
 import axios from 'axios'
+import pinataSDK from '@pinata/sdk'
 import { pinataEndpoints, MAIN_FILE_NAME } from '../constants'
 
 // ! ADMIN api keys
@@ -98,15 +99,17 @@ export const getAllData = (apiKey, secretApiKey) => {
 }
 
 export const pinJson = async (apiKey, secretApiKey, body) => {
+  const options = {
+    pinataMetadata: {
+      name: MAIN_FILE_NAME,
+    },
+  }
+  const pinata = pinataSDK(apiKey, secretApiKey)
+
   return new Promise((resolve, reject) => {
-    axios
-      .post(pinataEndpoints.pinJSONToIPFS, body, {
-        headers: {
-          pinata_api_key: apiKey,
-          pinata_secret_api_key: secretApiKey,
-        },
-      })
-      .then((response) => resolve(response.data))
+    pinata
+      .pinJSONToIPFS(body, options)
+      .then((result) => resolve(result))
       .catch(reject)
   })
 }
