@@ -36,15 +36,9 @@ const deployContract = async (params) => {
           from: accounts[0],
           gas,
         })
-        .on('transactionHash', (hash) => {
-          log(`deployment tx hash: ${hash}`)
-        })
-        .on('error', (error) => {
-          console.error(error)
-        })
-        .on('receipt', (receipt) => {
-          onDeploy(receipt)
-        })
+        .on('transactionHash', (hash) => log(`deployment tx hash: ${hash}`))
+        .on('error', (error) => console.error(error))
+        .on('receipt', (receipt) => onDeploy(receipt))
     }
   } catch (error) {
     throw new Error(error)
@@ -109,8 +103,14 @@ const getContractInstance = (library, address, abi) => {
 }
 
 export const deploy = async (params) => {
-  const { admin, feeRecipient, library, onFactoryDeploy, onRouterDeploy } =
-    params
+  const {
+    admin,
+    feeRecipient,
+    library,
+    onFactoryDeploy,
+    onRouterDeploy,
+    onStorageDeploy,
+  } = params
 
   const accounts = await window.ethereum.request({ method: 'eth_accounts' })
   const factoryInstance = await deployFactory({
@@ -120,13 +120,17 @@ export const deploy = async (params) => {
   })
 
   if (factoryInstance) {
-    log(`factory address: ${factoryInstance.options.address}`)
+    const routerInstance = await deployRouter({
+      onDeploy: onRouterDeploy,
+      library,
+      factory: factoryInstance.options.address,
+    })
 
-    const initCodeHash = await factoryInstance.methods
-      .INIT_CODE_PAIR_HASH()
-      .call()
-
-    log(`init code hash: ${initCodeHash}`)
+    const storageInstance = await deployStorage({
+      onDeploy: onStorageDeploy,
+      library,
+      admin,
+    })
 
     await factoryInstance.methods
       .setFeeTo(feeRecipient)
@@ -145,14 +149,6 @@ export const deploy = async (params) => {
       .catch((error) => {
         console.error('setFeeToSetter: ', error)
       })
-
-    const routerInstance = await deployRouter({
-      onDeploy: onRouterDeploy,
-      library,
-      factory: factoryInstance.options.address,
-    })
-
-    log(`router address: ${routerInstance.options.address}`)
   } else {
     throw new Error('No factory contract')
   }

@@ -7,6 +7,8 @@ import {
   FormControl,
   Form,
   ListGroup,
+  Alert,
+  ProgressBar,
 } from 'react-bootstrap'
 import { deploy } from '../utils'
 
@@ -47,10 +49,51 @@ export function Deployment(props) {
     }
   }
 
-  const deployedData = []
+  const [factoryAddress, setFactoryAddress] = useState('')
+  const [routerAddress, setRouterAddress] = useState('')
+  const [storageAddress, setStorageAddress] = useState('')
+
+  const saveData = (key, value) => {
+    const strData = window.localStorage.getItem('userDeploymentData')
+
+    if (strData) {
+      const data = JSON.parse(strData)
+
+      data[key] = value
+
+      window.localStorage.setItem('userDeploymentData', JSON.stringify(data))
+    } else {
+      window.localStorage.setItem(
+        'userDeploymentData',
+        JSON.stringify({
+          [key]: value,
+        })
+      )
+    }
+  }
+  const getData = (key) => {
+    const info = window.localStorage.getItem('userDeploymentData')
+
+    if (info) return info[key]
+  }
+
+  const addContractInfo = (name, receipt) => {
+    try {
+      saveData(`${name}_${receipt.contractAddress}`, receipt.contractAddress)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const [deploymentProcessPercent, setDeploymentProcessPercent] =
+    useState(false)
 
   const startDeploy = async () => {
     setPending(true)
+    setDeploymentProcessPercent(1)
+    setFactoryAddress('')
+    setRouterAddress('')
+    setStorageAddress('')
 
     try {
       const result = await deploy({
@@ -58,22 +101,26 @@ export function Deployment(props) {
         admin: adminAddress,
         feeRecipient: feeAddress,
         onFactoryDeploy: (receipt) => {
-          deployedData.push(
-            `Factory transaction hash: ${receipt?.transactionHash}`
-          )
-          deployedData.push(`Factory: ${receipt?.contractAddress}`)
+          setFactoryAddress(receipt.contractAddress)
+          addContractInfo('Factory', receipt)
+          setDeploymentProcessPercent(33)
         },
         onRouterDeploy: (receipt) => {
-          deployedData.push(
-            `Router transaction hash: ${receipt?.transactionHash}`
-          )
-          deployedData.push(`Router: ${receipt?.contractAddress}`)
+          setRouterAddress(receipt.contractAddress)
+          addContractInfo('Router', receipt)
+          setDeploymentProcessPercent(66)
+        },
+        onStorageDeploy: (receipt) => {
+          setStorageAddress(receipt.contractAddress)
+          addContractInfo('Storage', receipt)
+          setDeploymentProcessPercent(100)
         },
       })
     } catch (error) {
       setError(error)
     } finally {
       setPending(false)
+      setDeploymentProcessPercent(false)
     }
   }
 
@@ -86,7 +133,9 @@ export function Deployment(props) {
 
   return (
     <>
-      <section className={`mb-4 ${web3React?.active ? '' : 'disabled'}`}>
+      <section
+        className={`mb-4 ${!web3React?.active || pending ? 'disabled' : ''}`}
+      >
         <Form.Label htmlFor="adminAddress">Admin address</Form.Label>
         <InputGroup className="mb-3">
           <FormControl
@@ -122,19 +171,25 @@ export function Deployment(props) {
         </Button>
       </section>
 
-      {deployedData.length ? (
-        <section className="mb-3">
-          <ListGroup>
-            {deployedData.map((item, index) => {
-              return (
-                <ListGroup.Item key={index} variant="success">
-                  {item}
-                </ListGroup.Item>
-              )
-            })}
-          </ListGroup>
-        </section>
-      ) : null}
+      {typeof deploymentProcessPercent === 'number' && (
+        <ProgressBar animated now={deploymentProcessPercent} className="mb-3" />
+      )}
+
+      {factoryAddress && (
+        <Alert variant="success">
+          <strong>Factory</strong>: {factoryAddress}
+        </Alert>
+      )}
+      {routerAddress && (
+        <Alert variant="success">
+          <strong>Router</strong>: {routerAddress}
+        </Alert>
+      )}
+      {storageAddress && (
+        <Alert variant="success">
+          <strong>Storage</strong>: {storageAddress}
+        </Alert>
+      )}
     </>
   )
 }
