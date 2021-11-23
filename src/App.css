@@ -17,3 +17,12 @@ body {
   opacity: 0.6;
   pointer-events: none;
 }
+
+.scrollableList {
+  max-height: 20rem;
+  overflow-y: scroll;
+}
+
+.deploymentInfoRow {
+  overflow-x: auto;
+}
