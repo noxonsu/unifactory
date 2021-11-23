@@ -1,7 +1,7 @@
 import { useWeb3React } from '@web3-react/core'
-import { networks } from './constants'
+import { networks } from '../constants'
 import { Button, ListGroup, Alert, Row, Col } from 'react-bootstrap'
-import { injected, walletconnect } from './utils'
+import { injected, walletconnect } from '../utils'
 
 export function Wallet(props) {
   const { activateWallet, pending } = props

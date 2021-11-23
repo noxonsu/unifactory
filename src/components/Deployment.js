@@ -8,7 +8,7 @@ import {
   Form,
   ListGroup,
 } from 'react-bootstrap'
-import { deploy } from './utils'
+import { deploy } from '../utils'
 
 export function Deployment(props) {
   const { pending, setPending, error, setError } = props

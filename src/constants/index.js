@@ -44,7 +44,6 @@ export const pinataGateway = 'https://gateway.pinata.cloud'
 export const pinataApi = 'https://api.pinata.cloud'
 export const pinataEndpoints = {
   generateApiKeys: `${pinataApi}/users/generateApiKey`,
-  authentication: `${pinataApi}/data/`,
   ipfs: `${pinataGateway}/ipfs`,
   pinJSONToIPFS: `${pinataApi}/pinning/pinJSONToIPFS`,
   pinList: `${pinataApi}/data/pinList`,

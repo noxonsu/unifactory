@@ -8,8 +8,8 @@ import {
   Col,
   Alert,
 } from 'react-bootstrap'
-import { TokenList } from './TokenList'
-import { pinJson, getAllData } from './utils'
+import { TokenLists } from './TokenLists'
+import { pinJson, getData } from '../utils'
 
 export function InterfaceOptions(props) {
   const { pending, setPending, setError } = props
@@ -17,25 +17,28 @@ export function InterfaceOptions(props) {
   const [notification, setNotification] = useState('')
   const [publicKey, setPublicKey] = useState('')
   const [privateKey, setPrivateKey] = useState('')
+  const [optionsCID, setOptionsCID] = useState('')
 
   const updatePublicKey = (event) => setPublicKey(event.target.value)
   const updatePrivateKey = (event) => setPrivateKey(event.target.value)
+  const updateOptionsCID = (event) => setOptionsCID(event.target.value)
 
   const [projectName, setProjectName] = useState('')
   const [logoUrl, setLogoUrl] = useState('')
   const [brandColor, setBrandColor] = useState('')
+  const [tokenLists, setTokenLists] = useState([])
 
   const updateProjectName = (event) => setProjectName(event.target.value)
   const updateLogoUrl = (event) => setLogoUrl(event.target.value)
   const updateBrandColor = (event) => setBrandColor(event.target.value)
 
-  const fetchAvailableOptions = async () => {
-    if (!publicKey || !privateKey) return
+  const getAvailableOptions = async () => {
+    if (!optionsCID) return
 
     setPending(true)
 
     try {
-      const userOptions = await getAllData(publicKey, privateKey)
+      const userOptions = await getData(optionsCID)
       console.log('userOptions: ', userOptions)
 
       window.localStorage.setItem(
@@ -46,11 +49,12 @@ export function InterfaceOptions(props) {
       if (userOptions && !Object.keys(userOptions).length) {
         setNotification('You do not have any saved options')
       } else {
-        const { logoUrl, brandColor, projectName } = userOptions
+        const { logoUrl, brandColor, projectName, tokenLists } = userOptions
 
         setProjectName(projectName)
         setLogoUrl(logoUrl)
         setBrandColor(brandColor)
+        setTokenLists(tokenLists)
       }
     } catch (error) {
       console.error(error)
@@ -63,11 +67,11 @@ export function InterfaceOptions(props) {
     projectName,
     logoUrl,
     brandColor,
-    // tokenLists: [],
+    tokenLists,
   })
 
   const updateOptions = async () => {
-    if (!publicKey || !privateKey) return
+    if (!publicKey || !privateKey || !optionsCID) return
 
     const oldOptions = window.localStorage.getItem('userProjectOptions')
     const currentOptions = returnCurrentOptions()
@@ -136,7 +140,7 @@ export function InterfaceOptions(props) {
         <Col className="d-grid">
           <Button
             variant="primary"
-            onClick={fetchAvailableOptions}
+            onClick={getAvailableOptions}
             disabled={pending}
           >
             {true ? 'Sign in' : '...'}
@@ -172,7 +176,20 @@ export function InterfaceOptions(props) {
             />
           </InputGroup>
         </Col>
+
+        <Col className="d-grid">
+          <InputGroup className="mb-2">
+            <FormControl
+              type="text"
+              onChange={updateOptionsCID}
+              placeholder="Project options CID"
+            />
+          </InputGroup>
+        </Col>
       </Row>
+
+      <hr />
+      <br />
 
       <Form.Label htmlFor="projectNameInput">Project name</Form.Label>
       <InputGroup className="mb-3">
@@ -207,7 +224,7 @@ export function InterfaceOptions(props) {
 
       <h5 className="mb-3">Token lists</h5>
 
-      <TokenList />
+      <TokenLists tokenLists={tokenLists} />
 
       <div className="d-grid">
         <Button

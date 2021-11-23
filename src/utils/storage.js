@@ -2,65 +2,40 @@ import axios from 'axios'
 import pinataSDK from '@pinata/sdk'
 import { pinataEndpoints, MAIN_FILE_NAME } from '../constants'
 
-// ! ADMIN api keys
-// TODO: we have to use all logic, that related to
-// these keys, on the server
-// const pinata = pinataSDK(
-//   process.env.REACT_APP_PINATA_API_KEY,
-//   process.env.REACT_APP_PINATA_SECRET_API_KEY
-// )
-
 // TODO: track request limits
 // * take a minimum Pinata limits (30 request per minute)
 
-// TODO: server logic
-export const generateApiKey = (adminApiKey, adminSecretApiKey) => {
-  const body = {
-    keyName: 'Example Key',
-    permissions: {
-      endpoints: {
-        data: {
-          userPinnedDataTotal: true,
-        },
-        pinning: {
-          pinJobs: true,
-          unpin: true,
-          userPinPolicy: true,
-        },
-      },
-    },
+export const generateNewKeys = async (adminApiKey, adminSecretApiKey) => {
+  const { REACT_APP_SERVER_IP, REACT_APP_SERVER_PORT } = process.env
+
+  if (!REACT_APP_SERVER_IP || !REACT_APP_SERVER_PORT) {
+    throw new Error('No destination')
   }
 
   return new Promise((resolve, reject) => {
     axios
-      .post(pinataEndpoints.generateApiKeys, body, {
-        headers: {
-          pinata_api_key: adminApiKey,
-          pinata_secret_api_key: adminSecretApiKey,
-        },
+      .get(`https://${REACT_APP_SERVER_IP}:${REACT_APP_SERVER_PORT}/newKeys`)
+      .then((response) => {
+        console.log('server response: ', response)
+
+        /*
+          {
+            "pinata_api_key": "",
+            "pinata_api_secret": "",
+            "JWT": ""
+          }
+        */
+        resolve(response.data)
       })
-      .then((response) => resolve(response.data))
       .catch(reject)
   })
 }
 
-// TODO: deside - remove or not?
-export const authentication = async (apiKey, secretKey) => {
-  return new Promise((resolve, reject) => {
-    axios
-      .get(pinataEndpoints.authentication, {
-        headers: {
-          pinata_api_key: apiKey,
-          pinata_secret_api_key: secretKey,
-        },
-      })
-      .then((response) => resolve(response.data))
-      .catch(reject)
-  })
-}
-
-// TODO: how to validate a file hash?
 export const getData = async (contentHash) => {
+  if (!contentHash.match(/[a-zA-Z0-9]/)) {
+    return new Error('Incorrect file hash')
+  }
+
   return new Promise((resolve, reject) => {
     axios
       .get(`${pinataEndpoints.ipfs}/${contentHash}`)
