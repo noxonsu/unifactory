@@ -17,10 +17,7 @@ export function InterfaceOptions(props) {
   const web3React = useWeb3React()
 
   const [notification, setNotification] = useState('')
-  // TODO: remove the temp contract value
-  const [storageContract, setStorageContract] = useState(
-    '0x2d26D82ffc081a1fD70f06703276EB578202C235'
-  )
+  const [storageContract, setStorageContract] = useState('')
 
   const updateStorageContract = (event) =>
     setStorageContract(event.target.value)

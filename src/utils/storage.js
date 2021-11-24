@@ -1,6 +1,6 @@
 import axios from 'axios'
 import pinataSDK from '@pinata/sdk'
-import Storage from '../contracts/build/ProjectStorage.json'
+import Storage from '../contracts/build/Storage.json'
 import { networks, pinataEndpoints, MAIN_FILE_NAME } from '../constants'
 import { getContractInstance } from '../utils'
 

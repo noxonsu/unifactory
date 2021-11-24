@@ -1,6 +1,6 @@
 import FactoryJson from '../contracts/build/Factory.json'
 import RouterV2Json from '../contracts/build/RouterV2.json'
-import Storage from '../contracts/build/ProjectStorage.json'
+import Storage from '../contracts/build/Storage.json'
 import { networks, wrapperCurrencies } from '../constants'
 
 const log = (message) => {

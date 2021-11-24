@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: MIT
-pragma solidity =0.7.5;
-pragma abicoder v2;
+pragma solidity ^0.8.0;
 
 import './interfaces/IStorage.sol';
 
-abstract contract Storage is IStorage {
+contract Storage is IStorage {
     address private _owner;
     Project private _project;
 
