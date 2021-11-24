@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useWeb3React } from '@web3-react/core'
 import {
   Button,
   InputGroup,
@@ -9,10 +10,11 @@ import {
   Alert,
 } from 'react-bootstrap'
 import { TokenLists } from './TokenLists'
-import { pinJson, getData } from '../utils'
+import { saveOptionsToContract, getData } from '../utils'
 
 export function InterfaceOptions(props) {
   const { pending, setPending, setError } = props
+  const web3React = useWeb3React()
 
   const [notification, setNotification] = useState('')
   // TODO: remove the temp contract value
@@ -78,30 +80,30 @@ export function InterfaceOptions(props) {
     tokenLists,
   })
 
-  // const updateOptions = async () => {
-  //   const oldOptions = window.localStorage.getItem('userProjectOptions')
-  //   const currentOptions = returnCurrentOptions()
+  const updateOptions = async () => {
+    const oldOptions = window.localStorage.getItem('userProjectOptions')
+    const currentOptions = returnCurrentOptions()
 
-  //   // if we have at least one token list, there is timestamp value
-  //   // with this value we always will get false in this expression
-  //   if (JSON.stringify(oldOptions) === JSON.stringify(currentOptions)) {
-  //     setNotification('You did not change anything')
-  //   } else {
-  //     setPending(true)
+    // if we have at least one token list, there is timestamp value
+    // with this value we always will get false in this expression
+    if (JSON.stringify(oldOptions) === JSON.stringify(currentOptions)) {
+      setNotification('You did not change anything')
+    } else {
+      setPending(true)
 
-  //     try {
-  //       const result = await pinJson(publicKey, privateKey, currentOptions)
-
-  //       console.log('pinned result: ', result)
-  //     } catch (error) {
-  //       console.error(error)
-  //     } finally {
-  //       setPending(false)
-  //     }
-  //   }
-  // }
-
-  const updateOptions = () => {}
+      try {
+        const result = await saveOptionsToContract(
+          web3React?.library,
+          storageContract,
+          currentOptions
+        )
+      } catch (error) {
+        console.error(error)
+      } finally {
+        setPending(false)
+      }
+    }
+  }
 
   /*
 {
@@ -135,11 +137,13 @@ export function InterfaceOptions(props) {
 
   useEffect(() => {
     const buttonIsAvailable =
-      storageContract && (logoUrl || brandColor || projectName)
+      web3React?.active &&
+      storageContract &&
+      (logoUrl || brandColor || projectName)
     // publicKey && privateKey && (logoUrl || brandColor || projectName)
 
     setUpdateButtonIsAvailable(!!buttonIsAvailable)
-  }, [projectName, logoUrl, brandColor])
+  }, [projectName, logoUrl, brandColor, web3React?.active])
 
   /* Pinata.cloud
       <Row className="mb-3">

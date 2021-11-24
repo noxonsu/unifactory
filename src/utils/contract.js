@@ -88,16 +88,6 @@ export const deployStorage = async (params) => {
   })
 }
 
-// * temp contracts Polygon testnet *
-const FACTORY = '0xe13ef32fD77a5B4112cc9d1D612CFbAFFaE99b34'
-// hash must be change if we change a Pair contract, otherwise it's the same
-const INIT_CODE_PAIR_HASH =
-  '0x2b412748f39ea0fec33e51424ba001ecc89020b7b84f9827e1bd91468446d718'
-const ROUTER = '0x2f9CfEB4E7a3DFf011569d242a34a79AA222E3C9'
-
-// BSC testnet
-const STORAGE = '0xa159A55cDAB9ac1C0b08047bEe6c70730CC2f7EF'
-
 export const getContractInstance = (library, address, abi) => {
   return new library.eth.Contract(abi, address)
 }

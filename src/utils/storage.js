@@ -1,6 +1,8 @@
 import axios from 'axios'
 import pinataSDK from '@pinata/sdk'
-import { pinataEndpoints, MAIN_FILE_NAME } from '../constants'
+import Storage from '../contracts/build/ProjectStorage.json'
+import { networks, pinataEndpoints, MAIN_FILE_NAME } from '../constants'
+import { getContractInstance } from '../utils'
 
 // TODO: track request limits
 // * take a minimum Pinata limits (30 request per minute)
@@ -52,4 +54,36 @@ export const pinJson = async (apiKey, secretApiKey, body) => {
   })
 }
 
-export const saveOptionsToContract = async (storageContract, options) => {}
+export const saveOptionsToContract = async (
+  library,
+  storageContract,
+  options
+) => {
+  const {
+    projectName = '',
+    logoUrl = '',
+    brandColor = '',
+    tokenLists = [],
+  } = options
+
+  const storage = getContractInstance(library, storageContract, Storage.abi)
+  const accounts = await window.ethereum.request({ method: 'eth_accounts' })
+  const data = {
+    name: projectName,
+    logo: logoUrl,
+    brandColor,
+    listName: '',
+    tokens: [],
+  }
+
+  return new Promise(async (resolve, reject) => {
+    const result = await storage.methods
+      .addFullData(data)
+      .send({
+        from: accounts[0],
+      })
+      .catch(reject)
+
+    resolve(result)
+  })
+}
