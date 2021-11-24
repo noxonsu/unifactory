@@ -45,7 +45,7 @@ const deployContract = async (params) => {
   }
 }
 
-const deployFactory = async (params) => {
+export const deployFactory = async (params) => {
   const { library, onDeploy, admin } = params
   const { abi, bytecode } = FactoryJson
 
@@ -58,7 +58,7 @@ const deployFactory = async (params) => {
   })
 }
 
-const deployRouter = async (params) => {
+export const deployRouter = async (params) => {
   const { library, factory, onDeploy } = params
   const { abi, bytecode } = RouterV2Json
   const chainId = await library.eth.getChainId()
@@ -73,7 +73,7 @@ const deployRouter = async (params) => {
   })
 }
 
-const deployStorage = async (params) => {
+export const deployStorage = async (params) => {
   const { library, admin, onDeploy } = params
   const { abi, bytecode } = Storage
   const chainId = await library.eth.getChainId()
@@ -98,19 +98,13 @@ const ROUTER = '0x2f9CfEB4E7a3DFf011569d242a34a79AA222E3C9'
 // BSC testnet
 const STORAGE = '0xa159A55cDAB9ac1C0b08047bEe6c70730CC2f7EF'
 
-const getContractInstance = (library, address, abi) => {
+export const getContractInstance = (library, address, abi) => {
   return new library.eth.Contract(abi, address)
 }
 
-export const deploy = async (params) => {
-  const {
-    admin,
-    feeRecipient,
-    library,
-    onFactoryDeploy,
-    onRouterDeploy,
-    onStorageDeploy,
-  } = params
+export const deploySwapContract = async (params) => {
+  const { admin, feeRecipient, library, onFactoryDeploy, onRouterDeploy } =
+    params
 
   const accounts = await window.ethereum.request({ method: 'eth_accounts' })
   const factoryInstance = await deployFactory({
@@ -124,12 +118,6 @@ export const deploy = async (params) => {
       onDeploy: onRouterDeploy,
       library,
       factory: factoryInstance.options.address,
-    })
-
-    const storageInstance = await deployStorage({
-      onDeploy: onStorageDeploy,
-      library,
-      admin,
     })
 
     await factoryInstance.methods

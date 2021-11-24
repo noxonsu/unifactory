@@ -2,21 +2,24 @@ import { useState, useEffect, useCallback } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import {
   Container,
-  Button,
   InputGroup,
   FormControl,
   Form,
   ListGroup,
   Alert,
   ProgressBar,
+  Row,
+  Col,
 } from 'react-bootstrap'
-import { deploy } from '../utils'
+import { Button } from './Button'
+import { deploySwapContract, deployStorage } from '../utils'
 
 export function Deployment(props) {
   const { pending, setPending, error, setError } = props
 
   const web3React = useWeb3React()
-  const [canDeploy, setCanDeploy] = useState(false)
+  const [canDeploySwapContract, setCanDeploySwapContract] = useState(false)
+  const [canDeployStorage, setCanDeployStorage] = useState(false)
   const [adminAddress, setAdminAddress] = useState('')
   const [useAdminAsFeeRecipient, setUseAdminAsFeeRecipient] = useState(false)
   const [feeAddress, setFeeAddress] = useState('')
@@ -81,39 +84,33 @@ export function Deployment(props) {
     try {
       saveData(`${name}_${receipt.contractAddress}`, receipt.contractAddress)
     } catch (error) {
-      console.error(error)
+      setError(error)
     }
   }
 
   const [deploymentProcessPercent, setDeploymentProcessPercent] =
     useState(false)
 
-  const startDeploy = async () => {
+  const onSwapDeploy = async () => {
     setPending(true)
-    setDeploymentProcessPercent(1)
+    setDeploymentProcessPercent(5)
     setFactoryAddress('')
     setRouterAddress('')
-    setStorageAddress('')
 
     try {
-      const result = await deploy({
+      const result = await deploySwapContract({
         library: web3React.library,
         admin: adminAddress,
         feeRecipient: feeAddress,
         onFactoryDeploy: (receipt) => {
           setFactoryAddress(receipt.contractAddress)
           addContractInfo('Factory', receipt)
-          setDeploymentProcessPercent(33)
+          setDeploymentProcessPercent(40)
         },
         onRouterDeploy: (receipt) => {
           setRouterAddress(receipt.contractAddress)
           addContractInfo('Router', receipt)
-          setDeploymentProcessPercent(66)
-        },
-        onStorageDeploy: (receipt) => {
-          setStorageAddress(receipt.contractAddress)
-          addContractInfo('Storage', receipt)
-          setDeploymentProcessPercent(100)
+          setDeploymentProcessPercent(90)
         },
       })
     } catch (error) {
@@ -124,11 +121,38 @@ export function Deployment(props) {
     }
   }
 
-  useEffect(() => {
-    const validAddresses =
-      isValidAddress(adminAddress) && isValidAddress(feeAddress)
+  const onStorageDeploy = async () => {
+    setPending(true)
+    setDeploymentProcessPercent(20)
+    setStorageAddress('')
 
-    setCanDeploy(web3React?.active && validAddresses)
+    try {
+      const storageInstance = await deployStorage({
+        onDeploy: (receipt) => {
+          console.log('receipt after storage deployment !')
+          setStorageAddress(receipt.contractAddress)
+          addContractInfo('Storage', receipt)
+          setDeploymentProcessPercent(100)
+        },
+        library: web3React.library,
+        admin: adminAddress,
+      })
+    } catch (error) {
+      setError(error)
+    } finally {
+      setPending(false)
+      setDeploymentProcessPercent(false)
+    }
+  }
+
+  useEffect(() => {
+    setCanDeploySwapContract(
+      web3React?.active &&
+        isValidAddress(adminAddress) &&
+        isValidAddress(feeAddress)
+    )
+
+    setCanDeployStorage(web3React?.active && isValidAddress(adminAddress))
   }, [isValidAddress, adminAddress, feeAddress, web3React?.active])
 
   return (
@@ -136,7 +160,7 @@ export function Deployment(props) {
       <section
         className={`mb-4 ${!web3React?.active || pending ? 'disabled' : ''}`}
       >
-        <Form.Label htmlFor="adminAddress">Admin address</Form.Label>
+        <Form.Label htmlFor="adminAddress">Admin address *</Form.Label>
         <InputGroup className="mb-3">
           <FormControl
             defaultValue={adminAddress}
@@ -146,7 +170,7 @@ export function Deployment(props) {
         </InputGroup>
 
         <Form.Label htmlFor="feeRecipientAddress">
-          Fee recipient address
+          Fee recipient address **
         </Form.Label>
         <InputGroup className="mb-3">
           <InputGroup.Checkbox onChange={changeAdminAsFeeRecipient} />
@@ -160,19 +184,40 @@ export function Deployment(props) {
         </InputGroup>
       </section>
 
-      <section className="d-grid mb-3">
-        <Button
-          size="lg"
-          variant="primary"
-          onClick={startDeploy}
-          disabled={pending || !canDeploy}
-        >
-          {pending ? 'Pending...' : 'Deploy'}
-        </Button>
-      </section>
+      <ul className="list-unstyled">
+        <li>* required for Swap contracts and a Storage contract</li>
+        <li>** required only for a Swap contract</li>
+      </ul>
+
+      <Row className="mb-3">
+        <Col className="d-grid">
+          <Button
+            onClick={onSwapDeploy}
+            pending={pending}
+            disabled={pending || !canDeploySwapContract}
+          >
+            Deploy swap contracts
+          </Button>
+        </Col>
+
+        <Col className="d-grid">
+          <Button
+            onClick={onStorageDeploy}
+            pending={pending}
+            disabled={pending || !canDeployStorage}
+          >
+            Deploy Storage
+          </Button>
+        </Col>
+      </Row>
 
       {typeof deploymentProcessPercent === 'number' && (
-        <ProgressBar animated now={deploymentProcessPercent} className="mb-3" />
+        <ProgressBar
+          animated
+          now={deploymentProcessPercent}
+          className="mb-3"
+          variant="success"
+        />
       )}
 
       {factoryAddress && (

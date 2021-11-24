@@ -15,13 +15,21 @@ export function InterfaceOptions(props) {
   const { pending, setPending, setError } = props
 
   const [notification, setNotification] = useState('')
-  const [publicKey, setPublicKey] = useState('')
-  const [privateKey, setPrivateKey] = useState('')
-  const [optionsCID, setOptionsCID] = useState('')
+  // TODO: remove the temp contract value
+  const [storageContract, setStorageContract] = useState(
+    '0x2d26D82ffc081a1fD70f06703276EB578202C235'
+  )
 
-  const updatePublicKey = (event) => setPublicKey(event.target.value)
-  const updatePrivateKey = (event) => setPrivateKey(event.target.value)
-  const updateOptionsCID = (event) => setOptionsCID(event.target.value)
+  const updateStorageContract = (event) =>
+    setStorageContract(event.target.value)
+
+  // const [publicKey, setPublicKey] = useState('')
+  // const [privateKey, setPrivateKey] = useState('')
+  // const [optionsCID, setOptionsCID] = useState('')
+
+  // const updatePublicKey = (event) => setPublicKey(event.target.value)
+  // const updatePrivateKey = (event) => setPrivateKey(event.target.value)
+  // const updateOptionsCID = (event) => setOptionsCID(event.target.value)
 
   const [projectName, setProjectName] = useState('')
   const [logoUrl, setLogoUrl] = useState('')
@@ -32,36 +40,36 @@ export function InterfaceOptions(props) {
   const updateLogoUrl = (event) => setLogoUrl(event.target.value)
   const updateBrandColor = (event) => setBrandColor(event.target.value)
 
-  const getAvailableOptions = async () => {
-    if (!optionsCID) return
+  // const getAvailableOptions = async () => {
+  //   if (!optionsCID) return
 
-    setPending(true)
+  //   setPending(true)
 
-    try {
-      const userOptions = await getData(optionsCID)
-      console.log('userOptions: ', userOptions)
+  //   try {
+  //     const userOptions = await getData(optionsCID)
+  //     console.log('userOptions: ', userOptions)
 
-      window.localStorage.setItem(
-        'userProjectOptions',
-        JSON.stringify(userOptions)
-      )
+  //     window.localStorage.setItem(
+  //       'userProjectOptions',
+  //       JSON.stringify(userOptions)
+  //     )
 
-      if (userOptions && !Object.keys(userOptions).length) {
-        setNotification('You do not have any saved options')
-      } else {
-        const { logoUrl, brandColor, projectName, tokenLists } = userOptions
+  //     if (userOptions && !Object.keys(userOptions).length) {
+  //       setNotification('You do not have any saved options')
+  //     } else {
+  //       const { logoUrl, brandColor, projectName, tokenLists } = userOptions
 
-        setProjectName(projectName)
-        setLogoUrl(logoUrl)
-        setBrandColor(brandColor)
-        setTokenLists(tokenLists)
-      }
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setPending(false)
-    }
-  }
+  //       setProjectName(projectName)
+  //       setLogoUrl(logoUrl)
+  //       setBrandColor(brandColor)
+  //       setTokenLists(tokenLists)
+  //     }
+  //   } catch (error) {
+  //     console.error(error)
+  //   } finally {
+  //     setPending(false)
+  //   }
+  // }
 
   const returnCurrentOptions = () => ({
     projectName,
@@ -70,30 +78,30 @@ export function InterfaceOptions(props) {
     tokenLists,
   })
 
-  const updateOptions = async () => {
-    if (!publicKey || !privateKey || !optionsCID) return
+  // const updateOptions = async () => {
+  //   const oldOptions = window.localStorage.getItem('userProjectOptions')
+  //   const currentOptions = returnCurrentOptions()
 
-    const oldOptions = window.localStorage.getItem('userProjectOptions')
-    const currentOptions = returnCurrentOptions()
+  //   // if we have at least one token list, there is timestamp value
+  //   // with this value we always will get false in this expression
+  //   if (JSON.stringify(oldOptions) === JSON.stringify(currentOptions)) {
+  //     setNotification('You did not change anything')
+  //   } else {
+  //     setPending(true)
 
-    // if we have at least one token list, there is timestamp value
-    // with this value we always will get false in this expression
-    if (JSON.stringify(oldOptions) === JSON.stringify(currentOptions)) {
-      setNotification('You did not change anything')
-    } else {
-      setPending(true)
+  //     try {
+  //       const result = await pinJson(publicKey, privateKey, currentOptions)
 
-      try {
-        const result = await pinJson(publicKey, privateKey, currentOptions)
+  //       console.log('pinned result: ', result)
+  //     } catch (error) {
+  //       console.error(error)
+  //     } finally {
+  //       setPending(false)
+  //     }
+  //   }
+  // }
 
-        console.log('pinned result: ', result)
-      } catch (error) {
-        console.error(error)
-      } finally {
-        setPending(false)
-      }
-    }
-  }
+  const updateOptions = () => {}
 
   /*
 {
@@ -127,15 +135,13 @@ export function InterfaceOptions(props) {
 
   useEffect(() => {
     const buttonIsAvailable =
-      publicKey && privateKey && (logoUrl || brandColor || projectName)
+      storageContract && (logoUrl || brandColor || projectName)
+    // publicKey && privateKey && (logoUrl || brandColor || projectName)
 
     setUpdateButtonIsAvailable(!!buttonIsAvailable)
-  }, [projectName, logoUrl, brandColor, publicKey, privateKey])
+  }, [projectName, logoUrl, brandColor])
 
-  return (
-    <section>
-      {notification && <Alert variant="warning">{notification}</Alert>}
-
+  /* Pinata.cloud
       <Row className="mb-3">
         <Col className="d-grid">
           <Button
@@ -187,9 +193,21 @@ export function InterfaceOptions(props) {
           </InputGroup>
         </Col>
       </Row>
+  */
 
-      <hr />
-      <br />
+  return (
+    <section>
+      {notification && <Alert variant="warning">{notification}</Alert>}
+
+      <Form.Label htmlFor="storageContractInput">Storage contract *</Form.Label>
+      <InputGroup className="mb-3">
+        <FormControl
+          type="text"
+          id="storageContractInput"
+          defaultValue={storageContract}
+          onChange={updateStorageContract}
+        />
+      </InputGroup>
 
       <Form.Label htmlFor="projectNameInput">Project name</Form.Label>
       <InputGroup className="mb-3">
@@ -225,6 +243,10 @@ export function InterfaceOptions(props) {
       <h5 className="mb-3">Token lists</h5>
 
       <TokenLists tokenLists={tokenLists} />
+
+      <ul className="list-unstyled">
+        <li>* required field</li>
+      </ul>
 
       <div className="d-grid">
         <Button

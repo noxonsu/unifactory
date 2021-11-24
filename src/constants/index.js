@@ -14,10 +14,15 @@ export const networks = {
     rpc: 'https://rpc-mainnet.matic.network',
     chainId: 137,
   },
+  3: {
+    name: 'Ropsten',
+    rpc: 'https://ropsten.infura.io/v3/212957e8adf14bf8aecf82358083e63e',
+    chainId: 3,
+  },
   4: {
     name: 'Rinkeby',
     rpc: 'https://rinkeby.infura.io/v3/212957e8adf14bf8aecf82358083e63e',
-    chainId: 1,
+    chainId: 4,
   },
   97: {
     name: 'BSC Testnet',
@@ -31,10 +36,21 @@ export const networks = {
   },
 }
 
+export const supportedChainIds = [
+  networks[1].chainId,
+  networks[56].chainId,
+  networks[137].chainId,
+  networks[3].chainId,
+  networks[4].chainId,
+  networks[97].chainId,
+  networks[80001].chainId,
+]
+
 export const wrapperCurrencies = {
   1: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
   56: '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c',
   137: '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
+  3: '0xc778417e063141139fce010982780140aa0cd5ab',
   4: '0xc778417e063141139fce010982780140aa0cd5ab',
   97: '0xae13d989dac2f0debff460ac112a837c89baa7cd',
   80001: '0x9c3c9283d3e44854697cd22d3faa240cfb032889',
