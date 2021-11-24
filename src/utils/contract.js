@@ -1,6 +1,6 @@
 import FactoryJson from '../contracts/build/Factory.json'
 import RouterV2Json from '../contracts/build/RouterV2.json'
-import Storage from '../contracts/build/ProjectStorage.json'
+import Storage from '../contracts/build/Storage.json'
 import { networks, wrapperCurrencies } from '../constants'
 
 const log = (message) => {
@@ -45,7 +45,7 @@ const deployContract = async (params) => {
   }
 }
 
-const deployFactory = async (params) => {
+export const deployFactory = async (params) => {
   const { library, onDeploy, admin } = params
   const { abi, bytecode } = FactoryJson
 
@@ -58,7 +58,7 @@ const deployFactory = async (params) => {
   })
 }
 
-const deployRouter = async (params) => {
+export const deployRouter = async (params) => {
   const { library, factory, onDeploy } = params
   const { abi, bytecode } = RouterV2Json
   const chainId = await library.eth.getChainId()
@@ -73,7 +73,7 @@ const deployRouter = async (params) => {
   })
 }
 
-const deployStorage = async (params) => {
+export const deployStorage = async (params) => {
   const { library, admin, onDeploy } = params
   const { abi, bytecode } = Storage
   const chainId = await library.eth.getChainId()
@@ -88,29 +88,13 @@ const deployStorage = async (params) => {
   })
 }
 
-// * temp contracts Polygon testnet *
-const FACTORY = '0xe13ef32fD77a5B4112cc9d1D612CFbAFFaE99b34'
-// hash must be change if we change a Pair contract, otherwise it's the same
-const INIT_CODE_PAIR_HASH =
-  '0x2b412748f39ea0fec33e51424ba001ecc89020b7b84f9827e1bd91468446d718'
-const ROUTER = '0x2f9CfEB4E7a3DFf011569d242a34a79AA222E3C9'
-
-// BSC testnet
-const STORAGE = '0xa159A55cDAB9ac1C0b08047bEe6c70730CC2f7EF'
-
-const getContractInstance = (library, address, abi) => {
+export const getContractInstance = (library, address, abi) => {
   return new library.eth.Contract(abi, address)
 }
 
-export const deploy = async (params) => {
-  const {
-    admin,
-    feeRecipient,
-    library,
-    onFactoryDeploy,
-    onRouterDeploy,
-    onStorageDeploy,
-  } = params
+export const deploySwapContract = async (params) => {
+  const { admin, feeRecipient, library, onFactoryDeploy, onRouterDeploy } =
+    params
 
   const accounts = await window.ethereum.request({ method: 'eth_accounts' })
   const factoryInstance = await deployFactory({
@@ -124,12 +108,6 @@ export const deploy = async (params) => {
       onDeploy: onRouterDeploy,
       library,
       factory: factoryInstance.options.address,
-    })
-
-    const storageInstance = await deployStorage({
-      onDeploy: onStorageDeploy,
-      library,
-      admin,
     })
 
     await factoryInstance.methods

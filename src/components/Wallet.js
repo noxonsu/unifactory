@@ -21,35 +21,40 @@ export function Wallet(props) {
   return (
     <section className="mb-3">
       <Row className="mb-3">
-        {connectionButtons.map((data, index) => {
-          const { name, connector } = data
+        {web3React?.active ? (
+          <Col className="d-grid">
+            <Button variant="secondary" disabled>
+              Connected
+            </Button>
+          </Col>
+        ) : (
+          connectionButtons.map((data, index) => {
+            const { name, connector } = data
 
-          return (
-            <Col key={index} className="d-grid">
-              <Button
-                variant={web3React?.active ? 'secondary' : 'primary'}
-                onClick={() => activateWallet(connector)}
-                disabled={pending || web3React?.active}
-              >
-                {pending
-                  ? 'Pending...'
-                  : web3React?.active
-                  ? 'Connected'
-                  : name}
-              </Button>
-            </Col>
-          )
-        })}
+            return (
+              <Col key={index} className="d-grid">
+                <Button
+                  variant={web3React?.active ? 'secondary' : 'primary'}
+                  onClick={() => activateWallet(connector)}
+                  disabled={pending || web3React?.active}
+                >
+                  {pending
+                    ? 'Pending...'
+                    : web3React?.active
+                    ? 'Connected'
+                    : name}
+                </Button>
+              </Col>
+            )
+          })
+        )}
       </Row>
 
       <div className="mb-3">
         {web3React.active ? (
           <ListGroup>
             <ListGroup.Item variant="info">
-              Network: {networks[web3React.chainId]?.name}
-            </ListGroup.Item>
-            <ListGroup.Item variant="info">
-              Account: {web3React.account}
+              {networks[web3React.chainId]?.name}: {web3React.account}
             </ListGroup.Item>
           </ListGroup>
         ) : (

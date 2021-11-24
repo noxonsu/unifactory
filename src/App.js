@@ -39,7 +39,6 @@ export function App() {
           defaultActiveKey="deployment"
           id="uncontrolled-tab-example"
           className="mb-4"
-          transition={false}
         >
           <Tab eventKey="deployment" title="Deployment">
             <Deployment
