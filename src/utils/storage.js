@@ -76,14 +76,24 @@ export const saveOptionsToContract = async (
     tokens: [],
   }
 
-  return new Promise(async (resolve, reject) => {
-    const result = await storage.methods
+  return new Promise((resolve, reject) => {
+    storage.methods
       .addFullData(data)
       .send({
         from: accounts[0],
       })
+      .then((response) => {
+        storage.methods.project().call().then(resolve).catch(reject)
+      })
       .catch(reject)
-
-    resolve(result)
   })
+}
+
+export const fetchOptionsFromContract = async (library, storageContract) => {
+  const storage = getContractInstance(library, storageContract, Storage.abi)
+  const accounts = await window.ethereum.request({ method: 'eth_accounts' })
+
+  return new Promise((resolve, reject) =>
+    storage.methods.project().call().then(resolve).catch(reject)
+  )
 }

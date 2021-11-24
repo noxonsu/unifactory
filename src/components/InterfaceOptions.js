@@ -1,16 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useWeb3React } from '@web3-react/core'
-import {
-  Button,
-  InputGroup,
-  FormControl,
-  Form,
-  Row,
-  Col,
-  Alert,
-} from 'react-bootstrap'
+import { InputGroup, FormControl, Form, Row, Col, Alert } from 'react-bootstrap'
+import { Button } from './Button'
 import { TokenLists } from './TokenLists'
-import { saveOptionsToContract, getData } from '../utils'
+import {
+  saveOptionsToContract,
+  fetchOptionsFromContract,
+  getData,
+} from '../utils'
 
 export function InterfaceOptions(props) {
   const { pending, setPending, setError } = props
@@ -70,6 +67,30 @@ export function InterfaceOptions(props) {
   //   }
   // }
 
+  // storage 0xe78fe2cceCD7e458c3bDd8034324643EB14e86D0
+
+  const fetchProjectOptions = async () => {
+    setPending(true)
+
+    try {
+      const projectInfo = await fetchOptionsFromContract(
+        web3React?.library,
+        storageContract
+      )
+
+      if (projectInfo) {
+        const { brandColor, logo, name } = projectInfo
+
+        setProjectName(name)
+        setLogoUrl(logo)
+        setBrandColor(brandColor)
+      }
+    } catch (error) {
+    } finally {
+      setPending(false)
+    }
+  }
+
   const returnCurrentOptions = () => ({
     projectName,
     logoUrl,
@@ -89,11 +110,21 @@ export function InterfaceOptions(props) {
       setPending(true)
 
       try {
-        const result = await saveOptionsToContract(
+        const projectInfo = await saveOptionsToContract(
           web3React?.library,
           storageContract,
           currentOptions
         )
+
+        if (projectInfo) {
+          const { brandColor, logo, name } = projectInfo
+
+          setProjectName(name)
+          setLogoUrl(logo)
+          setBrandColor(brandColor)
+        }
+
+        console.log('projectInfo: ', projectInfo)
       } catch (error) {
         console.error(error)
       } finally {
@@ -208,6 +239,13 @@ export function InterfaceOptions(props) {
           defaultValue={storageContract}
           onChange={updateStorageContract}
         />
+        <Button
+          onClick={fetchProjectOptions}
+          pending={pending}
+          disabled={pending || !storageContract || !web3React?.active}
+        >
+          Fetch options
+        </Button>
       </InputGroup>
 
       <Form.Label htmlFor="projectNameInput">Project name</Form.Label>
@@ -251,11 +289,11 @@ export function InterfaceOptions(props) {
 
       <div className="d-grid">
         <Button
-          variant="primary"
+          pending={pending}
           onClick={updateOptions}
           disabled={!updateButtonIsAvailable || pending}
         >
-          {pending ? 'Pending...' : 'Update options'}
+          Update options
         </Button>
       </div>
     </section>
