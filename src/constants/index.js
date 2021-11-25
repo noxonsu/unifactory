@@ -66,3 +66,10 @@ export const pinataEndpoints = {
 }
 
 export const MAIN_FILE_NAME = 'swapProject.json'
+
+export const projectOptions = {
+  NAME: 'NAME',
+  LOGO: 'LOGO',
+  COLOR: 'COLOR',
+  TOKENS: 'TOKENS',
+}

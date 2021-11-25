@@ -129,7 +129,6 @@ export function Deployment(props) {
     try {
       const storageInstance = await deployStorage({
         onDeploy: (receipt) => {
-          console.log('receipt after storage deployment !')
           setStorageAddress(receipt.contractAddress)
           addContractInfo('Storage', receipt)
           setDeploymentProcessPercent(100)
@@ -160,6 +159,11 @@ export function Deployment(props) {
       <section
         className={`mb-4 ${!web3React?.active || pending ? 'disabled' : ''}`}
       >
+        <ul className="list-unstyled">
+          <li>* required for Swap contracts and a Storage contract</li>
+          <li>** required only for a Swap contract</li>
+        </ul>
+
         <Form.Label htmlFor="adminAddress">Admin address *</Form.Label>
         <InputGroup className="mb-3">
           <FormControl
@@ -183,11 +187,6 @@ export function Deployment(props) {
           />
         </InputGroup>
       </section>
-
-      <ul className="list-unstyled">
-        <li>* required for Swap contracts and a Storage contract</li>
-        <li>** required only for a Swap contract</li>
-      </ul>
 
       <Row className="mb-3">
         <Col className="d-grid">

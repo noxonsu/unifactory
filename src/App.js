@@ -29,7 +29,7 @@ export function App() {
         <Wallet activateWallet={activateWallet} pending={pending} />
 
         {error && (
-          <Alert variant="danger">
+          <Alert variant="danger" className="overflowX">
             {error?.code && error.code + ': '}
             {error?.message}
           </Alert>

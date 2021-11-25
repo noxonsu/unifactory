@@ -2,72 +2,48 @@ import { useState, useEffect } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import { InputGroup, FormControl, Form, Row, Col, Alert } from 'react-bootstrap'
 import { Button } from './Button'
-import { TokenLists } from './TokenLists'
+import { TokenList } from './TokenList'
 import {
-  saveOptionsToContract,
+  saveProjectOption,
   fetchOptionsFromContract,
   getData,
+  returnTokenInfo,
 } from '../utils'
+import { projectOptions } from '../constants'
 
 export function InterfaceOptions(props) {
   const { pending, setPending, setError } = props
   const web3React = useWeb3React()
 
+  const [chainId, setChainId] = useState('')
+
+  useEffect(async () => {
+    if (web3React.active) {
+      const id = await web3React?.library.eth.getChainId()
+      setChainId(id)
+    } else {
+      setChainId('')
+    }
+  }, [web3React?.active])
+
   const [notification, setNotification] = useState('')
-  const [storageContract, setStorageContract] = useState('')
+  const [storageContract, setStorageContract] = useState(
+    '0xE2e4dDbd6254966f174110BC152bdAa7C6D300ce'
+  )
 
   const updateStorageContract = (event) =>
     setStorageContract(event.target.value)
 
-  // const [publicKey, setPublicKey] = useState('')
-  // const [privateKey, setPrivateKey] = useState('')
-  // const [optionsCID, setOptionsCID] = useState('')
-
-  // const updatePublicKey = (event) => setPublicKey(event.target.value)
-  // const updatePrivateKey = (event) => setPrivateKey(event.target.value)
-  // const updateOptionsCID = (event) => setOptionsCID(event.target.value)
-
   const [projectName, setProjectName] = useState('')
   const [logoUrl, setLogoUrl] = useState('')
   const [brandColor, setBrandColor] = useState('')
-  const [tokenLists, setTokenLists] = useState([])
+  const [tokenListName, setTokenListName] = useState([])
+  const [tokens, setTokens] = useState([])
 
   const updateProjectName = (event) => setProjectName(event.target.value)
   const updateLogoUrl = (event) => setLogoUrl(event.target.value)
   const updateBrandColor = (event) => setBrandColor(event.target.value)
-
-  // const getAvailableOptions = async () => {
-  //   if (!optionsCID) return
-
-  //   setPending(true)
-
-  //   try {
-  //     const userOptions = await getData(optionsCID)
-  //     console.log('userOptions: ', userOptions)
-
-  //     window.localStorage.setItem(
-  //       'userProjectOptions',
-  //       JSON.stringify(userOptions)
-  //     )
-
-  //     if (userOptions && !Object.keys(userOptions).length) {
-  //       setNotification('You do not have any saved options')
-  //     } else {
-  //       const { logoUrl, brandColor, projectName, tokenLists } = userOptions
-
-  //       setProjectName(projectName)
-  //       setLogoUrl(logoUrl)
-  //       setBrandColor(brandColor)
-  //       setTokenLists(tokenLists)
-  //     }
-  //   } catch (error) {
-  //     console.error(error)
-  //   } finally {
-  //     setPending(false)
-  //   }
-  // }
-
-  // storage 0xe78fe2cceCD7e458c3bDd8034324643EB14e86D0
+  const updateTokenListName = (event) => setTokenListName(event.target.value)
 
   const fetchProjectOptions = async () => {
     setPending(true)
@@ -79,87 +55,77 @@ export function InterfaceOptions(props) {
       )
 
       if (projectInfo) {
-        const { brandColor, logo, name } = projectInfo
+        const { brandColor, logo, name, tokenList } = projectInfo
 
-        setProjectName(name)
-        setLogoUrl(logo)
-        setBrandColor(brandColor)
+        console.log('projectInfo: ', projectInfo)
+
+        if (name) setProjectName(name)
+        if (logo) setLogoUrl(logo)
+        if (brandColor) setBrandColor(brandColor)
+        if (tokenList) {
+          setTokenListName(tokenList.name)
+
+          tokenList.tokens.map(async (address) => {
+            const { name, symbol, decimals } = await returnTokenInfo(
+              web3React.library,
+              address
+            )
+
+            setTokens((oldTokens) => [
+              ...oldTokens,
+              {
+                name,
+                symbol,
+                decimals,
+                address,
+              },
+            ])
+          })
+        }
       }
     } catch (error) {
+      setError(error)
     } finally {
       setPending(false)
     }
   }
 
-  const returnCurrentOptions = () => ({
-    projectName,
-    logoUrl,
-    brandColor,
-    tokenLists,
-  })
+  const saveOption = async (option) => {
+    let value
 
-  const updateOptions = async () => {
-    const oldOptions = window.localStorage.getItem('userProjectOptions')
-    const currentOptions = returnCurrentOptions()
-
-    // if we have at least one token list, there is timestamp value
-    // with this value we always will get false in this expression
-    if (JSON.stringify(oldOptions) === JSON.stringify(currentOptions)) {
-      setNotification('You did not change anything')
-    } else {
-      setPending(true)
-
-      try {
-        const projectInfo = await saveOptionsToContract(
-          web3React?.library,
-          storageContract,
-          currentOptions
-        )
-
-        if (projectInfo) {
-          const { brandColor, logo, name } = projectInfo
-
-          setProjectName(name)
-          setLogoUrl(logo)
-          setBrandColor(brandColor)
+    switch (option) {
+      case projectOptions.NAME:
+        value = projectName
+        break
+      case projectOptions.LOGO:
+        value = logoUrl
+        break
+      case projectOptions.COLOR:
+        value = brandColor
+        break
+      case projectOptions.TOKENS:
+        value = {
+          name: tokenListName,
+          tokens,
         }
+    }
 
-        console.log('projectInfo: ', projectInfo)
-      } catch (error) {
-        console.error(error)
-      } finally {
-        setPending(false)
-      }
+    setPending(true)
+    setError(false)
+
+    try {
+      const result = await saveProjectOption(
+        web3React?.library,
+        storageContract,
+        option,
+        value
+      )
+    } catch (error) {
+      setError(error)
+    } finally {
+      setPending(false)
     }
   }
-
-  /*
-{
-    projectName: TopScamSwap
-    logoUrl: https://image.pngaaa.com/860/1534860-middle.png
-    brandColor: string (#fefefe)
-    tokenLists: [{
-      "name": "",
-      "timestamp": "",
-      "version": {
-        "major": 1,
-        "minor": 0,
-        "patch": 0
-      },
-      "logoURI": "",
-      "keywords": [""],
-      "tokens": [
-        {
-          "name": "",
-          "symbol": "",
-          "address": "",
-          "chainId": -42,
-          "decimals": 18,
-        },
-      ],
-    }]
-}
-*/
 
   const [updateButtonIsAvailable, setUpdateButtonIsAvailable] = useState(false)
 
@@ -168,68 +134,19 @@ export function InterfaceOptions(props) {
       web3React?.active &&
       storageContract &&
       (logoUrl || brandColor || projectName)
-    // publicKey && privateKey && (logoUrl || brandColor || projectName)
 
     setUpdateButtonIsAvailable(!!buttonIsAvailable)
   }, [projectName, logoUrl, brandColor, web3React?.active])
 
-  /* Pinata.cloud
-      <Row className="mb-3">
-        <Col className="d-grid">
-          <Button
-            variant="primary"
-            onClick={getAvailableOptions}
-            disabled={pending}
-          >
-            {true ? 'Sign in' : '...'}
-          </Button>
-        </Col>
-        <Col className="d-grid">
-          <Button
-            variant="primary"
-            onClick={() => {}}
-            disabled={true || pending}
-          >
-            Create account
-          </Button>
-        </Col>
-      </Row>
-
-      <Row className="mb-3">
-        <Col className="d-grid">
-          <InputGroup className="mb-2">
-            <FormControl
-              type="password"
-              onChange={updatePublicKey}
-              placeholder="Pinata public key"
-            />
-          </InputGroup>
-        </Col>
-        <Col className="d-grid">
-          <InputGroup className="mb-2">
-            <FormControl
-              type="password"
-              onChange={updatePrivateKey}
-              placeholder="Pinata private key"
-            />
-          </InputGroup>
-        </Col>
-
-        <Col className="d-grid">
-          <InputGroup className="mb-2">
-            <FormControl
-              type="text"
-              onChange={updateOptionsCID}
-              placeholder="Project options CID"
-            />
-          </InputGroup>
-        </Col>
-      </Row>
-  */
+  const canNotUseStorage = pending || !storageContract || !web3React?.active
 
   return (
     <section>
       {notification && <Alert variant="warning">{notification}</Alert>}
+
+      <ul className="list-unstyled">
+        <li>* required field</li>
+      </ul>
 
       <Form.Label htmlFor="storageContractInput">Storage contract *</Form.Label>
       <InputGroup className="mb-3">
@@ -242,59 +159,97 @@ export function InterfaceOptions(props) {
         <Button
           onClick={fetchProjectOptions}
           pending={pending}
-          disabled={pending || !storageContract || !web3React?.active}
+          disabled={canNotUseStorage}
         >
           Fetch options
         </Button>
       </InputGroup>
 
-      <Form.Label htmlFor="projectNameInput">Project name</Form.Label>
-      <InputGroup className="mb-3">
-        <FormControl
-          type="text"
-          id="projectNameInput"
-          defaultValue={projectName}
-          onChange={updateProjectName}
-        />
-      </InputGroup>
+      <div
+        className={`${
+          !web3React?.active || pending || !storageContract ? 'disabled' : ''
+        }`}
+      >
+        <Form.Label htmlFor="projectNameInput">Project name</Form.Label>
+        <InputGroup className="mb-3">
+          <FormControl
+            type="text"
+            id="projectNameInput"
+            defaultValue={projectName}
+            onChange={updateProjectName}
+          />
+          <Button
+            onClick={() => saveOption(projectOptions.NAME)}
+            pending={pending}
+            disabled={canNotUseStorage || !projectName}
+          >
+            Save
+          </Button>
+        </InputGroup>
 
-      <Form.Label htmlFor="logoUrlInput">Logo url</Form.Label>
-      <InputGroup className="mb-3">
-        <FormControl
-          type="text"
-          id="logoUrlInput"
-          defaultValue={logoUrl}
-          onChange={updateLogoUrl}
-        />
-      </InputGroup>
+        <Form.Label htmlFor="logoUrlInput">Logo url</Form.Label>
+        <InputGroup className="mb-3">
+          <FormControl
+            type="text"
+            id="logoUrlInput"
+            defaultValue={logoUrl}
+            onChange={updateLogoUrl}
+          />
+          <Button
+            onClick={() => saveOption(projectOptions.LOGO)}
+            pending={pending}
+            disabled={canNotUseStorage || !logoUrl}
+          >
+            Save
+          </Button>
+        </InputGroup>
 
-      <Form.Label htmlFor="brandColorInput">Brand color</Form.Label>
-      <InputGroup className="mb-4">
-        <Form.Control
-          type="color"
-          id="brandColorInput"
-          defaultValue={brandColor}
-          title="Brand color"
-          onChange={updateBrandColor}
-        />
-      </InputGroup>
+        <Form.Label htmlFor="brandColorInput">Brand color</Form.Label>
+        <InputGroup className="mb-4">
+          <Form.Control
+            type="color"
+            id="brandColorInput"
+            defaultValue={brandColor}
+            title="Brand color"
+            onChange={updateBrandColor}
+          />
+          <Button
+            onClick={() => saveOption(projectOptions.COLOR)}
+            pending={pending}
+            disabled={canNotUseStorage || !brandColor}
+          >
+            Save
+          </Button>
+        </InputGroup>
 
-      <h5 className="mb-3">Token lists</h5>
+        <h5 className="mb-3">Token list</h5>
 
-      <TokenLists tokenLists={tokenLists} />
+        <InputGroup className="mb-3">
+          <FormControl
+            placeholder="List name"
+            type="text"
+            defaultValue={tokenListName}
+            onChange={updateTokenListName}
+          />
+        </InputGroup>
 
-      <ul className="list-unstyled">
-        <li>* required field</li>
-      </ul>
-
-      <div className="d-grid">
-        <Button
+        <TokenList
+          tokens={tokens}
+          setTokens={setTokens}
           pending={pending}
-          onClick={updateOptions}
-          disabled={!updateButtonIsAvailable || pending}
-        >
-          Update options
-        </Button>
+          setPending={setPending}
+          setError={setError}
+        />
+
+        <div className="d-grid">
+          <Button
+            pending={pending}
+            onClick={() => saveOption(projectOptions.TOKENS)}
+            disabled={canNotUseStorage}
+          >
+            Save token list
+          </Button>
+        </div>
       </div>
     </section>
   )
