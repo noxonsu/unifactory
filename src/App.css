@@ -18,6 +18,10 @@ body {
   pointer-events: none;
 }
 
+.overflowX {
+  overflow-x: auto;
+}
+
 .scrollableList {
   max-height: 20rem;
   overflow-y: scroll;

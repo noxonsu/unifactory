@@ -3,11 +3,8 @@ import { useWeb3React } from '@web3-react/core'
 import { InputGroup, FormControl, Form, Row, Col, Alert } from 'react-bootstrap'
 import { Button } from './Button'
 import { TokenLists } from './TokenLists'
-import {
-  saveOptionsToContract,
-  fetchOptionsFromContract,
-  getData,
-} from '../utils'
+import { saveProjectOption, fetchOptionsFromContract, getData } from '../utils'
+import { projectOptions } from '../constants'
 
 export function InterfaceOptions(props) {
   const { pending, setPending, setError } = props
@@ -19,14 +16,6 @@ export function InterfaceOptions(props) {
   const updateStorageContract = (event) =>
     setStorageContract(event.target.value)
 
-  // const [publicKey, setPublicKey] = useState('')
-  // const [privateKey, setPrivateKey] = useState('')
-  // const [optionsCID, setOptionsCID] = useState('')
-
-  // const updatePublicKey = (event) => setPublicKey(event.target.value)
-  // const updatePrivateKey = (event) => setPrivateKey(event.target.value)
-  // const updateOptionsCID = (event) => setOptionsCID(event.target.value)
-
   const [projectName, setProjectName] = useState('')
   const [logoUrl, setLogoUrl] = useState('')
   const [brandColor, setBrandColor] = useState('')
@@ -35,39 +24,6 @@ export function InterfaceOptions(props) {
   const updateProjectName = (event) => setProjectName(event.target.value)
   const updateLogoUrl = (event) => setLogoUrl(event.target.value)
   const updateBrandColor = (event) => setBrandColor(event.target.value)
-
-  // const getAvailableOptions = async () => {
-  //   if (!optionsCID) return
-
-  //   setPending(true)
-
-  //   try {
-  //     const userOptions = await getData(optionsCID)
-  //     console.log('userOptions: ', userOptions)
-
-  //     window.localStorage.setItem(
-  //       'userProjectOptions',
-  //       JSON.stringify(userOptions)
-  //     )
-
-  //     if (userOptions && !Object.keys(userOptions).length) {
-  //       setNotification('You do not have any saved options')
-  //     } else {
-  //       const { logoUrl, brandColor, projectName, tokenLists } = userOptions
-
-  //       setProjectName(projectName)
-  //       setLogoUrl(logoUrl)
-  //       setBrandColor(brandColor)
-  //       setTokenLists(tokenLists)
-  //     }
-  //   } catch (error) {
-  //     console.error(error)
-  //   } finally {
-  //     setPending(false)
-  //   }
-  // }
-
-  // storage 0xe78fe2cceCD7e458c3bDd8034324643EB14e86D0
 
   const fetchProjectOptions = async () => {
     setPending(true)
@@ -81,9 +37,9 @@ export function InterfaceOptions(props) {
       if (projectInfo) {
         const { brandColor, logo, name } = projectInfo
 
-        setProjectName(name)
-        setLogoUrl(logo)
-        setBrandColor(brandColor)
+        if (name) setProjectName(name)
+        if (logo) setLogoUrl(logo)
+        if (brandColor) setBrandColor(brandColor)
       }
     } catch (error) {
     } finally {
@@ -98,38 +54,36 @@ export function InterfaceOptions(props) {
     tokenLists,
   })
 
-  const updateOptions = async () => {
-    const oldOptions = window.localStorage.getItem('userProjectOptions')
-    const currentOptions = returnCurrentOptions()
+  const saveOption = async (option) => {
+    let value
 
-    // if we have at least one token list, there is timestamp value
-    // with this value we always will get false in this expression
-    if (JSON.stringify(oldOptions) === JSON.stringify(currentOptions)) {
-      setNotification('You did not change anything')
-    } else {
-      setPending(true)
+    switch (option) {
+      case projectOptions.NAME:
+        value = projectName
+        break
+      case projectOptions.LOGO:
+        value = logoUrl
+        break
+      case projectOptions.COLOR:
+        value = brandColor
+        break
+      case projectOptions.TOKENS:
+        value = tokenLists
+    }
 
-      try {
-        const projectInfo = await saveOptionsToContract(
-          web3React?.library,
-          storageContract,
-          currentOptions
-        )
+    setPending(true)
 
-        if (projectInfo) {
-          const { brandColor, logo, name } = projectInfo
-
-          setProjectName(name)
-          setLogoUrl(logo)
-          setBrandColor(brandColor)
-        }
-
-        console.log('projectInfo: ', projectInfo)
-      } catch (error) {
-        console.error(error)
-      } finally {
-        setPending(false)
-      }
+    try {
+      const result = await saveProjectOption(
+        web3React?.library,
+        storageContract,
+        option,
+        value
+      )
+    } catch (error) {
+      setError(error)
+    } finally {
+      setPending(false)
     }
   }
 
@@ -173,59 +127,7 @@ export function InterfaceOptions(props) {
     setUpdateButtonIsAvailable(!!buttonIsAvailable)
   }, [projectName, logoUrl, brandColor, web3React?.active])
 
-  /* Pinata.cloud
-      <Row className="mb-3">
-        <Col className="d-grid">
-          <Button
-            variant="primary"
-            onClick={getAvailableOptions}
-            disabled={pending}
-          >
-            {true ? 'Sign in' : '...'}
-          </Button>
-        </Col>
-        <Col className="d-grid">
-          <Button
-            variant="primary"
-            onClick={() => {}}
-            disabled={true || pending}
-          >
-            Create account
-          </Button>
-        </Col>
-      </Row>
-
-      <Row className="mb-3">
-        <Col className="d-grid">
-          <InputGroup className="mb-2">
-            <FormControl
-              type="password"
-              onChange={updatePublicKey}
-              placeholder="Pinata public key"
-            />
-          </InputGroup>
-        </Col>
-        <Col className="d-grid">
-          <InputGroup className="mb-2">
-            <FormControl
-              type="password"
-              onChange={updatePrivateKey}
-              placeholder="Pinata private key"
-            />
-          </InputGroup>
-        </Col>
-
-        <Col className="d-grid">
-          <InputGroup className="mb-2">
-            <FormControl
-              type="text"
-              onChange={updateOptionsCID}
-              placeholder="Project options CID"
-            />
-          </InputGroup>
-        </Col>
-      </Row>
-  */
+  const canNotUseStorage = pending || !storageContract || !web3React?.active
 
   return (
     <section>
@@ -242,7 +144,7 @@ export function InterfaceOptions(props) {
         <Button
           onClick={fetchProjectOptions}
           pending={pending}
-          disabled={pending || !storageContract || !web3React?.active}
+          disabled={canNotUseStorage}
         >
           Fetch options
         </Button>
@@ -256,6 +158,13 @@ export function InterfaceOptions(props) {
           defaultValue={projectName}
           onChange={updateProjectName}
         />
+        <Button
+          onClick={() => saveOption(projectOptions.NAME)}
+          pending={pending}
+          disabled={canNotUseStorage || !projectName}
+        >
+          Save
+        </Button>
       </InputGroup>
 
       <Form.Label htmlFor="logoUrlInput">Logo url</Form.Label>
@@ -266,6 +175,13 @@ export function InterfaceOptions(props) {
           defaultValue={logoUrl}
           onChange={updateLogoUrl}
         />
+        <Button
+          onClick={() => saveOption(projectOptions.LOGO)}
+          pending={pending}
+          disabled={canNotUseStorage || !logoUrl}
+        >
+          Save
+        </Button>
       </InputGroup>
 
       <Form.Label htmlFor="brandColorInput">Brand color</Form.Label>
@@ -277,6 +193,13 @@ export function InterfaceOptions(props) {
           title="Brand color"
           onChange={updateBrandColor}
         />
+        <Button
+          onClick={() => saveOption(projectOptions.COLOR)}
+          pending={pending}
+          disabled={canNotUseStorage || !brandColor}
+        >
+          Save
+        </Button>
       </InputGroup>
 
       <h5 className="mb-3">Token lists</h5>
@@ -290,10 +213,10 @@ export function InterfaceOptions(props) {
       <div className="d-grid">
         <Button
           pending={pending}
-          onClick={updateOptions}
-          disabled={!updateButtonIsAvailable || pending}
+          onClick={() => saveOption(projectOptions.TOKENS)}
+          disabled={canNotUseStorage}
         >
-          Update options
+          Save tokens
         </Button>
       </div>
     </section>

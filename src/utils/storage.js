@@ -1,7 +1,12 @@
 import axios from 'axios'
 import pinataSDK from '@pinata/sdk'
 import Storage from '../contracts/build/Storage.json'
-import { networks, pinataEndpoints, MAIN_FILE_NAME } from '../constants'
+import {
+  networks,
+  pinataEndpoints,
+  MAIN_FILE_NAME,
+  projectOptions,
+} from '../constants'
 import { getContractInstance } from '../utils'
 
 // TODO: track request limits
@@ -96,4 +101,41 @@ export const fetchOptionsFromContract = async (library, storageContract) => {
   return new Promise((resolve, reject) =>
     storage.methods.project().call().then(resolve).catch(reject)
   )
+}
+
+// storage 0xafc031187b36372430a5f9D39cF5F1D9e7ba91b2
+export const saveProjectOption = async (
+  library,
+  storageContract,
+  option,
+  value
+) => {
+  const storage = getContractInstance(library, storageContract, Storage.abi)
+  const accounts = await window.ethereum.request({ method: 'eth_accounts' })
+  let method = ''
+
+  switch (option) {
+    case projectOptions.NAME:
+      method = 'setProjectName'
+      break
+    case projectOptions.LOGO:
+      method = 'setLogoUrl'
+      break
+    case projectOptions.COLOR:
+      method = 'setBrandColor'
+      break
+    case projectOptions.TOKENS:
+      method = 'setTokenList'
+  }
+
+  if (method) {
+    return new Promise((resolve, reject) =>
+      storage.methods[method](value)
+        .send({ from: accounts[0] })
+        .then(resolve)
+        .catch(reject)
+    )
+  } else {
+    throw new Error('No such option')
+  }
 }
