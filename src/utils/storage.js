@@ -98,12 +98,23 @@ export const fetchOptionsFromContract = async (library, storageContract) => {
   const storage = getContractInstance(library, storageContract, Storage.abi)
   const accounts = await window.ethereum.request({ method: 'eth_accounts' })
 
-  return new Promise((resolve, reject) =>
-    storage.methods.project().call().then(resolve).catch(reject)
-  )
+  return new Promise((resolve, reject) => {
+    try {
+      const project = storage.methods.project().call()
+      const tokenList = storage.methods.tokenList().call()
+
+      return {
+        brandColor: project.brandColor,
+        logo: project.logo,
+        name: project.name,
+        tokenList,
+      }
+    } catch (error) {
+      reject(error)
+    }
+  })
 }
 
-// storage 0xafc031187b36372430a5f9D39cF5F1D9e7ba91b2
 export const saveProjectOption = async (
   library,
   storageContract,

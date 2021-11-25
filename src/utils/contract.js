@@ -1,7 +1,9 @@
+import TokenAbi from 'human-standard-token-abi'
 import FactoryJson from '../contracts/build/Factory.json'
 import RouterV2Json from '../contracts/build/RouterV2.json'
 import Storage from '../contracts/build/Storage.json'
 import { networks, wrapperCurrencies } from '../constants'
+import { cache, addValue } from './cache'
 
 const log = (message) => {
   console.group('%c Log', 'color: crimson; font-size: 14px;')
@@ -130,4 +132,41 @@ export const deploySwapContract = async (params) => {
   } else {
     throw new Error('No factory contract')
   }
+}
+
+export const isContract = async (library, address) => {
+  const lowerAddress = address.toLowerCase()
+
+  if (cache.isContract && cache.isContract[address]) {
+    return cache.isContract[address]
+  }
+
+  const codeAtAddress = await library.eth.getCode(address)
+  const codeIsEmpty =
+    !codeAtAddress || codeAtAddress === '0x' || codeAtAddress === '0x0'
+
+  if (!cache.isContract) cache.isContract = {}
+
+  cache.isContract[address] = !codeIsEmpty
+
+  return !codeIsEmpty
+}
+
+export const returnTokenInfo = async (library, address) => {
+  const result = await isContract(library, address)
+
+  if (result) {
+    const contract = new library.eth.Contract(TokenAbi, address)
+    const name = await contract.methods.name().call()
+    const symbol = await contract.methods.symbol().call()
+    const decimals = await contract.methods.decimals().call()
+
+    return {
+      name,
+      symbol,
+      decimals,
+    }
+  }
+
+  return false
 }
