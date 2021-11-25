@@ -98,17 +98,17 @@ export const fetchOptionsFromContract = async (library, storageContract) => {
   const storage = getContractInstance(library, storageContract, Storage.abi)
   const accounts = await window.ethereum.request({ method: 'eth_accounts' })
 
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     try {
-      const project = storage.methods.project().call()
-      const tokenList = storage.methods.tokenList().call()
+      const project = await storage.methods.project().call()
+      const tokenList = await storage.methods.tokenList().call()
 
-      return {
+      resolve({
         brandColor: project.brandColor,
         logo: project.logo,
         name: project.name,
         tokenList,
-      }
+      })
     } catch (error) {
       reject(error)
     }
@@ -124,28 +124,47 @@ export const saveProjectOption = async (
   const storage = getContractInstance(library, storageContract, Storage.abi)
   const accounts = await window.ethereum.request({ method: 'eth_accounts' })
   let method = ''
+  let args
 
   switch (option) {
     case projectOptions.NAME:
       method = 'setProjectName'
+      args = [value]
       break
     case projectOptions.LOGO:
       method = 'setLogoUrl'
+      args = [value]
       break
     case projectOptions.COLOR:
       method = 'setBrandColor'
+      args = [value]
       break
     case projectOptions.TOKENS:
       method = 'setTokenList'
+      args = [
+        {
+          name: value.name,
+          tokens: value.tokens.map((item) => item.address),
+        },
+      ]
   }
 
   if (method) {
-    return new Promise((resolve, reject) =>
-      storage.methods[method](value)
+    return new Promise(async (resolve, reject) => {
+      // const gas = await storage.methods[method](...args)
+      //   .estimateGas({ from: accounts[0] })
+      //   .then(resolve)
+      //   .catch(reject)
+
+      //     console.log('gas: ', gas)
+
+      // if (gas) {
+      storage.methods[method](...args)
         .send({ from: accounts[0] })
         .then(resolve)
         .catch(reject)
-    )
+      // }
+    })
   } else {
     throw new Error('No such option')
   }

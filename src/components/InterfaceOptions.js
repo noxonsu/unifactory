@@ -3,7 +3,12 @@ import { useWeb3React } from '@web3-react/core'
 import { InputGroup, FormControl, Form, Row, Col, Alert } from 'react-bootstrap'
 import { Button } from './Button'
 import { TokenList } from './TokenList'
-import { saveProjectOption, fetchOptionsFromContract, getData } from '../utils'
+import {
+  saveProjectOption,
+  fetchOptionsFromContract,
+  getData,
+  returnTokenInfo,
+} from '../utils'
 import { projectOptions } from '../constants'
 
 export function InterfaceOptions(props) {
@@ -23,7 +28,7 @@ export function InterfaceOptions(props) {
 
   const [notification, setNotification] = useState('')
   const [storageContract, setStorageContract] = useState(
-    '0xafc031187b36372430a5f9D39cF5F1D9e7ba91b2'
+    '0xE2e4dDbd6254966f174110BC152bdAa7C6D300ce'
   )
 
   const updateStorageContract = (event) =>
@@ -32,11 +37,13 @@ export function InterfaceOptions(props) {
   const [projectName, setProjectName] = useState('')
   const [logoUrl, setLogoUrl] = useState('')
   const [brandColor, setBrandColor] = useState('')
+  const [tokenListName, setTokenListName] = useState([])
   const [tokens, setTokens] = useState([])
 
   const updateProjectName = (event) => setProjectName(event.target.value)
   const updateLogoUrl = (event) => setLogoUrl(event.target.value)
   const updateBrandColor = (event) => setBrandColor(event.target.value)
+  const updateTokenListName = (event) => setTokenListName(event.target.value)
 
   const fetchProjectOptions = async () => {
     setPending(true)
@@ -55,9 +62,29 @@ export function InterfaceOptions(props) {
         if (name) setProjectName(name)
         if (logo) setLogoUrl(logo)
         if (brandColor) setBrandColor(brandColor)
-        if (tokenList) setTokens(tokens)
+        if (tokenList) {
+          setTokenListName(tokenList.name)
+
+          tokenList.tokens.map(async (address) => {
+            const { name, symbol, decimals } = await returnTokenInfo(
+              web3React.library,
+              address
+            )
+
+            setTokens((oldTokens) => [
+              ...oldTokens,
+              {
+                name,
+                symbol,
+                decimals,
+                address,
+              },
+            ])
+          })
+        }
       }
     } catch (error) {
+      setError(error)
     } finally {
       setPending(false)
     }
@@ -77,10 +104,14 @@ export function InterfaceOptions(props) {
         value = brandColor
         break
       case projectOptions.TOKENS:
-        value = tokens
+        value = {
+          name: tokenListName,
+          tokens,
+        }
     }
 
     setPending(true)
+    setError(false)
 
     try {
       const result = await saveProjectOption(
@@ -193,6 +224,15 @@ export function InterfaceOptions(props) {
 
         <h5 className="mb-3">Token list</h5>
 
+        <InputGroup className="mb-3">
+          <FormControl
+            placeholder="List name"
+            type="text"
+            defaultValue={tokenListName}
+            onChange={updateTokenListName}
+          />
+        </InputGroup>
+
         <TokenList
           tokens={tokens}
           setTokens={setTokens}
@@ -207,7 +247,7 @@ export function InterfaceOptions(props) {
             onClick={() => saveOption(projectOptions.TOKENS)}
             disabled={canNotUseStorage}
           >
-            Save tokens
+            Save token list
           </Button>
         </div>
       </div>

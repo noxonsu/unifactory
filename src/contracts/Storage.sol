@@ -45,11 +45,10 @@ contract Storage is IStorage {
         _project.brandColor = _color;
     }
 
-    function setTokenList(string memory _name, string[] memory _tokens) external override onlyOwner {
-        bytes memory byteName = bytes(_name);
+    function setTokenList(TokenList memory _list) external override onlyOwner {
+        bytes memory byteName = bytes(_list.name);
         require(byteName.length != 0, "No name");
 
-        _tokenList.name = _name;
-        _tokenList.tokens = _tokens;
+        _tokenList = _list;
     }
 }

@@ -129,7 +129,6 @@ export function Deployment(props) {
     try {
       const storageInstance = await deployStorage({
         onDeploy: (receipt) => {
-          console.log('receipt after storage deployment !')
           setStorageAddress(receipt.contractAddress)
           addContractInfo('Storage', receipt)
           setDeploymentProcessPercent(100)

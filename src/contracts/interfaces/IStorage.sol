@@ -20,5 +20,5 @@ interface IStorage {
     function setProjectName(string memory) external;
     function setLogoUrl(string memory) external;
     function setBrandColor(string memory) external;
-    function setTokenList(string memory _name, string[] memory _tokens) external;
+    function setTokenList(TokenList memory _list) external;
 }
