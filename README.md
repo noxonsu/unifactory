@@ -1,5 +1,3 @@
-# \_
-
 # Installation
 
 ## DNS way. Simple and secured way. Most recommended.
@@ -12,7 +10,11 @@ The only one password you need is your domain registar's password, you don't nee
 
 That't it! Now open your domain and you'll see the installation master! 
 
-изображение деплоера
+### Preview
+
+<img src="./images/deploymentTab.png">
+
+---
 
 Once you finiish this form the domain will linked to your MetaMask address (your eth address will recorded as "admin" of your domain in the "domainRegistry" smartcontract. TODO: добавить линки на этот реестр в разных сетях).
 
