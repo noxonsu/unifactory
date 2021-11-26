@@ -180,12 +180,22 @@ export function Deployment(props) {
         </InputGroup>
       </section>
 
-      <Row className="mb-3">
+      <Row>
         <Col className="d-grid">
           <p className="highlightedInfo">
             Main contracts to use swaps, add and remove liquidity
           </p>
+        </Col>
 
+        <Col className="d-grid">
+          <p className="highlightedInfo">
+            Contract for storing project information
+          </p>
+        </Col>
+      </Row>
+
+      <Row>
+        <Col className="d-grid">
           <Button
             onClick={onSwapDeploy}
             pending={pending}
@@ -196,9 +206,6 @@ export function Deployment(props) {
         </Col>
 
         <Col className="d-grid">
-          <p className="highlightedInfo">
-            Contract for storing project information
-          </p>
           <Button
             onClick={onStorageDeploy}
             pending={pending}

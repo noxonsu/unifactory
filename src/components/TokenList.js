@@ -1,17 +1,26 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import { AiOutlinePlus } from 'react-icons/ai'
-import { GrFormClose } from 'react-icons/gr'
 import { InputGroup, Alert, ListGroup, FormControl } from 'react-bootstrap'
 import { Button } from './Button'
-import { returnTokenInfo } from '../utils'
+import { returnTokenInfo, isValidAddress } from '../utils'
 
 export function TokenList(props) {
-  const { tokens, setTokens, pending, setPending, setError } = props
+  const { tokens, setTokens, tokensLoading, pending, setPending, setError } =
+    props
   const web3React = useWeb3React()
   const [newTokenAddress, setNewTokenAddress] = useState('')
+  const [tokenAddressIsCorrect, setTokenAddressIsCorrect] = useState(true)
 
   const updateTokenAddress = (event) => setNewTokenAddress(event.target.value)
+
+  useEffect(() => {
+    if (web3React.library) {
+      setTokenAddressIsCorrect(
+        isValidAddress(web3React.library, newTokenAddress)
+      )
+    }
+  }, [web3React.library, newTokenAddress])
 
   const addNewToken = async () => {
     const tokenInList = tokens.find(
@@ -61,28 +70,42 @@ export function TokenList(props) {
   return (
     <section className="mb-3 d-grid">
       {tokens.length ? (
-        <ListGroup
-          className={`mb-3 ${tokens.length > 8 ? 'scrollableList' : ''}`}
-        >
-          {tokens.map((item, index) => {
-            const { name, symbol, address, decimals } = item
+        <>
+          <ListGroup
+            className={`mb-2 ${tokens.length > 7 ? 'scrollableList' : ''}`}
+          >
+            {tokens.map((item, index) => {
+              const { name, symbol, address } = item
 
-            return (
-              <ListGroup.Item
-                key={index}
-                variant="light d-flex justify-content-between flex-wrap"
-              >
-                <span>
-                  {name} <small className="text-muted">{decimals}</small>:
-                </span>{' '}
-                {address}
-                <Button onClick={() => removeToken(address)}>
-                  <GrFormClose title="remove token" />
-                </Button>
-              </ListGroup.Item>
-            )
-          })}
-        </ListGroup>
+              return (
+                <ListGroup.Item
+                  key={index}
+                  className="d-flex justify-content-between align-items-center flex-wrap"
+                >
+                  <span>
+                    {name} <small className="text-muted">({symbol})</small>:
+                  </span>
+                  <span className="d-flex align-items-center">
+                    <span className="me-2">{address}</span>
+                    <button
+                      type="button"
+                      className="btn-close btn-sm"
+                      aria-label="Close"
+                      title="remove this token"
+                      onClick={() => removeToken(address)}
+                    ></button>
+                  </span>
+                </ListGroup.Item>
+              )
+            })}
+          </ListGroup>
+
+          {tokensLoading && (
+            <span className="mb-3 d-flex justify-content-center">
+              Loading...
+            </span>
+          )}
+        </>
       ) : (
         <Alert variant="warning">No tokens</Alert>
       )}
@@ -93,6 +116,9 @@ export function TokenList(props) {
           placeholder="Token address"
           defaultValue={newTokenAddress}
           onChange={updateTokenAddress}
+          className={`${
+            newTokenAddress && !tokenAddressIsCorrect ? 'wrong' : ''
+          }`}
         />
         <Button
           onClick={addNewToken}

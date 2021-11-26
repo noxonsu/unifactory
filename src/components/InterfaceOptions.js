@@ -15,6 +15,7 @@ export function InterfaceOptions(props) {
   const { pending, setPending, setError } = props
   const web3React = useWeb3React()
 
+  const [tokensLoading, setTokensLoading] = useState(false)
   const [notification, setNotification] = useState('')
   const [storageContract, setStorageContract] = useState(
     '0xE2e4dDbd6254966f174110BC152bdAa7C6D300ce'
@@ -63,7 +64,10 @@ export function InterfaceOptions(props) {
         if (brandColor) setBrandColor(brandColor)
         if (listName) setTokenListName(listName)
         if (tokens.length) {
-          tokens.map(async (address) => {
+          setTokensLoading(true)
+          setTokens([])
+
+          tokens.map(async (address, index) => {
             const { name, symbol, decimals } = await returnTokenInfo(
               web3React.library,
               address
@@ -78,6 +82,10 @@ export function InterfaceOptions(props) {
                 address,
               },
             ])
+
+            if (tokens.length === 1 || tokens.length === index + 1) {
+              setTokensLoading(false)
+            }
           })
         }
       }
@@ -133,7 +141,7 @@ export function InterfaceOptions(props) {
     }
   }
 
-  const [updateButtonIsAvailable, setUpdateButtonIsAvailable] = useState(false)
+  const [fullUpdateIsAvailable, setFullUpdateIsAvailable] = useState(false)
 
   useEffect(() => {
     const fullUpdateIsAvailable =
@@ -143,7 +151,7 @@ export function InterfaceOptions(props) {
       brandColor &&
       projectName
 
-    setUpdateButtonIsAvailable(!!fullUpdateIsAvailable)
+    setFullUpdateIsAvailable(!!fullUpdateIsAvailable)
   }, [storageContract, projectName, logoUrl, brandColor, web3React?.active])
 
   const canNotUseStorage = pending || !storageContract || !web3React?.active
@@ -239,6 +247,7 @@ export function InterfaceOptions(props) {
         </InputGroup>
 
         <TokenList
+          tokensLoading={tokensLoading}
           tokens={tokens}
           setTokens={setTokens}
           pending={pending}
@@ -251,7 +260,7 @@ export function InterfaceOptions(props) {
           <Button
             pending={pending}
             onClick={() => saveOption(projectOptions.TOKENS)}
-            disabled={canNotUseStorage}
+            disabled={canNotUseStorage || !tokenListName}
           >
             Save token list
           </Button>
@@ -261,7 +270,7 @@ export function InterfaceOptions(props) {
           <Button
             pending={pending}
             onClick={}
-            disabled={!updateButtonIsAvailable}
+            disabled={!fullUpdateIsAvailable}
           >
             Save all options
           </Button>
