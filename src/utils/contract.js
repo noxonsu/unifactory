@@ -2,7 +2,7 @@ import TokenAbi from 'human-standard-token-abi'
 import FactoryJson from '../contracts/build/Factory.json'
 import RouterV2Json from '../contracts/build/RouterV2.json'
 import Storage from '../contracts/build/Storage.json'
-import { networks, wrapperCurrencies } from '../constants'
+import { wrapperCurrencies, factoryMethods } from '../constants'
 import { cache, addValue } from './cache'
 
 const log = (message) => {
@@ -94,52 +94,67 @@ export const getContractInstance = (library, address, abi) => {
   return new library.eth.Contract(abi, address)
 }
 
-export const deploySwapContract = async (params) => {
-  const { admin, feeRecipient, library, onFactoryDeploy, onRouterDeploy } =
-    params
+export const deploySwapContracts = async (params) => {
+  const { admin, library, onFactoryDeploy, onRouterDeploy } = params
 
   const accounts = await window.ethereum.request({ method: 'eth_accounts' })
   const factoryInstance = await deployFactory({
     onDeploy: onFactoryDeploy,
     library,
-    admin: accounts[0],
+    admin,
   })
 
   if (factoryInstance) {
-    const routerInstance = await deployRouter({
+    await deployRouter({
       onDeploy: onRouterDeploy,
       library,
       factory: factoryInstance.options.address,
     })
-
-    await factoryInstance.methods
-      .setFeeTo(feeRecipient)
-      .send({
-        from: accounts[0],
-      })
-      .catch((error) => {
-        console.error('setFeeTo: ', error)
-      })
-
-    await factoryInstance.methods
-      .setFeeToSetter(admin)
-      .send({
-        from: accounts[0],
-      })
-      .catch((error) => {
-        console.error('setFeeToSetter: ', error)
-      })
   } else {
     throw new Error('No factory contract')
   }
 }
 
-export const isContract = async (library, address) => {
-  const lowerAddress = address.toLowerCase()
+export const setFactoryOption = async (
+  library,
+  from,
+  factoryAddress,
+  method,
+  value
+) => {
+  const factory = new library.eth.Contract(FactoryJson.abi, factoryAddress)
 
+  return new Promise((resolve, reject) => {
+    factory.methods[method](value)
+      .send({
+        from,
+      })
+      .then(resolve)
+      .catch(reject)
+  })
+}
+
+export const isValidAddressFormat = (address) => {
+  return typeof address === 'string' && /^0x[A-Fa-f0-9]{40}$/.test(address)
+}
+
+export const isValidAddress = (library, address) => {
+  if (!isValidAddressFormat(address) || !library) return false
+
+  try {
+    return library.utils.isAddress(address)
+  } catch (error) {
+    log(error.message)
+    return false
+  }
+}
+
+export const isContract = async (library, address) => {
   if (cache.isContract && cache.isContract[address]) {
     return cache.isContract[address]
   }
+
+  if (!isValidAddressFormat(address)) return false
 
   const codeAtAddress = await library.eth.getCode(address)
   const codeIsEmpty =
@@ -147,7 +162,7 @@ export const isContract = async (library, address) => {
 
   if (!cache.isContract) cache.isContract = {}
 
-  cache.isContract[address] = !codeIsEmpty
+  addValue('isContract', address, !codeIsEmpty)
 
   return !codeIsEmpty
 }
@@ -156,10 +171,20 @@ export const returnTokenInfo = async (library, address) => {
   const result = await isContract(library, address)
 
   if (result) {
+    if (cache.tokenInfo && cache.tokenInfo[address]) {
+      return cache.tokenInfo[address]
+    }
+
     const contract = new library.eth.Contract(TokenAbi, address)
     const name = await contract.methods.name().call()
     const symbol = await contract.methods.symbol().call()
     const decimals = await contract.methods.decimals().call()
+
+    addValue('tokenInfo', address, {
+      name,
+      symbol,
+      decimals,
+    })
 
     return {
       name,

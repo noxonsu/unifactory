@@ -3,7 +3,7 @@ body {
 }
 
 .appContainer {
-  max-width: 40rem;
+  max-width: 46rem;
   padding: 1.6rem;
   border-radius: 1rem;
   box-shadow: 0 0 48px #cecece;
@@ -29,4 +29,15 @@ body {
 
 .deploymentInfoRow {
   overflow-x: auto;
+}
+
+.highlightedInfo {
+  padding: 0.3rem 0.6rem;
+  background: #f4f4f4;
+  border-radius: 0.3rem;
+}
+
+.wrong,
+.wrong:focus {
+  border: 1px solid red;
 }

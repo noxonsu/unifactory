@@ -1,56 +1,26 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import {
-  Container,
   InputGroup,
   FormControl,
   Form,
-  ListGroup,
   Alert,
   ProgressBar,
   Row,
   Col,
 } from 'react-bootstrap'
 import { Button } from './Button'
-import { deploySwapContract, deployStorage } from '../utils'
+import { deploySwapContracts, deployStorage, isValidAddress } from '../utils'
 
 export function Deployment(props) {
-  const { pending, setPending, error, setError } = props
+  const { pending, setPending, setError } = props
 
   const web3React = useWeb3React()
   const [canDeploySwapContract, setCanDeploySwapContract] = useState(false)
   const [canDeployStorage, setCanDeployStorage] = useState(false)
   const [adminAddress, setAdminAddress] = useState('')
-  const [useAdminAsFeeRecipient, setUseAdminAsFeeRecipient] = useState(false)
-  const [feeAddress, setFeeAddress] = useState('')
 
-  const isValidAddress = useCallback(
-    (address) => {
-      // TODO: check a contract address and warn about it
-      if (web3React?.active) {
-        return web3React.library.utils.isAddress(address)
-      }
-    },
-    [web3React?.active, web3React?.library?.utils]
-  )
-
-  const onAdminChange = (event) => {
-    if (useAdminAsFeeRecipient) setFeeAddress(event.target.value)
-
-    setAdminAddress(event.target.value)
-  }
-
-  const onFeeRecipientChange = (event) => {
-    setFeeAddress(event.target.value)
-  }
-
-  const changeAdminAsFeeRecipient = () => {
-    setUseAdminAsFeeRecipient(!useAdminAsFeeRecipient)
-
-    if (!useAdminAsFeeRecipient && adminAddress) {
-      setFeeAddress(adminAddress)
-    }
-  }
+  const onAdminChange = (event) => setAdminAddress(event.target.value)
 
   const [factoryAddress, setFactoryAddress] = useState('')
   const [routerAddress, setRouterAddress] = useState('')
@@ -74,11 +44,13 @@ export function Deployment(props) {
       )
     }
   }
-  const getData = (key) => {
-    const info = window.localStorage.getItem('userDeploymentData')
 
-    if (info) return info[key]
-  }
+  // TODO: display available info from localStorage
+  // const getData = (key) => {
+  //   const info = window.localStorage.getItem('userDeploymentData')
+
+  //   if (info) return info[key]
+  // }
 
   const addContractInfo = (name, receipt) => {
     try {
@@ -98,10 +70,9 @@ export function Deployment(props) {
     setRouterAddress('')
 
     try {
-      const result = await deploySwapContract({
+      const result = await deploySwapContracts({
         library: web3React.library,
         admin: adminAddress,
-        feeRecipient: feeAddress,
         onFactoryDeploy: (receipt) => {
           setFactoryAddress(receipt.contractAddress)
           addContractInfo('Factory', receipt)
@@ -127,7 +98,7 @@ export function Deployment(props) {
     setStorageAddress('')
 
     try {
-      const storageInstance = await deployStorage({
+      await deployStorage({
         onDeploy: (receipt) => {
           setStorageAddress(receipt.contractAddress)
           addContractInfo('Storage', receipt)
@@ -146,24 +117,19 @@ export function Deployment(props) {
 
   useEffect(() => {
     setCanDeploySwapContract(
-      web3React?.active &&
-        isValidAddress(adminAddress) &&
-        isValidAddress(feeAddress)
+      web3React?.active && isValidAddress(web3React.library, adminAddress)
     )
 
-    setCanDeployStorage(web3React?.active && isValidAddress(adminAddress))
-  }, [isValidAddress, adminAddress, feeAddress, web3React?.active])
+    setCanDeployStorage(
+      web3React?.active && isValidAddress(web3React.library, adminAddress)
+    )
+  }, [web3React.library, adminAddress, web3React?.active])
 
   return (
     <>
       <section
         className={`mb-4 ${!web3React?.active || pending ? 'disabled' : ''}`}
       >
-        <ul className="list-unstyled">
-          <li>* required for Swap contracts and a Storage contract</li>
-          <li>** required only for a Swap contract</li>
-        </ul>
-
         <Form.Label htmlFor="adminAddress">Admin address *</Form.Label>
         <InputGroup className="mb-3">
           <FormControl
@@ -172,21 +138,21 @@ export function Deployment(props) {
             id="adminAddress"
           />
         </InputGroup>
-
-        <Form.Label htmlFor="feeRecipientAddress">
-          Fee recipient address **
-        </Form.Label>
-        <InputGroup className="mb-3">
-          <InputGroup.Checkbox onChange={changeAdminAsFeeRecipient} />
-          <InputGroup.Text>The same as an admin</InputGroup.Text>
-          <FormControl
-            defaultValue={feeAddress}
-            onChange={onFeeRecipientChange}
-            disabled={useAdminAsFeeRecipient}
-            id="feeRecipientAddress"
-          />
-        </InputGroup>
       </section>
+
+      <Row>
+        <Col className="d-grid">
+          <p className="highlightedInfo">
+            Main contracts to use swaps, add and remove liquidity
+          </p>
+        </Col>
+
+        <Col className="d-grid">
+          <p className="highlightedInfo">
+            Contract for storing project information
+          </p>
+        </Col>
+      </Row>
 
       <Row className="mb-3">
         <Col className="d-grid">

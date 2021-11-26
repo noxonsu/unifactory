@@ -2,9 +2,9 @@ import './App.css'
 import { useState } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import { Container, Tabs, Tab, Alert } from 'react-bootstrap'
-import { deploy } from './utils'
 import { Wallet } from './components/Wallet'
 import { Deployment } from './components/Deployment'
+import { SwapContracts } from './components/SwapContracts'
 import { InterfaceOptions } from './components/InterfaceOptions'
 
 export function App() {
@@ -35,6 +35,10 @@ export function App() {
           </Alert>
         )}
 
+        <ul className="list-unstyled highlightedInfo">
+          <li>* required field</li>
+        </ul>
+
         <Tabs
           defaultActiveKey="deployment"
           id="uncontrolled-tab-example"
@@ -42,6 +46,13 @@ export function App() {
         >
           <Tab eventKey="deployment" title="Deployment">
             <Deployment
+              pending={pending}
+              setPending={setPending}
+              setError={setError}
+            />
+          </Tab>
+          <Tab eventKey="swapContracts" title="Swap contracts">
+            <SwapContracts
               pending={pending}
               setPending={setPending}
               setError={setError}

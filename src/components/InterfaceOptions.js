@@ -1,43 +1,46 @@
 import { useState, useEffect } from 'react'
 import { useWeb3React } from '@web3-react/core'
-import { InputGroup, FormControl, Form, Row, Col, Alert } from 'react-bootstrap'
+import { InputGroup, FormControl, Form, Alert } from 'react-bootstrap'
 import { Button } from './Button'
 import { TokenList } from './TokenList'
 import {
   saveProjectOption,
   fetchOptionsFromContract,
-  getData,
   returnTokenInfo,
+  isValidAddress,
 } from '../utils'
-import { projectOptions } from '../constants'
+import { storageMethods } from '../constants'
 
 export function InterfaceOptions(props) {
   const { pending, setPending, setError } = props
   const web3React = useWeb3React()
 
-  const [chainId, setChainId] = useState('')
-
-  useEffect(async () => {
-    if (web3React.active) {
-      const id = await web3React?.library.eth.getChainId()
-      setChainId(id)
-    } else {
-      setChainId('')
-    }
-  }, [web3React?.active])
-
+  const [tokensLoading, setTokensLoading] = useState(false)
   const [notification, setNotification] = useState('')
   const [storageContract, setStorageContract] = useState(
-    '0xE2e4dDbd6254966f174110BC152bdAa7C6D300ce'
+    '0xE98CdbD299c0A845596fD3F318501Af52C5DB58f'
   )
 
   const updateStorageContract = (event) =>
     setStorageContract(event.target.value)
 
+  useEffect(() => {
+    if (web3React.library) {
+      if (
+        storageContract &&
+        !isValidAddress(web3React.library, storageContract)
+      ) {
+        setError(new Error('Incorrect storage contract'))
+      } else {
+        setError(false)
+      }
+    }
+  }, [setError, web3React.library, storageContract])
+
   const [projectName, setProjectName] = useState('')
   const [logoUrl, setLogoUrl] = useState('')
   const [brandColor, setBrandColor] = useState('')
-  const [tokenListName, setTokenListName] = useState([])
+  const [tokenListName, setTokenListName] = useState('')
   const [tokens, setTokens] = useState([])
 
   const updateProjectName = (event) => setProjectName(event.target.value)
@@ -55,17 +58,17 @@ export function InterfaceOptions(props) {
       )
 
       if (projectInfo) {
-        const { brandColor, logo, name, tokenList } = projectInfo
-
-        console.log('projectInfo: ', projectInfo)
+        const { brandColor, logo, name, listName, tokens } = projectInfo
 
         if (name) setProjectName(name)
         if (logo) setLogoUrl(logo)
         if (brandColor) setBrandColor(brandColor)
-        if (tokenList) {
-          setTokenListName(tokenList.name)
+        if (listName) setTokenListName(listName)
+        if (tokens.length) {
+          setTokensLoading(true)
+          setTokens([])
 
-          tokenList.tokens.map(async (address) => {
+          tokens.map(async (address, index) => {
             const { name, symbol, decimals } = await returnTokenInfo(
               web3React.library,
               address
@@ -80,6 +83,10 @@ export function InterfaceOptions(props) {
                 address,
               },
             ])
+
+            if (tokens.length === 1 || tokens.length === index + 1) {
+              setTokensLoading(false)
+            }
           })
         }
       }
@@ -90,36 +97,53 @@ export function InterfaceOptions(props) {
     }
   }
 
-  const saveOption = async (option) => {
+  const saveOption = async (method) => {
     let value
 
-    switch (option) {
-      case projectOptions.NAME:
+    switch (method) {
+      case storageMethods.setProjectName:
         value = projectName
         break
-      case projectOptions.LOGO:
+      case storageMethods.setLogoUrl:
         value = logoUrl
         break
-      case projectOptions.COLOR:
+      case storageMethods.setBrandColor:
         value = brandColor
         break
-      case projectOptions.TOKENS:
+      case storageMethods.setTokenList:
         value = {
           name: tokenListName,
           tokens,
         }
+        break
+      case storageMethods.setFullData:
+        value = {
+          name: projectName,
+          logo: logoUrl,
+          brandColor,
+          listName: tokenListName,
+          tokens,
+        }
+        break
+      default:
+        value = ''
     }
 
-    setPending(true)
     setError(false)
+    setNotification(false)
+    setPending(true)
 
     try {
-      const result = await saveProjectOption(
+      const receipt = await saveProjectOption(
         web3React?.library,
         storageContract,
-        option,
+        method,
         value
       )
+
+      if (receipt.status) {
+        setNotification(`Updated in transaction: ${receipt.transactionHash}`)
+      }
     } catch (error) {
       setError(error)
     } finally {
@@ -127,26 +151,24 @@ export function InterfaceOptions(props) {
     }
   }
 
-  const [updateButtonIsAvailable, setUpdateButtonIsAvailable] = useState(false)
+  const [fullUpdateIsAvailable, setFullUpdateIsAvailable] = useState(false)
 
   useEffect(() => {
-    const buttonIsAvailable =
+    const fullUpdateIsAvailable =
       web3React?.active &&
       storageContract &&
-      (logoUrl || brandColor || projectName)
+      logoUrl &&
+      brandColor &&
+      projectName
 
-    setUpdateButtonIsAvailable(!!buttonIsAvailable)
-  }, [projectName, logoUrl, brandColor, web3React?.active])
+    setFullUpdateIsAvailable(!!fullUpdateIsAvailable)
+  }, [storageContract, projectName, logoUrl, brandColor, web3React?.active])
 
   const canNotUseStorage = pending || !storageContract || !web3React?.active
 
   return (
     <section>
-      {notification && <Alert variant="warning">{notification}</Alert>}
-
-      <ul className="list-unstyled">
-        <li>* required field</li>
-      </ul>
+      {notification && <Alert variant="info">{notification}</Alert>}
 
       <Form.Label htmlFor="storageContractInput">Storage contract *</Form.Label>
       <InputGroup className="mb-3">
@@ -170,16 +192,15 @@ export function InterfaceOptions(props) {
           !web3React?.active || pending || !storageContract ? 'disabled' : ''
         }`}
       >
-        <Form.Label htmlFor="projectNameInput">Project name</Form.Label>
         <InputGroup className="mb-3">
+          <InputGroup.Text>Project name</InputGroup.Text>
           <FormControl
             type="text"
-            id="projectNameInput"
             defaultValue={projectName}
             onChange={updateProjectName}
           />
           <Button
-            onClick={() => saveOption(projectOptions.NAME)}
+            onClick={() => saveOption(storageMethods.setProjectName)}
             pending={pending}
             disabled={canNotUseStorage || !projectName}
           >
@@ -187,16 +208,15 @@ export function InterfaceOptions(props) {
           </Button>
         </InputGroup>
 
-        <Form.Label htmlFor="logoUrlInput">Logo url</Form.Label>
         <InputGroup className="mb-3">
+          <InputGroup.Text>Logo url</InputGroup.Text>
           <FormControl
             type="text"
-            id="logoUrlInput"
             defaultValue={logoUrl}
             onChange={updateLogoUrl}
           />
           <Button
-            onClick={() => saveOption(projectOptions.LOGO)}
+            onClick={() => saveOption(storageMethods.setLogoUrl)}
             pending={pending}
             disabled={canNotUseStorage || !logoUrl}
           >
@@ -204,17 +224,16 @@ export function InterfaceOptions(props) {
           </Button>
         </InputGroup>
 
-        <Form.Label htmlFor="brandColorInput">Brand color</Form.Label>
         <InputGroup className="mb-4">
+          <InputGroup.Text>Brand color</InputGroup.Text>
           <Form.Control
             type="color"
-            id="brandColorInput"
             defaultValue={brandColor}
             title="Brand color"
             onChange={updateBrandColor}
           />
           <Button
-            onClick={() => saveOption(projectOptions.COLOR)}
+            onClick={() => saveOption(storageMethods.setBrandColor)}
             pending={pending}
             disabled={canNotUseStorage || !brandColor}
           >
@@ -225,8 +244,8 @@ export function InterfaceOptions(props) {
         <h5 className="mb-3">Token list</h5>
 
         <InputGroup className="mb-3">
+          <InputGroup.Text>List name</InputGroup.Text>
           <FormControl
-            placeholder="List name"
             type="text"
             defaultValue={tokenListName}
             onChange={updateTokenListName}
@@ -234,20 +253,33 @@ export function InterfaceOptions(props) {
         </InputGroup>
 
         <TokenList
+          tokensLoading={tokensLoading}
           tokens={tokens}
           setTokens={setTokens}
           pending={pending}
           setPending={setPending}
           setError={setError}
+          setNotification={setNotification}
         />
+
+        <div className="d-grid mb-3">
+          <Button
+            pending={pending}
+            onClick={() => saveOption(storageMethods.setTokenList)}
+            disabled={canNotUseStorage || !tokenListName}
+          >
+            Save token list
+          </Button>
+        </div>
 
         <div className="d-grid">
           <Button
             pending={pending}
-            onClick={() => saveOption(projectOptions.TOKENS)}
-            disabled={canNotUseStorage}
+            onClick={() => saveOption(storageMethods.setFullData)}
+            disabled={!fullUpdateIsAvailable}
+            size="lg"
           >
-            Save token list
+            Save all options
           </Button>
         </div>
       </div>
