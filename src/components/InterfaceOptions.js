@@ -168,11 +168,7 @@ export function InterfaceOptions(props) {
 
   return (
     <section>
-      {notification && <Alert variant="warning">{notification}</Alert>}
-
-      <ul className="list-unstyled highlightedInfo">
-        <li>* required field</li>
-      </ul>
+      {notification && <Alert variant="info">{notification}</Alert>}
 
       <Form.Label htmlFor="storageContractInput">Storage contract *</Form.Label>
       <InputGroup className="mb-3">

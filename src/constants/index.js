@@ -74,3 +74,8 @@ export const storageMethods = {
   setTokenList: 'setTokenList',
   setFullData: 'setFullData',
 }
+
+export const factoryMethods = {
+  setFeeTo: 'setFeeTo',
+  setFeeToSetter: 'setFeeToSetter',
+}

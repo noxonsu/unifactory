@@ -60,7 +60,7 @@ export function Wallet(props) {
       <div className="mb-3">
         {web3React.active ? (
           <ListGroup>
-            <ListGroup.Item variant="info">
+            <ListGroup.Item>
               {networks[web3React.chainId]?.name}: {web3React.account}
             </ListGroup.Item>
           </ListGroup>
