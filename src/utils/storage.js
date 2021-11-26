@@ -1,12 +1,7 @@
 import axios from 'axios'
 import pinataSDK from '@pinata/sdk'
 import Storage from '../contracts/build/Storage.json'
-import {
-  networks,
-  pinataEndpoints,
-  MAIN_FILE_NAME,
-  projectOptions,
-} from '../constants'
+import { pinataEndpoints, projectOptions } from '../constants'
 import { getContractInstance } from '../utils'
 
 // TODO: track request limits
@@ -59,17 +54,8 @@ export const pinJson = async (apiKey, secretApiKey, body) => {
   })
 }
 
-export const saveOptionsToContract = async (
-  library,
-  storageContract,
-  options
-) => {
-  const {
-    projectName = '',
-    logoUrl = '',
-    brandColor = '',
-    tokenLists = [],
-  } = options
+export const saveAllOptions = async (library, storageContract, options) => {
+  const { projectName, logoUrl, brandColor, listName, tokens } = options
 
   const storage = getContractInstance(library, storageContract, Storage.abi)
   const accounts = await window.ethereum.request({ method: 'eth_accounts' })
@@ -77,8 +63,8 @@ export const saveOptionsToContract = async (
     name: projectName,
     logo: logoUrl,
     brandColor,
-    listName: '',
-    tokens: [],
+    listName,
+    tokens,
   }
 
   return new Promise((resolve, reject) => {
@@ -96,7 +82,6 @@ export const saveOptionsToContract = async (
 
 export const fetchOptionsFromContract = async (library, storageContract) => {
   const storage = getContractInstance(library, storageContract, Storage.abi)
-  const accounts = await window.ethereum.request({ method: 'eth_accounts' })
 
   return new Promise(async (resolve, reject) => {
     try {
@@ -107,7 +92,8 @@ export const fetchOptionsFromContract = async (library, storageContract) => {
         brandColor: project.brandColor,
         logo: project.logo,
         name: project.name,
-        tokenList,
+        listName: tokenList.name,
+        tokens: tokenList.tokens,
       })
     } catch (error) {
       reject(error)
@@ -123,7 +109,7 @@ export const saveProjectOption = async (
 ) => {
   const storage = getContractInstance(library, storageContract, Storage.abi)
   const accounts = await window.ethereum.request({ method: 'eth_accounts' })
-  let method = ''
+  let method
   let args
 
   switch (option) {
@@ -147,23 +133,18 @@ export const saveProjectOption = async (
           tokens: value.tokens.map((item) => item.address),
         },
       ]
+      break
+    default:
+      method = ''
+      args = []
   }
 
   if (method) {
     return new Promise(async (resolve, reject) => {
-      // const gas = await storage.methods[method](...args)
-      //   .estimateGas({ from: accounts[0] })
-      //   .then(resolve)
-      //   .catch(reject)
-
-      //     console.log('gas: ', gas)
-
-      // if (gas) {
       storage.methods[method](...args)
         .send({ from: accounts[0] })
         .then(resolve)
         .catch(reject)
-      // }
     })
   } else {
     throw new Error('No such option')

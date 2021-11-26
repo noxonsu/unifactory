@@ -1,21 +1,19 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import {
-  Container,
   InputGroup,
   FormControl,
   Form,
-  ListGroup,
   Alert,
   ProgressBar,
   Row,
   Col,
 } from 'react-bootstrap'
 import { Button } from './Button'
-import { deploySwapContract, deployStorage } from '../utils'
+import { deploySwapContracts, deployStorage, isValidAddress } from '../utils'
 
 export function Deployment(props) {
-  const { pending, setPending, error, setError } = props
+  const { pending, setPending, setError } = props
 
   const web3React = useWeb3React()
   const [canDeploySwapContract, setCanDeploySwapContract] = useState(false)
@@ -23,16 +21,6 @@ export function Deployment(props) {
   const [adminAddress, setAdminAddress] = useState('')
   const [useAdminAsFeeRecipient, setUseAdminAsFeeRecipient] = useState(false)
   const [feeAddress, setFeeAddress] = useState('')
-
-  const isValidAddress = useCallback(
-    (address) => {
-      // TODO: check a contract address and warn about it
-      if (web3React?.active) {
-        return web3React.library.utils.isAddress(address)
-      }
-    },
-    [web3React?.active, web3React?.library?.utils]
-  )
 
   const onAdminChange = (event) => {
     if (useAdminAsFeeRecipient) setFeeAddress(event.target.value)
@@ -74,11 +62,13 @@ export function Deployment(props) {
       )
     }
   }
-  const getData = (key) => {
-    const info = window.localStorage.getItem('userDeploymentData')
 
-    if (info) return info[key]
-  }
+  // TODO: display available info from localStorage
+  // const getData = (key) => {
+  //   const info = window.localStorage.getItem('userDeploymentData')
+
+  //   if (info) return info[key]
+  // }
 
   const addContractInfo = (name, receipt) => {
     try {
@@ -98,7 +88,7 @@ export function Deployment(props) {
     setRouterAddress('')
 
     try {
-      const result = await deploySwapContract({
+      const result = await deploySwapContracts({
         library: web3React.library,
         admin: adminAddress,
         feeRecipient: feeAddress,
@@ -127,7 +117,7 @@ export function Deployment(props) {
     setStorageAddress('')
 
     try {
-      const storageInstance = await deployStorage({
+      await deployStorage({
         onDeploy: (receipt) => {
           setStorageAddress(receipt.contractAddress)
           addContractInfo('Storage', receipt)
@@ -147,19 +137,21 @@ export function Deployment(props) {
   useEffect(() => {
     setCanDeploySwapContract(
       web3React?.active &&
-        isValidAddress(adminAddress) &&
-        isValidAddress(feeAddress)
+        isValidAddress(web3React.library, adminAddress) &&
+        isValidAddress(web3React.library, feeAddress)
     )
 
-    setCanDeployStorage(web3React?.active && isValidAddress(adminAddress))
-  }, [isValidAddress, adminAddress, feeAddress, web3React?.active])
+    setCanDeployStorage(
+      web3React?.active && isValidAddress(web3React.library, adminAddress)
+    )
+  }, [web3React.library, adminAddress, feeAddress, web3React?.active])
 
   return (
     <>
       <section
         className={`mb-4 ${!web3React?.active || pending ? 'disabled' : ''}`}
       >
-        <ul className="list-unstyled">
+        <ul className="list-unstyled highlightedInfo">
           <li>* required for Swap contracts and a Storage contract</li>
           <li>** required only for a Swap contract</li>
         </ul>
@@ -190,6 +182,10 @@ export function Deployment(props) {
 
       <Row className="mb-3">
         <Col className="d-grid">
+          <p className="highlightedInfo">
+            Main contracts to use swaps, add and remove liquidity
+          </p>
+
           <Button
             onClick={onSwapDeploy}
             pending={pending}
@@ -200,6 +196,9 @@ export function Deployment(props) {
         </Col>
 
         <Col className="d-grid">
+          <p className="highlightedInfo">
+            Contract for storing project information
+          </p>
           <Button
             onClick={onStorageDeploy}
             pending={pending}

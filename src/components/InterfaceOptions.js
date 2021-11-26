@@ -1,30 +1,19 @@
 import { useState, useEffect } from 'react'
 import { useWeb3React } from '@web3-react/core'
-import { InputGroup, FormControl, Form, Row, Col, Alert } from 'react-bootstrap'
+import { InputGroup, FormControl, Form, Alert } from 'react-bootstrap'
 import { Button } from './Button'
 import { TokenList } from './TokenList'
 import {
   saveProjectOption,
   fetchOptionsFromContract,
-  getData,
   returnTokenInfo,
+  isValidAddress,
 } from '../utils'
 import { projectOptions } from '../constants'
 
 export function InterfaceOptions(props) {
   const { pending, setPending, setError } = props
   const web3React = useWeb3React()
-
-  const [chainId, setChainId] = useState('')
-
-  useEffect(async () => {
-    if (web3React.active) {
-      const id = await web3React?.library.eth.getChainId()
-      setChainId(id)
-    } else {
-      setChainId('')
-    }
-  }, [web3React?.active])
 
   const [notification, setNotification] = useState('')
   const [storageContract, setStorageContract] = useState(
@@ -33,6 +22,16 @@ export function InterfaceOptions(props) {
 
   const updateStorageContract = (event) =>
     setStorageContract(event.target.value)
+
+  useEffect(() => {
+    if (web3React.library) {
+      if (!isValidAddress(web3React.library, storageContract)) {
+        setError(new Error('Incorrect storage contract'))
+      } else {
+        setError(false)
+      }
+    }
+  }, [setError, web3React.library, storageContract])
 
   const [projectName, setProjectName] = useState('')
   const [logoUrl, setLogoUrl] = useState('')
@@ -55,17 +54,16 @@ export function InterfaceOptions(props) {
       )
 
       if (projectInfo) {
-        const { brandColor, logo, name, tokenList } = projectInfo
+        const { brandColor, logo, name, listName, tokens } = projectInfo
 
         console.log('projectInfo: ', projectInfo)
 
         if (name) setProjectName(name)
         if (logo) setLogoUrl(logo)
         if (brandColor) setBrandColor(brandColor)
-        if (tokenList) {
-          setTokenListName(tokenList.name)
-
-          tokenList.tokens.map(async (address) => {
+        if (listName) setTokenListName(listName)
+        if (tokens.length) {
+          tokens.map(async (address) => {
             const { name, symbol, decimals } = await returnTokenInfo(
               web3React.library,
               address
@@ -108,18 +106,26 @@ export function InterfaceOptions(props) {
           name: tokenListName,
           tokens,
         }
+        break
+      default:
+        value = ''
     }
 
-    setPending(true)
     setError(false)
+    setNotification(false)
+    setPending(true)
 
     try {
-      const result = await saveProjectOption(
+      const receipt = await saveProjectOption(
         web3React?.library,
         storageContract,
         option,
         value
       )
+
+      if (receipt.status) {
+        setNotification(`Updated in transaction: ${receipt.transactionHash}`)
+      }
     } catch (error) {
       setError(error)
     } finally {
@@ -130,13 +136,15 @@ export function InterfaceOptions(props) {
   const [updateButtonIsAvailable, setUpdateButtonIsAvailable] = useState(false)
 
   useEffect(() => {
-    const buttonIsAvailable =
+    const fullUpdateIsAvailable =
       web3React?.active &&
       storageContract &&
-      (logoUrl || brandColor || projectName)
+      logoUrl &&
+      brandColor &&
+      projectName
 
-    setUpdateButtonIsAvailable(!!buttonIsAvailable)
-  }, [projectName, logoUrl, brandColor, web3React?.active])
+    setUpdateButtonIsAvailable(!!fullUpdateIsAvailable)
+  }, [storageContract, projectName, logoUrl, brandColor, web3React?.active])
 
   const canNotUseStorage = pending || !storageContract || !web3React?.active
 
@@ -144,7 +152,7 @@ export function InterfaceOptions(props) {
     <section>
       {notification && <Alert variant="warning">{notification}</Alert>}
 
-      <ul className="list-unstyled">
+      <ul className="list-unstyled highlightedInfo">
         <li>* required field</li>
       </ul>
 
@@ -170,11 +178,10 @@ export function InterfaceOptions(props) {
           !web3React?.active || pending || !storageContract ? 'disabled' : ''
         }`}
       >
-        <Form.Label htmlFor="projectNameInput">Project name</Form.Label>
         <InputGroup className="mb-3">
+          <InputGroup.Text>Project name</InputGroup.Text>
           <FormControl
             type="text"
-            id="projectNameInput"
             defaultValue={projectName}
             onChange={updateProjectName}
           />
@@ -187,11 +194,10 @@ export function InterfaceOptions(props) {
           </Button>
         </InputGroup>
 
-        <Form.Label htmlFor="logoUrlInput">Logo url</Form.Label>
         <InputGroup className="mb-3">
+          <InputGroup.Text>Logo url</InputGroup.Text>
           <FormControl
             type="text"
-            id="logoUrlInput"
             defaultValue={logoUrl}
             onChange={updateLogoUrl}
           />
@@ -204,11 +210,10 @@ export function InterfaceOptions(props) {
           </Button>
         </InputGroup>
 
-        <Form.Label htmlFor="brandColorInput">Brand color</Form.Label>
         <InputGroup className="mb-4">
+          <InputGroup.Text>Brand color</InputGroup.Text>
           <Form.Control
             type="color"
-            id="brandColorInput"
             defaultValue={brandColor}
             title="Brand color"
             onChange={updateBrandColor}
@@ -225,8 +230,8 @@ export function InterfaceOptions(props) {
         <h5 className="mb-3">Token list</h5>
 
         <InputGroup className="mb-3">
+          <InputGroup.Text>List name</InputGroup.Text>
           <FormControl
-            placeholder="List name"
             type="text"
             defaultValue={tokenListName}
             onChange={updateTokenListName}
@@ -239,9 +244,10 @@ export function InterfaceOptions(props) {
           pending={pending}
           setPending={setPending}
           setError={setError}
+          setNotification={setNotification}
         />
 
-        <div className="d-grid">
+        <div className="d-grid mb-3">
           <Button
             pending={pending}
             onClick={() => saveOption(projectOptions.TOKENS)}
@@ -250,6 +256,16 @@ export function InterfaceOptions(props) {
             Save token list
           </Button>
         </div>
+
+        {/* <div className="d-grid">
+          <Button
+            pending={pending}
+            onClick={}
+            disabled={!updateButtonIsAvailable}
+          >
+            Save all options
+          </Button>
+        </div> */}
       </div>
     </section>
   )

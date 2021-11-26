@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import { AiOutlinePlus } from 'react-icons/ai'
 import { GrFormClose } from 'react-icons/gr'
@@ -84,7 +84,7 @@ export function TokenList(props) {
           })}
         </ListGroup>
       ) : (
-        <Alert variant="secondary">No tokens</Alert>
+        <Alert variant="warning">No tokens</Alert>
       )}
 
       <InputGroup className="mb-3">

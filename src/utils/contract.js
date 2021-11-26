@@ -94,7 +94,7 @@ export const getContractInstance = (library, address, abi) => {
   return new library.eth.Contract(abi, address)
 }
 
-export const deploySwapContract = async (params) => {
+export const deploySwapContracts = async (params) => {
   const { admin, feeRecipient, library, onFactoryDeploy, onRouterDeploy } =
     params
 
@@ -106,11 +106,13 @@ export const deploySwapContract = async (params) => {
   })
 
   if (factoryInstance) {
-    const routerInstance = await deployRouter({
+    await deployRouter({
       onDeploy: onRouterDeploy,
       library,
       factory: factoryInstance.options.address,
     })
+
+    // TODO: create separate options for admin and fee addresses
 
     await factoryInstance.methods
       .setFeeTo(feeRecipient)
@@ -134,12 +136,27 @@ export const deploySwapContract = async (params) => {
   }
 }
 
-export const isContract = async (library, address) => {
-  const lowerAddress = address.toLowerCase()
+export const isValidAddressFormat = (address) => {
+  return typeof address === 'string' && /^0x[A-Fa-f0-9]{40}$/.test(address)
+}
 
+export const isValidAddress = (library, address) => {
+  if (!isValidAddressFormat(address) || !library) return false
+
+  try {
+    return library.utils.isAddress(address)
+  } catch (error) {
+    log(error.message)
+    return false
+  }
+}
+
+export const isContract = async (library, address) => {
   if (cache.isContract && cache.isContract[address]) {
     return cache.isContract[address]
   }
+
+  if (!isValidAddressFormat(address)) return false
 
   const codeAtAddress = await library.eth.getCode(address)
   const codeIsEmpty =
