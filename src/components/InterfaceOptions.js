@@ -9,7 +9,7 @@ import {
   returnTokenInfo,
   isValidAddress,
 } from '../utils'
-import { projectOptions } from '../constants'
+import { storageMethods } from '../constants'
 
 export function InterfaceOptions(props) {
   const { pending, setPending, setError } = props
@@ -18,7 +18,7 @@ export function InterfaceOptions(props) {
   const [tokensLoading, setTokensLoading] = useState(false)
   const [notification, setNotification] = useState('')
   const [storageContract, setStorageContract] = useState(
-    '0xE2e4dDbd6254966f174110BC152bdAa7C6D300ce'
+    '0xE98CdbD299c0A845596fD3F318501Af52C5DB58f'
   )
 
   const updateStorageContract = (event) =>
@@ -26,7 +26,10 @@ export function InterfaceOptions(props) {
 
   useEffect(() => {
     if (web3React.library) {
-      if (!isValidAddress(web3React.library, storageContract)) {
+      if (
+        storageContract &&
+        !isValidAddress(web3React.library, storageContract)
+      ) {
         setError(new Error('Incorrect storage contract'))
       } else {
         setError(false)
@@ -37,7 +40,7 @@ export function InterfaceOptions(props) {
   const [projectName, setProjectName] = useState('')
   const [logoUrl, setLogoUrl] = useState('')
   const [brandColor, setBrandColor] = useState('')
-  const [tokenListName, setTokenListName] = useState([])
+  const [tokenListName, setTokenListName] = useState('')
   const [tokens, setTokens] = useState([])
 
   const updateProjectName = (event) => setProjectName(event.target.value)
@@ -56,8 +59,6 @@ export function InterfaceOptions(props) {
 
       if (projectInfo) {
         const { brandColor, logo, name, listName, tokens } = projectInfo
-
-        console.log('projectInfo: ', projectInfo)
 
         if (name) setProjectName(name)
         if (logo) setLogoUrl(logo)
@@ -96,22 +97,31 @@ export function InterfaceOptions(props) {
     }
   }
 
-  const saveOption = async (option) => {
+  const saveOption = async (method) => {
     let value
 
-    switch (option) {
-      case projectOptions.NAME:
+    switch (method) {
+      case storageMethods.setProjectName:
         value = projectName
         break
-      case projectOptions.LOGO:
+      case storageMethods.setLogoUrl:
         value = logoUrl
         break
-      case projectOptions.COLOR:
+      case storageMethods.setBrandColor:
         value = brandColor
         break
-      case projectOptions.TOKENS:
+      case storageMethods.setTokenList:
         value = {
           name: tokenListName,
+          tokens,
+        }
+        break
+      case storageMethods.setFullData:
+        value = {
+          name: projectName,
+          logo: logoUrl,
+          brandColor,
+          listName: tokenListName,
           tokens,
         }
         break
@@ -127,7 +137,7 @@ export function InterfaceOptions(props) {
       const receipt = await saveProjectOption(
         web3React?.library,
         storageContract,
-        option,
+        method,
         value
       )
 
@@ -194,7 +204,7 @@ export function InterfaceOptions(props) {
             onChange={updateProjectName}
           />
           <Button
-            onClick={() => saveOption(projectOptions.NAME)}
+            onClick={() => saveOption(storageMethods.setProjectName)}
             pending={pending}
             disabled={canNotUseStorage || !projectName}
           >
@@ -210,7 +220,7 @@ export function InterfaceOptions(props) {
             onChange={updateLogoUrl}
           />
           <Button
-            onClick={() => saveOption(projectOptions.LOGO)}
+            onClick={() => saveOption(storageMethods.setLogoUrl)}
             pending={pending}
             disabled={canNotUseStorage || !logoUrl}
           >
@@ -227,7 +237,7 @@ export function InterfaceOptions(props) {
             onChange={updateBrandColor}
           />
           <Button
-            onClick={() => saveOption(projectOptions.COLOR)}
+            onClick={() => saveOption(storageMethods.setBrandColor)}
             pending={pending}
             disabled={canNotUseStorage || !brandColor}
           >
@@ -259,22 +269,23 @@ export function InterfaceOptions(props) {
         <div className="d-grid mb-3">
           <Button
             pending={pending}
-            onClick={() => saveOption(projectOptions.TOKENS)}
+            onClick={() => saveOption(storageMethods.setTokenList)}
             disabled={canNotUseStorage || !tokenListName}
           >
             Save token list
           </Button>
         </div>
 
-        {/* <div className="d-grid">
+        <div className="d-grid">
           <Button
             pending={pending}
-            onClick={}
+            onClick={() => saveOption(storageMethods.setFullData)}
             disabled={!fullUpdateIsAvailable}
+            size="lg"
           >
             Save all options
           </Button>
-        </div> */}
+        </div>
       </div>
     </section>
   )

@@ -1,7 +1,7 @@
 import axios from 'axios'
 import pinataSDK from '@pinata/sdk'
 import Storage from '../contracts/build/Storage.json'
-import { pinataEndpoints, projectOptions } from '../constants'
+import { pinataEndpoints, storageMethods } from '../constants'
 import { getContractInstance } from '../utils'
 
 // TODO: track request limits
@@ -86,15 +86,8 @@ export const fetchOptionsFromContract = async (library, storageContract) => {
   return new Promise(async (resolve, reject) => {
     try {
       const project = await storage.methods.project().call()
-      const tokenList = await storage.methods.tokenList().call()
 
-      resolve({
-        brandColor: project.brandColor,
-        logo: project.logo,
-        name: project.name,
-        listName: tokenList.name,
-        tokens: tokenList.tokens,
-      })
+      resolve(project)
     } catch (error) {
       reject(error)
     }
@@ -104,35 +97,28 @@ export const fetchOptionsFromContract = async (library, storageContract) => {
 export const saveProjectOption = async (
   library,
   storageContract,
-  option,
+  method,
   value
 ) => {
   const storage = getContractInstance(library, storageContract, Storage.abi)
   const accounts = await window.ethereum.request({ method: 'eth_accounts' })
-  let method
   let args
 
-  switch (option) {
-    case projectOptions.NAME:
-      method = 'setProjectName'
+  switch (method) {
+    case storageMethods.setProjectName:
       args = [value]
       break
-    case projectOptions.LOGO:
-      method = 'setLogoUrl'
+    case storageMethods.setLogoUrl:
       args = [value]
       break
-    case projectOptions.COLOR:
-      method = 'setBrandColor'
+    case storageMethods.setBrandColor:
       args = [value]
       break
-    case projectOptions.TOKENS:
-      method = 'setTokenList'
-      args = [
-        {
-          name: value.name,
-          tokens: value.tokens.map((item) => item.address),
-        },
-      ]
+    case storageMethods.setTokenList:
+      args = [value.name, value.tokens.map((item) => item.address)]
+      break
+    case storageMethods.setFullData:
+      args = [{ ...value, tokens: value.tokens.map((item) => item.address) }]
       break
     default:
       method = ''
@@ -147,6 +133,6 @@ export const saveProjectOption = async (
         .catch(reject)
     })
   } else {
-    throw new Error('No such option')
+    throw new Error('No such method')
   }
 }

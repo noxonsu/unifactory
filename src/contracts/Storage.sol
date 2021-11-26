@@ -1,12 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import './IStorage.sol';
+import './interfaces/IStorage.sol';
 
 contract Storage is IStorage {
     address private _owner;
     Project private _project;
-    TokenList private _tokenList;
 
     modifier onlyOwner() {
         require(msg.sender == _owner, "Owner: FORBIDDEN");
@@ -25,11 +24,12 @@ contract Storage is IStorage {
         return _project;
     }
 
-    function tokenList() external override view returns(TokenList memory) {
-        return _tokenList;
+    function tokenList() external override view returns(string memory _name, address[] memory _tokens) {
+        return (_project.listName, _project.tokens);
     }
 
     function setOwner(address owner_) external override onlyOwner {
+        require(owner_ != address(0), "Zero address");
         _owner = owner_;
     }
 
@@ -45,10 +45,22 @@ contract Storage is IStorage {
         _project.brandColor = _color;
     }
 
-    function setTokenList(TokenList memory _list) external override onlyOwner {
-        bytes memory byteName = bytes(_list.name);
-        require(byteName.length != 0, "No name");
+    function setTokenList(string memory _name, address[] memory _tokens) external override onlyOwner {
+        bytes memory byteName = bytes(_name);
+        require(byteName.length != 0, "No list name");
+        _project.listName = _name;
+        _project.tokens = _tokens;
+    }
 
-        _tokenList = _list;
+    function clearTokenList() external override onlyOwner {
+        delete _project.tokens;
+    }
+
+    function setFullData(Project memory _data) external override onlyOwner {
+        _project.name = _data.name;
+        _project.logo = _data.logo;
+        _project.brandColor = _data.brandColor;
+        _project.listName = _data.listName;
+        _project.tokens = _data.tokens;
     }
 }

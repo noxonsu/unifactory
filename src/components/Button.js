@@ -1,7 +1,14 @@
 import { Button as BSButton } from 'react-bootstrap'
 
 export function Button(props) {
-  const { onClick, pending, children, disabled, className = '' } = props
+  const {
+    onClick,
+    pending,
+    children,
+    disabled,
+    className = '',
+    ...other
+  } = props
 
   return (
     <BSButton
@@ -9,6 +16,7 @@ export function Button(props) {
       onClick={onClick}
       disabled={disabled}
       className={className}
+      {...other}
     >
       {pending ? (
         <>

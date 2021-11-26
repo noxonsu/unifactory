@@ -194,7 +194,7 @@ export function Deployment(props) {
         </Col>
       </Row>
 
-      <Row>
+      <Row className="mb-3">
         <Col className="d-grid">
           <Button
             onClick={onSwapDeploy}
