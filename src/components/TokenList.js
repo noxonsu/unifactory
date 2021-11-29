@@ -1,17 +1,27 @@
 import { useState, useEffect } from 'react'
-import { useWeb3React } from '@web3-react/core'
 import { AiOutlinePlus } from 'react-icons/ai'
 import { InputGroup, Alert, ListGroup, FormControl } from 'react-bootstrap'
 import { Button } from './Button'
-import { returnTokenInfo, isValidAddress } from '../utils'
+import { returnTokenInfo, isValidAddress, saveProjectOption } from '../utils'
+import { storageMethods } from '../constants'
 
 export function TokenList(props) {
-  const { tokens, setTokens, tokensLoading, pending, setPending, setError } =
-    props
-  const web3React = useWeb3React()
+  const {
+    list,
+    web3React,
+    pending,
+    setPending,
+    setError,
+    setNotification,
+    storageContract,
+    isNewList,
+  } = props
+  const [tokenListName, setTokenListName] = useState(list.name || '')
+  const [tokens, setTokens] = useState(list.tokens || [])
   const [newTokenAddress, setNewTokenAddress] = useState('')
   const [tokenAddressIsCorrect, setTokenAddressIsCorrect] = useState(true)
 
+  const updateTokenListName = (event) => setTokenListName(event.target.value)
   const updateTokenAddress = (event) => setNewTokenAddress(event.target.value)
 
   useEffect(() => {
@@ -30,6 +40,7 @@ export function TokenList(props) {
     if (tokenInList) return
 
     setError(false)
+    setNotification(false)
     setPending(true)
 
     const tokenInfo = await returnTokenInfo(web3React.library, newTokenAddress)
@@ -44,6 +55,7 @@ export function TokenList(props) {
           symbol,
           decimals,
           address: newTokenAddress,
+          chainId: web3React.chainId,
         },
       ])
 
@@ -67,8 +79,49 @@ export function TokenList(props) {
     setTokens(updatedList)
   }
 
+  const saveTokenList = async () => {
+    // TODO: implement a Storage method for list updating
+    if (!isNewList) return
+
+    setError(false)
+    setNotification(false)
+    setPending(true)
+
+    try {
+      const receipt = await saveProjectOption(
+        web3React?.library,
+        storageContract,
+        isNewList
+          ? storageMethods.addTokenList
+          : storageMethods.updateTokenList,
+        {
+          oldName: list.name,
+          name: tokenListName,
+          tokens,
+        }
+      )
+
+      if (receipt.status) {
+        setNotification(`Saved in transaction: ${receipt.transactionHash}`)
+      }
+    } catch (error) {
+      setError(error)
+    } finally {
+      setPending(false)
+    }
+  }
+
   return (
-    <section className="mb-3 d-grid">
+    <section className="d-grid">
+      <InputGroup className="mb-3">
+        <InputGroup.Text>List name</InputGroup.Text>
+        <FormControl
+          type="text"
+          defaultValue={tokenListName}
+          onChange={updateTokenListName}
+        />
+      </InputGroup>
+
       {tokens.length ? (
         <>
           <ListGroup
@@ -99,12 +152,6 @@ export function TokenList(props) {
               )
             })}
           </ListGroup>
-
-          {tokensLoading && (
-            <span className="mb-3 d-flex justify-content-center">
-              Loading...
-            </span>
-          )}
         </>
       ) : (
         <Alert variant="warning">No tokens</Alert>
@@ -128,6 +175,16 @@ export function TokenList(props) {
           <AiOutlinePlus /> Token
         </Button>
       </InputGroup>
+
+      <div className="d-grid">
+        <Button
+          pending={pending}
+          onClick={saveTokenList}
+          disabled={!tokenListName || !tokens.length}
+        >
+          {isNewList ? 'Save a new list' : 'Update the token list'}
+        </Button>
+      </div>
     </section>
   )
 }

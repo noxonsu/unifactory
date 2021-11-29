@@ -6,6 +6,7 @@ import './interfaces/IStorage.sol';
 contract Storage is IStorage {
     address private _owner;
     Project private _project;
+    TokenList[] private _tokenLists;
 
     modifier onlyOwner() {
         require(msg.sender == _owner, "Owner: FORBIDDEN");
@@ -24,8 +25,20 @@ contract Storage is IStorage {
         return _project;
     }
 
-    function tokenList() external override view returns(string memory _name, address[] memory _tokens) {
-        return (_project.listName, _project.tokens);
+    function tokenList(string memory _name) external override view returns(string memory _listData) {
+        for(uint256 i; i < _tokenLists.length; i++) {
+            if (keccak256(abi.encodePacked(_tokenLists[i].name)) == keccak256(abi.encodePacked(_name))) {
+                return _tokenLists[i].data;
+            }
+        }
+    }
+
+    function tokenLists() external override view returns(string[] memory) {
+        string[] memory lists = new string[](_tokenLists.length);
+        for(uint256 i; i < _tokenLists.length; i++) {
+            lists[i] = _tokenLists[i].data;
+        }
+        return lists;
     }
 
     function setOwner(address owner_) external override onlyOwner {
@@ -45,22 +58,41 @@ contract Storage is IStorage {
         _project.brandColor = _color;
     }
 
-    function setTokenList(string memory _name, address[] memory _tokens) external override onlyOwner {
+    function addTokenList(string memory _name, string memory _data) external override onlyOwner {
         bytes memory byteName = bytes(_name);
-        require(byteName.length != 0, "No list name");
-        _project.listName = _name;
-        _project.tokens = _tokens;
+        require(byteName.length != 0, "No name");
+        bool exist;
+        for(uint256 i; i < _tokenLists.length; i++) {
+            if (keccak256(abi.encodePacked(_tokenLists[i].name)) == keccak256(abi.encodePacked(_name))) {
+                _tokenLists[i].name = _name;
+                _tokenLists[i].data = _data;
+                exist = true;
+            }
+        }
+        if (!exist) _tokenLists.push(TokenList({name: _name, data: _data}));
     }
 
-    function clearTokenList() external override onlyOwner {
-        delete _project.tokens;
+    function removeTokenList(string memory _name) external override onlyOwner {
+        bytes memory byteName = bytes(_name);
+        require(byteName.length != 0, "No name");
+        bool arrayOffset;
+        for(uint256 i; i < _tokenLists.length - 1; i++) {
+            if (keccak256(abi.encodePacked(_tokenLists[i].name)) == keccak256(abi.encodePacked(_name))) {
+                arrayOffset = true;
+            }
+            if (arrayOffset) _tokenLists[i] = _tokenLists[i + 1];
+        }
+        if (arrayOffset) _tokenLists.pop();
     }
 
-    function setFullData(Project memory _data) external override onlyOwner {
-        _project.name = _data.name;
-        _project.logo = _data.logo;
-        _project.brandColor = _data.brandColor;
-        _project.listName = _data.listName;
-        _project.tokens = _data.tokens;
+    function clearTokenLists() external override onlyOwner {
+        delete _tokenLists;
+    }
+
+    function setFullData(Project memory _newData) external override onlyOwner {
+        // use existed functions to set this info
+        _project.name = _newData.name;
+        _project.logo = _newData.logo;
+        _project.brandColor = _newData.brandColor;
     }
 }

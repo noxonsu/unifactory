@@ -6,23 +6,25 @@ interface IStorage {
         string name;
         string logo;
         string brandColor;
-        string listName;
-        address[] tokens;
     }
 
     struct TokenList {
         string name;
-        address[] tokens;
+        string data;
     }
 
     function owner() external view returns(address);
     function project() external view returns(Project memory);
-    function tokenList() external view returns(string memory _name, address[] memory _tokens);
+    function tokenList(string memory) external view returns(string memory);
+
+    function tokenLists() external view returns(string[] memory);
+    function addTokenList(string memory _name, string memory _data) external;
+    function removeTokenList(string memory) external;
+
     function setOwner(address) external;
     function setProjectName(string memory) external;
     function setLogoUrl(string memory) external;
     function setBrandColor(string memory) external;
-    function setTokenList(string memory _name, address[] memory _tokens) external;
-    function clearTokenList() external;
+    function clearTokenLists() external;
     function setFullData(Project memory) external;
 }

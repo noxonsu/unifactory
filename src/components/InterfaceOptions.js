@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import { InputGroup, FormControl, Form, Alert } from 'react-bootstrap'
 import { Button } from './Button'
-import { TokenList } from './TokenList'
+import { TokenLists } from './TokenLists'
 import {
   saveProjectOption,
   fetchOptionsFromContract,
-  returnTokenInfo,
   isValidAddress,
+  getTimestamp,
 } from '../utils'
 import { storageMethods } from '../constants'
 
@@ -15,10 +15,9 @@ export function InterfaceOptions(props) {
   const { pending, setPending, setError } = props
   const web3React = useWeb3React()
 
-  const [tokensLoading, setTokensLoading] = useState(false)
   const [notification, setNotification] = useState('')
   const [storageContract, setStorageContract] = useState(
-    '0xE98CdbD299c0A845596fD3F318501Af52C5DB58f'
+    '0x2f9CfEB4E7a3DFf011569d242a34a79AA222E3C9'
   )
 
   const updateStorageContract = (event) =>
@@ -40,53 +39,34 @@ export function InterfaceOptions(props) {
   const [projectName, setProjectName] = useState('')
   const [logoUrl, setLogoUrl] = useState('')
   const [brandColor, setBrandColor] = useState('')
-  const [tokenListName, setTokenListName] = useState('')
-  const [tokens, setTokens] = useState([])
+  const [tokenLists, setTokenLists] = useState([])
 
   const updateProjectName = (event) => setProjectName(event.target.value)
   const updateLogoUrl = (event) => setLogoUrl(event.target.value)
   const updateBrandColor = (event) => setBrandColor(event.target.value)
-  const updateTokenListName = (event) => setTokenListName(event.target.value)
 
   const fetchProjectOptions = async () => {
     setPending(true)
 
     try {
-      const projectInfo = await fetchOptionsFromContract(
+      const data = await fetchOptionsFromContract(
         web3React?.library,
         storageContract
       )
 
-      if (projectInfo) {
-        const { brandColor, logo, name, listName, tokens } = projectInfo
+      if (data) {
+        const { brandColor, logo, name, tokenLists } = data
 
         if (name) setProjectName(name)
         if (logo) setLogoUrl(logo)
         if (brandColor) setBrandColor(brandColor)
-        if (listName) setTokenListName(listName)
-        if (tokens.length) {
-          setTokensLoading(true)
-          setTokens([])
+        if (tokenLists.length) {
+          setTokenLists([])
 
-          tokens.map(async (address, index) => {
-            const { name, symbol, decimals } = await returnTokenInfo(
-              web3React.library,
-              address
-            )
+          tokenLists.forEach(async (tokenLists, index) => {
+            const list = JSON.parse(tokenLists)
 
-            setTokens((oldTokens) => [
-              ...oldTokens,
-              {
-                name,
-                symbol,
-                decimals,
-                address,
-              },
-            ])
-
-            if (tokens.length === 1 || tokens.length === index + 1) {
-              setTokensLoading(false)
-            }
+            setTokenLists((oldData) => [...oldData, list])
           })
         }
       }
@@ -95,6 +75,16 @@ export function InterfaceOptions(props) {
     } finally {
       setPending(false)
     }
+  }
+
+  const createNewTokenList = () => {
+    setTokenLists((oldData) => [
+      ...oldData,
+      {
+        name: 'Template list',
+        tokens: [],
+      },
+    ])
   }
 
   const saveOption = async (method) => {
@@ -110,19 +100,11 @@ export function InterfaceOptions(props) {
       case storageMethods.setBrandColor:
         value = brandColor
         break
-      case storageMethods.setTokenList:
-        value = {
-          name: tokenListName,
-          tokens,
-        }
-        break
       case storageMethods.setFullData:
         value = {
           name: projectName,
           logo: logoUrl,
           brandColor,
-          listName: tokenListName,
-          tokens,
         }
         break
       default:
@@ -142,7 +124,7 @@ export function InterfaceOptions(props) {
       )
 
       if (receipt.status) {
-        setNotification(`Updated in transaction: ${receipt.transactionHash}`)
+        setNotification(`Saved in transaction: ${receipt.transactionHash}`)
       }
     } catch (error) {
       setError(error)
@@ -167,7 +149,7 @@ export function InterfaceOptions(props) {
   const canNotUseStorage = pending || !storageContract || !web3React?.active
 
   return (
-    <section>
+    <section className={canNotUseStorage ? 'disabled' : ''}>
       {notification && <Alert variant="info">{notification}</Alert>}
 
       <Form.Label htmlFor="storageContractInput">Storage contract *</Form.Label>
@@ -178,11 +160,7 @@ export function InterfaceOptions(props) {
           defaultValue={storageContract}
           onChange={updateStorageContract}
         />
-        <Button
-          onClick={fetchProjectOptions}
-          pending={pending}
-          disabled={canNotUseStorage}
-        >
+        <Button onClick={fetchProjectOptions} pending={pending}>
           Fetch options
         </Button>
       </InputGroup>
@@ -202,7 +180,7 @@ export function InterfaceOptions(props) {
           <Button
             onClick={() => saveOption(storageMethods.setProjectName)}
             pending={pending}
-            disabled={canNotUseStorage || !projectName}
+            disabled={!projectName}
           >
             Save
           </Button>
@@ -218,7 +196,7 @@ export function InterfaceOptions(props) {
           <Button
             onClick={() => saveOption(storageMethods.setLogoUrl)}
             pending={pending}
-            disabled={canNotUseStorage || !logoUrl}
+            disabled={!logoUrl}
           >
             Save
           </Button>
@@ -235,44 +213,36 @@ export function InterfaceOptions(props) {
           <Button
             onClick={() => saveOption(storageMethods.setBrandColor)}
             pending={pending}
-            disabled={canNotUseStorage || !brandColor}
+            disabled={!brandColor}
           >
             Save
           </Button>
         </InputGroup>
 
-        <h5 className="mb-3">Token list</h5>
+        <h5 className="mb-3">Token lists</h5>
 
-        <InputGroup className="mb-3">
-          <InputGroup.Text>List name</InputGroup.Text>
-          <FormControl
-            type="text"
-            defaultValue={tokenListName}
-            onChange={updateTokenListName}
-          />
-        </InputGroup>
-
-        <TokenList
-          tokensLoading={tokensLoading}
-          tokens={tokens}
-          setTokens={setTokens}
+        <TokenLists
+          storageContract={storageContract}
           pending={pending}
           setPending={setPending}
           setError={setError}
           setNotification={setNotification}
+          tokenLists={tokenLists}
+          setTokenLists={setTokenLists}
         />
 
-        <div className="d-grid mb-3">
-          <Button
-            pending={pending}
-            onClick={() => saveOption(storageMethods.setTokenList)}
-            disabled={canNotUseStorage || !tokenListName}
-          >
-            Save token list
+        <div className="d-grid">
+          <Button pending={pending} onClick={createNewTokenList}>
+            Create a new token list
           </Button>
         </div>
 
-        <div className="d-grid">
+        {/*
+        TODO: it will be difficult to save many token lists at once in the Solidity array.
+        Maybe reset all lists and set it again with updates every time when we want to update
+        all data at once. It's more easier to manipulate theme on the front side
+        */}
+        {/* <div className="d-grid">
           <Button
             pending={pending}
             onClick={() => saveOption(storageMethods.setFullData)}
@@ -281,7 +251,7 @@ export function InterfaceOptions(props) {
           >
             Save all options
           </Button>
-        </div>
+        </div> */}
       </div>
     </section>
   )

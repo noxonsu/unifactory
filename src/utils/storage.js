@@ -2,7 +2,7 @@ import axios from 'axios'
 import pinataSDK from '@pinata/sdk'
 import Storage from '../contracts/build/Storage.json'
 import { pinataEndpoints, storageMethods } from '../constants'
-import { getContractInstance } from '../utils'
+import { getContractInstance, getTimestamp } from '../utils'
 
 // TODO: track request limits
 // * take a minimum Pinata limits (30 request per minute)
@@ -86,8 +86,9 @@ export const fetchOptionsFromContract = async (library, storageContract) => {
   return new Promise(async (resolve, reject) => {
     try {
       const project = await storage.methods.project().call()
+      const tokenLists = await storage.methods.tokenLists().call()
 
-      resolve(project)
+      resolve({ ...project, tokenLists })
     } catch (error) {
       reject(error)
     }
@@ -104,6 +105,23 @@ export const saveProjectOption = async (
   const accounts = await window.ethereum.request({ method: 'eth_accounts' })
   let args
 
+  const validTokenList = {
+    name: value.name,
+    timestamp: getTimestamp(),
+    // TODO: track interface changes and change this version
+    /* 
+    Increment major version when tokens are removed
+    Increment minor version when tokens are added
+    Increment patch version when tokens already on the list have minor details changed (name, symbol, logo URL, decimals)
+    */
+    version: {
+      major: 1,
+      minor: 0,
+      patch: 0,
+    },
+    tokens: value.tokens,
+  }
+
   switch (method) {
     case storageMethods.setProjectName:
       args = [value]
@@ -114,8 +132,11 @@ export const saveProjectOption = async (
     case storageMethods.setBrandColor:
       args = [value]
       break
-    case storageMethods.setTokenList:
-      args = [value.name, value.tokens.map((item) => item.address)]
+    case storageMethods.addTokenList:
+      args = [value.name, JSON.stringify(validTokenList)]
+      break
+    case storageMethods.updateTokenList:
+      args = [value.oldName, value.name, JSON.stringify(validTokenList)]
       break
     case storageMethods.setFullData:
       args = [{ ...value, tokens: value.tokens.map((item) => item.address) }]

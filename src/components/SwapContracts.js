@@ -72,7 +72,7 @@ export function SwapContracts(props) {
       </InputGroup>
 
       <p className="highlightedInfo">
-        Only admin can change fee a fee recipient address. You can use the same
+        Only admin can change a fee recipient address. You can use the same
         address for both inputs.
       </p>
 
