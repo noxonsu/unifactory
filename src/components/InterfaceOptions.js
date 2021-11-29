@@ -18,7 +18,7 @@ export function InterfaceOptions(props) {
   const [tokensLoading, setTokensLoading] = useState(false)
   const [notification, setNotification] = useState('')
   const [storageContract, setStorageContract] = useState(
-    '0xE98CdbD299c0A845596fD3F318501Af52C5DB58f'
+    '0x2f9CfEB4E7a3DFf011569d242a34a79AA222E3C9'
   )
 
   const updateStorageContract = (event) =>
