@@ -72,6 +72,7 @@ export const storageMethods = {
   setLogoUrl: 'setLogoUrl',
   setBrandColor: 'setBrandColor',
   addTokenList: 'addTokenList',
+  updateTokenList: 'updateTokenList',
   setFullData: 'setFullData',
 }
 

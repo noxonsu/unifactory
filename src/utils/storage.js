@@ -2,7 +2,7 @@ import axios from 'axios'
 import pinataSDK from '@pinata/sdk'
 import Storage from '../contracts/build/Storage.json'
 import { pinataEndpoints, storageMethods } from '../constants'
-import { getContractInstance } from '../utils'
+import { getContractInstance, getTimestamp } from '../utils'
 
 // TODO: track request limits
 // * take a minimum Pinata limits (30 request per minute)
@@ -105,10 +105,9 @@ export const saveProjectOption = async (
   const accounts = await window.ethereum.request({ method: 'eth_accounts' })
   let args
 
-  const ms = Math.floor(new Date().getTime() / 1000) * 1000
   const validTokenList = {
     name: value.name,
-    timestamp: new Date(ms).toISOString(),
+    timestamp: getTimestamp(),
     // TODO: track interface changes and change this version
     /* 
     Increment major version when tokens are removed
@@ -135,6 +134,9 @@ export const saveProjectOption = async (
       break
     case storageMethods.addTokenList:
       args = [value.name, JSON.stringify(validTokenList)]
+      break
+    case storageMethods.updateTokenList:
+      args = [value.oldName, value.name, JSON.stringify(validTokenList)]
       break
     case storageMethods.setFullData:
       args = [{ ...value, tokens: value.tokens.map((item) => item.address) }]

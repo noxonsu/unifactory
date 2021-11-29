@@ -13,14 +13,8 @@ export function TokenLists(props) {
     setError,
     setNotification,
   } = props
+
   const web3React = useWeb3React()
-
-  /* 
-  update list name
-  update/remove/add tokens (only by addresses)
-
-  other info will be auto calculated
-  */
 
   return (
     <section>
@@ -45,6 +39,7 @@ export function TokenLists(props) {
                     setError={setError}
                     setNotification={setNotification}
                     storageContract={storageContract}
+                    isNewList={!list.timestamp}
                   />
                 </Accordion.Body>
               </Accordion.Item>

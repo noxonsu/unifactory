@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import { InputGroup, FormControl, Form, Alert } from 'react-bootstrap'
 import { Button } from './Button'
-import { TokenList } from './TokenList'
 import { TokenLists } from './TokenLists'
 import {
   saveProjectOption,
   fetchOptionsFromContract,
   isValidAddress,
+  getTimestamp,
 } from '../utils'
 import { storageMethods } from '../constants'
 
@@ -39,15 +39,11 @@ export function InterfaceOptions(props) {
   const [projectName, setProjectName] = useState('')
   const [logoUrl, setLogoUrl] = useState('')
   const [brandColor, setBrandColor] = useState('')
-  const [tokenListName, setTokenListName] = useState('')
-  const [tokens, setTokens] = useState([])
-
   const [tokenLists, setTokenLists] = useState([])
 
   const updateProjectName = (event) => setProjectName(event.target.value)
   const updateLogoUrl = (event) => setLogoUrl(event.target.value)
   const updateBrandColor = (event) => setBrandColor(event.target.value)
-  const updateTokenListName = (event) => setTokenListName(event.target.value)
 
   const fetchProjectOptions = async () => {
     setPending(true)
@@ -81,6 +77,16 @@ export function InterfaceOptions(props) {
     }
   }
 
+  const createNewTokenList = () => {
+    setTokenLists((oldData) => [
+      ...oldData,
+      {
+        name: 'Template list',
+        tokens: [],
+      },
+    ])
+  }
+
   const saveOption = async (method) => {
     let value
 
@@ -94,19 +100,11 @@ export function InterfaceOptions(props) {
       case storageMethods.setBrandColor:
         value = brandColor
         break
-      case storageMethods.addTokenList:
-        value = {
-          name: tokenListName,
-          tokens,
-        }
-        break
       case storageMethods.setFullData:
         value = {
           name: projectName,
           logo: logoUrl,
           brandColor,
-          listName: tokenListName,
-          tokens,
         }
         break
       default:
@@ -232,6 +230,12 @@ export function InterfaceOptions(props) {
           tokenLists={tokenLists}
           setTokenLists={setTokenLists}
         />
+
+        <div className="d-grid">
+          <Button pending={pending} onClick={createNewTokenList}>
+            Create a new token list
+          </Button>
+        </div>
 
         {/*
         TODO: it will be difficult to save many token lists at once in the Solidity array.

@@ -14,6 +14,7 @@ export function TokenList(props) {
     setError,
     setNotification,
     storageContract,
+    isNewList,
   } = props
   const [tokenListName, setTokenListName] = useState(list.name || '')
   const [tokens, setTokens] = useState(list.tokens || [])
@@ -79,6 +80,9 @@ export function TokenList(props) {
   }
 
   const saveTokenList = async () => {
+    // TODO: implement a Storage method for list updating
+    if (!isNewList) return
+
     setError(false)
     setNotification(false)
     setPending(true)
@@ -87,8 +91,11 @@ export function TokenList(props) {
       const receipt = await saveProjectOption(
         web3React?.library,
         storageContract,
-        storageMethods.addTokenList,
+        isNewList
+          ? storageMethods.addTokenList
+          : storageMethods.updateTokenList,
         {
+          oldName: list.name,
           name: tokenListName,
           tokens,
         }
@@ -169,13 +176,13 @@ export function TokenList(props) {
         </Button>
       </InputGroup>
 
-      <div className="d-grid mb-3">
+      <div className="d-grid">
         <Button
           pending={pending}
           onClick={saveTokenList}
-          disabled={!tokenListName}
+          disabled={!tokenListName || !tokens.length}
         >
-          Save token list
+          {isNewList ? 'Save a new list' : 'Update the token list'}
         </Button>
       </div>
     </section>
