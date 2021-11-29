@@ -3,10 +3,10 @@ import { useWeb3React } from '@web3-react/core'
 import { InputGroup, FormControl, Form, Alert } from 'react-bootstrap'
 import { Button } from './Button'
 import { TokenList } from './TokenList'
+import { TokenLists } from './TokenLists'
 import {
   saveProjectOption,
   fetchOptionsFromContract,
-  returnTokenInfo,
   isValidAddress,
 } from '../utils'
 import { storageMethods } from '../constants'
@@ -43,6 +43,8 @@ export function InterfaceOptions(props) {
   const [tokenListName, setTokenListName] = useState('')
   const [tokens, setTokens] = useState([])
 
+  const [tokenLists, setTokenLists] = useState([])
+
   const updateProjectName = (event) => setProjectName(event.target.value)
   const updateLogoUrl = (event) => setLogoUrl(event.target.value)
   const updateBrandColor = (event) => setBrandColor(event.target.value)
@@ -52,41 +54,52 @@ export function InterfaceOptions(props) {
     setPending(true)
 
     try {
-      const projectInfo = await fetchOptionsFromContract(
+      const data = await fetchOptionsFromContract(
         web3React?.library,
         storageContract
       )
 
-      if (projectInfo) {
-        const { brandColor, logo, name, listName, tokens } = projectInfo
+      if (data) {
+        const { brandColor, logo, name, tokenLists } = data
 
         if (name) setProjectName(name)
         if (logo) setLogoUrl(logo)
         if (brandColor) setBrandColor(brandColor)
-        if (listName) setTokenListName(listName)
-        if (tokens.length) {
-          setTokensLoading(true)
-          setTokens([])
 
-          tokens.map(async (address, index) => {
-            const { name, symbol, decimals } = await returnTokenInfo(
-              web3React.library,
-              address
-            )
+        if (tokenLists.length) {
+          // setTokensLoading(true)
+          // setTokens([])
+          setTokenLists([])
 
-            setTokens((oldTokens) => [
-              ...oldTokens,
-              {
-                name,
-                symbol,
-                decimals,
-                address,
-              },
-            ])
+          tokenLists.forEach(async (tokenLists, index) => {
+            const list = JSON.parse(tokenLists)
 
-            if (tokens.length === 1 || tokens.length === index + 1) {
-              setTokensLoading(false)
-            }
+            setTokenLists((oldData) => [...oldData, list])
+
+            // setTokenListName(list.name)
+
+            // if (list.tokens.length) {
+            //   list.tokens.forEach((token) => {
+            //     const { name, symbol, decimals, address, chainId, logoURI } =
+            //       token
+
+            //     setTokens((oldTokens) => [
+            //       ...oldTokens,
+            //       {
+            //         name,
+            //         symbol,
+            //         decimals,
+            //         address,
+            //         chainId,
+            //         logoURI,
+            //       },
+            //     ])
+            //   })
+            // }
+
+            // if (tokenLists.length === 1 || tokenLists.length === index + 1) {
+            //   setTokensLoading(false)
+            // }
           })
         }
       }
@@ -110,7 +123,7 @@ export function InterfaceOptions(props) {
       case storageMethods.setBrandColor:
         value = brandColor
         break
-      case storageMethods.setTokenList:
+      case storageMethods.addTokenList:
         value = {
           name: tokenListName,
           tokens,
@@ -142,7 +155,7 @@ export function InterfaceOptions(props) {
       )
 
       if (receipt.status) {
-        setNotification(`Updated in transaction: ${receipt.transactionHash}`)
+        setNotification(`Saved in transaction: ${receipt.transactionHash}`)
       }
     } catch (error) {
       setError(error)
@@ -252,20 +265,19 @@ export function InterfaceOptions(props) {
           />
         </InputGroup>
 
-        <TokenList
-          tokensLoading={tokensLoading}
-          tokens={tokens}
-          setTokens={setTokens}
+        <TokenLists
           pending={pending}
           setPending={setPending}
           setError={setError}
           setNotification={setNotification}
+          tokenLists={tokenLists}
+          setTokenLists={setTokenLists}
         />
 
         <div className="d-grid mb-3">
           <Button
             pending={pending}
-            onClick={() => saveOption(storageMethods.setTokenList)}
+            onClick={() => saveOption(storageMethods.addTokenList)}
             disabled={canNotUseStorage || !tokenListName}
           >
             Save token list

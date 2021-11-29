@@ -1,14 +1,18 @@
 import { useState, useEffect } from 'react'
-import { useWeb3React } from '@web3-react/core'
 import { AiOutlinePlus } from 'react-icons/ai'
 import { InputGroup, Alert, ListGroup, FormControl } from 'react-bootstrap'
 import { Button } from './Button'
 import { returnTokenInfo, isValidAddress } from '../utils'
 
 export function TokenList(props) {
-  const { tokens, setTokens, tokensLoading, pending, setPending, setError } =
-    props
-  const web3React = useWeb3React()
+  const {
+    tokens,
+    web3React,
+    // setTokens, tokensLoading,
+    pending,
+    setPending,
+    setError,
+  } = props
   const [newTokenAddress, setNewTokenAddress] = useState('')
   const [tokenAddressIsCorrect, setTokenAddressIsCorrect] = useState(true)
 
@@ -23,6 +27,8 @@ export function TokenList(props) {
   }, [web3React.library, newTokenAddress])
 
   const addNewToken = async () => {
+    return
+
     const tokenInList = tokens.find(
       (item) => item.address.toLowerCase() === newTokenAddress.toLowerCase()
     )
@@ -44,6 +50,7 @@ export function TokenList(props) {
           symbol,
           decimals,
           address: newTokenAddress,
+          // chainId,
         },
       ])
 
@@ -60,6 +67,8 @@ export function TokenList(props) {
   }
 
   const removeToken = (address) => {
+    return
+
     const updatedList = tokens.filter(
       (item) => item.address.toLowerCase() !== address.toLowerCase()
     )
@@ -100,11 +109,11 @@ export function TokenList(props) {
             })}
           </ListGroup>
 
-          {tokensLoading && (
+          {/* {tokensLoading && (
             <span className="mb-3 d-flex justify-content-center">
               Loading...
             </span>
-          )}
+          )} */}
         </>
       ) : (
         <Alert variant="warning">No tokens</Alert>

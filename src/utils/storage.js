@@ -86,8 +86,9 @@ export const fetchOptionsFromContract = async (library, storageContract) => {
   return new Promise(async (resolve, reject) => {
     try {
       const project = await storage.methods.project().call()
+      const tokenLists = await storage.methods.tokenLists().call()
 
-      resolve(project)
+      resolve({ ...project, tokenLists })
     } catch (error) {
       reject(error)
     }
@@ -104,6 +105,24 @@ export const saveProjectOption = async (
   const accounts = await window.ethereum.request({ method: 'eth_accounts' })
   let args
 
+  const ms = Math.floor(new Date().getTime() / 1000) * 1000
+  const validTokenList = {
+    name: value.name,
+    timestamp: new Date(ms).toISOString(),
+    // TODO: track interface changes and change this version
+    /* 
+    Increment major version when tokens are removed
+    Increment minor version when tokens are added
+    Increment patch version when tokens already on the list have minor details changed (name, symbol, logo URL, decimals)
+    */
+    version: {
+      major: 1,
+      minor: 0,
+      patch: 0,
+    },
+    tokens: value.tokens,
+  }
+
   switch (method) {
     case storageMethods.setProjectName:
       args = [value]
@@ -114,8 +133,8 @@ export const saveProjectOption = async (
     case storageMethods.setBrandColor:
       args = [value]
       break
-    case storageMethods.setTokenList:
-      args = [value.name, value.tokens.map((item) => item.address)]
+    case storageMethods.addTokenList:
+      args = [value.name, JSON.stringify(validTokenList)]
       break
     case storageMethods.setFullData:
       args = [{ ...value, tokens: value.tokens.map((item) => item.address) }]
