@@ -15,7 +15,6 @@ export function InterfaceOptions(props) {
   const { pending, setPending, setError } = props
   const web3React = useWeb3React()
 
-  const [tokensLoading, setTokensLoading] = useState(false)
   const [notification, setNotification] = useState('')
   const [storageContract, setStorageContract] = useState(
     '0x2f9CfEB4E7a3DFf011569d242a34a79AA222E3C9'
@@ -65,41 +64,13 @@ export function InterfaceOptions(props) {
         if (name) setProjectName(name)
         if (logo) setLogoUrl(logo)
         if (brandColor) setBrandColor(brandColor)
-
         if (tokenLists.length) {
-          // setTokensLoading(true)
-          // setTokens([])
           setTokenLists([])
 
           tokenLists.forEach(async (tokenLists, index) => {
             const list = JSON.parse(tokenLists)
 
             setTokenLists((oldData) => [...oldData, list])
-
-            // setTokenListName(list.name)
-
-            // if (list.tokens.length) {
-            //   list.tokens.forEach((token) => {
-            //     const { name, symbol, decimals, address, chainId, logoURI } =
-            //       token
-
-            //     setTokens((oldTokens) => [
-            //       ...oldTokens,
-            //       {
-            //         name,
-            //         symbol,
-            //         decimals,
-            //         address,
-            //         chainId,
-            //         logoURI,
-            //       },
-            //     ])
-            //   })
-            // }
-
-            // if (tokenLists.length === 1 || tokenLists.length === index + 1) {
-            //   setTokensLoading(false)
-            // }
           })
         }
       }
@@ -180,7 +151,7 @@ export function InterfaceOptions(props) {
   const canNotUseStorage = pending || !storageContract || !web3React?.active
 
   return (
-    <section>
+    <section className={canNotUseStorage ? 'disabled' : ''}>
       {notification && <Alert variant="info">{notification}</Alert>}
 
       <Form.Label htmlFor="storageContractInput">Storage contract *</Form.Label>
@@ -191,11 +162,7 @@ export function InterfaceOptions(props) {
           defaultValue={storageContract}
           onChange={updateStorageContract}
         />
-        <Button
-          onClick={fetchProjectOptions}
-          pending={pending}
-          disabled={canNotUseStorage}
-        >
+        <Button onClick={fetchProjectOptions} pending={pending}>
           Fetch options
         </Button>
       </InputGroup>
@@ -215,7 +182,7 @@ export function InterfaceOptions(props) {
           <Button
             onClick={() => saveOption(storageMethods.setProjectName)}
             pending={pending}
-            disabled={canNotUseStorage || !projectName}
+            disabled={!projectName}
           >
             Save
           </Button>
@@ -231,7 +198,7 @@ export function InterfaceOptions(props) {
           <Button
             onClick={() => saveOption(storageMethods.setLogoUrl)}
             pending={pending}
-            disabled={canNotUseStorage || !logoUrl}
+            disabled={!logoUrl}
           >
             Save
           </Button>
@@ -248,24 +215,16 @@ export function InterfaceOptions(props) {
           <Button
             onClick={() => saveOption(storageMethods.setBrandColor)}
             pending={pending}
-            disabled={canNotUseStorage || !brandColor}
+            disabled={!brandColor}
           >
             Save
           </Button>
         </InputGroup>
 
-        <h5 className="mb-3">Token list</h5>
-
-        <InputGroup className="mb-3">
-          <InputGroup.Text>List name</InputGroup.Text>
-          <FormControl
-            type="text"
-            defaultValue={tokenListName}
-            onChange={updateTokenListName}
-          />
-        </InputGroup>
+        <h5 className="mb-3">Token lists</h5>
 
         <TokenLists
+          storageContract={storageContract}
           pending={pending}
           setPending={setPending}
           setError={setError}
@@ -274,17 +233,12 @@ export function InterfaceOptions(props) {
           setTokenLists={setTokenLists}
         />
 
-        <div className="d-grid mb-3">
-          <Button
-            pending={pending}
-            onClick={() => saveOption(storageMethods.addTokenList)}
-            disabled={canNotUseStorage || !tokenListName}
-          >
-            Save token list
-          </Button>
-        </div>
-
-        <div className="d-grid">
+        {/*
+        TODO: it will be difficult to save many token lists at once in the Solidity array.
+        Maybe reset all lists and set it again with updates every time when we want to update
+        all data at once. It's more easier to manipulate theme on the front side
+        */}
+        {/* <div className="d-grid">
           <Button
             pending={pending}
             onClick={() => saveOption(storageMethods.setFullData)}
@@ -293,7 +247,7 @@ export function InterfaceOptions(props) {
           >
             Save all options
           </Button>
-        </div>
+        </div> */}
       </div>
     </section>
   )

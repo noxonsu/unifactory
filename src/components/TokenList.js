@@ -2,20 +2,25 @@ import { useState, useEffect } from 'react'
 import { AiOutlinePlus } from 'react-icons/ai'
 import { InputGroup, Alert, ListGroup, FormControl } from 'react-bootstrap'
 import { Button } from './Button'
-import { returnTokenInfo, isValidAddress } from '../utils'
+import { returnTokenInfo, isValidAddress, saveProjectOption } from '../utils'
+import { storageMethods } from '../constants'
 
 export function TokenList(props) {
   const {
-    tokens,
+    list,
     web3React,
-    // setTokens, tokensLoading,
     pending,
     setPending,
     setError,
+    setNotification,
+    storageContract,
   } = props
+  const [tokenListName, setTokenListName] = useState(list.name || '')
+  const [tokens, setTokens] = useState(list.tokens || [])
   const [newTokenAddress, setNewTokenAddress] = useState('')
   const [tokenAddressIsCorrect, setTokenAddressIsCorrect] = useState(true)
 
+  const updateTokenListName = (event) => setTokenListName(event.target.value)
   const updateTokenAddress = (event) => setNewTokenAddress(event.target.value)
 
   useEffect(() => {
@@ -27,8 +32,6 @@ export function TokenList(props) {
   }, [web3React.library, newTokenAddress])
 
   const addNewToken = async () => {
-    return
-
     const tokenInList = tokens.find(
       (item) => item.address.toLowerCase() === newTokenAddress.toLowerCase()
     )
@@ -36,6 +39,7 @@ export function TokenList(props) {
     if (tokenInList) return
 
     setError(false)
+    setNotification(false)
     setPending(true)
 
     const tokenInfo = await returnTokenInfo(web3React.library, newTokenAddress)
@@ -50,7 +54,7 @@ export function TokenList(props) {
           symbol,
           decimals,
           address: newTokenAddress,
-          // chainId,
+          chainId: web3React.chainId,
         },
       ])
 
@@ -67,8 +71,6 @@ export function TokenList(props) {
   }
 
   const removeToken = (address) => {
-    return
-
     const updatedList = tokens.filter(
       (item) => item.address.toLowerCase() !== address.toLowerCase()
     )
@@ -76,8 +78,43 @@ export function TokenList(props) {
     setTokens(updatedList)
   }
 
+  const saveTokenList = async () => {
+    setError(false)
+    setNotification(false)
+    setPending(true)
+
+    try {
+      const receipt = await saveProjectOption(
+        web3React?.library,
+        storageContract,
+        storageMethods.addTokenList,
+        {
+          name: tokenListName,
+          tokens,
+        }
+      )
+
+      if (receipt.status) {
+        setNotification(`Saved in transaction: ${receipt.transactionHash}`)
+      }
+    } catch (error) {
+      setError(error)
+    } finally {
+      setPending(false)
+    }
+  }
+
   return (
-    <section className="mb-3 d-grid">
+    <section className="d-grid">
+      <InputGroup className="mb-3">
+        <InputGroup.Text>List name</InputGroup.Text>
+        <FormControl
+          type="text"
+          defaultValue={tokenListName}
+          onChange={updateTokenListName}
+        />
+      </InputGroup>
+
       {tokens.length ? (
         <>
           <ListGroup
@@ -108,12 +145,6 @@ export function TokenList(props) {
               )
             })}
           </ListGroup>
-
-          {/* {tokensLoading && (
-            <span className="mb-3 d-flex justify-content-center">
-              Loading...
-            </span>
-          )} */}
         </>
       ) : (
         <Alert variant="warning">No tokens</Alert>
@@ -137,6 +168,16 @@ export function TokenList(props) {
           <AiOutlinePlus /> Token
         </Button>
       </InputGroup>
+
+      <div className="d-grid mb-3">
+        <Button
+          pending={pending}
+          onClick={saveTokenList}
+          disabled={!tokenListName}
+        >
+          Save token list
+        </Button>
+      </div>
     </section>
   )
 }

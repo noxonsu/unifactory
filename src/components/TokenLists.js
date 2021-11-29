@@ -7,6 +7,7 @@ export function TokenLists(props) {
   const {
     tokenLists,
     setTokenLists,
+    storageContract,
     pending,
     setPending,
     setError,
@@ -38,13 +39,12 @@ export function TokenLists(props) {
                 <Accordion.Body>
                   <TokenList
                     web3React={web3React}
-                    // tokensLoading={tokensLoading}
-                    tokens={tokens}
-                    // setTokens={setTokens}
+                    list={list}
                     pending={pending}
                     setPending={setPending}
                     setError={setError}
                     setNotification={setNotification}
+                    storageContract={storageContract}
                   />
                 </Accordion.Body>
               </Accordion.Item>
@@ -52,7 +52,7 @@ export function TokenLists(props) {
           })}
         </Accordion>
       ) : (
-        <Alert variant="warning">No token list</Alert>
+        <Alert variant="warning">No token lists</Alert>
       )}
     </section>
   )
