@@ -68,15 +68,19 @@ export const pinataEndpoints = {
 export const MAIN_FILE_NAME = 'swapProject.json'
 
 export const storageMethods = {
+  setDomain: 'setDomain',
   setProjectName: 'setProjectName',
   setLogoUrl: 'setLogoUrl',
   setBrandColor: 'setBrandColor',
   addTokenList: 'addTokenList',
   updateTokenList: 'updateTokenList',
+  removeTokenList: 'removeTokenList',
+  clearTokenLists: 'clearTokenLists',
   setFullData: 'setFullData',
 }
 
 export const factoryMethods = {
   setFeeTo: 'setFeeTo',
   setFeeToSetter: 'setFeeToSetter',
+  setAllFeeToProtocol: 'setAllFeeToProtocol',
 }

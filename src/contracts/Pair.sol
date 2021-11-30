@@ -89,6 +89,8 @@ contract Pair is ERC20 {
     // if fee is on, mint liquidity equivalent to 1/6th of the growth in sqrt(k)
     function _mintFee(uint112 _reserve0, uint112 _reserve1) private returns (bool feeOn) {
         address feeTo = IUniswapV2Factory(factory).feeTo();
+        bool allFeeToProtocol = IUniswapV2Factory(factory).allFeeToProtocol();
+        uint protocolFeeDenominator = IUniswapV2Factory(factory).protocolFeeDenominator();
         feeOn = feeTo != address(0);
         uint _kLast = kLast; // gas savings
 
@@ -98,8 +100,9 @@ contract Pair is ERC20 {
                 uint rootKLast = Math.sqrt(_kLast);
 
                 if (rootK > rootKLast) {
+                    uint calcDenominator = protocolFeeDenominator / 1000;
                     uint numerator = totalSupply.mul(rootK.sub(rootKLast));
-                    uint denominator = rootK.mul(5).add(rootKLast);
+                    uint denominator = allFeeToProtocol ? rootK.add(rootKLast) : rootK.mul(calcDenominator).add(rootKLast);
                     uint liquidity = numerator / denominator;
 
                     if (liquidity > 0) _mint(feeTo, liquidity);

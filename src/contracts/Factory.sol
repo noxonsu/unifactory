@@ -5,12 +5,20 @@ import './interfaces/IUniswapV2Factory.sol';
 import './Pair.sol';
 
 contract Factory is IUniswapV2Factory {
+    uint256 public override protocolFeeDenominator = 3000;
+    uint256 public override totalFee = 996;
     address public override feeTo;
     address public override feeToSetter;
     bytes32 public constant INIT_CODE_PAIR_HASH = keccak256(abi.encodePacked(type(Pair).creationCode));
+    bool public override allFeeToProtocol;
 
     mapping(address => mapping(address => address)) public override getPair;
     address[] public override allPairs;
+
+    modifier onlyOwner() {
+        require(msg.sender == feeToSetter, 'Factory: FORBIDDEN');
+        _;
+    }
 
     constructor(address _feeToSetter) {
         feeToSetter = _feeToSetter;
@@ -37,13 +45,27 @@ contract Factory is IUniswapV2Factory {
         emit PairCreated(token0, token1, pair, allPairs.length);
     }
 
-    function setFeeTo(address _feeTo) external override {
-        require(msg.sender == feeToSetter, 'Factory: FORBIDDEN');
+    function setFeeTo(address _feeTo) external override onlyOwner {
         feeTo = _feeTo;
     }
 
-    function setFeeToSetter(address _feeToSetter) external override {
-        require(msg.sender == feeToSetter, 'Factory: FORBIDDEN');
+    function setFeeToSetter(address _feeToSetter) external override onlyOwner {
         feeToSetter = _feeToSetter;
+    }
+
+    function setAllFeeToProtocol(bool _allFeeToProtocol) external override onlyOwner {
+        allFeeToProtocol = _allFeeToProtocol;
+    }
+
+    // set protocol fee denominator to change fee in _mintFee() function of the pair
+    function setProtocolFee(uint _protocolFeeDenominator) external override onlyOwner {
+        require(_protocolFeeDenominator > 0, 'Factory: FORBIDDEN_FEE');
+        protocolFeeDenominator = _protocolFeeDenominator;
+    }
+
+    // set total fee function to change fees in getAmountsOut function
+    function changeTotalFee(uint _totalFee) external override onlyOwner {
+        require(_totalFee > 0, 'Factory: FORBIDDEN_FEE');
+        totalFee = _totalFee;
     }
 }

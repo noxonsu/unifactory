@@ -2,7 +2,7 @@ import TokenAbi from 'human-standard-token-abi'
 import FactoryJson from '../contracts/build/Factory.json'
 import RouterV2Json from '../contracts/build/RouterV2.json'
 import Storage from '../contracts/build/Storage.json'
-import { wrapperCurrencies, factoryMethods } from '../constants'
+import { wrapperCurrencies } from '../constants'
 import { cache, addValue } from './cache'
 
 const log = (message) => {
