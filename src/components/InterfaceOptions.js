@@ -7,7 +7,6 @@ import {
   saveProjectOption,
   fetchOptionsFromContract,
   isValidAddress,
-  getTimestamp,
 } from '../utils'
 import { storageMethods } from '../constants'
 
@@ -16,25 +15,23 @@ export function InterfaceOptions(props) {
   const web3React = useWeb3React()
 
   const [notification, setNotification] = useState('')
-  const [storageContract, setStorageContract] = useState(
-    '0x2f9CfEB4E7a3DFf011569d242a34a79AA222E3C9'
+  const [storage, setStorage] = useState(
+    '0xB10f778E6CB775b35Bd4aDA9335ACD4d766D47F8'
   )
+  const [storageIsCorrect, setStorageIsCorrect] = useState(false)
 
-  const updateStorageContract = (event) =>
-    setStorageContract(event.target.value)
+  const updateStorageContract = (event) => setStorage(event.target.value)
 
   useEffect(() => {
     if (web3React.library) {
-      if (
-        storageContract &&
-        !isValidAddress(web3React.library, storageContract)
-      ) {
-        setError(new Error('Incorrect storage contract'))
-      } else {
-        setError(false)
-      }
+      const isStorageCorrect = isValidAddress(web3React.library, storage)
+
+      setStorageIsCorrect(isStorageCorrect)
+      setError(
+        storage && !isStorageCorrect ? new Error('Incorrect address') : false
+      )
     }
-  }, [setError, web3React.library, storageContract])
+  }, [setError, web3React.library, storage])
 
   const [projectName, setProjectName] = useState('')
   const [logoUrl, setLogoUrl] = useState('')
@@ -49,10 +46,7 @@ export function InterfaceOptions(props) {
     setPending(true)
 
     try {
-      const data = await fetchOptionsFromContract(
-        web3React?.library,
-        storageContract
-      )
+      const data = await fetchOptionsFromContract(web3React?.library, storage)
 
       if (data) {
         const { brandColor, logo, name, tokenLists } = data
@@ -118,7 +112,7 @@ export function InterfaceOptions(props) {
     try {
       const receipt = await saveProjectOption(
         web3React?.library,
-        storageContract,
+        storage,
         method,
         value
       )
@@ -137,19 +131,13 @@ export function InterfaceOptions(props) {
 
   useEffect(() => {
     const fullUpdateIsAvailable =
-      web3React?.active &&
-      storageContract &&
-      logoUrl &&
-      brandColor &&
-      projectName
+      web3React?.active && storage && logoUrl && brandColor && projectName
 
     setFullUpdateIsAvailable(!!fullUpdateIsAvailable)
-  }, [storageContract, projectName, logoUrl, brandColor, web3React?.active])
-
-  const canNotUseStorage = pending || !storageContract || !web3React?.active
+  }, [storage, projectName, logoUrl, brandColor, web3React?.active])
 
   return (
-    <section className={canNotUseStorage ? 'disabled' : ''}>
+    <section>
       {notification && <Alert variant="info">{notification}</Alert>}
 
       <Form.Label htmlFor="storageContractInput">Storage contract *</Form.Label>
@@ -157,7 +145,7 @@ export function InterfaceOptions(props) {
         <FormControl
           type="text"
           id="storageContractInput"
-          defaultValue={storageContract}
+          defaultValue={storage}
           onChange={updateStorageContract}
         />
         <Button onClick={fetchProjectOptions} pending={pending}>
@@ -167,7 +155,7 @@ export function InterfaceOptions(props) {
 
       <div
         className={`${
-          !web3React?.active || pending || !storageContract ? 'disabled' : ''
+          !web3React?.active || pending || !storageIsCorrect ? 'disabled' : ''
         }`}
       >
         <InputGroup className="mb-3">
@@ -222,7 +210,7 @@ export function InterfaceOptions(props) {
         <h5 className="mb-3">Token lists</h5>
 
         <TokenLists
-          storageContract={storageContract}
+          storage={storage}
           pending={pending}
           setPending={setPending}
           setError={setError}

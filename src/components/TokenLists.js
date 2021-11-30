@@ -7,7 +7,7 @@ export function TokenLists(props) {
   const {
     tokenLists,
     setTokenLists,
-    storageContract,
+    storage,
     pending,
     setPending,
     setError,
@@ -38,7 +38,7 @@ export function TokenLists(props) {
                     setPending={setPending}
                     setError={setError}
                     setNotification={setNotification}
-                    storageContract={storageContract}
+                    storage={storage}
                     isNewList={!list.timestamp}
                   />
                 </Accordion.Body>

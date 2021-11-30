@@ -4,12 +4,7 @@ import RouterV2Json from '../contracts/build/RouterV2.json'
 import Storage from '../contracts/build/Storage.json'
 import { wrapperCurrencies } from '../constants'
 import { cache, addValue } from './cache'
-
-const log = (message) => {
-  console.group('%c Log', 'color: crimson; font-size: 14px;')
-  console.log(message)
-  console.groupEnd()
-}
+import { log } from './index'
 
 const deployContract = async (params) => {
   const { abi, byteCode, library, onDeploy, deployArguments } = params
@@ -63,8 +58,7 @@ export const deployFactory = async (params) => {
 export const deployRouter = async (params) => {
   const { library, factory, onDeploy } = params
   const { abi, bytecode } = RouterV2Json
-  const chainId = await library.eth.getChainId()
-  const wrapperCurrency = wrapperCurrencies[chainId]
+  const wrapperCurrency = wrapperCurrencies[library.chainId]
 
   return await deployContract({
     abi,
@@ -78,8 +72,6 @@ export const deployRouter = async (params) => {
 export const deployStorage = async (params) => {
   const { library, admin, onDeploy } = params
   const { abi, bytecode } = Storage
-  const chainId = await library.eth.getChainId()
-  const wrapperCurrency = wrapperCurrencies[chainId]
 
   return await deployContract({
     abi,
