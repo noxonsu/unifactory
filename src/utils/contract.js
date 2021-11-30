@@ -1,8 +1,8 @@
 import TokenAbi from 'human-standard-token-abi'
+import networks from '../networks.json'
 import FactoryJson from '../contracts/build/Factory.json'
 import RouterV2Json from '../contracts/build/RouterV2.json'
 import Storage from '../contracts/build/Storage.json'
-import { wrapperCurrencies } from '../constants'
 import { cache, addValue } from './cache'
 import { log } from './index'
 
@@ -58,7 +58,7 @@ export const deployFactory = async (params) => {
 export const deployRouter = async (params) => {
   const { library, factory, onDeploy } = params
   const { abi, bytecode } = RouterV2Json
-  const wrapperCurrency = wrapperCurrencies[library.chainId]
+  const wrapperCurrency = networks[library.chainId].wrapperCurrency
 
   return await deployContract({
     abi,

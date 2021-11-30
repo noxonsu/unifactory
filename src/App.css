@@ -45,3 +45,7 @@ body {
 .wrong:focus {
   border: 1px solid red;
 }
+
+.monospace {
+  font-family: monospace;
+}

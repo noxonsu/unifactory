@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useWeb3React } from '@web3-react/core'
-import { networks } from '../constants'
+import networks from '../networks.json'
 import { Button, ListGroup, Alert, Row, Col } from 'react-bootstrap'
 import { injected, walletconnect } from '../utils'
 
@@ -61,7 +61,8 @@ export function Wallet(props) {
         {web3React.active ? (
           <ListGroup>
             <ListGroup.Item>
-              {networks[web3React.chainId]?.name}: {web3React.account}
+              {networks[web3React.chainId]?.name}:{' '}
+              <span className="monospace">{web3React.account}</span>
             </ListGroup.Item>
           </ListGroup>
         ) : (
