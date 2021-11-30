@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 interface IStorage {
     struct Project {
+        string domain;
         string name;
         string logo;
         string brandColor;
@@ -19,9 +20,11 @@ interface IStorage {
 
     function tokenLists() external view returns(string[] memory);
     function addTokenList(string memory _name, string memory _data) external;
+    function updateTokenList(string memory _oldName, string memory _name, string memory _data) external;
     function removeTokenList(string memory) external;
 
     function setOwner(address) external;
+    function setDomain(string memory) external;
     function setProjectName(string memory) external;
     function setLogoUrl(string memory) external;
     function setBrandColor(string memory) external;
