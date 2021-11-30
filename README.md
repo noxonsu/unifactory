@@ -18,4 +18,5 @@ That't it! Now open your domain and you'll see the installation master!
 
 Once you finiish this form the domain will linked to your MetaMask address (your eth address will recorded as "admin" of your domain in the "domainRegistry" smartcontract. TODO: добавить линки на этот реестр в разных сетях).
 
-# 
+# Support and updates
+Join the channel https://t.me/unifatory
