@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity =0.7.5;
+pragma solidity ^0.8.0;
 
 import '../interfaces/IUniswapV2Factory.sol';
 import '../interfaces/IUniswapV2Pair.sol';
@@ -18,14 +18,6 @@ library MainLibrary {
     // calculates the CREATE2 address for a pair without making any external calls
     function pairFor(address factory, address tokenA, address tokenB) internal view returns (address pair) {
         pair = IUniswapV2Factory(factory).getPair(tokenA, tokenB);
-
-        // (address token0, address token1) = sortTokens(tokenA, tokenB);
-        // pair = address(uint(keccak256(abi.encodePacked(
-        //         hex'ff',
-        //         factory,
-        //         keccak256(abi.encodePacked(token0, token1)),
-        //         hex'2b412748f39ea0fec33e51424ba001ecc89020b7b84f9827e1bd91468446d718' // init code hash
-        //     ))));
     }
 
     // fetches and sorts the reserves for a pair

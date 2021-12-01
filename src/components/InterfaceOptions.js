@@ -154,7 +154,11 @@ export function InterfaceOptions(props) {
           defaultValue={storage}
           onChange={updateStorageContract}
         />
-        <Button onClick={fetchProjectOptions} pending={pending}>
+        <Button
+          onClick={fetchProjectOptions}
+          pending={pending}
+          disabled={!storageIsCorrect || pending}
+        >
           Fetch options
         </Button>
       </InputGroup>

@@ -21,6 +21,8 @@ export const pinataEndpoints = {
 
 export const MAIN_FILE_NAME = 'swapProject.json'
 
+export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
+
 export const storageMethods = {
   setDomain: 'setDomain',
   setProjectName: 'setProjectName',
@@ -37,4 +39,5 @@ export const factoryMethods = {
   setFeeTo: 'setFeeTo',
   setFeeToSetter: 'setFeeToSetter',
   setAllFeeToProtocol: 'setAllFeeToProtocol',
+  allInfo: 'allInfo',
 }

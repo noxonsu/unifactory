@@ -58,7 +58,8 @@ export const deployFactory = async (params) => {
 export const deployRouter = async (params) => {
   const { library, factory, onDeploy } = params
   const { abi, bytecode } = RouterV2Json
-  const wrapperCurrency = networks[library.chainId].wrapperCurrency
+  const chainId = await library.eth.getChainId()
+  const wrapperCurrency = networks[chainId].wrapperCurrency
 
   return await deployContract({
     abi,
@@ -89,7 +90,6 @@ export const getContractInstance = (library, address, abi) => {
 export const deploySwapContracts = async (params) => {
   const { admin, library, onFactoryDeploy, onRouterDeploy } = params
 
-  const accounts = await window.ethereum.request({ method: 'eth_accounts' })
   const factoryInstance = await deployFactory({
     onDeploy: onFactoryDeploy,
     library,
@@ -105,6 +105,20 @@ export const deploySwapContracts = async (params) => {
   } else {
     throw new Error('No factory contract')
   }
+}
+
+export const getFactoryOptions = async (library, factoryAddress) => {
+  const factory = getContractInstance(library, factoryAddress, FactoryJson.abi)
+
+  return new Promise(async (resolve, reject) => {
+    try {
+      const options = await factory.methods.allInfo().call()
+
+      resolve(options)
+    } catch (error) {
+      reject(error)
+    }
+  })
 }
 
 export const setFactoryOption = async (

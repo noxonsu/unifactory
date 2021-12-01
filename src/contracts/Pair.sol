@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.4.23 <0.8.0;
+pragma solidity ^0.8.0;
 
 import './interfaces/IUniswapV2Pair.sol';
 import './ERC20.sol';
@@ -72,7 +72,7 @@ contract Pair is ERC20 {
 
     // update reserves and, on the first call per block, price accumulators
     function _update(uint balance0, uint balance1, uint112 _reserve0, uint112 _reserve1) private {
-        require(balance0 <= uint112(-1) && balance1 <= uint112(-1), 'Pair: OVERFLOW');
+        require(balance0 <= type(uint112).max && balance1 <= type(uint112).max, 'Pair: OVERFLOW');
         uint32 blockTimestamp = uint32(block.timestamp % 2**32);
         uint32 timeElapsed = blockTimestamp - blockTimestampLast; // overflow is desired
         if (timeElapsed > 0 && _reserve0 != 0 && _reserve1 != 0) {
@@ -86,25 +86,21 @@ contract Pair is ERC20 {
         emit Sync(reserve0, reserve1);
     }
 
-    // if fee is on, mint liquidity equivalent to 1/6th of the growth in sqrt(k)
     function _mintFee(uint112 _reserve0, uint112 _reserve1) private returns (bool feeOn) {
         address feeTo = IUniswapV2Factory(factory).feeTo();
         bool allFeeToProtocol = IUniswapV2Factory(factory).allFeeToProtocol();
-        uint protocolFeeDenominator = IUniswapV2Factory(factory).protocolFeeDenominator();
-        feeOn = feeTo != address(0);
+        uint protocolFee = IUniswapV2Factory(factory).protocolFee();
         uint _kLast = kLast; // gas savings
+        feeOn = feeTo != address(0);
 
         if (feeOn) {
-            if (_kLast != 0) {
+            if (_kLast != 0 && protocolFee != 0) {
                 uint rootK = Math.sqrt(uint(_reserve0).mul(_reserve1));
                 uint rootKLast = Math.sqrt(_kLast);
-
                 if (rootK > rootKLast) {
-                    uint calcDenominator = protocolFeeDenominator / 1000;
                     uint numerator = totalSupply.mul(rootK.sub(rootKLast));
-                    uint denominator = allFeeToProtocol ? rootK.add(rootKLast) : rootK.mul(calcDenominator).add(rootKLast);
+                    uint denominator = allFeeToProtocol ? rootK.add(rootKLast) : rootK.mul(protocolFee).add(rootKLast);
                     uint liquidity = numerator / denominator;
-
                     if (liquidity > 0) _mint(feeTo, liquidity);
                 }
             }

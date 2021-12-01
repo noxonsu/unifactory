@@ -2,15 +2,16 @@ import { useState, useEffect } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import { InputGroup, FormControl, Form } from 'react-bootstrap'
 import { Button } from './Button'
-import { isValidAddress, setFactoryOption } from '../utils'
-import { factoryMethods } from '../constants'
+import { isValidAddress, setFactoryOption, getFactoryOptions } from '../utils'
+import { factoryMethods, ZERO_ADDRESS } from '../constants'
 
 export function SwapContracts(props) {
   const { pending, setPending, setError } = props
   const web3React = useWeb3React()
 
+  // router 0xdAb9D87d5f6304Dc3eC1536A234Cc361766A6F86
   const [factory, setFactory] = useState(
-    '0x84c9699f87EB31672BFBe0460CFb87643A97BD07'
+    '0x91aC81e40e3c1108687f339079A985d90019439e'
   )
   const [factoryIsCorrect, setFactoryIsCorrect] = useState(false)
 
@@ -28,6 +29,32 @@ export function SwapContracts(props) {
   const updateAdmin = (event) => setAdmin(event.target.value)
   const updateFeeRecipient = (event) => setFeeRecipient(event.target.value)
   const updateFeesToAdmin = (event) => setAllFeesToAdmin(event.target.checked)
+
+  const fetchContractOptions = async () => {
+    setPending(true)
+
+    try {
+      const options = await getFactoryOptions(web3React?.library, factory)
+
+      if (options) {
+        const {
+          // protocolFee,
+          // totalFee,
+          feeTo,
+          feeToSetter,
+          allFeeToProtocol,
+        } = options
+
+        setAdmin(feeToSetter)
+        setFeeRecipient(feeTo === ZERO_ADDRESS ? '' : feeTo)
+        setAllFeesToAdmin(allFeeToProtocol)
+      }
+    } catch (error) {
+      setError(error)
+    } finally {
+      setPending(false)
+    }
+  }
 
   const saveOption = async (method) => {
     let value
@@ -76,6 +103,13 @@ export function SwapContracts(props) {
           onChange={updateFactory}
           className={`${factory && !factoryIsCorrect ? 'wrong' : ''}`}
         />
+        <Button
+          onClick={fetchContractOptions}
+          pending={pending}
+          disabled={!factoryIsCorrect || pending}
+        >
+          Fetch options
+        </Button>
       </InputGroup>
 
       <p className="highlightedInfo info">
