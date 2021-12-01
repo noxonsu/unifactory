@@ -1,29 +1,21 @@
-import networks from '../networks.json'
+// import networks from '../networks.json'
 
-export const supportedChainIds = [
-  networks[1].chainId,
-  networks[56].chainId,
-  networks[137].chainId,
-  networks[3].chainId,
-  networks[4].chainId,
-  networks[97].chainId,
-  networks[80001].chainId,
-]
+// const supportedChainIds = Object.values(networks)
+//   .filter((network) => network.wrappedToken !== '')
+//   .map((network) => network.chainId)
 
-export const pinataGateway = 'https://gateway.pinata.cloud'
-export const pinataApi = 'https://api.pinata.cloud'
-export const pinataEndpoints = {
+const pinataGateway = 'https://gateway.pinata.cloud'
+const pinataApi = 'https://api.pinata.cloud'
+const pinataEndpoints = {
   generateApiKeys: `${pinataApi}/users/generateApiKey`,
   ipfs: `${pinataGateway}/ipfs`,
   pinJSONToIPFS: `${pinataApi}/pinning/pinJSONToIPFS`,
   pinList: `${pinataApi}/data/pinList`,
 }
 
-export const MAIN_FILE_NAME = 'swapProject.json'
+const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
-export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
-
-export const storageMethods = {
+const storageMethods = {
   setDomain: 'setDomain',
   setProjectName: 'setProjectName',
   setLogoUrl: 'setLogoUrl',
@@ -35,9 +27,19 @@ export const storageMethods = {
   setFullData: 'setFullData',
 }
 
-export const factoryMethods = {
+const factoryMethods = {
   setFeeTo: 'setFeeTo',
   setFeeToSetter: 'setFeeToSetter',
   setAllFeeToProtocol: 'setAllFeeToProtocol',
   allInfo: 'allInfo',
+}
+
+export {
+  // supportedChainIds,
+  pinataGateway,
+  pinataApi,
+  pinataEndpoints,
+  ZERO_ADDRESS,
+  storageMethods,
+  factoryMethods,
 }

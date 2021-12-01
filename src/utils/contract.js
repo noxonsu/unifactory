@@ -56,15 +56,14 @@ export const deployFactory = async (params) => {
 }
 
 export const deployRouter = async (params) => {
-  const { library, factory, onDeploy } = params
+  const { library, factory, onDeploy, wrappedToken } = params
   const { abi, bytecode } = RouterV2Json
   const chainId = await library.eth.getChainId()
-  const wrapperCurrency = networks[chainId].wrapperCurrency
 
   return await deployContract({
     abi,
     byteCode: bytecode,
-    deployArguments: [factory, wrapperCurrency],
+    deployArguments: [factory, wrappedToken],
     library,
     onDeploy,
   })
@@ -88,7 +87,8 @@ export const getContractInstance = (library, address, abi) => {
 }
 
 export const deploySwapContracts = async (params) => {
-  const { admin, library, onFactoryDeploy, onRouterDeploy } = params
+  const { admin, library, wrappedToken, onFactoryDeploy, onRouterDeploy } =
+    params
 
   const factoryInstance = await deployFactory({
     onDeploy: onFactoryDeploy,
@@ -101,6 +101,7 @@ export const deploySwapContracts = async (params) => {
       onDeploy: onRouterDeploy,
       library,
       factory: factoryInstance.options.address,
+      wrappedToken,
     })
   } else {
     throw new Error('No factory contract')

@@ -1,7 +1,8 @@
 import './App.css'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import { Container, Tabs, Tab, Alert } from 'react-bootstrap'
+import networks from './networks.json'
 import { Wallet } from './components/Wallet'
 import { Deployment } from './components/Deployment'
 import { SwapContracts } from './components/SwapContracts'
@@ -23,6 +24,28 @@ export function App() {
       .finally(() => setPending(false))
   }
 
+  const [wrappedToken, setWrappedToken] = useState('')
+  const [problemWithNetwork, setProblemWithNetwork] = useState('')
+
+  useEffect(() => {
+    if (web3React.chainId) {
+      if (networks[web3React.chainId]?.wrappedToken) {
+        setProblemWithNetwork('')
+        setWrappedToken(networks[web3React.chainId].wrappedToken)
+      } else {
+        setWrappedToken('')
+        setProblemWithNetwork(
+          `We do not have wrapped token address for this network. Without it you can NOT deploy swap contracts.
+          Switch to a different network or enter it manually.`
+        )
+      }
+    }
+  }, [web3React.chainId])
+
+  useEffect(() => {
+    console.log('error: ', error)
+  }, [error])
+
   return (
     <Container className="appContainer">
       <main>
@@ -32,6 +55,12 @@ export function App() {
           <Alert variant="danger" className="overflowX">
             {error?.code && error.code + ': '}
             {error?.message}
+          </Alert>
+        )}
+
+        {problemWithNetwork && (
+          <Alert variant="warning" className="overflowX">
+            {problemWithNetwork}
           </Alert>
         )}
 
@@ -47,8 +76,11 @@ export function App() {
           <Tab eventKey="deployment" title="Deployment">
             <Deployment
               pending={pending}
+              error={error}
               setPending={setPending}
               setError={setError}
+              wrappedToken={wrappedToken}
+              setWrappedToken={setWrappedToken}
             />
           </Tab>
           <Tab eventKey="swapContracts" title="Swap contracts">

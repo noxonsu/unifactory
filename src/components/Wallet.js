@@ -61,7 +61,7 @@ export function Wallet(props) {
         {web3React.active ? (
           <ListGroup>
             <ListGroup.Item>
-              {networks[web3React.chainId]?.name}:{' '}
+              {networks[web3React.chainId]?.name || 'Account'}:{' '}
               <span className="monospace">{web3React.account}</span>
             </ListGroup.Item>
           </ListGroup>

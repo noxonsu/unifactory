@@ -2,11 +2,8 @@ import { InjectedConnector } from '@web3-react/injected-connector'
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 import Web3 from 'web3'
 import networks from '../networks.json'
-import { supportedChainIds } from '../constants'
 
-export const injected = new InjectedConnector({
-  supportedChainIds,
-})
+export const injected = new InjectedConnector()
 
 // TODO: make a better interface with the ability to
 // choose between networks and then connect through WalletConnect

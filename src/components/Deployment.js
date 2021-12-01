@@ -10,17 +10,30 @@ import {
   Col,
 } from 'react-bootstrap'
 import { Button } from './Button'
-import { deploySwapContracts, deployStorage, isValidAddress } from '../utils'
+import {
+  deploySwapContracts,
+  deployStorage,
+  isValidAddress,
+  returnTokenInfo,
+} from '../utils'
 
 export function Deployment(props) {
-  const { pending, setPending, setError } = props
+  const {
+    pending,
+    error,
+    setPending,
+    setError,
+    wrappedToken,
+    setWrappedToken,
+  } = props
 
   const web3React = useWeb3React()
-  const [canDeploySwapContract, setCanDeploySwapContract] = useState(false)
+  const [canDeploySwapContracts, setCanDeploySwapContracts] = useState(false)
   const [canDeployStorage, setCanDeployStorage] = useState(false)
   const [adminAddress, setAdminAddress] = useState('')
 
   const onAdminChange = (event) => setAdminAddress(event.target.value)
+  const updateWrappedToken = (event) => setWrappedToken(event.target.value)
 
   const [factoryAddress, setFactoryAddress] = useState('')
   const [routerAddress, setRouterAddress] = useState('')
@@ -63,16 +76,27 @@ export function Deployment(props) {
   const [deploymentProcessPercent, setDeploymentProcessPercent] =
     useState(false)
 
-  const onSwapDeploy = async () => {
+  const onContractsDeployment = async () => {
     setPending(true)
     setDeploymentProcessPercent(5)
     setFactoryAddress('')
     setRouterAddress('')
 
     try {
+      const tokenInfo = await returnTokenInfo(web3React.library, wrappedToken)
+
+      if (!tokenInfo) {
+        return setError(
+          new Error(
+            '! It is not a wrapped token address. Double check it and try again.'
+          )
+        )
+      }
+
       const result = await deploySwapContracts({
         library: web3React.library,
         admin: adminAddress,
+        wrappedToken,
         onFactoryDeploy: (receipt) => {
           setFactoryAddress(receipt.contractAddress)
           addContractInfo('Factory', receipt)
@@ -116,29 +140,47 @@ export function Deployment(props) {
   }
 
   useEffect(() => {
-    setCanDeploySwapContract(
-      web3React?.active && isValidAddress(web3React.library, adminAddress)
+    setCanDeploySwapContracts(
+      web3React?.active &&
+        isValidAddress(web3React.library, adminAddress) &&
+        wrappedToken &&
+        isValidAddress(web3React.library, wrappedToken)
     )
 
     setCanDeployStorage(
       web3React?.active && isValidAddress(web3React.library, adminAddress)
     )
-  }, [web3React.library, adminAddress, web3React?.active])
+  }, [web3React.library, adminAddress, web3React?.active, wrappedToken])
 
   return (
-    <>
-      <section
-        className={`mb-4 ${!web3React?.active || pending ? 'disabled' : ''}`}
-      >
-        <Form.Label htmlFor="adminAddress">Admin address *</Form.Label>
-        <InputGroup className="mb-3">
-          <FormControl
-            defaultValue={adminAddress}
-            onChange={onAdminChange}
-            id="adminAddress"
-          />
-        </InputGroup>
-      </section>
+    <section
+      className={`mb-4 ${!web3React?.active || pending ? 'disabled' : ''}`}
+    >
+      <Form.Label htmlFor="adminAddress">Admin address *</Form.Label>
+      <InputGroup className="mb-3">
+        <FormControl
+          defaultValue={adminAddress}
+          onChange={onAdminChange}
+          id="adminAddress"
+        />
+      </InputGroup>
+
+      <Form.Label htmlFor="wrappedToken">Wrapped token *</Form.Label>
+      <p className="highlightedInfo">
+        Wrapped token - ERC20 token that represents a native EVM network
+        currency (ETH, BNB, MATIC, etc.). In order the native currency to be
+        exchanged with other EVM-based ERC20 tokens, it needs to be wrapped into
+        wrapped token. Wrapping the native currency does not affect its value.
+        For example 1 ETH = 1 WETH.
+      </p>
+      <InputGroup className="mb-3">
+        <FormControl
+          defaultValue={wrappedToken}
+          disabled={wrappedToken && !error}
+          onChange={updateWrappedToken}
+          id="wrappedToken"
+        />
+      </InputGroup>
 
       <Row>
         <Col className="d-grid">
@@ -157,9 +199,9 @@ export function Deployment(props) {
       <Row className="mb-3">
         <Col className="d-grid">
           <Button
-            onClick={onSwapDeploy}
+            onClick={onContractsDeployment}
             pending={pending}
-            disabled={pending || !canDeploySwapContract}
+            disabled={pending || !canDeploySwapContracts}
           >
             Deploy swap contracts
           </Button>
@@ -200,6 +242,6 @@ export function Deployment(props) {
           <strong>Storage</strong>: {storageAddress}
         </Alert>
       )}
-    </>
+    </section>
   )
 }

@@ -33,12 +33,12 @@ body {
 
 .highlightedInfo {
   padding: 0.3rem 0.6rem;
-  background-color: #f4f4f4;
+  background-color: #eff4fd;
   border-radius: 0.3rem;
 }
 
-.highlightedInfo.info {
-  background-color: #ddf9ff;
+.highlightedInfo.tip {
+  background-color: #ddfff3;
 }
 
 .wrong,
