@@ -16,7 +16,7 @@ export function InterfaceOptions(props) {
 
   const [notification, setNotification] = useState('')
   const [storage, setStorage] = useState(
-    '0xB10f778E6CB775b35Bd4aDA9335ACD4d766D47F8'
+    '0x374087f89A06a1B791181Af18C514BA627BcAC5c'
   )
   const [storageIsCorrect, setStorageIsCorrect] = useState(false)
 
@@ -33,11 +33,13 @@ export function InterfaceOptions(props) {
     }
   }, [setError, web3React.library, storage])
 
+  const [domain, setDomain] = useState('')
   const [projectName, setProjectName] = useState('')
   const [logoUrl, setLogoUrl] = useState('')
   const [brandColor, setBrandColor] = useState('')
   const [tokenLists, setTokenLists] = useState([])
 
+  const updateDomain = (event) => setDomain(event.target.value)
   const updateProjectName = (event) => setProjectName(event.target.value)
   const updateLogoUrl = (event) => setLogoUrl(event.target.value)
   const updateBrandColor = (event) => setBrandColor(event.target.value)
@@ -49,8 +51,9 @@ export function InterfaceOptions(props) {
       const data = await fetchOptionsFromContract(web3React?.library, storage)
 
       if (data) {
-        const { brandColor, logo, name, tokenLists } = data
+        const { domain, brandColor, logo, name, tokenLists } = data
 
+        if (domain) setDomain(domain)
         if (name) setProjectName(name)
         if (logo) setLogoUrl(logo)
         if (brandColor) setBrandColor(brandColor)
@@ -85,6 +88,9 @@ export function InterfaceOptions(props) {
     let value
 
     switch (method) {
+      case storageMethods.setDomain:
+        value = domain
+        break
       case storageMethods.setProjectName:
         value = projectName
         break
@@ -158,6 +164,22 @@ export function InterfaceOptions(props) {
           !web3React?.active || pending || !storageIsCorrect ? 'disabled' : ''
         }`}
       >
+        <InputGroup className="mb-3">
+          <InputGroup.Text>Domain</InputGroup.Text>
+          <FormControl
+            type="text"
+            defaultValue={domain}
+            onChange={updateDomain}
+          />
+          <Button
+            onClick={() => saveOption(storageMethods.setDomain)}
+            pending={pending}
+            disabled={!domain}
+          >
+            Save
+          </Button>
+        </InputGroup>
+
         <InputGroup className="mb-3">
           <InputGroup.Text>Project name</InputGroup.Text>
           <FormControl
