@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity =0.7.5;
+pragma solidity ^0.8.0;
 
 import './libraries/TransferHelper.sol';
 import './libraries/MainLibrary.sol';
@@ -146,7 +146,7 @@ contract RouterV1 is IUniswapV2Router01 {
         bool approveMax, uint8 v, bytes32 r, bytes32 s
     ) external override returns (uint amountA, uint amountB) {
         address pair = MainLibrary.pairFor(factory, tokenA, tokenB);
-        uint value = approveMax ? uint(-1) : liquidity;
+        uint value = approveMax ? type(uint).max : liquidity;
         IUniswapV2Pair(pair).permit(msg.sender, address(this), value, deadline, v, r, s);
         (amountA, amountB) = removeLiquidity(tokenA, tokenB, liquidity, amountAMin, amountBMin, to, deadline);
     }
@@ -160,7 +160,7 @@ contract RouterV1 is IUniswapV2Router01 {
         bool approveMax, uint8 v, bytes32 r, bytes32 s
     ) external override returns (uint amountToken, uint amountETH) {
         address pair = MainLibrary.pairFor(factory, token, WETH);
-        uint value = approveMax ? uint(-1) : liquidity;
+        uint value = approveMax ? type(uint).max : liquidity;
         IUniswapV2Pair(pair).permit(msg.sender, address(this), value, deadline, v, r, s);
         (amountToken, amountETH) = removeLiquidityETH(token, liquidity, amountTokenMin, amountETHMin, to, deadline);
     }
@@ -263,19 +263,19 @@ contract RouterV1 is IUniswapV2Router01 {
         return MainLibrary.quote(amountA, reserveA, reserveB);
     }
 
-    function getAmountOut(uint amountIn, uint reserveIn, uint reserveOut) public pure override returns (uint amountOut) {
-        return MainLibrary.getAmountOut(amountIn, reserveIn, reserveOut);
+    function getAmountOut(address _factory, uint amountIn, uint reserveIn, uint reserveOut) public override returns (uint amountOut) {
+        return MainLibrary.getAmountOut(_factory, amountIn, reserveIn, reserveOut);
     }
 
-    function getAmountIn(uint amountOut, uint reserveIn, uint reserveOut) public pure override returns (uint amountIn) {
-        return MainLibrary.getAmountOut(amountOut, reserveIn, reserveOut);
+    function getAmountIn(address _factory, uint amountOut, uint reserveIn, uint reserveOut) public override returns (uint amountIn) {
+        return MainLibrary.getAmountOut(_factory, amountOut, reserveIn, reserveOut);
     }
 
-    function getAmountsOut(uint amountIn, address[] memory path) public view override returns (uint[] memory amounts) {
+    function getAmountsOut(uint amountIn, address[] memory path) public override returns (uint[] memory amounts) {
         return MainLibrary.getAmountsOut(factory, amountIn, path);
     }
 
-    function getAmountsIn(uint amountOut, address[] memory path) public view override returns (uint[] memory amounts) {
+    function getAmountsIn(uint amountOut, address[] memory path) public override returns (uint[] memory amounts) {
         return MainLibrary.getAmountsIn(factory, amountOut, path);
     }
 }

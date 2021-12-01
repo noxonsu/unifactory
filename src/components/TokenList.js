@@ -13,7 +13,7 @@ export function TokenList(props) {
     setPending,
     setError,
     setNotification,
-    storageContract,
+    storage,
     isNewList,
   } = props
   const [tokenListName, setTokenListName] = useState(list.name || '')
@@ -90,7 +90,7 @@ export function TokenList(props) {
     try {
       const receipt = await saveProjectOption(
         web3React?.library,
-        storageContract,
+        storage,
         isNewList
           ? storageMethods.addTokenList
           : storageMethods.updateTokenList,
@@ -170,7 +170,7 @@ export function TokenList(props) {
         <Button
           onClick={addNewToken}
           pending={pending}
-          disabled={!newTokenAddress}
+          disabled={!tokenAddressIsCorrect}
         >
           <AiOutlinePlus /> Token
         </Button>

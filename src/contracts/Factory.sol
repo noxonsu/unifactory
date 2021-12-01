@@ -1,23 +1,44 @@
 // SPDX-License-Identifier: MIT
-pragma solidity =0.7.5;
+pragma solidity ^0.8.0;
 
 import './interfaces/IUniswapV2Factory.sol';
 import './Pair.sol';
 
 contract Factory is IUniswapV2Factory {
+    uint256 public override protocolFee;
+    uint256 public override totalFee;
     address public override feeTo;
     address public override feeToSetter;
     bytes32 public constant INIT_CODE_PAIR_HASH = keccak256(abi.encodePacked(type(Pair).creationCode));
+    bool public override allFeeToProtocol;
 
     mapping(address => mapping(address => address)) public override getPair;
     address[] public override allPairs;
 
+    modifier onlyOwner() {
+        require(msg.sender == feeToSetter, 'Factory: FORBIDDEN');
+        _;
+    }
+
     constructor(address _feeToSetter) {
         feeToSetter = _feeToSetter;
+        protocolFee = 5; 
+        totalFee = 997;
     }
 
     function allPairsLength() external override view returns (uint256) {
         return allPairs.length;
+    }
+
+    function allInfo() external view override returns(AllInfo memory) {
+        return AllInfo({
+            protocolFee: protocolFee,
+            totalFee: totalFee,
+            feeTo: feeTo,
+            feeToSetter: feeToSetter,
+            INIT_CODE_PAIR_HASH: INIT_CODE_PAIR_HASH,
+            allFeeToProtocol: allFeeToProtocol
+        });
     }
 
     function createPair(address tokenA, address tokenB) external override returns (address pair) {
@@ -37,13 +58,25 @@ contract Factory is IUniswapV2Factory {
         emit PairCreated(token0, token1, pair, allPairs.length);
     }
 
-    function setFeeTo(address _feeTo) external override {
-        require(msg.sender == feeToSetter, 'Factory: FORBIDDEN');
+    function setFeeTo(address _feeTo) external override onlyOwner {
         feeTo = _feeTo;
     }
 
-    function setFeeToSetter(address _feeToSetter) external override {
-        require(msg.sender == feeToSetter, 'Factory: FORBIDDEN');
+    function setFeeToSetter(address _feeToSetter) external override onlyOwner {
         feeToSetter = _feeToSetter;
+    }
+
+    function setAllFeeToProtocol(bool _allFeeToProtocol) external override onlyOwner {
+        allFeeToProtocol = _allFeeToProtocol;
+    }
+
+    function setProtocolFee(uint _protocolFee) external override onlyOwner {
+        require(_protocolFee > 0, 'Factory: FORBIDDEN_FEE');
+        protocolFee = _protocolFee;
+    }
+
+    function setTotalFee(uint _totalFee) external override onlyOwner {
+        require(_totalFee > 0, 'Factory: FORBIDDEN_FEE');
+        totalFee = _totalFee;
     }
 }

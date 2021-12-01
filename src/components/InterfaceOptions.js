@@ -7,7 +7,6 @@ import {
   saveProjectOption,
   fetchOptionsFromContract,
   isValidAddress,
-  getTimestamp,
 } from '../utils'
 import { storageMethods } from '../constants'
 
@@ -16,31 +15,31 @@ export function InterfaceOptions(props) {
   const web3React = useWeb3React()
 
   const [notification, setNotification] = useState('')
-  const [storageContract, setStorageContract] = useState(
-    '0x2f9CfEB4E7a3DFf011569d242a34a79AA222E3C9'
+  const [storage, setStorage] = useState(
+    '0x374087f89A06a1B791181Af18C514BA627BcAC5c'
   )
+  const [storageIsCorrect, setStorageIsCorrect] = useState(false)
 
-  const updateStorageContract = (event) =>
-    setStorageContract(event.target.value)
+  const updateStorageContract = (event) => setStorage(event.target.value)
 
   useEffect(() => {
     if (web3React.library) {
-      if (
-        storageContract &&
-        !isValidAddress(web3React.library, storageContract)
-      ) {
-        setError(new Error('Incorrect storage contract'))
-      } else {
-        setError(false)
-      }
-    }
-  }, [setError, web3React.library, storageContract])
+      const isStorageCorrect = isValidAddress(web3React.library, storage)
 
+      setStorageIsCorrect(isStorageCorrect)
+      setError(
+        storage && !isStorageCorrect ? new Error('Incorrect address') : false
+      )
+    }
+  }, [setError, web3React.library, storage])
+
+  const [domain, setDomain] = useState('')
   const [projectName, setProjectName] = useState('')
   const [logoUrl, setLogoUrl] = useState('')
   const [brandColor, setBrandColor] = useState('')
   const [tokenLists, setTokenLists] = useState([])
 
+  const updateDomain = (event) => setDomain(event.target.value)
   const updateProjectName = (event) => setProjectName(event.target.value)
   const updateLogoUrl = (event) => setLogoUrl(event.target.value)
   const updateBrandColor = (event) => setBrandColor(event.target.value)
@@ -49,14 +48,12 @@ export function InterfaceOptions(props) {
     setPending(true)
 
     try {
-      const data = await fetchOptionsFromContract(
-        web3React?.library,
-        storageContract
-      )
+      const data = await fetchOptionsFromContract(web3React?.library, storage)
 
       if (data) {
-        const { brandColor, logo, name, tokenLists } = data
+        const { domain, brandColor, logo, name, tokenLists } = data
 
+        if (domain) setDomain(domain)
         if (name) setProjectName(name)
         if (logo) setLogoUrl(logo)
         if (brandColor) setBrandColor(brandColor)
@@ -91,6 +88,9 @@ export function InterfaceOptions(props) {
     let value
 
     switch (method) {
+      case storageMethods.setDomain:
+        value = domain
+        break
       case storageMethods.setProjectName:
         value = projectName
         break
@@ -118,7 +118,7 @@ export function InterfaceOptions(props) {
     try {
       const receipt = await saveProjectOption(
         web3React?.library,
-        storageContract,
+        storage,
         method,
         value
       )
@@ -137,19 +137,13 @@ export function InterfaceOptions(props) {
 
   useEffect(() => {
     const fullUpdateIsAvailable =
-      web3React?.active &&
-      storageContract &&
-      logoUrl &&
-      brandColor &&
-      projectName
+      web3React?.active && storage && logoUrl && brandColor && projectName
 
     setFullUpdateIsAvailable(!!fullUpdateIsAvailable)
-  }, [storageContract, projectName, logoUrl, brandColor, web3React?.active])
-
-  const canNotUseStorage = pending || !storageContract || !web3React?.active
+  }, [storage, projectName, logoUrl, brandColor, web3React?.active])
 
   return (
-    <section className={canNotUseStorage ? 'disabled' : ''}>
+    <section>
       {notification && <Alert variant="info">{notification}</Alert>}
 
       <Form.Label htmlFor="storageContractInput">Storage contract *</Form.Label>
@@ -157,19 +151,39 @@ export function InterfaceOptions(props) {
         <FormControl
           type="text"
           id="storageContractInput"
-          defaultValue={storageContract}
+          defaultValue={storage}
           onChange={updateStorageContract}
         />
-        <Button onClick={fetchProjectOptions} pending={pending}>
+        <Button
+          onClick={fetchProjectOptions}
+          pending={pending}
+          disabled={!storageIsCorrect || pending}
+        >
           Fetch options
         </Button>
       </InputGroup>
 
       <div
         className={`${
-          !web3React?.active || pending || !storageContract ? 'disabled' : ''
+          !web3React?.active || pending || !storageIsCorrect ? 'disabled' : ''
         }`}
       >
+        <InputGroup className="mb-3">
+          <InputGroup.Text>Domain</InputGroup.Text>
+          <FormControl
+            type="text"
+            defaultValue={domain}
+            onChange={updateDomain}
+          />
+          <Button
+            onClick={() => saveOption(storageMethods.setDomain)}
+            pending={pending}
+            disabled={!domain}
+          >
+            Save
+          </Button>
+        </InputGroup>
+
         <InputGroup className="mb-3">
           <InputGroup.Text>Project name</InputGroup.Text>
           <FormControl
@@ -222,7 +236,7 @@ export function InterfaceOptions(props) {
         <h5 className="mb-3">Token lists</h5>
 
         <TokenLists
-          storageContract={storageContract}
+          storage={storage}
           pending={pending}
           setPending={setPending}
           setError={setError}

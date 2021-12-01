@@ -54,10 +54,14 @@ export const pinJson = async (apiKey, secretApiKey, body) => {
   })
 }
 
-export const saveAllOptions = async (library, storageContract, options) => {
+export const getStorage = (library, address) => {
+  return getContractInstance(library, address, Storage.abi)
+}
+
+export const saveAllOptions = async (library, storageAddress, options) => {
   const { projectName, logoUrl, brandColor, listName, tokens } = options
 
-  const storage = getContractInstance(library, storageContract, Storage.abi)
+  const storage = getStorage(library, storageAddress)
   const accounts = await window.ethereum.request({ method: 'eth_accounts' })
   const data = {
     name: projectName,
@@ -80,8 +84,8 @@ export const saveAllOptions = async (library, storageContract, options) => {
   })
 }
 
-export const fetchOptionsFromContract = async (library, storageContract) => {
-  const storage = getContractInstance(library, storageContract, Storage.abi)
+export const fetchOptionsFromContract = async (library, storageAddress) => {
+  const storage = getStorage(library, storageAddress)
 
   return new Promise(async (resolve, reject) => {
     try {
@@ -97,11 +101,11 @@ export const fetchOptionsFromContract = async (library, storageContract) => {
 
 export const saveProjectOption = async (
   library,
-  storageContract,
+  storageAddress,
   method,
   value
 ) => {
-  const storage = getContractInstance(library, storageContract, Storage.abi)
+  const storage = getStorage(library, storageAddress)
   const accounts = await window.ethereum.request({ method: 'eth_accounts' })
   let args
 
@@ -123,6 +127,9 @@ export const saveProjectOption = async (
   }
 
   switch (method) {
+    case storageMethods.setDomain:
+      args = [value]
+      break
     case storageMethods.setProjectName:
       args = [value]
       break
@@ -138,6 +145,9 @@ export const saveProjectOption = async (
     case storageMethods.updateTokenList:
       args = [value.oldName, value.name, JSON.stringify(validTokenList)]
       break
+    case storageMethods.removeTokenList:
+      args = [value]
+      break
     case storageMethods.setFullData:
       args = [{ ...value, tokens: value.tokens.map((item) => item.address) }]
       break
@@ -145,6 +155,9 @@ export const saveProjectOption = async (
       method = ''
       args = []
   }
+
+  console.log('method: ', method)
+  console.log('args: ', args)
 
   if (method) {
     return new Promise(async (resolve, reject) => {

@@ -1,15 +1,10 @@
 import TokenAbi from 'human-standard-token-abi'
+import networks from '../networks.json'
 import FactoryJson from '../contracts/build/Factory.json'
 import RouterV2Json from '../contracts/build/RouterV2.json'
 import Storage from '../contracts/build/Storage.json'
-import { wrapperCurrencies, factoryMethods } from '../constants'
 import { cache, addValue } from './cache'
-
-const log = (message) => {
-  console.group('%c Log', 'color: crimson; font-size: 14px;')
-  console.log(message)
-  console.groupEnd()
-}
+import { log } from './index'
 
 const deployContract = async (params) => {
   const { abi, byteCode, library, onDeploy, deployArguments } = params
@@ -64,7 +59,7 @@ export const deployRouter = async (params) => {
   const { library, factory, onDeploy } = params
   const { abi, bytecode } = RouterV2Json
   const chainId = await library.eth.getChainId()
-  const wrapperCurrency = wrapperCurrencies[chainId]
+  const wrapperCurrency = networks[chainId].wrapperCurrency
 
   return await deployContract({
     abi,
@@ -78,8 +73,6 @@ export const deployRouter = async (params) => {
 export const deployStorage = async (params) => {
   const { library, admin, onDeploy } = params
   const { abi, bytecode } = Storage
-  const chainId = await library.eth.getChainId()
-  const wrapperCurrency = wrapperCurrencies[chainId]
 
   return await deployContract({
     abi,
@@ -97,7 +90,6 @@ export const getContractInstance = (library, address, abi) => {
 export const deploySwapContracts = async (params) => {
   const { admin, library, onFactoryDeploy, onRouterDeploy } = params
 
-  const accounts = await window.ethereum.request({ method: 'eth_accounts' })
   const factoryInstance = await deployFactory({
     onDeploy: onFactoryDeploy,
     library,
@@ -113,6 +105,20 @@ export const deploySwapContracts = async (params) => {
   } else {
     throw new Error('No factory contract')
   }
+}
+
+export const getFactoryOptions = async (library, factoryAddress) => {
+  const factory = getContractInstance(library, factoryAddress, FactoryJson.abi)
+
+  return new Promise(async (resolve, reject) => {
+    try {
+      const options = await factory.methods.allInfo().call()
+
+      resolve(options)
+    } catch (error) {
+      reject(error)
+    }
+  })
 }
 
 export const setFactoryOption = async (

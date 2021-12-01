@@ -2,17 +2,33 @@
 pragma solidity >=0.5.0;
 
 interface IUniswapV2Factory {
+    struct AllInfo {
+        uint protocolFee;
+        uint totalFee;
+        address feeTo;
+        address feeToSetter;
+        bytes32 INIT_CODE_PAIR_HASH;
+        bool allFeeToProtocol;
+    }
+
     event PairCreated(address indexed token0, address indexed token1, address pair, uint);
 
+    function protocolFee() external returns(uint);
+    function totalFee() external returns(uint);
     function feeTo() external view returns (address);
     function feeToSetter() external view returns (address);
+    function allFeeToProtocol() external view returns(bool);
 
     function getPair(address tokenA, address tokenB) external view returns (address pair);
     function allPairs(uint) external view returns (address pair);
     function allPairsLength() external view returns (uint);
+    function allInfo() external view returns (AllInfo memory);
 
     function createPair(address tokenA, address tokenB) external returns (address pair);
 
     function setFeeTo(address) external;
     function setFeeToSetter(address) external;
+    function setAllFeeToProtocol(bool) external;
+    function setProtocolFee(uint) external;
+    function setTotalFee(uint) external;
 }
