@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import './libraries/TransferHelper.sol';
 import './libraries/MainLibrary.sol';
 
-import './interfaces/IUniswapV2Factory.sol';
+import './interfaces/IFactory.sol';
 import './interfaces/IUniswapV2Router01.sol';
 import './interfaces/IERC20.sol';
 import './interfaces/IWETH.sol';
@@ -37,8 +37,8 @@ contract RouterV1 is IUniswapV2Router01 {
         uint amountBMin
     ) private returns (uint amountA, uint amountB) {
         // create the pair if it doesn't exist yet
-        if (IUniswapV2Factory(factory).getPair(tokenA, tokenB) == address(0)) {
-            IUniswapV2Factory(factory).createPair(tokenA, tokenB);
+        if (IFactory(factory).getPair(tokenA, tokenB) == address(0)) {
+            IFactory(factory).createPair(tokenA, tokenB);
         }
         (uint reserveA, uint reserveB) = MainLibrary.getReserves(factory, tokenA, tokenB);
         if (reserveA == 0 && reserveB == 0) {
@@ -263,19 +263,19 @@ contract RouterV1 is IUniswapV2Router01 {
         return MainLibrary.quote(amountA, reserveA, reserveB);
     }
 
-    function getAmountOut(address _factory, uint amountIn, uint reserveIn, uint reserveOut) public override returns (uint amountOut) {
+    function getAmountOut(address _factory, uint amountIn, uint reserveIn, uint reserveOut) public view override returns (uint amountOut) {
         return MainLibrary.getAmountOut(_factory, amountIn, reserveIn, reserveOut);
     }
 
-    function getAmountIn(address _factory, uint amountOut, uint reserveIn, uint reserveOut) public override returns (uint amountIn) {
+    function getAmountIn(address _factory, uint amountOut, uint reserveIn, uint reserveOut) public view override returns (uint amountIn) {
         return MainLibrary.getAmountOut(_factory, amountOut, reserveIn, reserveOut);
     }
 
-    function getAmountsOut(uint amountIn, address[] memory path) public override returns (uint[] memory amounts) {
+    function getAmountsOut(uint amountIn, address[] memory path) public view override returns (uint[] memory amounts) {
         return MainLibrary.getAmountsOut(factory, amountIn, path);
     }
 
-    function getAmountsIn(uint amountOut, address[] memory path) public override returns (uint[] memory amounts) {
+    function getAmountsIn(uint amountOut, address[] memory path) public view override returns (uint[] memory amounts) {
         return MainLibrary.getAmountsIn(factory, amountOut, path);
     }
 }

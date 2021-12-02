@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import '../interfaces/IUniswapV2Factory.sol';
+import '../interfaces/IFactory.sol';
 import '../interfaces/IUniswapV2Pair.sol';
 import './SafeMath.sol';
 
@@ -17,7 +17,7 @@ library MainLibrary {
 
     // calculates the CREATE2 address for a pair without making any external calls
     function pairFor(address factory, address tokenA, address tokenB) internal view returns (address pair) {
-        pair = IUniswapV2Factory(factory).getPair(tokenA, tokenB);
+        pair = IFactory(factory).getPair(tokenA, tokenB);
     }
 
     // fetches and sorts the reserves for a pair
@@ -35,10 +35,10 @@ library MainLibrary {
     }
 
     // given an input amount of an asset and pair reserves, returns the maximum output amount of the other asset
-    function getAmountOut(address factory, uint amountIn, uint reserveIn, uint reserveOut) internal returns (uint amountOut) {
+    function getAmountOut(address factory, uint amountIn, uint reserveIn, uint reserveOut) internal view returns (uint amountOut) {
         require(amountIn > 0, 'MainLibrary: INSUFFICIENT_INPUT_AMOUNT');
         require(reserveIn > 0 && reserveOut > 0, 'MainLibrary: INSUFFICIENT_LIQUIDITY');
-        uint totalFee = IUniswapV2Factory(factory).totalFee();
+        uint totalFee = IFactory(factory).totalFee();
         uint amountInWithFee = amountIn.mul(totalFee);
         uint numerator = amountInWithFee.mul(reserveOut);
         uint denominator = reserveIn.mul(1000).add(amountInWithFee);
@@ -46,17 +46,17 @@ library MainLibrary {
     }
 
     // given an output amount of an asset and pair reserves, returns a required input amount of the other asset
-    function getAmountIn(address factory, uint amountOut, uint reserveIn, uint reserveOut) internal returns (uint amountIn) {
+    function getAmountIn(address factory, uint amountOut, uint reserveIn, uint reserveOut) internal view returns (uint amountIn) {
         require(amountOut > 0, 'MainLibrary: INSUFFICIENT_OUTPUT_AMOUNT');
         require(reserveIn > 0 && reserveOut > 0, 'MainLibrary: INSUFFICIENT_LIQUIDITY');
-        uint totalFee = IUniswapV2Factory(factory).totalFee();
+        uint totalFee = IFactory(factory).totalFee();
         uint numerator = reserveIn.mul(amountOut).mul(1000);
         uint denominator = reserveOut.sub(amountOut).mul(totalFee);
         amountIn = (numerator / denominator).add(1);
     }
 
     // performs chained getAmountOut calculations on any number of pairs
-    function getAmountsOut(address factory, uint amountIn, address[] memory path) internal returns (uint[] memory amounts) {
+    function getAmountsOut(address factory, uint amountIn, address[] memory path) internal view returns (uint[] memory amounts) {
         require(path.length >= 2, 'MainLibrary: INVALID_PATH');
         amounts = new uint[](path.length);
         amounts[0] = amountIn;
@@ -67,7 +67,7 @@ library MainLibrary {
     }
 
     // performs chained getAmountIn calculations on any number of pairs
-    function getAmountsIn(address factory, uint amountOut, address[] memory path) internal returns (uint[] memory amounts) {
+    function getAmountsIn(address factory, uint amountOut, address[] memory path) internal view returns (uint[] memory amounts) {
         require(path.length >= 2, 'MainLibrary: INVALID_PATH');
         amounts = new uint[](path.length);
         amounts[amounts.length - 1] = amountOut;
