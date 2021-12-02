@@ -5,7 +5,7 @@ import './libraries/TransferHelper.sol';
 import './libraries/MainLibrary.sol';
 import './libraries/SafeMath.sol';
 
-import './interfaces/IUniswapV2Factory.sol';
+import './interfaces/IFactory.sol';
 import './interfaces/IUniswapV2Router02.sol';
 import './interfaces/IERC20.sol';
 import './interfaces/IWETH.sol';
@@ -40,8 +40,8 @@ contract RouterV2 is IUniswapV2Router02 {
         uint amountBMin
     ) internal virtual returns (uint amountA, uint amountB) {
         // create the pair if it doesn't exist yet
-        if (IUniswapV2Factory(factory).getPair(tokenA, tokenB) == address(0)) {
-            IUniswapV2Factory(factory).createPair(tokenA, tokenB);
+        if (IFactory(factory).getPair(tokenA, tokenB) == address(0)) {
+            IFactory(factory).createPair(tokenA, tokenB);
         }
         (uint reserveA, uint reserveB) = MainLibrary.getReserves(factory, tokenA, tokenB);
         if (reserveA == 0 && reserveB == 0) {

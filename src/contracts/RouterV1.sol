@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import './libraries/TransferHelper.sol';
 import './libraries/MainLibrary.sol';
 
-import './interfaces/IUniswapV2Factory.sol';
+import './interfaces/IFactory.sol';
 import './interfaces/IUniswapV2Router01.sol';
 import './interfaces/IERC20.sol';
 import './interfaces/IWETH.sol';
@@ -37,8 +37,8 @@ contract RouterV1 is IUniswapV2Router01 {
         uint amountBMin
     ) private returns (uint amountA, uint amountB) {
         // create the pair if it doesn't exist yet
-        if (IUniswapV2Factory(factory).getPair(tokenA, tokenB) == address(0)) {
-            IUniswapV2Factory(factory).createPair(tokenA, tokenB);
+        if (IFactory(factory).getPair(tokenA, tokenB) == address(0)) {
+            IFactory(factory).createPair(tokenA, tokenB);
         }
         (uint reserveA, uint reserveB) = MainLibrary.getReserves(factory, tokenA, tokenB);
         if (reserveA == 0 && reserveB == 0) {

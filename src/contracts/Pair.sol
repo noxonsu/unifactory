@@ -6,7 +6,7 @@ import './ERC20.sol';
 import './libraries/Math.sol';
 import './libraries/UQ112x112.sol';
 import './interfaces/IERC20.sol';
-import './interfaces/IUniswapV2Factory.sol';
+import './interfaces/IFactory.sol';
 import './interfaces/IUniswapV2Callee.sol';
 
 contract Pair is ERC20 {
@@ -87,10 +87,12 @@ contract Pair is ERC20 {
     }
 
     function _mintFee(uint112 _reserve0, uint112 _reserve1) private returns (bool feeOn) {
-        address feeTo = IUniswapV2Factory(factory).feeTo();
-        bool allFeeToProtocol = IUniswapV2Factory(factory).allFeeToProtocol();
-        uint protocolFee = IUniswapV2Factory(factory).protocolFee();
+        address feeTo = IFactory(factory).feeTo();
+        address devFeeTo = IFactory(factory).devFeeTo();
+        uint devFeePercent = IFactory(factory).devFeePercent();
+        uint protocolFee = IFactory(factory).protocolFee();
         uint _kLast = kLast; // gas savings
+        bool allFeeToProtocol = IFactory(factory).allFeeToProtocol();
         feeOn = feeTo != address(0);
 
         if (feeOn) {
@@ -101,7 +103,19 @@ contract Pair is ERC20 {
                     uint numerator = totalSupply.mul(rootK.sub(rootKLast));
                     uint denominator = allFeeToProtocol ? rootK.add(rootKLast) : rootK.mul(protocolFee).add(rootKLast);
                     uint liquidity = numerator / denominator;
-                    if (liquidity > 0) _mint(feeTo, liquidity);
+                    if (liquidity > 0) {
+                         if (devFeePercent == 0 || devFeeTo == address(0)) {
+                            _mint(feeTo, liquidity);
+                        } else {
+                            uint maxPercent = 100;
+                            uint onePercentOfLiquidity = liquidity / maxPercent;
+                            uint protocolLiquidityPercent = maxPercent.sub(devFeePercent);
+                            uint protocolLiquidity = onePercentOfLiquidity.mul(protocolLiquidityPercent);
+                            uint devLiquidity = onePercentOfLiquidity.mul(devFeePercent);
+                            _mint(feeTo, protocolLiquidity);
+                            _mint(devFeeTo, devLiquidity);
+                        }
+                    }
                 }
             }
         } else if (_kLast != 0) {
