@@ -112,7 +112,7 @@ export function SwapContracts(props) {
         </Button>
       </InputGroup>
 
-      <p className="highlightedInfo info">
+      <p className="highlightedInfo tip">
         You can use the same address for both inputs.
       </p>
 

@@ -156,9 +156,6 @@ export const saveProjectOption = async (
       args = []
   }
 
-  console.log('method: ', method)
-  console.log('args: ', args)
-
   if (method) {
     return new Promise(async (resolve, reject) => {
       storage.methods[method](...args)

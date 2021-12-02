@@ -16,7 +16,7 @@ export function InterfaceOptions(props) {
 
   const [notification, setNotification] = useState('')
   const [storage, setStorage] = useState(
-    '0x374087f89A06a1B791181Af18C514BA627BcAC5c'
+    '0xe69E71944CD14e8D67574688935C07aC5aE272Ca'
   )
   const [storageIsCorrect, setStorageIsCorrect] = useState(false)
 
@@ -153,6 +153,7 @@ export function InterfaceOptions(props) {
           id="storageContractInput"
           defaultValue={storage}
           onChange={updateStorageContract}
+          disabled={pending}
         />
         <Button
           onClick={fetchProjectOptions}
@@ -218,7 +219,7 @@ export function InterfaceOptions(props) {
 
         <InputGroup className="mb-4">
           <InputGroup.Text>Brand color</InputGroup.Text>
-          <Form.Control
+          <FormControl
             type="color"
             defaultValue={brandColor}
             title="Brand color"
