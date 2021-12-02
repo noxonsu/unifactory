@@ -60,7 +60,7 @@ export function Wallet(props) {
       <div className="mb-3">
         {web3React.active ? (
           <ListGroup>
-            <ListGroup.Item>
+            <ListGroup.Item className="d-flex justify-content-between">
               {networks[web3React.chainId]?.name || 'Account'}:{' '}
               <span className="monospace">{web3React.account}</span>
             </ListGroup.Item>

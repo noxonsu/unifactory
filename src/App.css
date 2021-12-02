@@ -44,6 +44,7 @@ body {
 .wrong,
 .wrong:focus {
   border: 1px solid red;
+  box-shadow: 0 0 0.3rem red;
 }
 
 .monospace {

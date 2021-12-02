@@ -9,6 +9,7 @@ import {
   Row,
   Col,
 } from 'react-bootstrap'
+import networks from '../networks.json'
 import { Button } from './Button'
 import {
   deploySwapContracts,
@@ -88,7 +89,7 @@ export function Deployment(props) {
       if (!tokenInfo) {
         return setError(
           new Error(
-            '! It is not a wrapped token address. Double check it and try again.'
+            'It is not a wrapped token address. Double check it and try again.'
           )
         )
       }
@@ -169,14 +170,17 @@ export function Deployment(props) {
       <p className="highlightedInfo">
         Wrapped token - ERC20 token that represents a native EVM network
         currency (ETH, BNB, MATIC, etc.). In order the native currency to be
-        exchanged with other EVM-based ERC20 tokens, it needs to be wrapped into
-        wrapped token. Wrapping the native currency does not affect its value.
-        For example 1 ETH = 1 WETH.
+        exchanged with other ERC20 tokens, it needs to be wrapped. Wrapping the
+        native currency does not affect its value. For example 1 ETH = 1 WETH.
       </p>
-      <InputGroup className="mb-3">
+      <InputGroup className="mb-3" key={wrappedToken}>
         <FormControl
           defaultValue={wrappedToken}
-          disabled={wrappedToken && !error}
+          disabled={
+            // don't allow the user to change a token address
+            // in case if we have it in our config
+            networks[web3React.chainId]?.wrappedToken && wrappedToken
+          }
           onChange={updateWrappedToken}
           id="wrappedToken"
         />

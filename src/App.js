@@ -42,17 +42,16 @@ export function App() {
     }
   }, [web3React.chainId])
 
-  useEffect(() => {
-    console.log('error: ', error)
-  }, [error])
-
   return (
     <Container className="appContainer">
       <main>
         <Wallet activateWallet={activateWallet} pending={pending} />
 
         {error && (
-          <Alert variant="danger" className="overflowX">
+          <Alert
+            variant="danger"
+            className="overflowX d-flex align-items-center"
+          >
             {error?.code && error.code + ': '}
             {error?.message}
           </Alert>
