@@ -107,15 +107,9 @@ contract Pair is ERC20 {
                          if (devFeePercent == 0 || devFeeTo == address(0)) {
                             _mint(feeTo, liquidity);
                         } else {
-                            uint protocolLiquidity;
-                            uint devLiquidity;
-                            {// scope for liquidity amounts, avoids stack too deep errors
-                            uint maxPercent = 100;
-                            uint onePercentOfLiquidity = liquidity / maxPercent;
-                            uint protocolLiquidityPercent = maxPercent.sub(devFeePercent);
-                            protocolLiquidity = onePercentOfLiquidity.mul(protocolLiquidityPercent);
-                            devLiquidity = onePercentOfLiquidity.mul(devFeePercent);
-                            }
+                            uint onePercentOfLiquidity = liquidity / 100;
+                            uint devLiquidity = onePercentOfLiquidity.mul(devFeePercent);
+                            uint protocolLiquidity = liquidity.sub(devLiquidity);
                             _mint(feeTo, protocolLiquidity);
                             _mint(devFeeTo, devLiquidity);
                         }
