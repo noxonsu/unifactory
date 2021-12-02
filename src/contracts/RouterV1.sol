@@ -263,19 +263,19 @@ contract RouterV1 is IUniswapV2Router01 {
         return MainLibrary.quote(amountA, reserveA, reserveB);
     }
 
-    function getAmountOut(address _factory, uint amountIn, uint reserveIn, uint reserveOut) public override returns (uint amountOut) {
+    function getAmountOut(address _factory, uint amountIn, uint reserveIn, uint reserveOut) public view override returns (uint amountOut) {
         return MainLibrary.getAmountOut(_factory, amountIn, reserveIn, reserveOut);
     }
 
-    function getAmountIn(address _factory, uint amountOut, uint reserveIn, uint reserveOut) public override returns (uint amountIn) {
+    function getAmountIn(address _factory, uint amountOut, uint reserveIn, uint reserveOut) public view override returns (uint amountIn) {
         return MainLibrary.getAmountOut(_factory, amountOut, reserveIn, reserveOut);
     }
 
-    function getAmountsOut(uint amountIn, address[] memory path) public override returns (uint[] memory amounts) {
+    function getAmountsOut(uint amountIn, address[] memory path) public view override returns (uint[] memory amounts) {
         return MainLibrary.getAmountsOut(factory, amountIn, path);
     }
 
-    function getAmountsIn(uint amountOut, address[] memory path) public override returns (uint[] memory amounts) {
+    function getAmountsIn(uint amountOut, address[] memory path) public view override returns (uint[] memory amounts) {
         return MainLibrary.getAmountsIn(factory, amountOut, path);
     }
 }
