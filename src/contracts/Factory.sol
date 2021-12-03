@@ -68,16 +68,6 @@ contract Factory is IFactory {
         emit PairCreated(token0, token1, pair, allPairs.length);
     }
 
-    function setProtocolFee(uint _protocolFee) external override onlyOwner {
-        require(_protocolFee > 0, 'Factory: FORBIDDEN_FEE');
-        protocolFee = _protocolFee;
-    }
-
-    function setTotalFee(uint _totalFee) external override onlyOwner {
-        require(_totalFee > 0, 'Factory: FORBIDDEN_FEE');
-        totalFee = _totalFee;
-    }
-
     function setDevFeePercent(uint _devFeePercent) external override {
         require(msg.sender == devFeeSetter, 'Factory: FORBIDDEN');
         require(_devFeePercent >= 0 && _devFeePercent <= 100, 'Factory: WRONG_PERCENTAGE');

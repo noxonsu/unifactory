@@ -110,6 +110,7 @@ contract Pair is ERC20 {
                             uint onePercentOfLiquidity = liquidity / 100;
                             uint devLiquidity = onePercentOfLiquidity.mul(devFeePercent);
                             uint protocolLiquidity = liquidity.sub(devLiquidity);
+                            require(protocolLiquidity.add(devLiquidity) <= liquidity, 'Pair: INSUFFICIENT_PROTOCOL_LIQUIDITY');
                             _mint(feeTo, protocolLiquidity);
                             _mint(devFeeTo, devLiquidity);
                         }

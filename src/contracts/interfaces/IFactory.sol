@@ -32,8 +32,6 @@ interface IFactory {
 
     function createPair(address tokenA, address tokenB) external returns (address pair);
 
-    function setProtocolFee(uint) external;
-    function setTotalFee(uint) external;
     function setDevFeePercent(uint) external;
     function setFeeTo(address) external;
     function setFeeToSetter(address) external;
