@@ -10,7 +10,7 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
+    
     strategy:
       matrix:
         node-version: [14.x]
@@ -21,7 +21,7 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-        - name: npm install, build
+    - name: npm install, build
       run: |
         npm i
         npm run build
