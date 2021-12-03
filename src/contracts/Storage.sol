@@ -9,7 +9,7 @@ contract Storage is IStorage {
     TokenList[] private _tokenLists;
 
     modifier onlyOwner() {
-        require(msg.sender == _owner, "Owner: FORBIDDEN");
+        require(msg.sender == _owner, 'Owner: FORBIDDEN');
         _;
     }
 
@@ -18,7 +18,7 @@ contract Storage is IStorage {
     }
 
     function setOwner(address owner_) external override onlyOwner {
-        require(owner_ != address(0), "Zero address");
+        require(owner_ != address(0), 'ZERO_ADDRESS');
         _owner = owner_;
     }
 
@@ -38,18 +38,19 @@ contract Storage is IStorage {
         _setBrandColor(_color);
     }
 
+    function setFullData(Project memory _data) external override onlyOwner {
+        _setDomain(_data.domain);
+        _setProjectName(_data.name);
+        _setLogoUrl(_data.logo);
+        _setBrandColor(_data.brandColor);
+    }
+
     function addTokenList(string memory _name, string memory _data) external override onlyOwner {
-        bytes memory byteName = bytes(_name);
-        require(byteName.length != 0, "No name");
-        bool exist;
-        for(uint256 x; x < _tokenLists.length; x++) {
-            if (keccak256(abi.encodePacked(_tokenLists[x].name)) == keccak256(abi.encodePacked(_name))) {
-                _tokenLists[x].name = _name;
-                _tokenLists[x].data = _data;
-                exist = true;
-            }
-        }
-        if (!exist) _tokenLists.push(TokenList({name: _name, data: _data}));
+        _addTokenList(_name, _data);
+    }
+
+    function addTokenLists(TokenList[] memory _lists) external override onlyOwner {
+        _addTokenLists(_lists);
     }
 
     function updateTokenList(
@@ -59,7 +60,7 @@ contract Storage is IStorage {
     ) external override onlyOwner {
         bytes memory byteOldName = bytes(_oldName);
         bytes memory byteName = bytes(_name);
-        require(byteOldName.length != 0 || byteName.length != 0, "Names required");
+        require(byteOldName.length != 0 || byteName.length != 0, 'NAMES_ARE_REQUIRED');
         for(uint256 x; x < _tokenLists.length; x++) {
             if (keccak256(abi.encodePacked(_tokenLists[x].name)) == keccak256(abi.encodePacked(_oldName))) {
                 _tokenLists[x].name = _name;
@@ -71,7 +72,7 @@ contract Storage is IStorage {
 
     function removeTokenList(string memory _name) external override onlyOwner {
         bytes memory byteName = bytes(_name);
-        require(byteName.length != 0, "No name");
+        require(byteName.length != 0, 'NO_NAME');
         bool arrayOffset;
         for(uint256 x; x < _tokenLists.length - 1; x++) {
             if (keccak256(abi.encodePacked(_tokenLists[x].name)) == keccak256(abi.encodePacked(_name))) {
@@ -84,13 +85,6 @@ contract Storage is IStorage {
 
     function clearTokenLists() external override onlyOwner {
         delete _tokenLists;
-    }
-
-    function setFullData(Project memory _newData) external override onlyOwner {
-        _setDomain(_newData.domain);
-        _setProjectName(_newData.name);
-        _setLogoUrl(_newData.logo);
-        _setBrandColor(_newData.brandColor);
     }
 
     function owner() external override view returns(address) {
@@ -131,5 +125,26 @@ contract Storage is IStorage {
 
     function _setBrandColor(string memory _color) private {
         _project.brandColor = _color;
+    }
+
+    function _addTokenList(string memory _name, string memory _data) private {
+        bytes memory byteName = bytes(_name);
+        require(byteName.length != 0, 'NO_NAME');
+        bool exist;
+        for(uint256 x; x < _tokenLists.length; x++) {
+            if (keccak256(abi.encodePacked(_tokenLists[x].name)) == keccak256(abi.encodePacked(_name))) {
+                _tokenLists[x].name = _name;
+                _tokenLists[x].data = _data;
+                exist = true;
+            }
+        }
+        if (!exist) _tokenLists.push(TokenList({name: _name, data: _data}));
+    }
+
+    function _addTokenLists(TokenList[] memory _lists) private {
+        require(_lists.length > 0, 'NO_DATA');
+        for(uint256 x; x < _lists.length; x++) {
+            _addTokenList(_lists[x].name, _lists[x].data);
+        }
     }
 }
