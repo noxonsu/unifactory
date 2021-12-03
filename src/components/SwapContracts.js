@@ -134,6 +134,10 @@ export function SwapContracts(props) {
         </InputGroup>
 
         <Form.Label htmlFor="feeRecipient">Fee recipient</Form.Label>
+        <p className="highlightedInfo">
+          The commission is charged if this address is set and is not a zero
+          address.
+        </p>
         <InputGroup className="mb-3">
           <FormControl
             defaultValue={feeRecipient}

@@ -16,7 +16,7 @@ export function InterfaceOptions(props) {
 
   const [notification, setNotification] = useState('')
   const [storage, setStorage] = useState(
-    '0xe69E71944CD14e8D67574688935C07aC5aE272Ca'
+    '0x58733119e4BEdEB914a231f81e94fae7DDe40FBe'
   )
   const [storageIsCorrect, setStorageIsCorrect] = useState(false)
 
@@ -60,11 +60,9 @@ export function InterfaceOptions(props) {
         if (tokenLists.length) {
           setTokenLists([])
 
-          tokenLists.forEach(async (tokenLists, index) => {
-            const list = JSON.parse(tokenLists)
-
-            setTokenLists((oldData) => [...oldData, list])
-          })
+          tokenLists.forEach(async (tokenLists) =>
+            setTokenLists((oldData) => [...oldData, JSON.parse(tokenLists)])
+          )
         }
       }
     } catch (error) {
@@ -102,6 +100,7 @@ export function InterfaceOptions(props) {
         break
       case storageMethods.setFullData:
         value = {
+          domain,
           name: projectName,
           logo: logoUrl,
           brandColor,
@@ -137,10 +136,10 @@ export function InterfaceOptions(props) {
 
   useEffect(() => {
     const fullUpdateIsAvailable =
-      web3React?.active && storage && logoUrl && brandColor && projectName
+      storage && logoUrl && brandColor && !!projectName
 
     setFullUpdateIsAvailable(!!fullUpdateIsAvailable)
-  }, [storage, projectName, logoUrl, brandColor, web3React?.active])
+  }, [storage, projectName, logoUrl, brandColor])
 
   return (
     <section>
@@ -234,6 +233,16 @@ export function InterfaceOptions(props) {
           </Button>
         </InputGroup>
 
+        <div className="d-grid mb-4">
+          <Button
+            pending={pending}
+            onClick={() => saveOption(storageMethods.setFullData)}
+            disabled={!fullUpdateIsAvailable}
+          >
+            Save all project options
+          </Button>
+        </div>
+
         <h5 className="mb-3">Token lists</h5>
 
         <TokenLists
@@ -246,27 +255,11 @@ export function InterfaceOptions(props) {
           setTokenLists={setTokenLists}
         />
 
-        <div className="d-grid">
+        <div className="d-grid mb-3">
           <Button pending={pending} onClick={createNewTokenList}>
             Create a new token list
           </Button>
         </div>
-
-        {/*
-        TODO: it will be difficult to save many token lists at once in the Solidity array.
-        Maybe reset all lists and set it again with updates every time when we want to update
-        all data at once. It's more easier to manipulate theme on the front side
-        */}
-        {/* <div className="d-grid">
-          <Button
-            pending={pending}
-            onClick={() => saveOption(storageMethods.setFullData)}
-            disabled={!fullUpdateIsAvailable}
-            size="lg"
-          >
-            Save all options
-          </Button>
-        </div> */}
       </div>
     </section>
   )
