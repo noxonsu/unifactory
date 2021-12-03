@@ -16,7 +16,7 @@ export function InterfaceOptions(props) {
 
   const [notification, setNotification] = useState('')
   const [storage, setStorage] = useState(
-    '0xe69E71944CD14e8D67574688935C07aC5aE272Ca'
+    '0x8506bd1659f92e9c304a719dC850B597e15eD65b'
   )
   const [storageIsCorrect, setStorageIsCorrect] = useState(false)
 
