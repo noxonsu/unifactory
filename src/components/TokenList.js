@@ -80,9 +80,6 @@ export function TokenList(props) {
   }
 
   const saveTokenList = async () => {
-    // TODO: implement a Storage method for list updating
-    if (!isNewList) return
-
     setError(false)
     setNotification(false)
     setPending(true)
@@ -157,7 +154,7 @@ export function TokenList(props) {
         <Alert variant="warning">No tokens</Alert>
       )}
 
-      <InputGroup className="mb-3">
+      <InputGroup className="mb-3" key={newTokenAddress}>
         <FormControl
           type="text"
           placeholder="Token address"

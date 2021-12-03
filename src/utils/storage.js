@@ -94,23 +94,24 @@ export const fetchOptionsFromContract = async (library, storageAddress) => {
 
       resolve({ ...project, tokenLists })
     } catch (error) {
+      const match = error.message.match(/Returned values aren\'t valid/)
+
+      if (match) {
+        return reject(
+          new Error(
+            'Invalid values. Seems it is a wrong contract address or an address from a different network.'
+          )
+        )
+      }
+
       reject(error)
     }
   })
 }
 
-export const saveProjectOption = async (
-  library,
-  storageAddress,
-  method,
-  value
-) => {
-  const storage = getStorage(library, storageAddress)
-  const accounts = await window.ethereum.request({ method: 'eth_accounts' })
-  let args
-
-  const validTokenList = {
-    name: value.name,
+const returnValidTokenListJSON = (name, tokens) => {
+  return JSON.stringify({
+    name,
     timestamp: getTimestamp(),
     // TODO: track interface changes and change this version
     /* 
@@ -123,8 +124,19 @@ export const saveProjectOption = async (
       minor: 0,
       patch: 0,
     },
-    tokens: value.tokens,
-  }
+    tokens,
+  })
+}
+
+export const saveProjectOption = async (
+  library,
+  storageAddress,
+  method,
+  value
+) => {
+  const storage = getStorage(library, storageAddress)
+  const accounts = await window.ethereum.request({ method: 'eth_accounts' })
+  let args
 
   switch (method) {
     case storageMethods.setDomain:
@@ -140,16 +152,20 @@ export const saveProjectOption = async (
       args = [value]
       break
     case storageMethods.addTokenList:
-      args = [value.name, JSON.stringify(validTokenList)]
+      args = [value.name, returnValidTokenListJSON(value.name, value.tokens)]
       break
     case storageMethods.updateTokenList:
-      args = [value.oldName, value.name, JSON.stringify(validTokenList)]
+      args = [
+        value.oldName,
+        value.name,
+        returnValidTokenListJSON(value.name, value.tokens),
+      ]
       break
     case storageMethods.removeTokenList:
       args = [value]
       break
     case storageMethods.setFullData:
-      args = [{ ...value, tokens: value.tokens.map((item) => item.address) }]
+      args = [{ ...value }]
       break
     default:
       method = ''

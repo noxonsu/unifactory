@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import { Alert, Accordion } from 'react-bootstrap'
 import { TokenList } from './TokenList'
@@ -21,7 +20,7 @@ export function TokenLists(props) {
       {tokenLists?.length ? (
         <Accordion>
           {tokenLists.map((list, index) => {
-            const { name, tokens } = list
+            const { name } = list
 
             return (
               <Accordion.Item

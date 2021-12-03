@@ -21,6 +21,7 @@ const storageMethods = {
   setLogoUrl: 'setLogoUrl',
   setBrandColor: 'setBrandColor',
   addTokenList: 'addTokenList',
+  addTokenLists: 'addTokenLists',
   updateTokenList: 'updateTokenList',
   removeTokenList: 'removeTokenList',
   clearTokenLists: 'clearTokenLists',
