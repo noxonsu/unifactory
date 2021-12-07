@@ -1,5 +1,5 @@
 {
-  "name": "name",
+  "name": "unifactory",
   "version": "0.0.0",
   "private": true,
   "engines": {
@@ -7,7 +7,6 @@
     "npm": "^8.0.0"
   },
   "dependencies": {
-    "@pinata/sdk": "^1.1.23",
     "@testing-library/jest-dom": "^5.15.0",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
