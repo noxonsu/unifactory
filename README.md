@@ -1,4 +1,9 @@
+White Label Exchange Solution on top of lead dex uniswap.org . 
+
 # Installation
+
+## Fastest way. 
+Click here to run own DEX on random subdomain *.onout.xyz https://randomredirect.i4.workers.dev/
 
 ## DNS way. Simple and secured way. Most recommended.
 The only one password you need is your domain registar's password, you don't need a server. app.uniswap.org use the same. 
