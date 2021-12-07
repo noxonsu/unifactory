@@ -17,6 +17,18 @@
     "chainId": 4,
     "wrappedToken": "0xc778417e063141139fce010982780140aa0cd5ab"
   },
+  "5": {
+    "name": "Goerli",
+    "rpc": "https://goerli.infura.io/v3/212957e8adf14bf8aecf82358083e63e",
+    "chainId": 5,
+    "wrappedToken": "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6"
+  },
+  "42": {
+    "name": "Kovan",
+    "rpc": "https://kovan.infura.io/v3/212957e8adf14bf8aecf82358083e63e",
+    "chainId": 42,
+    "wrappedToken": "0xd0A1E359811322d97991E03f863a0C30C2cF029C"
+  },
   "56": {
     "name": "Binance Smart Chain",
     "rpc": "https://bsc-dataseed1.ninicoin.io",
@@ -45,36 +57,31 @@
     "name": "Arbitrum",
     "rpc": "https://arb1.arbitrum.io/rpc",
     "chainId": 42161,
-    "wrappedToken": ""
+    "wrappedToken": "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1"
   },
   "421611": {
     "name": "Arbitrum testnet",
     "rpc": "https://rinkeby.arbitrum.io/rpc",
     "chainId": 421611,
-    "wrappedToken": ""
+    "wrappedToken": "0xB47e6A5f8b33b3F17603C83a0535A9dcD7E32681"
   },
-  "88": {
-    "name": "TomoChain",
-    "rpc": "https://rpc.tomochain.com",
-    "chainId": 88,
-    "wrappedToken": ""
+  "10": {
+    "name": "Optimism",
+    "rpc": "https://mainnet.optimism.io",
+    "chainId": 10,
+    "wrappedToken": "0x4200000000000000000000000000000000000006"
   },
-  "30": {
-    "name": "RSK",
-    "rpc": "https://public-node.rsk.co",
-    "chainId": 30,
-    "wrappedToken": ""
-  },
-  "31": {
-    "name": "RSK Testnet",
-    "rpc": "https://public-node.testnet.rsk.co",
-    "chainId": 31,
-    "wrappedToken": ""
+  "69": {
+    "name": "Optimism Kovan",
+    "rpc": "https://kovan.optimism.io/",
+    "chainId": 69,
+    "wrappedToken": "0x4200000000000000000000000000000000000006"
   },
   "100": {
     "name": "xDAI Chain",
     "rpc": "https://rpc.xdaichain.com",
     "chainId": 100,
+    "possible this address is WETH for xDAI (need to be sure to paste it as a value below)": "0x6A023CCd1ff6F2045C3309768eAd9E68F978f6e1",
     "wrappedToken": ""
   }
 }
