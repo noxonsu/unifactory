@@ -7,7 +7,7 @@ export const injected = new InjectedConnector()
 
 // TODO: make a better interface with the ability to
 // choose between networks and then connect through WalletConnect
-export const walletconnect = new WalletConnectConnector({
+export const walletConnect = new WalletConnectConnector({
   rpc: { 80001: networks[80001].rpc },
   bridge: 'https://bridge.walletconnect.org',
   qrcode: true,

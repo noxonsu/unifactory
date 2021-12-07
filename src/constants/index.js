@@ -1,18 +1,3 @@
-// import networks from '../networks.json'
-
-// const supportedChainIds = Object.values(networks)
-//   .filter((network) => network.wrappedToken !== '')
-//   .map((network) => network.chainId)
-
-const pinataGateway = 'https://gateway.pinata.cloud'
-const pinataApi = 'https://api.pinata.cloud'
-const pinataEndpoints = {
-  generateApiKeys: `${pinataApi}/users/generateApiKey`,
-  ipfs: `${pinataGateway}/ipfs`,
-  pinJSONToIPFS: `${pinataApi}/pinning/pinJSONToIPFS`,
-  pinList: `${pinataApi}/data/pinList`,
-}
-
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 const storageMethods = {
@@ -35,12 +20,4 @@ const factoryMethods = {
   allInfo: 'allInfo',
 }
 
-export {
-  // supportedChainIds,
-  pinataGateway,
-  pinataApi,
-  pinataEndpoints,
-  ZERO_ADDRESS,
-  storageMethods,
-  factoryMethods,
-}
+export { ZERO_ADDRESS, storageMethods, factoryMethods }

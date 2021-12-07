@@ -200,7 +200,7 @@ export function Deployment(props) {
         </Col>
       </Row>
 
-      <Row className="mb-3">
+      <Row className="mb-4">
         <Col className="d-grid">
           <Button
             onClick={onContractsDeployment}
@@ -222,6 +222,12 @@ export function Deployment(props) {
         </Col>
       </Row>
 
+      <h5>Deployment information</h5>
+      <p className="highlightedInfo">
+        You can see the latest information about deployed contracts below. Don't
+        forget to save it.
+      </p>
+
       {typeof deploymentProcessPercent === 'number' && (
         <ProgressBar
           animated
@@ -231,6 +237,7 @@ export function Deployment(props) {
         />
       )}
 
+      {/* TODO: display a Pair contract hash too*/}
       {factoryAddress && (
         <Alert variant="success">
           <strong>Factory</strong>: {factoryAddress}

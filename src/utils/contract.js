@@ -1,5 +1,4 @@
 import TokenAbi from 'human-standard-token-abi'
-import networks from '../networks.json'
 import FactoryJson from '../contracts/build/Factory.json'
 import RouterV2Json from '../contracts/build/RouterV2.json'
 import Storage from '../contracts/build/Storage.json'
@@ -97,6 +96,10 @@ export const deploySwapContracts = async (params) => {
   })
 
   if (factoryInstance) {
+    // TODO: display it in the interface
+    const hash = await factoryInstance.methods.INIT_CODE_PAIR_HASH().call()
+    log(`INIT_CODE_PAIR_HASH: ${hash}`)
+
     await deployRouter({
       onDeploy: onRouterDeploy,
       library,

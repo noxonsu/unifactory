@@ -9,10 +9,7 @@ export function SwapContracts(props) {
   const { pending, setPending, setError } = props
   const web3React = useWeb3React()
 
-  // router 0xdAb9D87d5f6304Dc3eC1536A234Cc361766A6F86
-  const [factory, setFactory] = useState(
-    '0x91aC81e40e3c1108687f339079A985d90019439e'
-  )
+  const [factory, setFactory] = useState('')
   const [factoryIsCorrect, setFactoryIsCorrect] = useState(false)
 
   useEffect(() => {

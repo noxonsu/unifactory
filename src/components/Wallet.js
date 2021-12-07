@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import networks from '../networks.json'
 import { Button, ListGroup, Alert, Row, Col } from 'react-bootstrap'
-import { injected, walletconnect } from '../utils'
+import { injected, walletConnect } from '../utils'
 
 export function Wallet(props) {
   const { activateWallet, pending } = props
@@ -22,7 +22,7 @@ export function Wallet(props) {
       name: 'Connect Metamask',
     },
     {
-      connector: walletconnect,
+      connector: walletConnect,
       name: 'WalletConnect',
     },
   ]

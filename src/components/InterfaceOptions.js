@@ -15,9 +15,7 @@ export function InterfaceOptions(props) {
   const web3React = useWeb3React()
 
   const [notification, setNotification] = useState('')
-  const [storage, setStorage] = useState(
-    '0x58733119e4BEdEB914a231f81e94fae7DDe40FBe'
-  )
+  const [storage, setStorage] = useState('')
   const [storageIsCorrect, setStorageIsCorrect] = useState(false)
 
   const updateStorageContract = (event) => setStorage(event.target.value)
