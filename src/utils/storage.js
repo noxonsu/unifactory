@@ -57,9 +57,12 @@ export const fetchOptionsFromContract = async (library, storageAddress) => {
   })
 }
 
-const returnValidTokenListJSON = (name, tokens) => {
+const returnValidTokenListJSON = (params) => {
+  const { name, tokens, logoURI } = params
+
   return JSON.stringify({
     name,
+    logoURI,
     timestamp: getTimestamp(),
     // TODO: track interface changes and change this version
     /* 
@@ -100,14 +103,10 @@ export const saveProjectOption = async (
       args = [value]
       break
     case storageMethods.addTokenList:
-      args = [value.name, returnValidTokenListJSON(value.name, value.tokens)]
+      args = [value.name, returnValidTokenListJSON(value)]
       break
     case storageMethods.updateTokenList:
-      args = [
-        value.oldName,
-        value.name,
-        returnValidTokenListJSON(value.name, value.tokens),
-      ]
+      args = [value.oldName, value.name, returnValidTokenListJSON(value)]
       break
     case storageMethods.removeTokenList:
       args = [value]
