@@ -114,7 +114,7 @@ export function TokenList(props) {
   return (
     <section className="d-grid">
       <InputGroup className="mb-3">
-        <InputGroup.Text>List name</InputGroup.Text>
+        <InputGroup.Text>List name *</InputGroup.Text>
         <FormControl
           type="text"
           defaultValue={tokenListName}
