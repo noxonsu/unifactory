@@ -17,11 +17,13 @@ export function TokenList(props) {
     isNewList,
   } = props
   const [tokenListName, setTokenListName] = useState(list.name || '')
+  const [tokenListLogo, setTokenListLogo] = useState(list.logoURI || '')
   const [tokens, setTokens] = useState(list.tokens || [])
   const [newTokenAddress, setNewTokenAddress] = useState('')
   const [tokenAddressIsCorrect, setTokenAddressIsCorrect] = useState(true)
 
   const updateTokenListName = (event) => setTokenListName(event.target.value)
+  const updateTokenListLogo = (event) => setTokenListLogo(event.target.value)
   const updateTokenAddress = (event) => setNewTokenAddress(event.target.value)
 
   useEffect(() => {
@@ -94,6 +96,7 @@ export function TokenList(props) {
         {
           oldName: list.name,
           name: tokenListName,
+          logoURI: tokenListLogo,
           tokens,
         }
       )
@@ -111,11 +114,19 @@ export function TokenList(props) {
   return (
     <section className="d-grid">
       <InputGroup className="mb-3">
-        <InputGroup.Text>List name</InputGroup.Text>
+        <InputGroup.Text>List name *</InputGroup.Text>
         <FormControl
           type="text"
           defaultValue={tokenListName}
           onChange={updateTokenListName}
+        />
+      </InputGroup>
+      <InputGroup className="mb-3">
+        <InputGroup.Text>List logo</InputGroup.Text>
+        <FormControl
+          type="text"
+          defaultValue={tokenListLogo}
+          onChange={updateTokenListLogo}
         />
       </InputGroup>
 

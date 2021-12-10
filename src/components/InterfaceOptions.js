@@ -75,6 +75,7 @@ export function InterfaceOptions(props) {
       ...oldData,
       {
         name: 'Template list',
+        logoURI: '',
         tokens: [],
       },
     ])
