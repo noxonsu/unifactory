@@ -23,10 +23,9 @@ Click here to run your own DEX on random subdomain \*.onout.xyz https://randomre
 
 The only password you need is your domain registrar's password, you don't need a server. app.uniswap.org uses the same.
 
-1. log in to your domain provider (where you have registered domain name)
-2. Open DNS setting of your domain and add CNAME record `your.domain` - `https://cloudflare-ipfs.com/` (see how to do this in your registar: [GoDaddy](https://www.google.com/search?q=how+to+add+cname+in+godaddy), [Namecheap](https://www.google.com/search?q=how+to+add+cname+in+Namecheap), [Cloudflare](https://www.google.com/search?q=how+to+add+cname+in+Cloudflare)
-   )
-3. TXT record for `_dnslink.your.website` with the value `dnslink=/ipfs/QmUh7FY9391Gya8tW7wK6Haz14n9eompxUQm4QmfDDhH7K`
+1. Log in to your domain provider (where you have registered domain name)
+2. Open DNS settings of your domain and add a **CNAME** record: `your.domain` with the value `https://cloudflare-ipfs.com/` (see how to do this in your registar: [GoDaddy](https://www.google.com/search?q=how+to+add+cname+in+godaddy), [Namecheap](https://www.google.com/search?q=how+to+add+cname+in+Namecheap), [Cloudflare](https://www.google.com/search?q=how+to+add+cname+in+Cloudflare))
+3. Add a **TXT** record: `_dnslink.your.domain` with the value `dnslink=/ipfs/QmbYDPjGJTCYck1xRJhuxRMM6ofTznDrM6MRfcXtoc69Rd`
 
 That's it! Now open your domain and you'll see the installation master!
 
