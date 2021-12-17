@@ -197,7 +197,7 @@ export function InterfaceOptions(props: any) {
         </ButtonPrimary>
 
         <ButtonPrimary onClick={() => saveOption(storageMethods.setFullData)} disabled={!fullUpdateIsAvailable}>
-          {t('saveAllOptions')}
+          {t('saveAllSettings')}
         </ButtonPrimary>
 
         <h4>{t('tokenLists')}</h4>

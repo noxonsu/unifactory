@@ -143,7 +143,7 @@ export default function Panel() {
       <Tabs>
         <Tab onClick={() => setTab('deployment')}>{t('deployment')}</Tab>
         <Tab onClick={() => setTab('contracts')}>{t('swapContracts')}</Tab>
-        <Tab onClick={() => setTab('interface')}>{t('unterfaceOptions')}</Tab>
+        <Tab onClick={() => setTab('interface')}>{t('interfaceOptions')}</Tab>
       </Tabs>
 
       <Content>

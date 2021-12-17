@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { PaddedColumn, Separator } from './styleds'
 import { RowBetween } from 'components/Row'
 import { ArrowLeft } from 'react-feather'
@@ -54,6 +55,7 @@ export default function Manage({
   setImportList: (list: TokenList) => void
   setListUrl: (url: string) => void
 }) {
+  const { t } = useTranslation()
   // toggle between tokens and lists
   const [showLists, setShowLists] = useState(true)
 
@@ -63,7 +65,7 @@ export default function Manage({
         <RowBetween>
           <ArrowLeft style={{ cursor: 'pointer' }} onClick={() => setModalView(CurrencyModalView.search)} />
           <Text fontWeight={500} fontSize={20}>
-            Manage
+            {t('manage')}
           </Text>
           <CloseIcon onClick={onDismiss} />
         </RowBetween>
@@ -72,10 +74,10 @@ export default function Manage({
       <PaddedColumn style={{ paddingBottom: 0 }}>
         <ToggleWrapper>
           <ToggleOption onClick={() => setShowLists(!showLists)} active={showLists}>
-            Lists
+            {t('lists')}
           </ToggleOption>
           <ToggleOption onClick={() => setShowLists(!showLists)} active={!showLists}>
-            Tokens
+            {t('tokens')}
           </ToggleOption>
         </ToggleWrapper>
       </PaddedColumn>

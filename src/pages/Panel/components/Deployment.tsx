@@ -143,7 +143,7 @@ export function Deployment(props: any) {
 
       <InputWrapper>
         <InputPanel
-          label="Domain *"
+          label={`${t('domain')} *`}
           value={domain}
           onChange={setDomain}
           // TODO: add the ability to change domain?
@@ -151,14 +151,9 @@ export function Deployment(props: any) {
         />
       </InputWrapper>
 
-      <AddressInputPanel label="Admin *" value={adminAddress} onChange={setAdminAddress} />
+      <AddressInputPanel label={`${t('admin')} *`} value={adminAddress} onChange={setAdminAddress} />
 
-      <Info>
-        {t('wrappedTokenDescription')}
-        {/* Wrapped token - ERC20 token that represents a native EVM network currency (ETH, BNB, MATIC, etc.). In order the
-        native currency to be exchanged with other ERC20 tokens, it needs to be wrapped. Wrapping the native currency
-        does not affect its value. For example 1 ETH = 1 WETH. */}
-      </Info>
+      <Info>{t('wrappedTokenDescription')}</Info>
       <AddressInputPanel
         label={`${t('wrappedToken')} *`}
         disabled={
@@ -182,14 +177,11 @@ export function Deployment(props: any) {
       </Button>
 
       <h4>{t('deploymentInformation')}</h4>
-      <Info>
-        {t('deploymentInformation')}
-        {/* You can see the latest information about deployed contracts below. Don't forget to save it. */}
-      </Info>
+      <Info>{t('deploymentInformationDescription')}</Info>
 
       {factoryAddress && (
         <p>
-          <strong>{t('dactory')}</strong>: {factoryAddress}
+          <strong>{t('factory')}</strong>: {factoryAddress}
         </p>
       )}
       {routerAddress && (

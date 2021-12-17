@@ -100,7 +100,7 @@ export function SwapContracts(props: any) {
 
   return (
     <section>
-      <AddressInputPanel label="Factory contract *" value={factory} onChange={setFactory} />
+      <AddressInputPanel label={`${t('factoryAddress')} *`} value={factory} onChange={setFactory} />
       <Button
         onClick={fetchContractOptions}
         // pending={pending}
@@ -108,20 +108,16 @@ export function SwapContracts(props: any) {
       >
         {t('fetchOptions')}
       </Button>
-      {/* You can use the same address for both inputs. */}
       <Info>{t('youCanUseTheSameAddressForBoothInputs')}</Info>
 
       <div className={`${!factoryIsCorrect || pending ? 'disabled' : ''}`}>
-        <AddressInputPanel label="New admin" value={admin} onChange={setAdmin} />
+        <AddressInputPanel label={`${t('newAdmin')}`} value={admin} onChange={setAdmin} />
         <Button onClick={() => saveOption(factoryMethods.setFeeToSetter)} disabled={!admin}>
           {t('save')}
         </Button>
 
-        <Info>
-          {t('feeIsChargedWhen')}
-          {/* The commission is charged if this address is set and is not a zero address */}
-        </Info>
-        <AddressInputPanel label="Fee recipient" value={feeRecipient} onChange={setFeeRecipient} />
+        <Info>{t('feeIsChargedWhen')}</Info>
+        <AddressInputPanel label={`${t('feeRecipient')}`} value={feeRecipient} onChange={setFeeRecipient} />
         <Button onClick={() => saveOption(factoryMethods.setFeeTo)} disabled={!feeRecipient}>
           {t('save')}
         </Button>
@@ -129,7 +125,6 @@ export function SwapContracts(props: any) {
         <label>
           <input type="checkbox" onChange={updateFeesToAdmin} />
           {t('allFeesToAdmin')}
-          {/* All fees to the admin (no fees for liquidity providers) */}
         </label>
         <Button onClick={() => saveOption(factoryMethods.setAllFeeToProtocol)} disabled={!factoryIsCorrect}>
           {t('save')}
