@@ -31,7 +31,7 @@ That's it! Now open your domain and you'll see the installation master!
 
 ### Preview
 
-<img src="./images/interface.png">
+<!-- <img src="./images/interface.png"> -->
 
 ---
 
