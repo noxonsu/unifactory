@@ -69,7 +69,7 @@ const HeaderRow = styled(RowFixed)`
   `};
 `
 
-const HeaderLinks = styled(Row)`
+const InternalLinks = styled(Row)`
   width: auto;
   margin: 0 auto;
   padding: 0.3rem;
@@ -87,14 +87,13 @@ const HeaderLinks = styled(Row)`
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     position: fixed;
+    margin-left: 0;
     bottom: 0;
-    padding: .5rem;
-    width: 80%;
-    left: 50%;
-    transform: translateX(-50%);
+    padding: 0.6rem;
+    width: 100%;
+    left: 0%;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
-    border-top: 1px solid ${({ theme }) => theme.bg3};
   `};
 `
 
@@ -141,7 +140,7 @@ const NetworkCard = styled(LightCard)`
 `
 
 const BalanceText = styled(Text)`
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     display: none;
   `};
 `
@@ -200,11 +199,14 @@ const StyledNavLink = styled(NavLink).attrs({
   }
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
+    max-width: 10rem;
     width: 100%;
+    padding: 0.4rem 6%;
     display: flex;
     align-items: center;
     justify-content: center;
     border: 1px solid ${({ theme }) => theme.bg3};
+    font-size: 1.1em;
   `};
 `
 
@@ -224,7 +226,7 @@ export default function Header() {
         </Title>
       </HeaderRow>
 
-      <HeaderLinks>
+      <InternalLinks>
         <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
           {t('swap')}
         </StyledNavLink>
@@ -241,7 +243,7 @@ export default function Header() {
         >
           {t('pool')}
         </StyledNavLink>
-      </HeaderLinks>
+      </InternalLinks>
 
       <HeaderControls>
         <HeaderElement>

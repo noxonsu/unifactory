@@ -38,7 +38,7 @@ export const retrieveDomainData = createAction<{ admin: string; factory: string;
 
 export const updateAppData = createAction<{
   domain: string
-  name: string
+  projectName: string
   brandColor: string
   logo: string
   tokenLists: string[]

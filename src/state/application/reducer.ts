@@ -71,7 +71,7 @@ export default createReducer(initialState, (builder) =>
       state.storage = storage
     })
     .addCase(updateAppData, (state, action) => {
-      const { domain, name, brandColor, logo, tokenLists, socialLinks } = action.payload
+      const { domain, projectName, brandColor, logo, tokenLists, socialLinks } = action.payload
       const validLists: any = []
 
       if (tokenLists.length) {
@@ -101,7 +101,7 @@ export default createReducer(initialState, (builder) =>
       }
 
       state.domain = domain
-      state.projectName = name
+      state.projectName = projectName
       state.brandColor = brandColor
       state.logo = logo
       state.tokenLists = validLists

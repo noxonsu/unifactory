@@ -1,46 +1,46 @@
 import React, { useContext, useCallback } from 'react'
 import styled, { ThemeContext } from 'styled-components'
-import useENS from '../../hooks/useENS'
-import { useActiveWeb3React } from '../../hooks'
-import { ExternalLink, TYPE } from '../../theme'
+import { TYPE } from '../../theme'
 import { AutoColumn } from '../Column'
-import { RowBetween } from '../Row'
-import { getExplorerLink } from '../../utils'
 
 const InputPanel = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
   position: relative;
   border-radius: 1.25rem;
-  background-color: ${({ theme }) => theme.bg1};
   z-index: 1;
   width: 100%;
 `
 
-const ContainerRow = styled.div<{ error: boolean }>`
+const Label = styled.div`
+  font-size: 1.1em;
+  margin: 0.2rem 0;
+  padding: 0.2rem 0;
+`
+
+const ContainerRow = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 1.25rem;
-  border: 1px solid ${({ error, theme }) => (error ? theme.red1 : theme.bg3)};
-  transition: border-color 300ms ${({ error }) => (error ? 'step-end' : 'step-start')},
-    color 500ms ${({ error }) => (error ? 'step-end' : 'step-start')};
+  border: 1px solid ${({ theme }) => theme.bg3};
+  transition: border-color 300ms step-start, color 500ms step-start;
   background-color: ${({ theme }) => theme.bg1};
 `
 
 const InputContainer = styled.div`
   flex: 1;
-  padding: 1rem;
+  padding: 0.6rem;
 `
 
-const Input = styled.input<{ error?: boolean; disabled: boolean }>`
-  font-size: 1.25rem;
+const Input = styled.input<{ disabled: boolean }>`
+  font-size: 1.15rem;
   outline: none;
   border: none;
   flex: 1 1 auto;
   width: 0;
   background-color: ${({ theme }) => theme.bg1};
-  transition: color 300ms ${({ error }) => (error ? 'step-end' : 'step-start')};
-  color: ${({ error, theme }) => (error ? theme.red1 : theme.text1)};
+  transition: color 300ms step-start;
+  color: ${({ theme }) => theme.text1};
   overflow: hidden;
   text-overflow: ellipsis;
   font-weight: 500;
@@ -71,21 +71,14 @@ export default function AddressInputPanel({
   disabled = false,
   value,
   onChange,
-  placeholder,
 }: {
   id?: string
   label?: string
   disabled?: boolean
-  placeholder?: boolean | undefined
-  // the typed string value
   value: string
-  // triggers whenever the typed value changes
   onChange: (value: string) => void
 }) {
-  const { chainId } = useActiveWeb3React()
   const theme = useContext(ThemeContext)
-
-  const { address, loading, name } = useENS(value)
 
   const handleInput = useCallback(
     (event) => {
@@ -96,34 +89,26 @@ export default function AddressInputPanel({
     [onChange]
   )
 
-  const error = Boolean(value.length > 0 && !loading && !address)
-
   return (
     <InputPanel id={id}>
-      <ContainerRow error={error}>
+      {label && (
+        <Label>
+          <TYPE.black color={theme.text2} fontWeight={500} fontSize={14}>
+            {label}
+          </TYPE.black>
+        </Label>
+      )}
+      <ContainerRow>
         <InputContainer>
           <AutoColumn gap="md">
-            <RowBetween>
-              <TYPE.black color={theme.text2} fontWeight={500} fontSize={14}>
-                {label || 'Recipient'}
-              </TYPE.black>
-              {address && chainId && (
-                <ExternalLink href={getExplorerLink(chainId, name ?? address, 'address')} style={{ fontSize: '14px' }}>
-                  (View in Explorer)
-                </ExternalLink>
-              )}
-            </RowBetween>
             <Input
               disabled={disabled}
-              className="recipient-address-input"
               type="text"
               autoComplete="off"
               autoCorrect="off"
               autoCapitalize="off"
               spellCheck="false"
-              placeholder={placeholder ? 'Wallet Address or ENS name' : undefined}
-              error={error}
-              pattern="^(0x[a-fA-F0-9]{40})$"
+              placeholder="..."
               onChange={disabled ? () => {} : handleInput}
               value={value}
             />

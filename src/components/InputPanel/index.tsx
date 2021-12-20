@@ -36,7 +36,7 @@ const Input = styled.input<{ disabled: boolean }>`
   width: 0;
   background-color: ${({ theme }) => theme.bg1};
   transition: color 300ms step-start;
-  color: ${({ theme }) => theme.primary1};
+  color: ${({ theme }) => theme.text1};
   overflow: hidden;
   text-overflow: ellipsis;
   font-weight: 500;

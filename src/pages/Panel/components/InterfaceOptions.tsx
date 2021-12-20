@@ -5,6 +5,7 @@ import { ZERO_ADDRESS } from 'sdk'
 import { useActiveWeb3React } from 'hooks'
 import { useRegistryContract } from 'hooks/useContract'
 import useDomainInfo from 'hooks/useDomainInfo'
+import { HuePicker } from 'react-color'
 import { ButtonPrimary } from 'components/Button'
 import { TokenLists } from './TokenLists'
 import InputPanel from 'components/InputPanel'
@@ -18,10 +19,26 @@ const InputWrapper = styled.div`
   margin: 0.2rem 0;
 `
 
+const ColorWrapper = styled(InputWrapper)`
+  padding: 0.4rem;
+`
+
 const Button = styled(ButtonPrimary)`
   font-size: 0.8em;
   margin-top: 0.3rem;
 `
+
+const Title = styled.h3`
+  font-weight: 400;
+`
+
+const colorPickerStyles = {
+  default: {
+    picker: {
+      width: '100%',
+    },
+  },
+}
 
 export function InterfaceOptions(props: any) {
   const { pending, setPending, setError } = props
@@ -81,10 +98,10 @@ export function InterfaceOptions(props: any) {
   const [projectName, setProjectName] = useState('')
   const [logoUrl, setLogoUrl] = useState('')
   const [brandColor, setBrandColor] = useState('')
-  const [socialLinks, setSocialLinks] = useState<string[]>([])
+  const [socialLinks, setSocialLinks] = useState<string>('')
   const [tokenLists, setTokenLists] = useState<any>([])
 
-  const updateBrandColor = (event: any) => setBrandColor(event.target.value)
+  const updateBrandColor = (color: { hex: string }) => setBrandColor(color.hex)
 
   const fetchProjectOptions = async () => {
     setPending(true)
@@ -95,10 +112,10 @@ export function InterfaceOptions(props: any) {
 
       if (data) {
         const { strSettings, tokenLists } = data
-        const { name, logo, brandColor, socialLinks } = JSON.parse(strSettings)
+        const { projectName, logoUrl, brandColor, socialLinks } = JSON.parse(strSettings)
 
-        if (name) setProjectName(name)
-        if (logo) setLogoUrl(logo)
+        if (projectName) setProjectName(projectName)
+        if (logoUrl) setLogoUrl(logoUrl)
         if (brandColor) setBrandColor(brandColor)
         if (socialLinks) setSocialLinks(socialLinks)
         if (tokenLists.length) {
@@ -122,11 +139,13 @@ export function InterfaceOptions(props: any) {
     setPending(true)
 
     try {
+      const socialLinksArr = socialLinks ? socialLinks.split(',') : []
+
       const settings = {
         projectName,
         logoUrl,
         brandColor,
-        socialLinks,
+        socialLinks: socialLinksArr,
       }
       const receipt: any = await saveProjectOption(
         //@ts-ignore
@@ -178,22 +197,26 @@ export function InterfaceOptions(props: any) {
 
       <div className={`${pending || !storageIsCorrect ? 'disabled' : ''}`}>
         <InputWrapper>
-          <InputPanel label="Project name" value={projectName} onChange={setProjectName} />
+          <InputPanel label={`${t('projectName')}`} value={projectName} onChange={setProjectName} />
         </InputWrapper>
 
         <InputWrapper>
-          <InputPanel label="Logo url" value={logoUrl} onChange={setLogoUrl} />
+          <InputPanel label={`${t('logoUrl')}`} value={logoUrl} onChange={setLogoUrl} />
         </InputWrapper>
 
         <InputWrapper>
-          <input type="color" defaultValue={brandColor} title="Brand color" onChange={updateBrandColor} />
+          <InputPanel label={`${t('socialLinks')}`} value={socialLinks} onChange={setSocialLinks} />
         </InputWrapper>
+
+        <ColorWrapper>
+          <HuePicker color={brandColor} onChangeComplete={updateBrandColor} styles={colorPickerStyles} />
+        </ColorWrapper>
 
         <Button onClick={saveSettings} disabled={!fullUpdateIsAvailable}>
           {t('saveSettings')}
         </Button>
 
-        <h4>{t('tokenLists')}</h4>
+        <Title>{t('tokenLists')}</Title>
 
         <TokenLists
           storage={storage}
