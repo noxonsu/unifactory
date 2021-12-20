@@ -21,6 +21,7 @@ const Title = styled.h4`
 
 const Button = styled(ButtonPrimary)`
   font-size: 0.8em;
+  margin-top: 0.3rem;
 `
 
 const InputWrapper = styled.div`
@@ -207,22 +208,6 @@ export function Deployment(props: any) {
           </p>
         ) : null
       })}
-
-      {/* {factoryAddress && (
-        <p>
-          <strong>{t('factory')}</strong>: {factoryAddress}
-        </p>
-      )}
-      {routerAddress && (
-        <p>
-          <strong>{t('router')}</strong>: {routerAddress}
-        </p>
-      )}
-      {storageAddress && (
-        <p>
-          <strong>{t('storage')}</strong>: {storageAddress}
-        </p>
-      )} */}
     </section>
   )
 }

@@ -12,7 +12,7 @@ import { colors } from 'theme'
 
 const Wrapper = styled.section`
   width: 100%;
-  padding: 10vh 0 3rem;
+  padding: 6vh 0 3rem;
   display: flex;
   flex-direction: column;
   align-items: center;

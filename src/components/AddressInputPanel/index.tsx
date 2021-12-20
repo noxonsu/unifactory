@@ -21,7 +21,7 @@ const ContainerRow = styled.div<{ error: boolean }>`
   justify-content: center;
   align-items: center;
   border-radius: 1.25rem;
-  border: 1px solid ${({ error, theme }) => (error ? theme.red1 : theme.bg2)};
+  border: 1px solid ${({ error, theme }) => (error ? theme.red1 : theme.bg3)};
   transition: border-color 300ms ${({ error }) => (error ? 'step-end' : 'step-start')},
     color 500ms ${({ error }) => (error ? 'step-end' : 'step-start')};
   background-color: ${({ theme }) => theme.bg1};
@@ -71,10 +71,12 @@ export default function AddressInputPanel({
   disabled = false,
   value,
   onChange,
+  placeholder,
 }: {
   id?: string
   label?: string
   disabled?: boolean
+  placeholder?: boolean | undefined
   // the typed string value
   value: string
   // triggers whenever the typed value changes
@@ -119,7 +121,7 @@ export default function AddressInputPanel({
               autoCorrect="off"
               autoCapitalize="off"
               spellCheck="false"
-              placeholder="Wallet Address or ENS name"
+              placeholder={placeholder ? 'Wallet Address or ENS name' : undefined}
               error={error}
               pattern="^(0x[a-fA-F0-9]{40})$"
               onChange={disabled ? () => {} : handleInput}

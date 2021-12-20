@@ -4,7 +4,8 @@ import styled from 'styled-components'
 import { MdArrowBack } from 'react-icons/md'
 import { shortenAddress } from 'utils'
 import networks from '../../networks.json'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { AppState } from 'state'
 import { useTranslation } from 'react-i18next'
 import { setAppManagement } from 'state/application/actions'
 import { CleanButton } from 'components/Button'
@@ -25,14 +26,11 @@ const HeaderButtons = styled.div`
 
 const BackButton = styled(CleanButton)`
   flex-basis: 14%;
-  padding: 10px;
+  margin-right: 2%;
+  padding: 11px;
   border: 1px solid ${({ theme }) => theme.primary4};
   border-radius: 12px;
   color: ${({ theme }) => theme.primary1};
-`
-
-const WalletWrapper = styled.div`
-  flex-basis: 84%;
 `
 
 const NetworkInfo = styled.div`
@@ -84,6 +82,10 @@ export default function Panel() {
   const { chainId, account } = useActiveWeb3React()
   const [error, setError] = useState<any | false>(false)
 
+  const appManagement = useSelector<AppState, AppState['application']['appManagement']>(
+    (state) => state.application.appManagement
+  )
+
   const [wrappedToken, setWrappedToken] = useState('')
 
   useEffect(() => {
@@ -105,12 +107,12 @@ export default function Panel() {
   return (
     <Wrapper>
       <HeaderButtons>
-        <BackButton onClick={backToApp}>
-          <MdArrowBack />
-        </BackButton>
-        <WalletWrapper>
-          <Wallet setPending={setPending} setError={setError} pending={pending} />
-        </WalletWrapper>
+        {appManagement && (
+          <BackButton onClick={backToApp}>
+            <MdArrowBack />
+          </BackButton>
+        )}
+        <Wallet setPending={setPending} setError={setError} pending={pending} />
       </HeaderButtons>
 
       <NetworkInfo>

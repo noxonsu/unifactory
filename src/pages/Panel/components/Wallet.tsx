@@ -1,8 +1,13 @@
 import React, { useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 import { ButtonSecondary } from 'components/Button'
 import { useActiveWeb3React } from 'hooks'
 import { injected } from 'utils/wallet'
+
+const Wrapper = styled.div`
+  width: 100%;
+`
 
 export function Wallet(props: any) {
   const { setPending, setError } = props
@@ -32,8 +37,8 @@ export function Wallet(props: any) {
   const disconnect = () => deactivate()
 
   return (
-    <section>
+    <Wrapper>
       <ButtonSecondary onClick={disconnect}>{t('disconnect')}</ButtonSecondary>
-    </section>
+    </Wrapper>
   )
 }

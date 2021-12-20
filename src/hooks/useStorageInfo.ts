@@ -14,7 +14,7 @@ type Data = {
   tokenLists: string[]
 } & Settings
 
-const parseSettings = (settings: string): Settings => {
+export const parseSettings = (settings: string): Settings => {
   let domain: string = ''
   let projectName: string = ''
   let brandColor: string = ''
@@ -28,14 +28,14 @@ const parseSettings = (settings: string): Settings => {
         domain: _domain,
         projectName: _projectName,
         brandColor: _brandColor,
-        logo: _logo,
+        logoUrl: _logoUrl,
         socialLinks: _socialLinks,
       } = settingsJSON
 
       if (_domain) domain = _domain
       if (_projectName) projectName = _projectName
       if (_brandColor) brandColor = _brandColor
-      if (_logo) logo = _logo
+      if (_logoUrl) logo = _logoUrl
       if (Array.isArray(_socialLinks) && _socialLinks.length) socialLinks = _socialLinks
     }
   } catch (error) {

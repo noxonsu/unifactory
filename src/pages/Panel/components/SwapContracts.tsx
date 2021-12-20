@@ -14,6 +14,10 @@ const Info = styled.p`
   opacity: 0.6;
 `
 
+const InputWrapper = styled.div`
+  margin: 0.2rem 0;
+`
+
 const Button = styled(ButtonPrimary)`
   padding: 0.8rem;
   margin-top: 0.3rem;
@@ -100,7 +104,9 @@ export function SwapContracts(props: any) {
 
   return (
     <section>
-      <AddressInputPanel label={`${t('factoryAddress')} *`} value={factory} onChange={setFactory} />
+      <InputWrapper>
+        <AddressInputPanel label={`${t('factoryAddress')} *`} value={factory} onChange={setFactory} />
+      </InputWrapper>
       <Button
         onClick={fetchContractOptions}
         // pending={pending}

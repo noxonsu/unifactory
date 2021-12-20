@@ -200,5 +200,6 @@
   "availableNetworks": "Available networks",
   "toGetStartedConnectWallet": "To get started, connect your wallet",
   "pleaseChangeWrongNetwork": "Please switch your network or connect to the appropriate network",
-  "noInfo": "No information"
+  "noInfo": "No information",
+  "saveSettings": "Save settings"
 }

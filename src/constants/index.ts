@@ -7,16 +7,12 @@ import {
 } from '../connectors'
 
 export const storageMethods = {
-  setDomain: 'setDomain',
-  setProjectName: 'setProjectName',
-  setLogoUrl: 'setLogoUrl',
-  setBrandColor: 'setBrandColor',
+  setSettings: 'setSettings',
   addTokenList: 'addTokenList',
   addTokenLists: 'addTokenLists',
   updateTokenList: 'updateTokenList',
   removeTokenList: 'removeTokenList',
   clearTokenLists: 'clearTokenLists',
-  setFullData: 'setFullData',
 }
 
 export const factoryMethods = {

@@ -39,10 +39,10 @@ export const fetchOptionsFromContract = async (library: Web3Provider, storageAdd
 
   return new Promise(async (resolve, reject) => {
     try {
-      const project = await storage.methods.project().call()
+      const strSettings = await storage.methods.settings().call()
       const tokenLists = await storage.methods.tokenLists().call()
 
-      resolve({ ...project, tokenLists })
+      resolve({ strSettings: strSettings || '{}', tokenLists })
     } catch (error) {
       const match = error.message.match(/Returned values aren't valid/)
 
@@ -86,16 +86,7 @@ export const saveProjectOption = async (library: Web3Provider, storageAddress: s
   let args: any
 
   switch (method) {
-    case storageMethods.setDomain:
-      args = [value]
-      break
-    case storageMethods.setProjectName:
-      args = [value]
-      break
-    case storageMethods.setLogoUrl:
-      args = [value]
-      break
-    case storageMethods.setBrandColor:
+    case storageMethods.setSettings:
       args = [value]
       break
     case storageMethods.addTokenList:
@@ -106,9 +97,6 @@ export const saveProjectOption = async (library: Web3Provider, storageAddress: s
       break
     case storageMethods.removeTokenList:
       args = [value]
-      break
-    case storageMethods.setFullData:
-      args = [{ ...value }]
       break
     default:
       method = ''

@@ -18,7 +18,7 @@ const ContainerRow = styled.div`
   justify-content: center;
   align-items: center;
   border-radius: 1.25rem;
-  border: 1px solid ${({ theme }) => theme.bg2};
+  border: 1px solid ${({ theme }) => theme.bg3};
   transition: border-color 300ms step-start, color 500ms step-start;
   background-color: ${({ theme }) => theme.bg1};
 `
