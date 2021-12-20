@@ -85,22 +85,11 @@ export default function Panel() {
   const [error, setError] = useState<any | false>(false)
 
   const [wrappedToken, setWrappedToken] = useState('')
-  const [problemWithNetwork, setProblemWithNetwork] = useState('')
 
   useEffect(() => {
     if (chainId) {
       //@ts-ignore
-      if (networks[chainId]?.wrappedToken?.address) {
-        setProblemWithNetwork('')
-        //@ts-ignore
-        setWrappedToken(networks[chainId].wrappedToken.address)
-      } else {
-        setWrappedToken('')
-        setProblemWithNetwork(
-          `We do not have wrapped token address for this network. Without it you can NOT deploy swap contracts.
-          Switch to a different network or enter it manually.`
-        )
-      }
+      setWrappedToken(networks[chainId].wrappedToken.address)
     }
   }, [chainId])
 
@@ -135,8 +124,6 @@ export default function Panel() {
           {error?.message}
         </Error>
       )}
-
-      {problemWithNetwork && <p>{problemWithNetwork}</p>}
 
       <p>* {t('requiredField')}</p>
 

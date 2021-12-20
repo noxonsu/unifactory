@@ -127,6 +127,8 @@ const NetworkCard = styled(LightCard)`
   padding: 8px 12px;
   box-shadow: rgba(0, 0, 0, 0.01) 0px 0px 1px, rgba(0, 0, 0, 0.04) 0px 4px 8px, rgba(0, 0, 0, 0.04) 0px 16px 24px,
     rgba(0, 0, 0, 0.01) 0px 24px 32px;
+  word-break: keep-all;
+  white-space: nowrap;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     margin: 0;

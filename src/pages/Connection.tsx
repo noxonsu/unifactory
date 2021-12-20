@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { ZERO_ADDRESS } from 'sdk'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import { FaWallet } from 'react-icons/fa'
 import networks from 'networks.json'
-import { useActiveWeb3React } from 'hooks'
 import { useDarkModeManager } from 'state/user/hooks'
 import AppBody from './AppBody'
 import Panel from './Panel'
@@ -38,7 +37,7 @@ const WalletIconWrapper = styled.div`
 `
 
 const Title = styled.h4`
-  margin-bottom: 0.8rem;
+  margin-bottom: 0.4rem;
 `
 
 const NetworkStatus = styled.div`
@@ -57,22 +56,9 @@ const supportedChainIds = () => {
 
 const unavailableOrZeroAddr = (value: string | undefined) => !value || value === ZERO_ADDRESS
 
-export default function Connection({ domainData }: any) {
+export default function Connection({ domainData, isAvailableNetwork }: any) {
   const { t } = useTranslation()
-  const { chainId } = useActiveWeb3React()
   const [darkMode] = useDarkModeManager()
-
-  const [isAvailableNetwork, setIsAvailableNetwork] = useState(true)
-
-  useEffect(() => {
-    //@ts-ignore
-    if (chainId && networks[chainId]) {
-      //@ts-ignore
-      const { registry, multicall, wrappedToken } = networks[chainId]
-
-      setIsAvailableNetwork(Boolean(chainId && registry && multicall && wrappedToken?.address))
-    }
-  }, [chainId])
 
   const needToConfigure =
     domainData &&
@@ -84,40 +70,33 @@ export default function Connection({ domainData }: any) {
 
   return (
     <Wrapper>
-      {needToConfigure ? (
-        <>
-          {isAvailableNetwork ? (
-            <AppBody>
-              <Panel />
-            </AppBody>
-          ) : (
-            <AppBody>
-              <SupportedNetworksWrapper>
-                <h3>
-                  {t('youCanNotUseThisNetwork')}
-                  {/* Sorry you can't use this network for now */}
-                </h3>
+      {!isAvailableNetwork ? (
+        <AppBody>
+          <SupportedNetworksWrapper>
+            <h3>{t('youCanNotUseThisNetwork')}</h3>
 
-                {availableNetworks.length && (
-                  <>
-                    <p>{t('availableNetworks')}</p>
-                    <ul>
-                      {availableNetworks.map((network: { name: string; chainId: number }, index) => {
-                        const { name, chainId } = network
+            {availableNetworks.length && (
+              <>
+                <p>{t('availableNetworks')}</p>
+                <ul>
+                  {availableNetworks.map((network: { name: string; chainId: number }, index) => {
+                    const { name, chainId } = network
 
-                        return (
-                          <li key={chainId}>
-                            {chainId} - {name}
-                          </li>
-                        )
-                      })}
-                    </ul>
-                  </>
-                )}
-              </SupportedNetworksWrapper>
-            </AppBody>
-          )}
-        </>
+                    return (
+                      <li key={chainId}>
+                        {chainId} - {name}
+                      </li>
+                    )
+                  })}
+                </ul>
+              </>
+            )}
+          </SupportedNetworksWrapper>
+        </AppBody>
+      ) : needToConfigure ? (
+        <AppBody>
+          <Panel />
+        </AppBody>
       ) : (
         <AppBody>
           <ContentWrapper>

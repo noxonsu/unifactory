@@ -206,10 +206,7 @@ function Web3StatusInner() {
             <Text>{error instanceof UnsupportedChainIdError ? t('wrongNetwork') : t('error')}</Text>
           </ErrorStatusTitle>
 
-          <ErrorStatusDescription>
-            {t('pleaseChangeWrongNetwork')}
-            {/* Please switch your network or connect to the appropriate network. */}
-          </ErrorStatusDescription>
+          <ErrorStatusDescription>{t('pleaseChangeWrongNetwork')}</ErrorStatusDescription>
         </Web3StatusError>
 
         <Web3StatusConnect onClick={disconnect}>{t('disconnect')}</Web3StatusConnect>

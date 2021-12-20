@@ -182,5 +182,10 @@
   "fetchOptions": "Opciones de recuperación",
   "saveAllSettings": "Guardar todos los ajustes",
   "tokenLists": "Token de listas",
-  "createNewTokenList": "Crear una nueva lista de tokens"
+  "createNewTokenList": "Crear una nueva lista de tokens",
+  "youCanNotUseThisNetwork": "Sorry you can't use this network for now",
+  "availableNetworks": "Available networks",
+  "toGetStartedConnectWallet": "To get started, connect your wallet",
+  "pleaseChangeWrongNetwork": "Please switch your network or connect to the appropriate network",
+  "noInfo": "No information"
 }

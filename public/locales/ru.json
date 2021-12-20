@@ -180,5 +180,10 @@
   "fetchOptions": "Запросить параметры",
   "saveAllSettings": "Сохранить все настройки",
   "tokenLists": "Списки токенов",
-  "createNewTokenList": "Создайте новый список токенов"
+  "createNewTokenList": "Создайте новый список токенов",
+  "youCanNotUseThisNetwork": "Sorry you can't use this network for now",
+  "availableNetworks": "Available networks",
+  "toGetStartedConnectWallet": "To get started, connect your wallet",
+  "pleaseChangeWrongNetwork": "Please switch your network or connect to the appropriate network",
+  "noInfo": "No information"
 }

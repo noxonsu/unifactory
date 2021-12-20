@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect } from 'react'
+import React, { Suspense, useEffect, useState } from 'react'
 import { Route, Switch } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { AppState } from 'state'
@@ -29,6 +29,7 @@ import { RedirectOldRemoveLiquidityPathStructure } from './RemoveLiquidity/redir
 import Swap from './Swap'
 import Footer from 'components/Footer'
 import { OpenClaimAddressModalAndRedirectToSwap, RedirectPathToSwapOnly } from './Swap/redirects'
+import networks from 'networks.json'
 
 const LoaderWrapper = styled.div`
   position: absolute;
@@ -76,9 +77,21 @@ const FooterWrapper = styled.footer`
 
 export default function App() {
   const dispatch = useDispatch()
-  const { active } = useWeb3React()
+  const { active, chainId } = useWeb3React()
   const { admin, factory, router } = useProjectInfo()
   const appIsReady = active && admin && factory && Boolean(router)
+
+  const [isAvailableNetwork, setIsAvailableNetwork] = useState(true)
+
+  useEffect(() => {
+    //@ts-ignore
+    if (chainId && networks[chainId]) {
+      //@ts-ignore
+      const { registry, multicall, wrappedToken } = networks[chainId]
+
+      setIsAvailableNetwork(Boolean(chainId && registry && multicall && wrappedToken?.address))
+    }
+  }, [chainId])
 
   const appManagement = useSelector<AppState, AppState['application']['appManagement']>(
     (state) => state.application.appManagement
@@ -106,7 +119,7 @@ export default function App() {
             <LoaderWrapper>
               <Loader size="2.8rem" />
             </LoaderWrapper>
-          ) : appIsReady ? (
+          ) : appIsReady && isAvailableNetwork ? (
             <>
               {appManagement ? (
                 <BodyWrapper>
@@ -116,6 +129,7 @@ export default function App() {
                 </BodyWrapper>
               ) : (
                 <>
+                  {/* addition tag for the flex layout */}
                   <div>
                     <HeaderWrapper>
                       <Header />
@@ -154,7 +168,7 @@ export default function App() {
               )}
             </>
           ) : (
-            <Connection domainData={domainData} />
+            <Connection domainData={domainData} isAvailableNetwork={isAvailableNetwork} />
           )}
         </Web3ReactManager>
       </AppWrapper>

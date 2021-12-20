@@ -17,7 +17,7 @@ const Info = styled.p`
 const Button = styled(ButtonPrimary)`
   padding: 0.8rem;
   margin-top: 0.3rem;
-  font-size: 0.9em;
+  font-size: 0.8em;
 `
 
 export function SwapContracts(props: any) {

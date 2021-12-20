@@ -116,7 +116,7 @@
     "rpc": "https://rpc-mumbai.maticvigil.com",
     "chainId": 80001,
     "explorer": "https://mumbai.polygonscan.com/",
-    "registry": "",
+    "registry": "0x3Df4F3022050fA83BC5f0c0757a52A3572619a89",
     "multicall": "0x08411ADd0b5AA8ee47563b146743C13b3556c9Cc",
     "ENSRegistry": "",
     "wrappedToken": {

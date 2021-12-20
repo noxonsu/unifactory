@@ -9,14 +9,18 @@ import AddressInputPanel from 'components/AddressInputPanel'
 import { deploySwapContracts, deployStorage, isValidAddress, returnTokenInfo } from 'utils/contract'
 
 const Info = styled.p`
-  padding: 0.4rem;
+  margin: 0;
+  padding: 0.3rem;
   font-size: 0.9rem;
-  opacity: 0.6;
+  opacity: 0.7;
+`
+
+const Title = styled.h4`
+  margin: 1.1em 0;
 `
 
 const Button = styled(ButtonPrimary)`
-  width: 49%;
-  font-size: 0.9em;
+  font-size: 0.8em;
 `
 
 const InputWrapper = styled.div`
@@ -35,9 +39,17 @@ export function Deployment(props: any) {
   const [domain, setDomain] = useState(currentDomain)
   const [adminAddress, setAdminAddress] = useState('')
 
-  const [factoryAddress, setFactoryAddress] = useState('')
-  const [routerAddress, setRouterAddress] = useState('')
-  const [storageAddress, setStorageAddress] = useState('')
+  const deployedContractsState = {
+    router: '',
+    factory: '',
+    storage: '',
+  }
+
+  const [deployedContracts, setDeployedContracts] = useState<{
+    router: string
+    factory: string
+    storage: string
+  }>(deployedContractsState)
 
   const saveData = (key: string, value: any) => {
     const strData = window.localStorage.getItem('userDeploymentData')
@@ -68,8 +80,7 @@ export function Deployment(props: any) {
 
   const onContractsDeployment = async () => {
     setPending(true)
-    setFactoryAddress('')
-    setRouterAddress('')
+    setDeployedContracts(deployedContractsState)
 
     try {
       //@ts-ignore
@@ -87,24 +98,33 @@ export function Deployment(props: any) {
         admin: adminAddress,
         wrappedToken,
         onFactoryDeploy: (receipt: any) => {
-          setFactoryAddress(receipt.contractAddress)
+          setDeployedContracts((prevState) => ({
+            ...prevState,
+            factory: receipt.contractAddress,
+          }))
           addContractInfo('Factory', receipt)
         },
         onRouterDeploy: (receipt: any) => {
-          setRouterAddress(receipt.contractAddress)
+          setDeployedContracts((prevState) => ({
+            ...prevState,
+            router: receipt.contractAddress,
+          }))
           addContractInfo('Router', receipt)
         },
       })
     } catch (error) {
       setError(error)
-    } finally {
-      setPending(false)
     }
+
+    setPending(false)
   }
 
   const onStorageDeploy = async () => {
     setPending(true)
-    setStorageAddress('')
+    setDeployedContracts((prevState) => ({
+      ...prevState,
+      storage: '',
+    }))
 
     try {
       await deployStorage({
@@ -112,7 +132,10 @@ export function Deployment(props: any) {
         //@ts-ignore
         registryAddress: networks[chainId]?.registry,
         onDeploy: (receipt: any) => {
-          setStorageAddress(receipt.contractAddress)
+          setDeployedContracts((prevState) => ({
+            ...prevState,
+            storage: receipt.contractAddress,
+          }))
           addContractInfo('Storage', receipt)
         },
         library,
@@ -120,9 +143,9 @@ export function Deployment(props: any) {
       })
     } catch (error) {
       setError(error)
-    } finally {
-      setPending(false)
     }
+
+    setPending(false)
   }
 
   useEffect(() => {
@@ -139,47 +162,53 @@ export function Deployment(props: any) {
 
   return (
     <section>
-      <h4>1) {t('deploySwapContracts')}</h4>
-
       <InputWrapper>
-        <InputPanel
-          label={`${t('domain')} *`}
-          value={domain}
-          onChange={setDomain}
-          // TODO: add the ability to change domain?
-          disabled={true}
-        />
+        <AddressInputPanel label={`${t('admin')} *`} value={adminAddress} onChange={setAdminAddress} />
+      </InputWrapper>
+      <InputWrapper>
+        <InputPanel label={`${t('domain')} *`} value={domain} onChange={setDomain} disabled />
       </InputWrapper>
 
-      <AddressInputPanel label={`${t('admin')} *`} value={adminAddress} onChange={setAdminAddress} />
+      <Title>1) {t('deploySwapContracts')}</Title>
 
       <Info>{t('wrappedTokenDescription')}</Info>
       <AddressInputPanel
         label={`${t('wrappedToken')} *`}
+        value={wrappedToken}
+        onChange={setWrappedToken}
         disabled={
           // don't allow the user to change a token address
           // in case if we have it in our config
           //@ts-ignore
           networks[chainId]?.wrappedToken?.address && wrappedToken
         }
-        value={wrappedToken}
-        onChange={setWrappedToken}
       />
 
       <Button onClick={onContractsDeployment} disabled={pending || !canDeploySwapContracts}>
         {t('deploySwapContracts')}
       </Button>
 
-      <h4>2) {t('deployStorageContract')}</h4>
+      <Title>2) {t('deployStorageContract')}</Title>
+      <Info>{t('deployAfterSwapContracts')}</Info>
 
       <Button onClick={onStorageDeploy} disabled={pending || !canDeployStorage}>
         {t('deployStorage')}
       </Button>
 
-      <h4>{t('deploymentInformation')}</h4>
-      <Info>{t('deploymentInformationDescription')}</Info>
+      <Title>{t('deploymentInformation')}</Title>
 
-      {factoryAddress && (
+      {Object.keys(deployedContracts).map((contractKey: string, index) => {
+        //@ts-ignore
+        const address = deployedContracts[contractKey]
+
+        return address ? (
+          <p key={index}>
+            {t(contractKey)}: {address}
+          </p>
+        ) : null
+      })}
+
+      {/* {factoryAddress && (
         <p>
           <strong>{t('factory')}</strong>: {factoryAddress}
         </p>
@@ -193,7 +222,7 @@ export function Deployment(props: any) {
         <p>
           <strong>{t('storage')}</strong>: {storageAddress}
         </p>
-      )}
+      )} */}
     </section>
   )
 }
