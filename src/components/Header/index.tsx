@@ -227,12 +227,12 @@ export default function Header() {
       </HeaderRow>
 
       <InternalLinks>
-        <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
+        <StyledNavLink id="swap-nav-link" to={'/swap'}>
           {t('swap')}
         </StyledNavLink>
         <StyledNavLink
-          id={`pool-nav-link`}
-          to={'/pool'}
+          id="pool-nav-link"
+          to="/pool"
           isActive={(match, { pathname }) =>
             Boolean(match) ||
             pathname.startsWith('/add') ||
