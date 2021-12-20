@@ -59,10 +59,8 @@ export const fetchOptionsFromContract = async (library: Web3Provider, storageAdd
 
 const returnValidTokenListJSON = (params: any) => {
   const { name, tokens, logoURI } = params
-
-  return JSON.stringify({
+  const list: any = {
     name,
-    logoURI,
     timestamp: getTimestamp(),
     // TODO: track interface changes and change this version
     /* 
@@ -76,7 +74,11 @@ const returnValidTokenListJSON = (params: any) => {
       patch: 0,
     },
     tokens,
-  })
+  }
+
+  if (logoURI) list.logoURI = logoURI
+
+  return JSON.stringify(list)
 }
 
 export const saveProjectOption = async (library: Web3Provider, storageAddress: string, method: string, value: any) => {

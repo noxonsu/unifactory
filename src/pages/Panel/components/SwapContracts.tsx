@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useActiveWeb3React } from 'hooks'
+import { useProjectInfo } from 'state/application/hooks'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import { ButtonPrimary } from 'components/Button'
@@ -28,7 +29,9 @@ export function SwapContracts(props: any) {
   const { pending, setPending, setError } = props
   const { t } = useTranslation()
   const { library, account } = useActiveWeb3React()
-  const [factory, setFactory] = useState('')
+
+  const { factory: stateFactory } = useProjectInfo()
+  const [factory, setFactory] = useState(stateFactory || '')
   const [factoryIsCorrect, setFactoryIsCorrect] = useState(false)
 
   useEffect(() => {

@@ -3,8 +3,9 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import { ZERO_ADDRESS } from 'sdk'
 import { useActiveWeb3React } from 'hooks'
+import useInterval from 'hooks/useInterval'
 import { useRegistryContract } from 'hooks/useContract'
-import useDomainInfo from 'hooks/useDomainInfo'
+import { useProjectInfo } from 'state/application/hooks'
 import { HuePicker } from 'react-color'
 import { ButtonPrimary } from 'components/Button'
 import { TokenLists } from './TokenLists'
@@ -47,10 +48,10 @@ export function InterfaceOptions(props: any) {
   //@ts-ignore
   const registry = useRegistryContract(networks[chainId]?.registry)
 
-  const { data: domainData } = useDomainInfo()
+  const { storage: stateStorage } = useProjectInfo()
 
   const [notification, setNotification] = useState<false | string>('')
-  const [storage, setStorage] = useState(domainData !== null ? domainData?.storage : '')
+  const [storage, setStorage] = useState(stateStorage || '')
   const [storageIsCorrect, setStorageIsCorrect] = useState(false)
 
   useEffect(() => {
@@ -62,38 +63,31 @@ export function InterfaceOptions(props: any) {
     }
   }, [setError, library, storage])
 
-  useEffect(() => {
-    if (Boolean(storage)) return
+  const [timer, setTimer] = useState(0)
+  const SECOND = 1_000
+  const MAX_TRACKING_TIME = SECOND * 6
 
-    const SECOND = 1_000
-    const MAX_TRACKING_TIME = SECOND * 7
-    let timer = 0
-
-    const interval = setInterval(async () => {
-      timer += SECOND
+  useInterval(
+    async () => {
+      setTimer(timer + SECOND)
 
       if (!registry) return
 
       const currentDomain = window.location.hostname || document.location.host
       const storage = await registry.domainStorage(currentDomain)
 
-      if (storage && storage !== ZERO_ADDRESS) {
-        setStorage(storage)
-        clearInterval(interval)
-      }
+      if (storage && storage !== ZERO_ADDRESS) setStorage(storage)
+    },
+    timer >= MAX_TRACKING_TIME || Boolean(storage) ? null : SECOND
+  )
 
-      if (timer >= MAX_TRACKING_TIME) {
-        setNotification(
-          'We have not found a storage contract. You have to deploy it in the Deployment tab. After a while you can see storage contract on this page. If you have already deployed it, wait for a while and try to reload this page.'
-        )
-        clearInterval(interval)
-      }
-    }, SECOND)
-
-    return () => {
-      if (interval) clearInterval()
+  useEffect(() => {
+    if (timer >= MAX_TRACKING_TIME && !Boolean(storage)) {
+      setNotification(
+        'We have not found a storage contract. You have to deploy it in the Deployment tab. After a while you can see storage contract on this page. If you have already deployed it, wait for a while and try to reload this page.'
+      )
     }
-  }, [registry, storage])
+  }, [timer, storage, MAX_TRACKING_TIME])
 
   const [projectName, setProjectName] = useState('')
   const [logoUrl, setLogoUrl] = useState('')
