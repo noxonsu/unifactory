@@ -1,12 +1,10 @@
 import React from 'react'
-import { Text } from 'rebass'
 import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import TempLogo from 'assets/images/templogo.png'
 import { useActiveWeb3React } from 'hooks'
 import { useProjectInfo } from 'state/application/hooks'
-import { useETHBalances } from 'state/wallet/hooks'
 import Menu from '../Menu'
 import { LightCard } from '../Card'
 import Row, { RowFixed } from '../Row'
@@ -139,12 +137,6 @@ const NetworkCard = styled(LightCard)`
   `};
 `
 
-const BalanceText = styled(Text)`
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    display: none;
-  `};
-`
-
 const Title = styled.a`
   display: flex;
   align-items: center;
@@ -214,7 +206,6 @@ export default function Header() {
   const { account, chainId } = useActiveWeb3React()
   const { t } = useTranslation()
   const { logo: logoUrl } = useProjectInfo()
-  const baseCoinBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
 
   return (
     <HeaderFrame>
@@ -227,11 +218,11 @@ export default function Header() {
       </HeaderRow>
 
       <InternalLinks>
-        <StyledNavLink id="swap-nav-link" to={'/swap'}>
+        <StyledNavLink id="header-swap-nav-link" to={'/swap'}>
           {t('swap')}
         </StyledNavLink>
         <StyledNavLink
-          id="pool-nav-link"
+          id="header-pool-nav-link"
           to="/pool"
           isActive={(match, { pathname }) =>
             Boolean(match) ||
@@ -255,11 +246,6 @@ export default function Header() {
             )}
           </HideSmall>
           <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
-            {account && baseCoinBalance ? (
-              <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" pr="0.5rem" fontWeight={500}>
-                {t('balance')} {baseCoinBalance?.toSignificant(4)}
-              </BalanceText>
-            ) : null}
             <Web3Status />
           </AccountElement>
         </HeaderElement>

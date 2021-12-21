@@ -9,7 +9,8 @@ import { shortenAddress } from 'utils'
 import { AutoRow } from '../Row'
 import Copy from './Copy'
 import Transaction from './Transaction'
-
+import { Text } from 'rebass'
+import { useETHBalances } from 'state/wallet/hooks'
 import { SUPPORTED_WALLETS } from '../../constants'
 import { ReactComponent as Close } from 'assets/images/x.svg'
 import { getExplorerLink } from 'utils'
@@ -199,6 +200,12 @@ const WalletAction = styled(ButtonSecondary)`
   }
 `
 
+const BalanceText = styled(Text)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    display: none;
+  `};
+`
+
 // const MainWalletAction = styled(WalletAction)`
 //   color: ${({ theme }) => theme.primary1};
 // `;
@@ -232,6 +239,8 @@ export default function AccountDetails({
   const { chainId, account, connector } = useActiveWeb3React()
   const theme = useContext(ThemeContext)
   const dispatch = useDispatch<AppDispatch>()
+
+  const baseCoinBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
 
   function formatConnectorName() {
     const { ethereum } = window
@@ -310,6 +319,7 @@ export default function AccountDetails({
                   </WalletAction>
                 </div>
               </AccountGroupingRow>
+
               <AccountGroupingRow id="web3-account-identifier-row">
                 <AccountControl>
                   {ENSName ? (
@@ -329,6 +339,15 @@ export default function AccountDetails({
                   )}
                 </AccountControl>
               </AccountGroupingRow>
+
+              <AccountGroupingRow>
+                {account && baseCoinBalance ? (
+                  <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" pr="0.5rem" fontWeight={500}>
+                    {t('balance')} {baseCoinBalance?.toSignificant(4)}
+                  </BalanceText>
+                ) : null}
+              </AccountGroupingRow>
+
               <AccountGroupingRow>
                 {ENSName ? (
                   <>

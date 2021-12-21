@@ -1,6 +1,6 @@
 import puppeteer from 'puppeteer'
-import * as dappeteer from '@chainsafe/dappeteer'
 import {
+  createMetamaskBrowser,
   clickOn,
   takeScreenshot,
   MINUTE,
@@ -9,6 +9,7 @@ import {
   timeOut,
   SECOND,
   importCustomToken,
+  fillFormInputs,
 } from '../utils'
 
 const localApp = 'http://localhost:3000/'
@@ -25,12 +26,7 @@ const tokenB = {
   amount: 1,
 }
 
-jest.setTimeout(MINUTE * 2.5)
-
-const metamaskConfig = {
-  seed: process.env.METAMASK_SEED,
-  // password: 'password1234',
-}
+jest.setTimeout(MINUTE * 3)
 
 describe('Add liquidity', () => {
   const startupDelay = TEN_SECONDS * 3
@@ -47,12 +43,11 @@ describe('Add liquidity', () => {
   }
 
   beforeAll(async () => {
-    browser = await dappeteer.launch(puppeteer, { metamaskVersion: dappeteer.RECOMMENDED_METAMASK_VERSION })
-    metamask = await dappeteer.setupMetamask(
-      browser
-      // metamaskConfig
-    )
-    page = await browser.newPage()
+    const { browser: _browser, page: _page, metamask: _metamask } = await createMetamaskBrowser()
+
+    browser = _browser
+    page = _page
+    metamask = _metamask
 
     await metamask.switchNetwork('rinkeby')
     await page.goto(localApp)
@@ -63,21 +58,21 @@ describe('Add liquidity', () => {
     if (browser) await browser.close()
   })
 
-  it('Connect Metamask', async () => {
+  it('should connect to Metamask', async () => {
     if (browser && page) {
       try {
         await clickOn({
           page,
           selector: '#connect-wallet',
         })
-        await timeOut(SECOND * 5)
+        await timeOut(SECOND * 3)
         await clickOn({
           page,
           selector: '#connect-METAMASK',
         })
         await timeOut(SECOND)
         await metamask.approve()
-        await timeOut(TEN_SECONDS)
+        await timeOut(SECOND * 3)
       } catch (error) {
         await failTest(error, 'connectWallet')
       }
@@ -86,7 +81,7 @@ describe('Add liquidity', () => {
     }
   })
 
-  it('Import tokens', async () => {
+  it('should import tokens', async () => {
     if (browser && page) {
       try {
         await importCustomToken(page, tokenA.address)
@@ -99,44 +94,44 @@ describe('Add liquidity', () => {
     }
   })
 
-  it('Fill liquidity form', async () => {
+  it('should fill liquidity form', async () => {
     if (browser && page) {
       try {
-        await page.goto(`${page.url()}add/`)
-        await timeOut(SECOND)
-
-        const [selectOfTokenA, selectOfTokenB] = await page.$$('#open-currency-select-button')
-
-        // TODO: almost the same code ============================
-        await selectOfTokenA.click()
         await clickOn({
           page,
-          selector: `#token-item-${tokenA.address}`,
+          selector: `#header-pool-nav-link`,
         })
-        const liquidityInputA = await page.$('#add-liquidity-input-tokena')
-        await liquidityInputA.type(String(tokenA.amount))
-        // ---------------
-        await selectOfTokenB.click()
         await clickOn({
           page,
-          selector: `#token-item-${tokenB.address}`,
+          selector: `#join-pool-button`,
         })
-        const liquidityInputB = await page.$('#add-liquidity-input-tokenb')
-        await liquidityInputB.type(String(tokenB.amount))
-        // ========================================================
+
+        await fillFormInputs({
+          page,
+          tokenA: tokenA.address,
+          amountA: tokenA.amount,
+          tokenB: tokenB.address,
+          amountB: tokenB.amount,
+        })
       } catch (error) {
         await failTest(error, 'liquidityForm')
-      }
-
-      try {
-        // approve and add liquidity
-        // await metamask.confirmTransaction()
-        // expect().toBe()
-      } catch (error) {
-        await failTest(error, 'addLiquidity')
       }
     } else {
       throw new Error('No the browser or the page')
     }
   })
+
+  // it('should add liquidity', async () => {
+  //   if (browser && page) {
+  //     try {
+  //       // approve and add liquidity
+  //       // await metamask.confirmTransaction()
+  //       // expect().toBe()
+  //     } catch (error) {
+  //       await failTest(error, 'addLiquidity')
+  //     }
+  //   } else {
+  //     throw new Error('No the browser or the page')
+  //   }
+  // })
 })

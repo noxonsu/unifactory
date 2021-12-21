@@ -1,4 +1,5 @@
 import puppeteer from 'puppeteer'
+import * as dappeteer from '@chainsafe/dappeteer'
 import fs from 'fs'
 
 let link = 'http://localhost:9001/'
@@ -15,6 +16,10 @@ export const MINUTE = SECOND * 60
 // if it's true then you will be able to see puppeteer's browser
 // Github flows don't work with that
 const isDebug = true
+const pageViewport = {
+  width: 1400,
+  height: 1080,
+}
 
 export const timeOut = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
@@ -28,10 +33,7 @@ export const createBrowser = async (): Promise<{
   })
 
   const page = await browser.newPage()
-  await page.setViewport({
-    width: 1400,
-    height: 1080,
-  })
+  await page.setViewport(pageViewport)
 
   page.on('error', (err) => {
     console.error('[puppeteer] error: ', err)
@@ -40,6 +42,26 @@ export const createBrowser = async (): Promise<{
   await page.goto(link)
 
   return { browser, page }
+}
+
+export const createMetamaskBrowser = async () => {
+  try {
+    const browser = await dappeteer.launch(puppeteer, { metamaskVersion: dappeteer.RECOMMENDED_METAMASK_VERSION })
+    const metamask = await dappeteer.setupMetamask(browser, {
+      // seed: process.env.METAMASK_SEED,
+      // password: 'password1234',
+    })
+    const page = await browser.newPage()
+    await page.setViewport(pageViewport)
+
+    return {
+      browser,
+      page,
+      metamask,
+    }
+  } catch (error) {
+    throw new Error(`Fail on browser creation: ${error.message}`)
+  }
 }
 
 export const clickOn = async (params) => {
@@ -104,5 +126,36 @@ export const importCustomToken = async (page: puppeteer.Page, address: string) =
     })
   } catch (error) {
     throw new Error(`Fail on token import: (${address}). ${error.message}`)
+  }
+}
+
+export const fillFormInputs = async (params: {
+  page: puppeteer.Page
+  tokenA: string
+  amountA: number
+  tokenB: string
+  amountB: number
+}) => {
+  const { page, tokenA, amountA, tokenB, amountB } = params
+
+  try {
+    const [selectOfTokenA, selectOfTokenB] = await page.$$('#open-currency-select-button')
+
+    async function fillOneSide(select, inputId, tokenAddr, amount) {
+      await select.click()
+      await timeOut(SECOND * 2)
+      await clickOn({
+        page,
+        selector: `#token-item-${tokenAddr.toLowerCase()}`,
+      })
+      await timeOut(SECOND)
+      const input = await page.$(inputId)
+      await input.type(String(amount))
+    }
+
+    await fillOneSide(selectOfTokenA, '#add-liquidity-input-tokena .token-amount-input', tokenA, amountA)
+    await fillOneSide(selectOfTokenB, '#add-liquidity-input-tokenb .token-amount-input', tokenB, amountB)
+  } catch (error) {
+    throw new Error(`Fail on form filling: ${error.message}`)
   }
 }
