@@ -303,7 +303,7 @@ export default function AccountDetails({
                     <WalletAction
                       style={{ fontSize: '.825rem', fontWeight: 400, marginRight: '8px' }}
                       onClick={() => {
-                        ;(connector as any).close()
+                        ;(connector as any)?.close()
                       }}
                     >
                       {t('disconnect')}
@@ -365,7 +365,7 @@ export default function AccountDetails({
                             href={chainId ? getExplorerLink(chainId, ENSName, 'address') : ''}
                           >
                             <LinkIcon size={16} />
-                            <span style={{ marginLeft: '4px' }}>{t('viewOn')} Explorer</span>
+                            <span style={{ marginLeft: '4px' }}>{t('viewIn')} Explorer</span>
                           </AddressLink>
                         )}
                       </div>
@@ -387,7 +387,7 @@ export default function AccountDetails({
                             href={getExplorerLink(chainId, account, 'address')}
                           >
                             <LinkIcon size={16} />
-                            <span style={{ marginLeft: '4px' }}>{t('viewOn')} Explorer</span>
+                            <span style={{ marginLeft: '4px' }}>{t('viewIn')} Explorer</span>
                           </AddressLink>
                         )}
                       </div>

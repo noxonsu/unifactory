@@ -5,9 +5,9 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import { ButtonPrimary } from 'components/Button'
 import AddressInputPanel from 'components/AddressInputPanel'
-import { isValidAddress, setFactoryOption, getFactoryOptions } from '../../../utils/contract'
+import { isValidAddress, setFactoryOption, getFactoryOptions } from '../../utils/contract'
 import { ZERO_ADDRESS } from 'sdk'
-import { factoryMethods } from '../../../constants'
+import { factoryMethods } from '../../constants'
 
 const Info = styled.p`
   padding: 0.4rem;

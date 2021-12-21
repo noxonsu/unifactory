@@ -9,10 +9,10 @@ import { AppState } from 'state'
 import { useTranslation } from 'react-i18next'
 import { setAppManagement } from 'state/application/actions'
 import { CleanButton } from 'components/Button'
-import { Wallet } from './components/Wallet'
-import { Deployment } from './components/Deployment'
-import { SwapContracts } from './components/SwapContracts'
-import { InterfaceOptions } from './components/InterfaceOptions'
+import { Wallet } from './Wallet'
+import { Deployment } from './Deployment'
+import { SwapContracts } from './SwapContracts'
+import { InterfaceOptions } from './InterfaceOptions'
 
 const Wrapper = styled.section`
   padding: 1rem;

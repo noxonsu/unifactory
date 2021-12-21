@@ -115,6 +115,8 @@ export default function App() {
       <Route component={DarkModeQueryParamReader} />
       <AppWrapper>
         <Web3ReactManager>
+          <Popups />
+
           {loading ? (
             <LoaderWrapper>
               <Loader size="2.8rem" />
@@ -136,7 +138,6 @@ export default function App() {
                     </HeaderWrapper>
 
                     <BodyWrapper>
-                      <Popups />
                       <Switch>
                         <Route exact strict path="/swap" component={Swap} />
                         <Route exact strict path="/claim" component={OpenClaimAddressModalAndRedirectToSwap} />

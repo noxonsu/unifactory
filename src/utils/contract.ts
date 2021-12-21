@@ -11,7 +11,7 @@ import { getWeb3Library } from './getLibrary'
 import { log } from './index'
 
 const deployContract = async (params: any) => {
-  const { abi, byteCode, library, onDeploy, deployArguments } = params
+  const { abi, byteCode, library, onDeploy = () => {}, onHash = () => {}, deployArguments } = params
 
   let contract
   let accounts
@@ -39,7 +39,7 @@ const deployContract = async (params: any) => {
         from: accounts[0],
         gas,
       })
-      .on('transactionHash', (hash: string) => log(`deployment tx hash: ${hash}`))
+      .on('transactionHash', (hash: string) => onHash(hash))
       .on('error', (error: any) => console.error(error))
       .on('receipt', (receipt: any) => onDeploy(receipt))
   } catch (error) {
@@ -48,7 +48,7 @@ const deployContract = async (params: any) => {
 }
 
 export const deployFactory = async (params: any) => {
-  const { library, onDeploy, admin } = params
+  const { library, onHash, admin } = params
   const { abi, bytecode } = Factory
 
   return await deployContract({
@@ -56,12 +56,12 @@ export const deployFactory = async (params: any) => {
     byteCode: bytecode,
     deployArguments: [admin],
     library,
-    onDeploy,
+    onHash,
   })
 }
 
 export const deployRouter = async (params: any) => {
-  const { library, factory, onDeploy, wrappedToken } = params
+  const { library, factory, onHash, wrappedToken } = params
   const { abi, bytecode } = RouterV2
 
   return await deployContract({
@@ -69,12 +69,12 @@ export const deployRouter = async (params: any) => {
     byteCode: bytecode,
     deployArguments: [factory, wrappedToken],
     library,
-    onDeploy,
+    onHash,
   })
 }
 
 export const deployStorage = async (params: any) => {
-  const { library, admin, onDeploy, registryAddress, domain } = params
+  const { library, admin, onHash, registryAddress, domain } = params
   const { abi, bytecode } = Storage
 
   try {
@@ -83,7 +83,7 @@ export const deployStorage = async (params: any) => {
       byteCode: bytecode,
       deployArguments: [admin],
       library,
-      onDeploy,
+      onHash,
     })
     //@ts-ignore
     const accounts = await window?.ethereum?.request({ method: 'eth_accounts' })
@@ -104,18 +104,18 @@ export const getContractInstance = (library: Web3Provider, address: string, abi:
 }
 
 export const deploySwapContracts = async (params: any) => {
-  const { domain, registryAddress, admin, library, wrappedToken, onFactoryDeploy, onRouterDeploy } = params
+  const { domain, registryAddress, admin, library, wrappedToken, onFactoryHash, onRouterHash } = params
 
   try {
     const factory = await deployFactory({
-      onDeploy: onFactoryDeploy,
+      onHash: onFactoryHash,
       library,
       admin,
     })
 
     if (factory) {
       const router = await deployRouter({
-        onDeploy: onRouterDeploy,
+        onHash: onRouterHash,
         library,
         factory: factory.options.address,
         wrappedToken,

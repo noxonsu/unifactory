@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { useActivePopups } from '../../state/application/hooks'
+import { useActivePopups } from 'state/application/hooks'
 import { AutoColumn } from '../Column'
 import PopupItem from './PopupItem'
 
@@ -43,8 +43,26 @@ const FixedPopupColumn = styled(AutoColumn)<{ extraPadding: boolean }>`
 `
 
 export default function Popups() {
-  // get all popups
   const activePopups = useActivePopups()
+
+  // popup component testing
+  // if (!activePopups.length) {
+  //   const zero = '0x0000000000000000000000000000000000000000000000000000000000000000'
+
+  //   activePopups.push({
+  //     key: zero,
+  //     show: true,
+  //     content: {
+  //       txn: {
+  //         hash: zero,
+  //         success: true,
+  //         // summary: 'Test popup',
+  //         summary: 'Test popup popup popup popup popup popup popup popup popup popup popup popup popup',
+  //       },
+  //     },
+  //     removeAfterMs: Infinity,
+  //   })
+  // }
 
   return (
     <>

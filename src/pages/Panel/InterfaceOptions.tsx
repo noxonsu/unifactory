@@ -13,7 +13,7 @@ import InputPanel from 'components/InputPanel'
 import AddressInputPanel from 'components/AddressInputPanel'
 import { saveProjectOption, fetchOptionsFromContract } from 'utils/storage'
 import { isValidAddress } from 'utils/contract'
-import { storageMethods } from '../../../constants'
+import { storageMethods } from '../../constants'
 import networks from 'networks.json'
 
 const InputWrapper = styled.div`

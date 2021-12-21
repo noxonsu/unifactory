@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useActiveWeb3React } from 'hooks'
+import { useTransactionAdder } from 'state/transactions/hooks'
 import styled from 'styled-components'
+import { Text } from 'rebass'
 import networks from 'networks.json'
 import { ButtonPrimary } from 'components/Button'
 import InputPanel from 'components/InputPanel'
 import AddressInputPanel from 'components/AddressInputPanel'
+import TransactionConfirmationModal, { ConfirmationModalContent } from 'components/TransactionConfirmationModal'
 import { deploySwapContracts, deployStorage, isValidAddress, returnTokenInfo } from 'utils/contract'
 
 const Info = styled.p`
@@ -29,9 +32,25 @@ const InputWrapper = styled.div`
 `
 
 export function Deployment(props: any) {
-  const { pending, setPending, setError, wrappedToken, setWrappedToken } = props
+  const { pending, setError, wrappedToken, setWrappedToken } = props
   const { t } = useTranslation()
   const { library, chainId } = useActiveWeb3React()
+  const addTransaction = useTransactionAdder()
+
+  enum DeployOption {
+    Swap,
+    Storage,
+  }
+
+  const [deployableOption, setDeployableOption] = useState<DeployOption | undefined>(undefined)
+  const [showConfirm, setShowConfirm] = useState<boolean>(false)
+  const [txHash, setTxHash] = useState<string>('')
+  const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false)
+
+  const handleDismissConfirmation = useCallback(() => {
+    setShowConfirm(false)
+    setTxHash('')
+  }, [])
 
   const [canDeploySwapContracts, setCanDeploySwapContracts] = useState(false)
   const [canDeployStorage, setCanDeployStorage] = useState(false)
@@ -40,48 +59,8 @@ export function Deployment(props: any) {
   const [domain, setDomain] = useState(currentDomain)
   const [adminAddress, setAdminAddress] = useState('')
 
-  const deployedContractsState = {
-    router: '',
-    factory: '',
-    storage: '',
-  }
-
-  const [deployedContracts, setDeployedContracts] = useState<{
-    router: string
-    factory: string
-    storage: string
-  }>(deployedContractsState)
-
-  const saveData = (key: string, value: any) => {
-    const strData = window.localStorage.getItem('userDeploymentData')
-
-    if (strData) {
-      const data = JSON.parse(strData)
-
-      data[key] = value
-
-      window.localStorage.setItem('userDeploymentData', JSON.stringify(data))
-    } else {
-      window.localStorage.setItem(
-        'userDeploymentData',
-        JSON.stringify({
-          [key]: value,
-        })
-      )
-    }
-  }
-
-  const addContractInfo = (name: string, receipt: any) => {
-    try {
-      saveData(`${name}_${receipt.contractAddress}`, receipt.contractAddress)
-    } catch (error) {
-      setError(error)
-    }
-  }
-
   const onContractsDeployment = async () => {
-    setPending(true)
-    setDeployedContracts(deployedContractsState)
+    setAttemptingTxn(true)
 
     try {
       //@ts-ignore
@@ -98,55 +77,57 @@ export function Deployment(props: any) {
         library,
         admin: adminAddress,
         wrappedToken,
-        onFactoryDeploy: (receipt: any) => {
-          setDeployedContracts((prevState) => ({
-            ...prevState,
-            factory: receipt.contractAddress,
-          }))
-          addContractInfo('Factory', receipt)
+        onFactoryHash: (hash: string) => {
+          setTxHash(hash)
+          addTransaction(
+            { hash },
+            {
+              summary: `Chain ${chainId}. Deploy factory`,
+            }
+          )
         },
-        onRouterDeploy: (receipt: any) => {
-          setDeployedContracts((prevState) => ({
-            ...prevState,
-            router: receipt.contractAddress,
-          }))
-          addContractInfo('Router', receipt)
+        onRouterHash: (hash: string) => {
+          setTxHash(hash)
+          addTransaction(
+            { hash },
+            {
+              summary: `Chain ${chainId}. Deploy router`,
+            }
+          )
+          setAttemptingTxn(false)
         },
       })
     } catch (error) {
       setError(error)
+      setAttemptingTxn(false)
     }
-
-    setPending(false)
   }
 
   const onStorageDeploy = async () => {
-    setPending(true)
-    setDeployedContracts((prevState) => ({
-      ...prevState,
-      storage: '',
-    }))
+    setAttemptingTxn(true)
 
     try {
       await deployStorage({
         domain,
         //@ts-ignore
         registryAddress: networks[chainId]?.registry,
-        onDeploy: (receipt: any) => {
-          setDeployedContracts((prevState) => ({
-            ...prevState,
-            storage: receipt.contractAddress,
-          }))
-          addContractInfo('Storage', receipt)
+        onHash: (hash: string) => {
+          setTxHash(hash)
+          addTransaction(
+            { hash },
+            {
+              summary: `Chain ${chainId}. Deploy storage`,
+            }
+          )
+          setAttemptingTxn(false)
         },
         library,
         admin: adminAddress,
       })
     } catch (error) {
       setError(error)
+      setAttemptingTxn(false)
     }
-
-    setPending(false)
   }
 
   useEffect(() => {
@@ -161,8 +142,42 @@ export function Deployment(props: any) {
     setCanDeployStorage(isValidAddress(library, adminAddress))
   }, [library, adminAddress, wrappedToken])
 
+  const modalBottom = () => {
+    const confirm = () => {
+      if (deployableOption === DeployOption.Swap) onContractsDeployment()
+      if (deployableOption === DeployOption.Storage) onStorageDeploy()
+    }
+
+    return (
+      <div>
+        <ButtonPrimary onClick={confirm}>
+          <Text fontWeight={500} fontSize={20}>
+            {t('confirmDeployment')}
+          </Text>
+        </ButtonPrimary>
+      </div>
+    )
+  }
+
   return (
-    <section>
+    <>
+      <TransactionConfirmationModal
+        isOpen={showConfirm}
+        onDismiss={handleDismissConfirmation}
+        attemptingTxn={attemptingTxn}
+        hash={txHash}
+        pendingText={''}
+        content={() => (
+          <ConfirmationModalContent
+            title={
+              deployableOption === DeployOption.Swap ? t('youAreDeployingSwapContracts') : t('youAreDeployingStorage')
+            }
+            onDismiss={handleDismissConfirmation}
+            topContent={() => null}
+            bottomContent={modalBottom}
+          />
+        )}
+      />
       <InputWrapper>
         <AddressInputPanel label={`${t('admin')} *`} value={adminAddress} onChange={setAdminAddress} />
       </InputWrapper>
@@ -171,7 +186,6 @@ export function Deployment(props: any) {
       </InputWrapper>
 
       <Title>1) {t('deploySwapContracts')}</Title>
-
       <Info>{t('wrappedTokenDescription')}</Info>
       <AddressInputPanel
         label={`${t('wrappedToken')} *`}
@@ -184,30 +198,27 @@ export function Deployment(props: any) {
           networks[chainId]?.wrappedToken?.address && wrappedToken
         }
       />
-
-      <Button onClick={onContractsDeployment} disabled={pending || !canDeploySwapContracts}>
+      <Button
+        onClick={() => {
+          setDeployableOption(DeployOption.Swap)
+          setShowConfirm(true)
+        }}
+        disabled={pending || !canDeploySwapContracts}
+      >
         {t('deploySwapContracts')}
       </Button>
 
       <Title>2) {t('deployStorageContract')}</Title>
       <Info>{t('deployAfterSwapContracts')}</Info>
-
-      <Button onClick={onStorageDeploy} disabled={pending || !canDeployStorage}>
+      <Button
+        onClick={() => {
+          setDeployableOption(DeployOption.Storage)
+          setShowConfirm(true)
+        }}
+        disabled={pending || !canDeployStorage}
+      >
         {t('deployStorage')}
       </Button>
-
-      <Title>{t('deploymentInformation')}</Title>
-
-      {Object.keys(deployedContracts).map((contractKey: string, index) => {
-        //@ts-ignore
-        const address = deployedContracts[contractKey]
-
-        return address ? (
-          <p key={index}>
-            {t(contractKey)}: {address}
-          </p>
-        ) : null
-      })}
-    </section>
+    </>
   )
 }
