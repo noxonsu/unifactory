@@ -1,16 +1,36 @@
 import puppeteer from 'puppeteer'
-import dappeteer from '@chainsafe/dappeteer'
-import { clickOn } from '../utils'
+import * as dappeteer from '@chainsafe/dappeteer'
+import {
+  clickOn,
+  takeScreenshot,
+  MINUTE,
+  TEN_SECONDS,
+  THIRTY_SECONDS,
+  timeOut,
+  SECOND,
+  importCustomToken,
+} from '../utils'
 
-const SECOND = 1_000
-const TEN_SECONDS = 10 * SECOND
-const MINUTE = 60 * SECOND
 const localApp = 'http://localhost:3000/'
-// Rinkeby
-const WEENUS = '0x711e1a4a500e6aaa0df2b934982506fc78e00833'
-const XEENUS = '0x77379ed253c4731f365fcccee8e7bbe07261d103'
 
-jest.setTimeout(MINUTE)
+// Rinkeby
+const tokenA = {
+  // DAI
+  address: '0xc7ad46e0b8a400bb3c915120d284aafba8fc4735',
+  amount: 1,
+}
+const tokenB = {
+  // USDT
+  address: '0xaf3c38a810670786d2fbd1a40adea7f9dc6e8746',
+  amount: 1,
+}
+
+jest.setTimeout(MINUTE * 2.5)
+
+const metamaskConfig = {
+  seed: process.env.METAMASK_SEED,
+  // password: 'password1234',
+}
 
 describe('Add liquidity', () => {
   const startupDelay = TEN_SECONDS * 3
@@ -18,13 +38,20 @@ describe('Add liquidity', () => {
   let page: undefined | puppeteer.Page
   let metamask: any
 
-  beforeAll(async () => {
-    console.group('%c Log', 'color: orange; font-size: 14px')
-    console.log('dappeteer: ', dappeteer)
-    console.groupEnd()
+  const falseTest = () => expect(false).toBe(true)
 
-    browser = await dappeteer.launch(puppeteer, { metamaskVersion: 'v10.1.1' })
-    metamask = await dappeteer.setupMetamask(browser)
+  const failTest = async (error, part) => {
+    await takeScreenshot(page, part)
+    console.error(error)
+    falseTest()
+  }
+
+  beforeAll(async () => {
+    browser = await dappeteer.launch(puppeteer, { metamaskVersion: dappeteer.RECOMMENDED_METAMASK_VERSION })
+    metamask = await dappeteer.setupMetamask(
+      browser
+      // metamaskConfig
+    )
     page = await browser.newPage()
 
     await metamask.switchNetwork('rinkeby')
@@ -36,27 +63,77 @@ describe('Add liquidity', () => {
     if (browser) await browser.close()
   })
 
-  it('it works', async () => {
+  it('Connect Metamask', async () => {
     if (browser && page) {
       try {
-        console.group('%c Log', 'color: orange; font-size: 14px')
-        console.log('page.itlte(): ', page.title())
-        console.log('metamask: ', metamask)
-        console.groupEnd()
+        await clickOn({
+          page,
+          selector: '#connect-wallet',
+        })
+        await timeOut(SECOND * 5)
+        await clickOn({
+          page,
+          selector: '#connect-METAMASK',
+        })
+        await timeOut(SECOND)
+        await metamask.approve()
+        await timeOut(TEN_SECONDS)
+      } catch (error) {
+        await failTest(error, 'connectWallet')
+      }
+    } else {
+      throw new Error('No the browser or the page')
+    }
+  })
 
-        // await clickOn({
-        //   page,
-        //   selector: '#pool-nav-link',
-        // })
-        // TODO: define which one of two inputs in usage
-        // click on open-currency-select-button
-        // select a token a
-        // enter the amount in token-amount-input
-        // the same actions for the second token
+  it('Import tokens', async () => {
+    if (browser && page) {
+      try {
+        await importCustomToken(page, tokenA.address)
+        await importCustomToken(page, tokenB.address)
+      } catch (error) {
+        await failTest(error, 'tokenImport')
+      }
+    } else {
+      throw new Error('No the browser or the page')
+    }
+  })
+
+  it('Fill liquidity form', async () => {
+    if (browser && page) {
+      try {
+        await page.goto(`${page.url()}add/`)
+        await timeOut(SECOND)
+
+        const [selectOfTokenA, selectOfTokenB] = await page.$$('#open-currency-select-button')
+
+        // TODO: almost the same code ============================
+        await selectOfTokenA.click()
+        await clickOn({
+          page,
+          selector: `#token-item-${tokenA.address}`,
+        })
+        const liquidityInputA = await page.$('#add-liquidity-input-tokena')
+        await liquidityInputA.type(String(tokenA.amount))
+        // ---------------
+        await selectOfTokenB.click()
+        await clickOn({
+          page,
+          selector: `#token-item-${tokenB.address}`,
+        })
+        const liquidityInputB = await page.$('#add-liquidity-input-tokenb')
+        await liquidityInputB.type(String(tokenB.amount))
+        // ========================================================
+      } catch (error) {
+        await failTest(error, 'liquidityForm')
+      }
+
+      try {
         // approve and add liquidity
         // await metamask.confirmTransaction()
+        // expect().toBe()
       } catch (error) {
-        console.error(error)
+        await failTest(error, 'addLiquidity')
       }
     } else {
       throw new Error('No the browser or the page')

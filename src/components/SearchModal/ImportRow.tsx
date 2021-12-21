@@ -86,6 +86,7 @@ export default function ImportRow({
       </AutoColumn>
       {!isActive && !isAdded ? (
         <ButtonPrimary
+          id={`import-token-${token?.address?.toLowerCase()}`}
           width="fit-content"
           padding="6px 12px"
           fontWeight={500}

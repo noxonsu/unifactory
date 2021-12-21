@@ -201,7 +201,7 @@ export default function CurrencyInputPanel({
             </>
           )}
           <CurrencySelect
-            className="open-currency-select-button"
+            id="open-currency-select-button"
             onClick={() => {
               if (!disableCurrencySelect) {
                 setModalOpen(true)

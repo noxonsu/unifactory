@@ -76,7 +76,7 @@ export default function Manage({
           <ToggleOption onClick={() => setShowLists(!showLists)} active={showLists}>
             {t('lists')}
           </ToggleOption>
-          <ToggleOption onClick={() => setShowLists(!showLists)} active={!showLists}>
+          <ToggleOption onClick={() => setShowLists(!showLists)} active={!showLists} id="manage-modal-tokens-tab">
             {t('tokens')}
           </ToggleOption>
         </ToggleWrapper>
