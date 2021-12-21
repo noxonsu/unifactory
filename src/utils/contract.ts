@@ -104,7 +104,8 @@ export const getContractInstance = (library: Web3Provider, address: string, abi:
 }
 
 export const deploySwapContracts = async (params: any) => {
-  const { domain, registryAddress, admin, library, wrappedToken, onFactoryHash, onRouterHash } = params
+  const { domain, registryAddress, admin, library, wrappedToken, onFactoryHash, onRouterHash, onSuccessfulDeploy } =
+    params
 
   try {
     const factory = await deployFactory({
@@ -133,6 +134,8 @@ export const deploySwapContracts = async (params: any) => {
         .send({
           from: accounts[0],
         })
+
+      onSuccessfulDeploy()
     } else {
       throw new Error('No factory contract')
     }

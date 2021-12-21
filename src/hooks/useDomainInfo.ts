@@ -4,7 +4,7 @@ import { useRegistryContract } from './useContract'
 import { useActiveWeb3React } from 'hooks'
 import networks from 'networks.json'
 
-export default function useDomainInfo(): {
+export default function useDomainInfo(trigger: boolean): {
   data: { admin: string; factory: string; router: string; storage: string } | null
   isLoading: boolean
   error: Error | null
@@ -41,7 +41,7 @@ export default function useDomainInfo(): {
     }
 
     fetchData()
-  }, [registry])
+  }, [registry, trigger])
 
   return { data, isLoading, error }
 }

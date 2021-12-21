@@ -33,7 +33,7 @@ const InputWrapper = styled.div`
 `
 
 export function Deployment(props: any) {
-  const { pending, setError, wrappedToken, setWrappedToken } = props
+  const { pending, setError, wrappedToken, setWrappedToken, setDomainDataTrigger } = props
   const { t } = useTranslation()
   const { library, chainId } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
@@ -98,6 +98,7 @@ export function Deployment(props: any) {
           )
           setAttemptingTxn(false)
         },
+        onSuccessfulDeploy: () => setDomainDataTrigger((state: boolean) => !state),
       })
     } catch (error) {
       setError(error)

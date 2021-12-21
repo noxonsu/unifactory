@@ -97,7 +97,8 @@ export default function App() {
     (state) => state.application.appManagement
   )
 
-  const { data: domainData, isLoading: domainLoading } = useDomainInfo()
+  const [domainDataTrigger, setDomainDataTrigger] = useState<boolean>(false)
+  const { data: domainData, isLoading: domainLoading } = useDomainInfo(domainDataTrigger)
   const { data: storageData, isLoading: storageLoading } = useStorageInfo()
 
   useEffect(() => {
@@ -126,7 +127,7 @@ export default function App() {
               {appManagement ? (
                 <BodyWrapper>
                   <AppBody>
-                    <Panel />
+                    <Panel setDomainDataTrigger={setDomainDataTrigger} />
                   </AppBody>
                 </BodyWrapper>
               ) : (
@@ -169,7 +170,11 @@ export default function App() {
               )}
             </>
           ) : (
-            <Connection domainData={domainData} isAvailableNetwork={isAvailableNetwork} />
+            <Connection
+              setDomainDataTrigger={setDomainDataTrigger}
+              domainData={domainData}
+              isAvailableNetwork={isAvailableNetwork}
+            />
           )}
         </Web3ReactManager>
       </AppWrapper>

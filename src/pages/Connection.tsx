@@ -56,7 +56,13 @@ const supportedChainIds = () => {
 
 const unavailableOrZeroAddr = (value: string | undefined) => !value || value === ZERO_ADDRESS
 
-export default function Connection({ domainData, isAvailableNetwork }: any) {
+interface ComponentProps {
+  domainData: any
+  isAvailableNetwork: boolean
+  setDomainDataTrigger: (x: any) => void
+}
+
+export default function Connection({ domainData, isAvailableNetwork, setDomainDataTrigger }: ComponentProps) {
   const { t } = useTranslation()
   const [darkMode] = useDarkModeManager()
 
@@ -95,7 +101,7 @@ export default function Connection({ domainData, isAvailableNetwork }: any) {
         </AppBody>
       ) : needToConfigure ? (
         <AppBody>
-          <Panel />
+          <Panel setDomainDataTrigger={setDomainDataTrigger} />
         </AppBody>
       ) : (
         <AppBody>

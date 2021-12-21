@@ -83,7 +83,11 @@ const DangerZone = styled.div`
   margin-top: 1rem;
 `
 
-export default function Panel() {
+interface ComponentProps {
+  setDomainDataTrigger: (x: any) => void
+}
+
+export default function Panel({ setDomainDataTrigger }: ComponentProps) {
   const { t } = useTranslation()
   const dispatch = useDispatch()
   const [pending, setPending] = useState<boolean>(false)
@@ -122,6 +126,8 @@ export default function Panel() {
     await registry.methods.removeDomain(domain).send({
       from: account,
     })
+
+    setDomainDataTrigger((state: boolean) => !state)
   }
 
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
@@ -183,6 +189,7 @@ export default function Panel() {
             setError={setError}
             wrappedToken={wrappedToken}
             setWrappedToken={setWrappedToken}
+            setDomainDataTrigger={setDomainDataTrigger}
           />
         )}
         {tab === 'contracts' && <SwapContracts pending={pending} setPending={setPending} setError={setError} />}
