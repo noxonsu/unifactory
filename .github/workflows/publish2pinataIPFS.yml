@@ -23,7 +23,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - name: npm install, build
       run: |
-        npm i
+        npm i --legacy-peer-deps
         npm run build
     - name: IPFS Pinata deploy GitHub action
       uses: anantaramdas/ipfs-pinata-deploy-action@v1.6.4

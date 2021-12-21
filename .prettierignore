@@ -1,0 +1,7 @@
+build
+contracts
+assets
+
+*.sol
+*.svg
+*.json

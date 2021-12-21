@@ -1,0 +1,71 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "strict": true,
+    "alwaysStrict": true,
+    "strictNullChecks": true,
+    "noUnusedLocals": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "downlevelIteration": true,
+    "allowSyntheticDefaultImports": true,
+    "types": ["react-spring", "jest"],
+    "typeRoots": ["node_modules/@types"],
+    "baseUrl": "src"
+  },
+  "paths": {
+    "networks": ["src/networks"],
+    "appConfig": ["src/appConfig"],
+
+    "assets": ["src/assets"],
+    "assets/*": ["src/assets/*"],
+
+    "components": ["src/components"],
+    "components/*": ["src/components/*"],
+
+    "connectors": ["src/connectors"],
+    "connectors/*": ["src/connectors/*"],
+
+    "constants": ["src/constants"],
+    "constants/*": ["src/constants/*"],
+
+    "contracts": ["src/contracts"],
+    "contracts/*": ["src/contracts/*"],
+
+    "data": ["src/data"],
+    "data/*": ["src/data/*"],
+
+    "hooks": ["src/hooks"],
+    "hooks/*": ["src/hooks/*"],
+
+    "pages": ["src/pages"],
+    "pages/*": ["src/pages/*"],
+
+    "sdk": ["src/sdk"],
+    "sdk/*": ["src/sdk/*"],
+
+    "state": ["src/state"],
+    "state/*": ["src/state/*"],
+
+    "theme": ["src/theme"],
+    "theme/*": ["src/theme/*"],
+
+    "utils": ["src/utils"],
+    "utils/*": ["src/utils/*"]
+  },
+  "exclude": ["node_modules", "**/*/*.test.ts"],
+  "include": ["./src/**/*.ts", "./src/**/*.tsx"]
+}
