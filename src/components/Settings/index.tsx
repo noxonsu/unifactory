@@ -3,16 +3,16 @@ import { Settings, X } from 'react-feather'
 import { Text } from 'rebass'
 import styled, { ThemeContext } from 'styled-components'
 import { useTranslation } from 'react-i18next'
-import { useOnClickOutside } from '../../hooks/useOnClickOutside'
-import { ApplicationModal } from '../../state/application/actions'
-import { useModalOpen, useToggleSettingsMenu } from '../../state/application/hooks'
+import { useOnClickOutside } from 'hooks/useOnClickOutside'
+import { ApplicationModal } from 'state/application/actions'
+import { useModalOpen, useToggleSettingsMenu } from 'state/application/hooks'
 import {
   useExpertModeManager,
   useUserTransactionTTL,
   useUserSlippageTolerance,
   useUserSingleHopOnly,
-} from '../../state/user/hooks'
-import { TYPE } from '../../theme'
+} from 'state/user/hooks'
+import { TYPE } from 'theme'
 import { ButtonError } from '../Button'
 import { AutoColumn } from '../Column'
 import Modal from '../Modal'

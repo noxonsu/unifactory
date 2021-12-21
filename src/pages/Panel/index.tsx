@@ -3,12 +3,17 @@ import { useActiveWeb3React } from 'hooks'
 import styled from 'styled-components'
 import { MdArrowBack } from 'react-icons/md'
 import { shortenAddress } from 'utils'
+import { Text } from 'rebass'
 import networks from '../../networks.json'
+import Registry from 'contracts/build/Registry.json'
 import { useDispatch, useSelector } from 'react-redux'
+import { getContractInstance } from 'utils/contract'
 import { AppState } from 'state'
 import { useTranslation } from 'react-i18next'
+import { useProjectInfo } from 'state/application/hooks'
 import { setAppManagement } from 'state/application/actions'
-import { CleanButton } from 'components/Button'
+import { CleanButton, ButtonError, ButtonSecondary } from 'components/Button'
+import ConfirmationModal from 'components/ConfirmationModal'
 import { Wallet } from './Wallet'
 import { Deployment } from './Deployment'
 import { SwapContracts } from './SwapContracts'
@@ -61,7 +66,6 @@ const Tab = styled.button`
 
 const Content = styled.div`
   border-radius: 1rem;
-  border: 1px solid #00000005;
 `
 
 const Error = styled.span`
@@ -75,11 +79,16 @@ const Error = styled.span`
   color: ${({ theme }) => theme.red1};
 `
 
+const DangerZone = styled.div`
+  margin-top: 1rem;
+`
+
 export default function Panel() {
   const { t } = useTranslation()
   const dispatch = useDispatch()
   const [pending, setPending] = useState<boolean>(false)
-  const { chainId, account } = useActiveWeb3React()
+  const { chainId, account, library } = useActiveWeb3React()
+  const { admin, factory, router } = useProjectInfo()
   const [error, setError] = useState<any | false>(false)
 
   const appManagement = useSelector<AppState, AppState['application']['appManagement']>(
@@ -103,9 +112,39 @@ export default function Panel() {
 
   //@ts-ignore
   const accountPrefix = networks[chainId] ? networks[chainId]?.name || t('account') : ''
+  const domain = window.location.hostname || document.location.host
+
+  const resetDomain = async () => {
+    setShowConfirm(false)
+    //@ts-ignore
+    const registry: any = getContractInstance(library, networks[chainId]?.registry, Registry.abi)
+
+    await registry.methods.removeDomain(domain).send({
+      from: account,
+    })
+  }
+
+  const [showConfirm, setShowConfirm] = useState<boolean>(false)
 
   return (
     <Wrapper>
+      <ConfirmationModal
+        isOpen={showConfirm}
+        onDismiss={() => setShowConfirm(false)}
+        content={() => (
+          <>
+            <Text fontWeight={500} fontSize={20}>
+              {t('resetDomainDescription')}
+            </Text>
+            <ButtonError error padding={'12px'} onClick={resetDomain}>
+              <Text fontSize={20} fontWeight={500} id="reset">
+                {t('resetDomainData')}
+              </Text>
+            </ButtonError>
+          </>
+        )}
+      />
+
       <HeaderButtons>
         {appManagement && (
           <BackButton onClick={backToApp}>
@@ -149,6 +188,12 @@ export default function Panel() {
         {tab === 'contracts' && <SwapContracts pending={pending} setPending={setPending} setError={setError} />}
         {tab === 'interface' && <InterfaceOptions pending={pending} setPending={setPending} setError={setError} />}
       </Content>
+
+      {Boolean(admin && factory && router) && (
+        <DangerZone>
+          <ButtonSecondary onClick={() => setShowConfirm(true)}>{t('resetDomainData')}</ButtonSecondary>
+        </DangerZone>
+      )}
     </Wrapper>
   )
 }

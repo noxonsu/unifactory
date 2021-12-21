@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useActiveWeb3React } from 'hooks'
 import { useTransactionAdder } from 'state/transactions/hooks'
+import { useProjectInfo } from 'state/application/hooks'
 import styled from 'styled-components'
 import { Text } from 'rebass'
 import networks from 'networks.json'
@@ -36,6 +37,7 @@ export function Deployment(props: any) {
   const { t } = useTranslation()
   const { library, chainId } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
+  const { admin: stateAdmin, factory: stateFactory, router: stateRouter } = useProjectInfo()
 
   enum DeployOption {
     Swap,
@@ -57,7 +59,7 @@ export function Deployment(props: any) {
 
   const currentDomain = window.location.hostname || document.location.host
   const [domain, setDomain] = useState(currentDomain)
-  const [adminAddress, setAdminAddress] = useState('')
+  const [adminAddress, setAdminAddress] = useState(stateAdmin || '')
 
   const onContractsDeployment = async () => {
     setAttemptingTxn(true)
@@ -138,9 +140,12 @@ export function Deployment(props: any) {
         //@ts-ignore
         isValidAddress(library, wrappedToken)
     )
-    //@ts-ignore
-    setCanDeployStorage(isValidAddress(library, adminAddress))
   }, [library, adminAddress, wrappedToken])
+
+  useEffect(() => {
+    //@ts-ignore
+    setCanDeployStorage(isValidAddress(library, adminAddress) && stateFactory && stateRouter)
+  }, [library, adminAddress, stateFactory, stateRouter])
 
   const modalBottom = () => {
     const confirm = () => {

@@ -18,11 +18,11 @@ export function useThemeColors(): {
   const [darkMode] = useDarkModeManager()
   const { brandColor } = useProjectInfo()
 
-  let primary1 = darkMode ? '#c4c4c4' : '#262626'
-  let primary2 = darkMode ? '#a3a3a3' : '#363636'
-  let primary3 = darkMode ? '#8f8f8f' : '#474747'
-  let primary4 = darkMode ? '#828282' : '#575757'
-  let primary5 = darkMode ? '#6b6b6b' : '#6b6b6b'
+  let primary1 = darkMode ? '#999999' : '#262626'
+  let primary2 = darkMode ? '#858585' : '#363636'
+  let primary3 = darkMode ? '#737373' : '#474747'
+  let primary4 = darkMode ? '#5c5c5c' : '#575757'
+  let primary5 = darkMode ? '#474747' : '#6b6b6b'
 
   if (brandColor) {
     const color = new Color(brandColor)
