@@ -1,4 +1,5 @@
 import React, { Suspense, useEffect, useState } from 'react'
+// import { Helmet } from 'react-helmet'
 import { Route, Switch } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { AppState } from 'state'
@@ -78,7 +79,12 @@ const FooterWrapper = styled.footer`
 export default function App() {
   const dispatch = useDispatch()
   const { active, chainId } = useWeb3React()
-  const { admin, factory, router } = useProjectInfo()
+  const {
+    admin,
+    factory,
+    router,
+    // projectName
+  } = useProjectInfo()
   const appIsReady = active && admin && factory && Boolean(router)
 
   const [isAvailableNetwork, setIsAvailableNetwork] = useState(true)
@@ -113,6 +119,12 @@ export default function App() {
 
   return (
     <Suspense fallback={null}>
+      {/* {projectName && (
+        <Helmet>
+          <title>{projectName}</title>
+        </Helmet>
+      )} */}
+
       <Route component={DarkModeQueryParamReader} />
       <AppWrapper>
         <Web3ReactManager>
