@@ -1,4 +1,7 @@
-import { Interface, FunctionFragment } from '@ethersproject/abi'
+import {
+  Interface,
+  // FunctionFragment
+} from '@ethersproject/abi'
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
 import { useEffect, useMemo } from 'react'
@@ -126,7 +129,10 @@ const LOADING_CALL_STATE: CallState = { valid: true, result: undefined, loading:
 function toCallState(
   callResult: CallResult | undefined,
   contractInterface: Interface | undefined,
-  fragment: FunctionFragment | undefined,
+  // TODO: temp fix. Fix this problem:
+  // The type 'readonly Fragment[]' is 'readonly' and cannot be assigned to the mutable type 'Fragment[]'
+  // probably because we use useMemo() for the fragment parameter before the function call
+  fragment: any, // FunctionFragment | undefined,
   latestBlockNumber: number | undefined
 ): CallState {
   if (!callResult) return INVALID_CALL_STATE
