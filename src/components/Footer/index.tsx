@@ -8,7 +8,7 @@ import { FaTelegramPlane } from 'react-icons/fa'
 import { BsQuestionCircle } from 'react-icons/bs'
 import { SiTwitter } from 'react-icons/si'
 import { AiOutlineYoutube } from 'react-icons/ai'
-import { BsFacebook, BsGithub, BsDiscord, BsMedium, BsReddit } from 'react-icons/bs'
+import { BsFacebook, BsGithub, BsDiscord, BsMedium, BsReddit, BsLinkedin, BsLightningChargeFill } from 'react-icons/bs'
 
 const FooterWrapper = styled.div`
   padding: 0.3rem;
@@ -67,6 +67,8 @@ const returnIconByUri = (uri: string) => {
     if (lowerUri.match(/discord/)) icon = <BsDiscord title="Discord" />
     if (lowerUri.match(/medium/)) icon = <BsMedium title="Medium" />
     if (lowerUri.match(/reddit/)) icon = <BsReddit title="Reddit" />
+    if (lowerUri.match(/linkedin/)) icon = <BsLinkedin title="Linkedin" />
+    if (lowerUri.match(/snapshot/)) icon = <BsLightningChargeFill title="Snapshot" />
   }
 
   return icon

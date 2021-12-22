@@ -13,8 +13,8 @@ import networks from 'networks.json'
 
 const HeaderFrame = styled.header`
   width: 100vw;
-  margin: 0.8rem auto;
-  padding: 0.8rem 1.6rem;
+  margin: 0.4rem auto;
+  padding: 0.4rem 1.6rem;
   z-index: 2;
   display: grid;
   grid-template-columns: 120px 1fr 120px;

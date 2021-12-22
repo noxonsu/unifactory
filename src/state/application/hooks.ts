@@ -1,27 +1,48 @@
 import { useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { TokenList } from '@uniswap/token-lists/dist/types'
 import { useActiveWeb3React } from '../../hooks'
 import { AppDispatch, AppState } from '../index'
+import { StorageState } from './reducer'
 import { addPopup, ApplicationModal, PopupContent, removePopup, setOpenModal } from './actions'
 
-export function useProjectInfo(): {
+type ProjectInfo = {
   admin: string
   factory: string
   router: string
   storage: string
-  domain: string
-  projectName: string
-  brandColor: string
-  logo: string
-  tokenLists: TokenList[]
-  socialLinks: string[]
-} {
-  return useSelector((state: AppState) => {
-    const { admin, factory, router, storage, domain, projectName, brandColor, logo, tokenLists, socialLinks } =
-      state.application
+} & StorageState
 
-    return { admin, factory, router, storage, domain, projectName, brandColor, logo, tokenLists, socialLinks }
+// ? seams it does not make sense. We can use state data directly ?
+// TODO: remove this hook?
+export function useProjectInfo(): ProjectInfo {
+  return useSelector((state: AppState) => {
+    const {
+      admin,
+      factory,
+      router,
+      storage,
+      domain,
+      projectName,
+      brandColor,
+      logo,
+      tokenLists,
+      socialLinks,
+      menuLinks,
+    } = state.application
+
+    return {
+      admin,
+      factory,
+      router,
+      storage,
+      domain,
+      projectName,
+      brandColor,
+      logo,
+      tokenLists,
+      socialLinks,
+      menuLinks,
+    }
   })
 }
 

@@ -3,15 +3,16 @@ import styled from 'styled-components'
 import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { IoIosReturnLeft } from 'react-icons/io'
+import { HiOutlineSun, HiMoon } from 'react-icons/hi'
+import { MdLanguage } from 'react-icons/md'
+import { RiArrowRightUpLine } from 'react-icons/ri'
 import i18n, { availableLanguages, LANG_NAME } from '../../i18n'
 import { ReactComponent as MenuIcon } from 'assets/images/menu.svg'
 import { useDarkModeManager } from 'state/user/hooks'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
-import { ApplicationModal } from 'state/application/actions'
-import { setAppManagement } from 'state/application/actions'
-import { useModalOpen, useToggleModal } from 'state/application/hooks'
-// import { ExternalLink } from 'theme';
-import { useProjectInfo } from 'state/application/hooks'
+import { ApplicationModal, setAppManagement } from 'state/application/actions'
+import { useModalOpen, useToggleModal, useProjectInfo } from 'state/application/hooks'
+import { ExternalLink } from 'theme'
 import { useActiveWeb3React } from 'hooks'
 
 const StyledMenuIcon = styled(MenuIcon)`
@@ -61,7 +62,7 @@ const StyledMenu = styled.div`
 `
 
 const MenuFlyout = styled.span`
-  min-width: 8.125rem;
+  min-width: 8.6rem;
   background-color: ${({ theme }) => theme.bg1};
   border-radius: 0.5rem;
   box-shadow: rgba(0, 0, 0, 0.01) 0px 0px 1px, rgba(0, 0, 0, 0.04) 0px 4px 8px, rgba(0, 0, 0, 0.04) 0px 16px 24px,
@@ -77,27 +78,11 @@ const MenuFlyout = styled.span`
   transition: 0.2s;
 `
 
-// const MenuItem = styled(ExternalLink)`
-//   cursor: pointer;
-//   flex: 1;
-//   padding: 0 0 0.2rem;
-//   color: ${({ theme }) => theme.text2};
-//   word-break: keep-all;
-//   white-space: nowrap;
-//   font-size: 0.9em;
-//   transition: 0.2s;
-//   text-decoration: none;
-
-//   :hover,
-//   :focus {
-//     color: ${({ theme }) => theme.text1};
-//     cursor: pointer;
-//     text-decoration: none;
-//   }
-// `;
-
 const MenuButton = styled.span`
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   flex: 1;
   padding: 0 0 0.6rem;
   color: ${({ theme }) => theme.text2};
@@ -105,6 +90,10 @@ const MenuButton = styled.span`
   white-space: nowrap;
   font-size: 0.9em;
   transition: 0.2s;
+
+  :last-child {
+    padding-bottom: 0;
+  }
 
   :hover,
   :focus {
@@ -114,8 +103,40 @@ const MenuButton = styled.span`
   }
 `
 
+const MenuItem = styled(ExternalLink)`
+  cursor: pointer;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0 0.6rem;
+  color: ${({ theme }) => theme.text2};
+  word-break: keep-all;
+  white-space: nowrap;
+  font-size: 0.9em;
+  transition: 0.2s;
+  text-decoration: none;
+
+  :last-child {
+    padding-bottom: 0;
+  }
+
+  :hover,
+  :focus {
+    color: ${({ theme }) => theme.text1};
+    cursor: pointer;
+    text-decoration: none;
+  }
+`
+
+const IconWrapper = styled.span`
+  width: 0.8rem;
+  margin-left: 0.6rem;
+`
+
 const Title = styled.h4`
   margin: 0.3rem 0 0.8rem;
+  font-weight: 500;
 `
 
 export const ClickableMenuItem = styled.a<{ active: boolean }>`
@@ -179,7 +200,7 @@ function LanguageMenu({ close }: { close: () => void }) {
 export default function Menu() {
   const { t } = useTranslation()
   const { account } = useActiveWeb3React()
-  const { admin } = useProjectInfo()
+  const { admin, menuLinks } = useProjectInfo()
   const dispatch = useDispatch()
 
   const [isAdmin, setIsAdmin] = useState<boolean>(account?.toLowerCase() === admin?.toLowerCase())
@@ -214,8 +235,37 @@ export default function Menu() {
           ) : (
             <MenuFlyout>
               <Title>{t('settings')}</Title>
-              <MenuButton onClick={toggleDarkMode}>{darkMode ? t('lightTheme') : t('darkTheme')}</MenuButton>
-              <MenuButton onClick={() => setMenu('lang')}>{t('language')}</MenuButton>
+              <MenuButton onClick={toggleDarkMode}>
+                {darkMode ? (
+                  <>
+                    {t('lightTheme')}
+                    <IconWrapper>
+                      <HiOutlineSun size="100%" />
+                    </IconWrapper>
+                  </>
+                ) : (
+                  <>
+                    {t('darkTheme')}
+                    <IconWrapper>
+                      <HiMoon size="100%" />
+                    </IconWrapper>
+                  </>
+                )}
+              </MenuButton>
+              <MenuButton onClick={() => setMenu('lang')}>
+                {t('language')}
+                <IconWrapper>
+                  <MdLanguage size="100%" />
+                </IconWrapper>
+              </MenuButton>
+
+              {Boolean(menuLinks?.length) &&
+                menuLinks.map((item: { source: string; name: string }, index: number) => (
+                  <MenuItem key={index} href={item.source} target="_blank">
+                    {item.name} <RiArrowRightUpLine />
+                  </MenuItem>
+                ))}
+
               {isAdmin && <MenuButton onClick={openSettings}>{t('manage')}</MenuButton>}
             </MenuFlyout>
           )}
