@@ -176,7 +176,7 @@ export function InterfaceOptions(props: any) {
     const fullUpdateIsAvailable = Boolean(storage && (logoUrl || brandColor || projectName || socialLinks.length))
 
     setFullUpdateIsAvailable(!!fullUpdateIsAvailable)
-  }, [storage, projectName, logoUrl, brandColor])
+  }, [storage, projectName, logoUrl, brandColor, socialLinks])
 
   const createNewTokenList = () => {
     setTokenLists((oldData: any) => [

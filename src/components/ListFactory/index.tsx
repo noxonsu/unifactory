@@ -59,7 +59,7 @@ export default function ListFactory({
   const [newItem, setNewItem] = useState<string>('')
   const [itemError, setItemError] = useState<boolean>(false)
 
-  useEffect(() => onItemChange(items), [items])
+  useEffect(() => onItemChange(items), [items, onItemChange])
   useEffect(() => setItems(startItems), [startItems])
 
   const onRemove = (targetIndex: number) => {
