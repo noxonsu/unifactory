@@ -1,5 +1,6 @@
 import { createAction } from '@reduxjs/toolkit'
 import { TokenList } from '@uniswap/token-lists'
+import { StorageState } from './reducer'
 
 export type PopupContent =
   | {
@@ -36,14 +37,7 @@ export const retrieveDomainData = createAction<{ admin: string; factory: string;
   'application/retrieveDomainData'
 )
 
-export const updateAppData = createAction<{
-  domain: string
-  projectName: string
-  brandColor: string
-  logo: string
-  tokenLists: string[]
-  socialLinks: string[]
-}>('application/updateAppData')
+export const updateAppData = createAction<StorageState>('application/updateAppData')
 
 export const updateBlockNumber = createAction<{ chainId: number; blockNumber: number }>('application/updateBlockNumber')
 

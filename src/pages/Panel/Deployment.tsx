@@ -7,6 +7,7 @@ import styled from 'styled-components'
 import { Text } from 'rebass'
 import networks from 'networks.json'
 import { ButtonPrimary } from 'components/Button'
+import QuestionHelper from 'components/QuestionHelper'
 import InputPanel from 'components/InputPanel'
 import AddressInputPanel from 'components/AddressInputPanel'
 import TransactionConfirmationModal, { ConfirmationModalContent } from 'components/TransactionConfirmationModal'
@@ -20,7 +21,8 @@ const Info = styled.p`
 `
 
 const Title = styled.h4`
-  margin: 1.1em 0;
+  margin: 1.4em 0 0.8rem;
+  font-weight: 500;
 `
 
 const Button = styled(ButtonPrimary)`
@@ -30,6 +32,11 @@ const Button = styled(ButtonPrimary)`
 
 const InputWrapper = styled.div`
   margin: 0.2rem 0;
+`
+
+const Label = styled.div`
+  display: flex;
+  align-items: center;
 `
 
 export function Deployment(props: any) {
@@ -192,9 +199,13 @@ export function Deployment(props: any) {
       </InputWrapper>
 
       <Title>1) {t('deploySwapContracts')}</Title>
-      <Info>{t('wrappedTokenDescription')}</Info>
+
       <AddressInputPanel
-        label={`${t('wrappedToken')} *`}
+        label={
+          <Label>
+            {t('wrappedToken')} * <QuestionHelper text={t('wrappedTokenDescription')} />
+          </Label>
+        }
         value={wrappedToken}
         onChange={setWrappedToken}
         disabled={

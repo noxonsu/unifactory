@@ -74,7 +74,7 @@ export default function AddressInputPanel({
   placeholder,
 }: {
   id?: string
-  label?: string
+  label?: string | JSX.Element
   disabled?: boolean
   placeholder?: boolean | undefined
   // the typed string value

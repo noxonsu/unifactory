@@ -37,6 +37,7 @@
     "@types/react-virtualized-auto-sizer": "1.0.0",
     "@types/react-window": "1.8.3",
     "@types/rebass": "4.0.8",
+    "@types/rebass__forms": "^4.0.6",
     "@types/styled-components": "5.1.10",
     "@types/valid-url": "^1.0.3",
     "@types/wcag-contrast": "3.0.0",
@@ -114,6 +115,7 @@
   },
   "dependencies": {
     "@chainsafe/dappeteer": "^2.3.0",
+    "@rebass/forms": "^4.0.6",
     "big.js": "^6.1.1",
     "color": "^3.2.1",
     "decimal.js-light": "^2.5.1",

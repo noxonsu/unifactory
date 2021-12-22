@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { useActiveWeb3React } from 'hooks'
+import { Box } from 'rebass'
+import { Label, Checkbox } from '@rebass/forms'
 import { useProjectInfo } from 'state/application/hooks'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import { ButtonPrimary } from 'components/Button'
 import AddressInputPanel from 'components/AddressInputPanel'
-import { isValidAddress, setFactoryOption, getFactoryOptions } from '../../utils/contract'
+import QuestionHelper from 'components/QuestionHelper'
+import { isValidAddress, setFactoryOption, getFactoryOptions } from 'utils/contract'
 import { ZERO_ADDRESS } from 'sdk'
 import { factoryMethods } from '../../constants'
 
@@ -23,6 +26,11 @@ const Button = styled(ButtonPrimary)`
   padding: 0.8rem;
   margin-top: 0.3rem;
   font-size: 0.8em;
+`
+
+const InputLabel = styled.div`
+  display: flex;
+  align-items: center;
 `
 
 export function SwapContracts(props: any) {
@@ -125,16 +133,25 @@ export function SwapContracts(props: any) {
           {t('save')}
         </Button>
 
-        <Info>{t('feeIsChargedWhen')}</Info>
-        <AddressInputPanel label={`${t('feeRecipient')}`} value={feeRecipient} onChange={setFeeRecipient} />
+        <AddressInputPanel
+          label={
+            <InputLabel>
+              {t('feeRecipient')} <QuestionHelper text={t('feeIsChargedWhen')} />
+            </InputLabel>
+          }
+          value={feeRecipient}
+          onChange={setFeeRecipient}
+        />
         <Button onClick={() => saveOption(factoryMethods.setFeeTo)} disabled={!feeRecipient}>
           {t('save')}
         </Button>
 
-        <label>
-          <input type="checkbox" onChange={updateFeesToAdmin} />
-          {t('allFeesToAdmin')}
-        </label>
+        <Box>
+          <Label>
+            <Checkbox id="remember" name="remember" onChange={updateFeesToAdmin} />
+            {t('allFeesToAdmin')}
+          </Label>
+        </Box>
         <Button onClick={() => saveOption(factoryMethods.setAllFeeToProtocol)} disabled={!factoryIsCorrect}>
           {t('save')}
         </Button>

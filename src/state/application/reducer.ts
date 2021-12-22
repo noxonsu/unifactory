@@ -1,6 +1,5 @@
 import { createReducer, nanoid } from '@reduxjs/toolkit'
 import { TokenList } from '@uniswap/token-lists/dist/types'
-import { returnValidList } from 'utils/getTokenList'
 import { ZERO_ADDRESS } from 'sdk'
 import {
   setAppManagement,
@@ -16,22 +15,26 @@ import {
 
 type PopupList = Array<{ key: string; show: boolean; content: PopupContent; removeAfterMs: number | null }>
 
-export interface ApplicationState {
-  readonly appManagement: boolean
-  readonly admin: string
-  readonly factory: string
-  readonly router: string
-  readonly storage: string
+export type StorageState = {
   readonly domain: string
   readonly projectName: string
   readonly brandColor: string
   readonly logo: string
   readonly tokenLists: TokenList[]
   readonly socialLinks: string[]
+  readonly menuLinks: { name: string; source: string }[]
+}
+
+export type ApplicationState = {
+  readonly appManagement: boolean
+  readonly admin: string
+  readonly factory: string
+  readonly router: string
+  readonly storage: string
   readonly blockNumber: { readonly [chainId: number]: number }
   readonly popupList: PopupList
   readonly openModal: ApplicationModal | null
-}
+} & StorageState
 
 const initialState: ApplicationState = {
   appManagement: false,
@@ -44,6 +47,7 @@ const initialState: ApplicationState = {
   brandColor: '',
   logo: '',
   tokenLists: [],
+  menuLinks: [],
   socialLinks: [],
   blockNumber: {},
   popupList: [],
@@ -71,44 +75,16 @@ export default createReducer(initialState, (builder) =>
       state.storage = storage
     })
     .addCase(updateAppData, (state, action) => {
-      const { domain, projectName, brandColor, logo, tokenLists, socialLinks } = action.payload
-      const validLists: any = []
-
-      if (tokenLists.length) {
-        validLists.push(
-          ...tokenLists
-            .filter((strJson) => {
-              try {
-                const list = JSON.parse(strJson)
-
-                list.tokens = list.tokens.map((token: any) => {
-                  return {
-                    ...token,
-                    // some value(s) has to be other types (for now it's only int decimals)
-                    // but JSON allows only strings
-                    decimals: Number(token.decimals),
-                  }
-                })
-
-                return returnValidList(list)
-              } catch (error) {
-                console.error(error)
-                return false
-              }
-            })
-            .map((strJson) => JSON.parse(strJson))
-        )
-      }
+      const { domain, projectName, brandColor, logo, tokenLists, socialLinks, menuLinks } = action.payload
 
       state.domain = domain
       state.projectName = projectName
       state.brandColor = brandColor
       state.logo = logo
-      state.tokenLists = validLists
 
-      if (socialLinks.length) {
-        state.socialLinks = socialLinks
-      }
+      if (tokenLists.length) state.tokenLists = tokenLists
+      if (socialLinks.length) state.socialLinks = socialLinks
+      if (menuLinks.length) state.menuLinks = menuLinks
     })
     .addCase(updateBlockNumber, (state, action) => {
       const { chainId, blockNumber } = action.payload

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import validUrl from 'valid-url'
 import styled from 'styled-components'
 import { ZERO_ADDRESS } from 'sdk'
 import { useActiveWeb3React } from 'hooks'
@@ -12,6 +13,7 @@ import { ButtonPrimary } from 'components/Button'
 import { TokenLists } from './TokenLists'
 import InputPanel from 'components/InputPanel'
 import AddressInputPanel from 'components/AddressInputPanel'
+import ListFactory from 'components/ListFactory'
 import { saveProjectOption, fetchOptionsFromContract } from 'utils/storage'
 import { isValidAddress } from 'utils/contract'
 import { storageMethods } from '../../constants'
@@ -94,7 +96,13 @@ export function InterfaceOptions(props: any) {
   const [projectName, setProjectName] = useState('')
   const [logoUrl, setLogoUrl] = useState('')
   const [brandColor, setBrandColor] = useState('')
-  const [socialLinks, setSocialLinks] = useState<string>('')
+  const [socialLinks, setSocialLinks] = useState<string[]>([])
+
+  const onSocialLinksChange = (newLinks: string[]) => setSocialLinks(newLinks)
+
+  // const [, setMenuLinks] = useState<string[]>([])
+  // const onMenuLinksChange = (newLinks: string[]) => setMenuLinks(newLinks)
+
   const [tokenLists, setTokenLists] = useState<any>([])
 
   const updateBrandColor = (color: { hex: string }) => setBrandColor(color.hex)
@@ -113,7 +121,7 @@ export function InterfaceOptions(props: any) {
         if (projectName) setProjectName(projectName)
         if (logoUrl) setLogoUrl(logoUrl)
         if (brandColor) setBrandColor(brandColor)
-        if (socialLinks) setSocialLinks(socialLinks.join(','))
+        if (socialLinks) setSocialLinks(socialLinks)
         if (tokenLists.length) {
           setTokenLists([])
 
@@ -135,20 +143,17 @@ export function InterfaceOptions(props: any) {
     setPending(true)
 
     try {
-      const socialLinksArr = socialLinks ? socialLinks.split(',') : []
-      const settings = {
-        projectName,
-        logoUrl,
-        brandColor,
-        socialLinks: socialLinksArr,
-      }
-
       await saveProjectOption({
         //@ts-ignore
         library,
         storageAddress: storage,
         method: storageMethods.setSettings,
-        value: JSON.stringify(settings),
+        value: JSON.stringify({
+          projectName,
+          logoUrl,
+          brandColor,
+          socialLinks,
+        }),
         onHash: (hash: string) => {
           addTransaction(
             { hash },
@@ -168,10 +173,10 @@ export function InterfaceOptions(props: any) {
   const [fullUpdateIsAvailable, setFullUpdateIsAvailable] = useState(false)
 
   useEffect(() => {
-    const fullUpdateIsAvailable = Boolean(storage && (logoUrl || brandColor || projectName))
+    const fullUpdateIsAvailable = Boolean(storage && (logoUrl || brandColor || projectName || socialLinks.length))
 
     setFullUpdateIsAvailable(!!fullUpdateIsAvailable)
-  }, [storage, projectName, logoUrl, brandColor])
+  }, [storage, projectName, logoUrl, brandColor, socialLinks])
 
   const createNewTokenList = () => {
     setTokenLists((oldData: any) => [
@@ -204,9 +209,15 @@ export function InterfaceOptions(props: any) {
           <InputPanel label={`${t('logoUrl')}`} value={logoUrl} onChange={setLogoUrl} />
         </InputWrapper>
 
-        <InputWrapper>
-          <InputPanel label={`${t('socialLinks')}`} value={socialLinks} onChange={setSocialLinks} />
-        </InputWrapper>
+        <ListFactory
+          title={t('socialLinks')}
+          placeholder="https://..."
+          startItems={socialLinks}
+          onItemChange={onSocialLinksChange}
+          isValidItem={(address) => Boolean(validUrl.isUri(address))}
+        />
+
+        {/* <ListFactory title={t('menuLinks')} placeholder="https://..." onItemChange={onMenuLinksChange} /> */}
 
         <ColorWrapper>
           <HuePicker color={brandColor} onChangeComplete={updateBrandColor} styles={colorPickerStyles} />

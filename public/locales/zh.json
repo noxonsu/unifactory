@@ -205,5 +205,14 @@
   "outputEstimatedYouReceiveAtLeast": "输出进行估计。 您将收到至少",
   "orTransactionWillRevert": "或者事务将恢复",
   "inputEstimatedYouSellAtMost": "输入进行估计。 你最多卖出去",
-  "outputWillSentTo": "输出将被发送到"
+  "outputWillSentTo": "输出将被发送到",
+  "minimumReceived": "最低接收量",
+  "maximumSold": "最大固体",
+  "priceImpact": "价格影响",
+  "liquidityProviderFee": "流动资金提供者费用",
+  "minimumReceivedDescription": "如果在确认之前出现较大的不利价格变动，您的交易将恢复",
+  "priceImpactDescription": "市场价格与估计价格之间因交易规模而产生的差额",
+  "liquidityProviderFeeDescription": "每笔交易的一部分作为协议激励流向流动性提供者",
+  "route": "路线",
+  "routeDescription": "通过这些令牌的路由为您的交易带来了最好的价格"
 }
