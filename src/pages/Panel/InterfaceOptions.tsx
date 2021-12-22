@@ -95,6 +95,7 @@ export function InterfaceOptions(props: any) {
   const [logoUrl, setLogoUrl] = useState('')
   const [brandColor, setBrandColor] = useState('')
   const [socialLinks, setSocialLinks] = useState<string>('')
+  // const [menuLinks, setMenuLinks] = useState<string>('')
   const [tokenLists, setTokenLists] = useState<any>([])
 
   const updateBrandColor = (color: { hex: string }) => setBrandColor(color.hex)
@@ -207,6 +208,10 @@ export function InterfaceOptions(props: any) {
         <InputWrapper>
           <InputPanel label={`${t('socialLinks')}`} value={socialLinks} onChange={setSocialLinks} />
         </InputWrapper>
+
+        {/* <InputWrapper>
+          <InputPanel label={`${t('menuLinks')}`} value={menuLinks} onChange={setMenuLinks} />
+        </InputWrapper> */}
 
         <ColorWrapper>
           <HuePicker color={brandColor} onChangeComplete={updateBrandColor} styles={colorPickerStyles} />

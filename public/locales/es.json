@@ -205,5 +205,14 @@
   "outputEstimatedYouReceiveAtLeast": "Se estima la producción. Usted recibirá al menos",
   "orTransactionWillRevert": "o la transacción se revertirá",
   "inputEstimatedYouSellAtMost": "Se estima la entrada. Venderás a lo sumo",
-  "outputWillSentTo": "La salida se enviará a"
+  "outputWillSentTo": "La salida se enviará a",
+  "minimumReceived": "Mínimo recibido",
+  "maximumSold": "Sólido máximo",
+  "priceImpact": "Impacto en los precios",
+  "liquidityProviderFee": "Comisión del proveedor de liquidez",
+  "minimumReceivedDescription": "Su transacción se revertirá si hay un movimiento de precios grande y desfavorable antes de que se confirme",
+  "priceImpactDescription": "La diferencia entre el precio de mercado y el precio estimado debido al tamaño de la operación",
+  "liquidityProviderFeeDescription": "Una parte de cada operación se destina a proveedores de liquidez como incentivo de protocolo",
+  "route": "Ruta",
+  "routeDescription": "El enrutamiento a través de estos tokens resultó en el mejor precio para su operación"
 }

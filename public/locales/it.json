@@ -217,5 +217,14 @@
   "outputEstimatedYouReceiveAtLeast": "La produzione è stimata. Riceverai almeno",
   "orTransactionWillRevert": "o la transazione verrà ripristinata",
   "inputEstimatedYouSellAtMost": "Ingresso è stimato. Venderai al massimo",
-  "outputWillSentTo": "L'uscita verrà inviata a"
+  "outputWillSentTo": "L'uscita verrà inviata a",
+  "minimumReceived": "Rom minimumeceived",
+  "maximumSold": "Massimo solido",
+  "priceImpact": "Incidenza sui prezzi",
+  "liquidityProviderFee": "Commissione del fornitore di liquidità",
+  "minimumReceivedDescription": "La transazione verrà ripristinata se c'è un movimento di prezzo ampio e sfavorevole prima che venga confermato",
+  "priceImpactDescription": "La differenza tra il prezzo di mercato e il prezzo stimato a causa delle dimensioni del commercio",
+  "liquidityProviderFeeDescription": "Una parte di ogni operazione va ai fornitori di liquidità come incentivo del protocollo",
+  "route": "Percorso",
+  "routeDescription": "Il routing attraverso questi token ha portato al miglior prezzo per il tuo commercio"
 }

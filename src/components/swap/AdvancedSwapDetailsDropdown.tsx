@@ -1,19 +1,18 @@
 import React from 'react'
 import styled from 'styled-components'
-import { useLastTruthy } from '../../hooks/useLast'
+import { useLastTruthy } from 'hooks/useLast'
 import { AdvancedSwapDetails, AdvancedSwapDetailsProps } from './AdvancedSwapDetails'
 
 const AdvancedDetailsFooter = styled.div<{ show: boolean }>`
-  padding-top: calc(8px + 2rem);
-  padding-bottom: 16px;
+  padding-top: 2.2rem;
+  padding-bottom: 1rem;
   margin-top: -2rem;
   width: 100%;
-  max-width: 500px;
+  max-width: 540px;
   border-radius: 0 0 1.2rem 1.2rem;
   color: ${({ theme }) => theme.text2};
   background-color: ${({ theme }) => theme.advancedBG};
   z-index: -1;
-
   transform: ${({ show }) => (show ? 'translateY(0%)' : 'translateY(-100%)')};
   transition: transform 300ms ease-in-out;
 `

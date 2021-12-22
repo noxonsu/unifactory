@@ -5,7 +5,8 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import { ButtonPrimary } from 'components/Button'
 import AddressInputPanel from 'components/AddressInputPanel'
-import { isValidAddress, setFactoryOption, getFactoryOptions } from '../../utils/contract'
+import QuestionHelper from 'components/QuestionHelper'
+import { isValidAddress, setFactoryOption, getFactoryOptions } from 'utils/contract'
 import { ZERO_ADDRESS } from 'sdk'
 import { factoryMethods } from '../../constants'
 
@@ -23,6 +24,11 @@ const Button = styled(ButtonPrimary)`
   padding: 0.8rem;
   margin-top: 0.3rem;
   font-size: 0.8em;
+`
+
+const Label = styled.div`
+  display: flex;
+  align-items: center;
 `
 
 export function SwapContracts(props: any) {
@@ -125,8 +131,15 @@ export function SwapContracts(props: any) {
           {t('save')}
         </Button>
 
-        <Info>{t('feeIsChargedWhen')}</Info>
-        <AddressInputPanel label={`${t('feeRecipient')}`} value={feeRecipient} onChange={setFeeRecipient} />
+        <AddressInputPanel
+          label={
+            <Label>
+              {t('feeRecipient')} <QuestionHelper text={t('feeIsChargedWhen')} />
+            </Label>
+          }
+          value={feeRecipient}
+          onChange={setFeeRecipient}
+        />
         <Button onClick={() => saveOption(factoryMethods.setFeeTo)} disabled={!feeRecipient}>
           {t('save')}
         </Button>

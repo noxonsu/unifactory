@@ -205,5 +205,14 @@
   "outputEstimatedYouReceiveAtLeast": "התפוקה נאמדת. תקבל לפחות",
   "orTransactionWillRevert": "או שהעסקה תחזור.",
   "inputEstimatedYouSellAtMost": "הקלט מוערך. אתה תמכור לכל היותר",
-  "outputWillSentTo": "הפלט יישלח אל"
+  "outputWillSentTo": "הפלט יישלח אל",
+  "minimumReceived": "התקבל מינימום",
+  "maximumSold": "מקסימום מוצק",
+  "priceImpact": "השפעת מחיר",
+  "liquidityProviderFee": "דמי ספק נזילות",
+  "minimumReceivedDescription": "העסקה שלך תחזור אם יש תנועת מחיר גדולה, שלילית לפני שהוא אישר",
+  "priceImpactDescription": "ההבדל בין מחיר השוק למחיר המשוער בשל גודל המסחר",
+  "liquidityProviderFeeDescription": "חלק מכל סחר הולך לספקי נזילות כתמריץ פרוטוקול",
+  "route": "נתיב",
+  "routeDescription": "ניתוב באמצעות אסימונים אלה הביא את המחיר הטוב ביותר עבור המסחר שלך"
 }
