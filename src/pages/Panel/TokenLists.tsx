@@ -11,7 +11,7 @@ const ListWrapper = styled.div`
 `
 
 export function TokenLists(props: any) {
-  const { tokenLists, storage, pending, setPending, setError, setNotification } = props
+  const { tokenLists, storage, pending, setPending, setError } = props
   const { t } = useTranslation()
   const web3React = useActiveWeb3React()
 
@@ -27,7 +27,6 @@ export function TokenLists(props: any) {
                 pending={pending}
                 setPending={setPending}
                 setError={setError}
-                setNotification={setNotification}
                 storage={storage}
                 isNewList={!list.timestamp}
               />

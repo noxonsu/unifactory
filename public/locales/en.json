@@ -200,5 +200,22 @@
   "toGetStartedConnectWallet": "To get started, connect your wallet",
   "pleaseChangeWrongNetwork": "Please switch your network or connect to the appropriate network",
   "noInfo": "No information",
-  "saveSettings": "Save settings"
+  "saveSettings": "Save settings",
+  "deployAfterSwapContracts": "Deploy after swap contracts",
+  "resetDomainData": "Reset domain data",
+  "projectName": "Project name",
+  "logoUrl": "Logo url",
+  "socialLinks": "Social links",
+  "resetDomainDescription": "All data for this domain will be erased (admin, contract addresses and settings)",
+  "youAreDeployingSwapContracts": "You are deploying swap contracts",
+  "youAreDeployingStorage": "You are deploying storage contract",
+  "confirmDeployment": "Confirm deployment",
+  "confirmTransactionInWallet": "Confirm this transaction in your wallet",
+  "waitingForConfirmation": "Waiting for confirmation",
+  "transactionSubmitted": "Transaction submitted",
+  "accept": "Accept",
+  "outputEstimatedYouReceiveAtLeast": "Output is estimated. You will receive at least",
+  "orTransactionWillRevert": "or the transaction will revert",
+  "inputEstimatedYouSellAtMost": "Input is estimated. You will sell at most",
+  "outputWillSentTo": "Output will be sent to"
 }

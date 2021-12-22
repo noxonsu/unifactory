@@ -8,7 +8,6 @@ import RouterV2 from 'contracts/build/RouterV2.json'
 import Storage from 'contracts/build/Storage.json'
 import { cache, addValue } from './cache'
 import { getWeb3Library } from './getLibrary'
-import { log } from './index'
 
 const deployContract = async (params: any) => {
   const { abi, byteCode, library, onDeploy = () => {}, onHash = () => {}, deployArguments } = params
@@ -187,7 +186,7 @@ export const isValidAddress = (library: Web3Provider, address: string) => {
   try {
     return isAddress(address)
   } catch (error) {
-    log(error.message)
+    console.error(error)
     return false
   }
 }

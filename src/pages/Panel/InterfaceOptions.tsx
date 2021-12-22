@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import { ZERO_ADDRESS } from 'sdk'
 import { useActiveWeb3React } from 'hooks'
+import { useTransactionAdder } from 'state/transactions/hooks'
 import useInterval from 'hooks/useInterval'
 import { useRegistryContract } from 'hooks/useContract'
 import { useProjectInfo } from 'state/application/hooks'
@@ -45,6 +46,7 @@ export function InterfaceOptions(props: any) {
   const { pending, setPending, setError } = props
   const { t } = useTranslation()
   const { library, chainId } = useActiveWeb3React()
+  const addTransaction = useTransactionAdder()
   //@ts-ignore
   const registry = useRegistryContract(networks[chainId]?.registry)
 
@@ -111,7 +113,7 @@ export function InterfaceOptions(props: any) {
         if (projectName) setProjectName(projectName)
         if (logoUrl) setLogoUrl(logoUrl)
         if (brandColor) setBrandColor(brandColor)
-        if (socialLinks) setSocialLinks(socialLinks)
+        if (socialLinks) setSocialLinks(socialLinks.join(','))
         if (tokenLists.length) {
           setTokenLists([])
 
@@ -134,24 +136,28 @@ export function InterfaceOptions(props: any) {
 
     try {
       const socialLinksArr = socialLinks ? socialLinks.split(',') : []
-
       const settings = {
         projectName,
         logoUrl,
         brandColor,
         socialLinks: socialLinksArr,
       }
-      const receipt: any = await saveProjectOption(
+
+      await saveProjectOption({
         //@ts-ignore
         library,
-        storage,
-        storageMethods.setSettings,
-        JSON.stringify(settings)
-      )
-
-      if (receipt?.status) {
-        setNotification(`Saved in transaction: ${receipt?.transactionHash}`)
-      }
+        storageAddress: storage,
+        method: storageMethods.setSettings,
+        value: JSON.stringify(settings),
+        onHash: (hash: string) => {
+          addTransaction(
+            { hash },
+            {
+              summary: `Chain ${chainId}. Settings saved`,
+            }
+          )
+        },
+      })
     } catch (error) {
       setError(error)
     }
@@ -217,7 +223,6 @@ export function InterfaceOptions(props: any) {
           pending={pending}
           setPending={setPending}
           setError={setError}
-          setNotification={setNotification}
           tokenLists={tokenLists}
           setTokenLists={setTokenLists}
         />

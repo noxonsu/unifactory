@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { AiOutlinePlus } from 'react-icons/ai'
 import { RiCloseFill } from 'react-icons/ri'
 import { MdOutlineKeyboardArrowDown, MdOutlineKeyboardArrowUp } from 'react-icons/md'
+import { useTransactionAdder } from 'state/transactions/hooks'
 import styled from 'styled-components'
 import { ButtonPrimary, CleanButton } from 'components/Button'
 import Input from 'components/Input'
@@ -55,8 +56,9 @@ const Button = styled(ButtonPrimary)`
 `
 
 export function TokenList(props: any) {
-  const { list, web3React, setPending, setError, setNotification, storage, isNewList } = props
+  const { list, web3React, setPending, setError, storage, isNewList } = props
   const { t } = useTranslation()
+  const addTransaction = useTransactionAdder()
   const [open, setOpen] = useState(false)
 
   const [tokenListName, setTokenListName] = useState(list.name || '')
@@ -77,7 +79,6 @@ export function TokenList(props: any) {
     if (tokenInList) return
 
     setError(false)
-    setNotification(false)
     setPending(true)
 
     const tokenInfo = await returnTokenInfo(web3React.library, newTokenAddress)
@@ -112,25 +113,29 @@ export function TokenList(props: any) {
 
   const saveTokenList = async () => {
     setError(false)
-    setNotification(false)
     setPending(true)
 
     try {
-      const receipt: any = await saveProjectOption(
-        web3React?.library,
-        storage,
-        isNewList ? storageMethods.addTokenList : storageMethods.updateTokenList,
-        {
+      await saveProjectOption({
+        //@ts-ignore
+        library: web3React?.library,
+        storageAddress: storage,
+        method: isNewList ? storageMethods.addTokenList : storageMethods.updateTokenList,
+        value: {
           oldName: list.name,
           name: tokenListName,
           logoURI: tokenListLogo,
           tokens,
-        }
-      )
-
-      if (receipt.status) {
-        setNotification(`Saved in transaction: ${receipt.transactionHash}`)
-      }
+        },
+        onHash: (hash: string) => {
+          addTransaction(
+            { hash },
+            {
+              summary: `Chain ${web3React.chainId}. Token list is saved`,
+            }
+          )
+        },
+      })
     } catch (error) {
       setError(error)
     } finally {
