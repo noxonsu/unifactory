@@ -12,12 +12,6 @@ export const getTimestamp = () => {
   return new Date(Math.floor(new Date().getTime() / 1000) * 1000).toISOString()
 }
 
-export const log = (message: string) => {
-  console.group('%c Log', 'color: crimson; font-size: 14px;')
-  console.log(message)
-  console.groupEnd()
-}
-
 // returns the checksummed address if the address is valid, otherwise returns false
 export function isAddress(value: any): string | false {
   try {

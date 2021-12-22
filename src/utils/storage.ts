@@ -81,7 +81,15 @@ const returnValidTokenListJSON = (params: any) => {
   return JSON.stringify(list)
 }
 
-export const saveProjectOption = async (library: Web3Provider, storageAddress: string, method: string, value: any) => {
+export const saveProjectOption = async (params: {
+  library: Web3Provider
+  storageAddress: string
+  method: string
+  value: any
+  onHash?: (hash: string) => void
+}) => {
+  const { library, storageAddress, method, value, onHash } = params
+
   const storage = getStorage(library, storageAddress)
   //@ts-ignore
   const accounts = await window?.ethereum?.request({ method: 'eth_accounts' })
@@ -101,7 +109,6 @@ export const saveProjectOption = async (library: Web3Provider, storageAddress: s
       args = [value]
       break
     default:
-      method = ''
       args = []
   }
 
@@ -109,6 +116,9 @@ export const saveProjectOption = async (library: Web3Provider, storageAddress: s
     return new Promise(async (resolve, reject) => {
       storage.methods[method](...args)
         .send({ from: accounts[0] })
+        .on('transactionHash', (hash: string) => {
+          if (typeof onHash === 'function') onHash(hash)
+        })
         .then(resolve)
         .catch(reject)
     })

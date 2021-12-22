@@ -55,7 +55,6 @@ function ConfirmationPendingContent({ onDismiss, pendingText }: { onDismiss: () 
           </AutoColumn>
           <Text fontSize={14} color="#565A69" textAlign="center">
             {t('confirmTransactionInWallet')}
-            {/* Confirm this transaction in your wallet */}
           </Text>
         </AutoColumn>
       </Section>
