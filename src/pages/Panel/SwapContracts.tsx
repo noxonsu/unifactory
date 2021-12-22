@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useActiveWeb3React } from 'hooks'
+import { Box } from 'rebass'
+import { Label, Checkbox } from '@rebass/forms'
 import { useProjectInfo } from 'state/application/hooks'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -26,7 +28,7 @@ const Button = styled(ButtonPrimary)`
   font-size: 0.8em;
 `
 
-const Label = styled.div`
+const InputLabel = styled.div`
   display: flex;
   align-items: center;
 `
@@ -133,9 +135,9 @@ export function SwapContracts(props: any) {
 
         <AddressInputPanel
           label={
-            <Label>
+            <InputLabel>
               {t('feeRecipient')} <QuestionHelper text={t('feeIsChargedWhen')} />
-            </Label>
+            </InputLabel>
           }
           value={feeRecipient}
           onChange={setFeeRecipient}
@@ -144,10 +146,12 @@ export function SwapContracts(props: any) {
           {t('save')}
         </Button>
 
-        <label>
-          <input type="checkbox" onChange={updateFeesToAdmin} />
-          {t('allFeesToAdmin')}
-        </label>
+        <Box>
+          <Label>
+            <Checkbox id="remember" name="remember" onChange={updateFeesToAdmin} />
+            {t('allFeesToAdmin')}
+          </Label>
+        </Box>
         <Button onClick={() => saveOption(factoryMethods.setAllFeeToProtocol)} disabled={!factoryIsCorrect}>
           {t('save')}
         </Button>
