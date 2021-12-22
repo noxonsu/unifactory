@@ -1,35 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import { AiOutlinePlus } from 'react-icons/ai'
 import { RiCloseFill } from 'react-icons/ri'
-import { MdOutlineKeyboardArrowDown, MdOutlineKeyboardArrowUp } from 'react-icons/md'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import styled from 'styled-components'
 import { ButtonPrimary, CleanButton } from 'components/Button'
 import Input from 'components/Input'
 import InputPanel from 'components/InputPanel'
 import { useTranslation } from 'react-i18next'
-import { saveProjectOption } from '../../utils/storage'
-import { returnTokenInfo, isValidAddress } from '../../utils/contract'
+import { saveProjectOption } from 'utils/storage'
+import { returnTokenInfo, isValidAddress } from 'utils/contract'
 import { storageMethods } from '../../constants'
 import { shortenAddress } from 'utils'
-
-const Wrapper = styled.div`
-  padding: 0.3rem;
-  border-radius: 1.25rem;
-  border: 1px solid ${({ theme }) => theme.bg3};
-  background-color: ${({ theme }) => theme.bg2};
-`
-
-const Header = styled(CleanButton)`
-  padding: 0.4rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`
-
-const ArrowWrapper = styled.div`
-  padding: 0.3rem;
-`
+import Accordion from 'components/Accordion'
 
 const TokenRow = styled.div`
   margin: 0.2rem;
@@ -59,7 +41,6 @@ export function TokenList(props: any) {
   const { list, web3React, setPending, setError, storage, isNewList } = props
   const { t } = useTranslation()
   const addTransaction = useTransactionAdder()
-  const [open, setOpen] = useState(false)
 
   const [tokenListName, setTokenListName] = useState(list.name || '')
   const [tokenListLogo, setTokenListLogo] = useState(list.logoURI || '')
@@ -144,53 +125,42 @@ export function TokenList(props: any) {
   }
 
   return (
-    <Wrapper>
-      <Header onClick={() => setOpen(!open)}>
-        <span>{list.name}</span>
-        <ArrowWrapper>{open ? <MdOutlineKeyboardArrowUp /> : <MdOutlineKeyboardArrowDown />}</ArrowWrapper>
-      </Header>
+    <Accordion title={list.name}>
+      <Input label={`${t('listName')} *`} value={tokenListName} onChange={setTokenListName} />
+      <Input label={t('logo')} value={tokenListLogo} onChange={setTokenListLogo} />
 
-      {open && (
-        <>
-          <Input label={`${t('listName')} *`} value={tokenListName} onChange={setTokenListName} />
-          <Input label={t('logo')} value={tokenListLogo} onChange={setTokenListLogo} />
-
-          {tokens.length ? (
-            <div>
-              {tokens.map(
-                ({ name, symbol, address }: { name: string; symbol: string; address: string }, index: number) => (
-                  <TokenRow key={index}>
-                    <span>
-                      {name} <small>({symbol})</small>:
-                    </span>{' '}
-                    <div className="address">
-                      <span className="monospace">{shortenAddress(address)}</span>
-                      <RemoveButton type="button" onClick={() => removeToken(address)} title="Remove token">
-                        <RiCloseFill />
-                      </RemoveButton>
-                    </div>
-                  </TokenRow>
-                )
-              )}
-            </div>
-          ) : (
-            <p>{t('noTokens')}</p>
-          )}
-
-          <div key={newTokenAddress}>
-            <InputPanel label={t('tokenAddress')} value={newTokenAddress} onChange={setNewTokenAddress} />
-            <Button onClick={addNewToken} disabled={!tokenAddressIsCorrect}>
-              <AiOutlinePlus /> {t('token')}
-            </Button>
-          </div>
-
-          <div>
-            <Button onClick={saveTokenList} disabled={!tokenListName || !tokens.length}>
-              {isNewList ? t('saveTokenList') : t('updateTokenList')}
-            </Button>
-          </div>
-        </>
+      {tokens.length ? (
+        <div>
+          {tokens.map(({ name, symbol, address }: { name: string; symbol: string; address: string }, index: number) => (
+            <TokenRow key={index}>
+              <span>
+                {name} <small>({symbol})</small>:
+              </span>{' '}
+              <div className="address">
+                <span className="monospace">{shortenAddress(address)}</span>
+                <RemoveButton type="button" onClick={() => removeToken(address)} title="Remove token">
+                  <RiCloseFill />
+                </RemoveButton>
+              </div>
+            </TokenRow>
+          ))}
+        </div>
+      ) : (
+        <p>{t('noTokens')}</p>
       )}
-    </Wrapper>
+
+      <div key={newTokenAddress}>
+        <InputPanel label={t('tokenAddress')} value={newTokenAddress} onChange={setNewTokenAddress} />
+        <Button onClick={addNewToken} disabled={!tokenAddressIsCorrect}>
+          <AiOutlinePlus /> {t('token')}
+        </Button>
+      </div>
+
+      <div>
+        <Button onClick={saveTokenList} disabled={!tokenListName || !tokens.length}>
+          {isNewList ? t('saveTokenList') : t('updateTokenList')}
+        </Button>
+      </div>
+    </Accordion>
   )
 }

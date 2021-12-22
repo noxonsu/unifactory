@@ -118,10 +118,6 @@ export function InterfaceOptions(props: any) {
         const { strSettings, tokenLists } = data
         const { projectName, logoUrl, brandColor, socialLinks } = JSON.parse(strSettings)
 
-        console.group('%c Log', 'color: orange; font-size: 14px')
-        console.log('socialLinks: ', socialLinks)
-        console.groupEnd()
-
         if (projectName) setProjectName(projectName)
         if (logoUrl) setLogoUrl(logoUrl)
         if (brandColor) setBrandColor(brandColor)
