@@ -25,13 +25,21 @@ The only password you need is your domain registrar's password, you don't need a
 
 1. Log in to your domain provider (where you have registered domain name)
 2. Open DNS settings of your domain and add a **CNAME** record: `your.domain` with the value `https://cloudflare-ipfs.com/` (see how to do this in your registar: [GoDaddy](https://www.google.com/search?q=how+to+add+cname+in+godaddy), [Namecheap](https://www.google.com/search?q=how+to+add+cname+in+Namecheap), [Cloudflare](https://www.google.com/search?q=how+to+add+cname+in+Cloudflare))
-3. Add a **TXT** record: `_dnslink.your.domain` with the value `dnslink=/ipfs/QmbYDPjGJTCYck1xRJhuxRMM6ofTznDrM6MRfcXtoc69Rd`
+3. Add a **TXT** record: `_dnslink.your.domain` with the value `dnslink=/ipfs/Qma7q6yVe8Nn7xgvuEce2LMPLGxVPGY7socbVBeUGYG5Gx`
 
 That's it! Now open your domain and you'll see the installation master!
 
-### Preview
+---
 
-<!-- <img src="./images/interface.png"> -->
+### Settings
+
+<img src="./images/settings.png">
+
+---
+
+### App
+
+<img src="./images/app.png">
 
 ---
 
