@@ -228,5 +228,6 @@
   "route": "Route",
   "routeDescription": "Routing through these tokens resulted in the best price for your trade",
   "primaryColor": "Primary color",
-  "menuLinks": "Menu links"
+  "menuLinks": "Menu links",
+  "navigationLinks": "Navigation links"
 }

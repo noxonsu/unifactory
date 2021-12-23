@@ -99,8 +99,9 @@ export function InterfaceOptions(props: any) {
   const [projectName, setProjectName] = useState('')
   const [logoUrl, setLogoUrl] = useState('')
   const [brandColor, setBrandColor] = useState('')
-  const [socialLinks, setSocialLinks] = useState<string[]>([])
+  const [navigationLinks, setNavigationLinks] = useState<LinkItem[]>([])
   const [menuLinks, setMenuLinks] = useState<LinkItem[]>([])
+  const [socialLinks, setSocialLinks] = useState<string[]>([])
   const [tokenLists, setTokenLists] = useState<any>([])
 
   const updateBrandColor = (color: { hex: string }) => setBrandColor(color.hex)
@@ -114,13 +115,14 @@ export function InterfaceOptions(props: any) {
 
       if (data) {
         const { strSettings, tokenLists } = data
-        const { projectName, logoUrl, brandColor, socialLinks, menuLinks } = JSON.parse(strSettings)
+        const { projectName, logoUrl, brandColor, navigationLinks, menuLinks, socialLinks } = JSON.parse(strSettings)
 
         if (projectName) setProjectName(projectName)
         if (logoUrl) setLogoUrl(logoUrl)
         if (brandColor) setBrandColor(brandColor)
-        if (socialLinks?.length) setSocialLinks(socialLinks)
+        if (navigationLinks?.length) setNavigationLinks(navigationLinks)
         if (menuLinks?.length) setMenuLinks(menuLinks)
+        if (socialLinks?.length) setSocialLinks(socialLinks)
         if (tokenLists.length) {
           setTokenLists([])
 
@@ -151,8 +153,9 @@ export function InterfaceOptions(props: any) {
           projectName,
           logoUrl,
           brandColor,
-          socialLinks,
+          navigationLinks,
           menuLinks,
+          socialLinks,
         }),
         onHash: (hash: string) => {
           addTransaction(
@@ -210,12 +213,11 @@ export function InterfaceOptions(props: any) {
         </OptionWrapper>
 
         <OptionWrapper>
-          <ListFactory
-            title={t('socialLinks')}
-            placeholder="https://..."
-            items={socialLinks}
-            setItems={setSocialLinks}
-            isValidItem={(address) => Boolean(validUrl.isUri(address))}
+          <MenuLinksFactory
+            title={t('navigationLinks')}
+            items={navigationLinks}
+            setItems={setNavigationLinks}
+            isValidItem={(item: LinkItem) => Boolean(validUrl.isUri(item.source))}
           />
         </OptionWrapper>
 
@@ -225,6 +227,16 @@ export function InterfaceOptions(props: any) {
             items={menuLinks}
             setItems={setMenuLinks}
             isValidItem={(item: LinkItem) => Boolean(validUrl.isUri(item.source))}
+          />
+        </OptionWrapper>
+
+        <OptionWrapper>
+          <ListFactory
+            title={t('socialLinks')}
+            placeholder="https://..."
+            items={socialLinks}
+            setItems={setSocialLinks}
+            isValidItem={(address) => Boolean(validUrl.isUri(address))}
           />
         </OptionWrapper>
 

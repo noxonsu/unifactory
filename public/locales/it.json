@@ -228,5 +228,6 @@
   "route": "Percorso",
   "routeDescription": "Il routing attraverso questi token ha portato al miglior prezzo per il tuo commercio",
   "primaryColor": "Colore primario",
-  "menuLinks": "Collegamenti menu"
+  "menuLinks": "Collegamenti menu",
+  "navigationLinks": "Collegamenti di navigazione"
 }

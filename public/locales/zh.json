@@ -216,5 +216,6 @@
   "route": "路线",
   "routeDescription": "通过这些令牌的路由为您的交易带来了最好的价格",
   "primaryColor": "原色,原色",
-  "menuLinks": "菜单链接"
+  "menuLinks": "菜单链接",
+  "navigationLinks": "导航链接"
 }

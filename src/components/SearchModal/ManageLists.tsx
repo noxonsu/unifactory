@@ -366,20 +366,17 @@ export function ManageLists({
       )}
       <Separator />
       <ListContainer>
-        {tokenLists?.length > 0 && (
-          <AutoColumn gap="md">
-            {tokenLists.map((list, index) => {
+        <AutoColumn gap="md">
+          {tokenLists?.length > 0 &&
+            tokenLists.map((list, index) => {
               try {
                 return <CustomListRow key={index} list={list} />
               } catch (error) {
-                console.log(error)
+                console.error(error)
                 return null
               }
             })}
-          </AutoColumn>
-        )}
 
-        <AutoColumn gap="md">
           {sortedLists.map((listUrl) => (
             <ListRow key={listUrl} listUrl={listUrl} />
           ))}

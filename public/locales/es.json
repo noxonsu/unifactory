@@ -216,5 +216,6 @@
   "route": "Ruta",
   "routeDescription": "El enrutamiento a través de estos tokens resultó en el mejor precio para su operación",
   "primaryColor": "Color primario",
-  "menuLinks": "Enlaces de menú"
+  "menuLinks": "Enlaces de menú",
+  "navigationLinks": "Enlaces de navegación"
 }

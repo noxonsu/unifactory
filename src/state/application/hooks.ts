@@ -26,8 +26,9 @@ export function useProjectInfo(): ProjectInfo {
       brandColor,
       logo,
       tokenLists,
-      socialLinks,
+      navigationLinks,
       menuLinks,
+      socialLinks,
     } = state.application
 
     return {
@@ -40,8 +41,9 @@ export function useProjectInfo(): ProjectInfo {
       brandColor,
       logo,
       tokenLists,
-      socialLinks,
+      navigationLinks,
       menuLinks,
+      socialLinks,
     }
   })
 }

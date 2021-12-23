@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import TempLogo from 'assets/images/templogo.png'
+import { RiArrowRightUpLine } from 'react-icons/ri'
 import { useActiveWeb3React } from 'hooks'
 import { useProjectInfo } from 'state/application/hooks'
 import Menu from '../Menu'
@@ -26,7 +27,7 @@ const HeaderFrame = styled.header`
     grid-template-columns: 60px 1fr 120px;
   `};
 
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToMedium`
     grid-template-columns: 60px 1fr;
   `};
 
@@ -67,10 +68,11 @@ const HeaderRow = styled(RowFixed)`
   `};
 `
 
-const InternalLinks = styled(Row)`
+const NavlLinks = styled(Row)`
   width: auto;
   margin: 0 auto;
   padding: 0.3rem;
+  flex-wrap: wrap;
   justify-content: center;
   border-radius: 0.8rem;
   box-shadow: rgba(0, 0, 0, 0.01) 0px 0px 1px, rgba(0, 0, 0, 0.04) 0px 4px 8px, rgba(0, 0, 0, 0.04) 0px 16px 24px,
@@ -83,7 +85,7 @@ const InternalLinks = styled(Row)`
     margin-right: auto;
   `};
 
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToMedium`
     position: fixed;
     margin-left: 0;
     bottom: 0;
@@ -184,14 +186,57 @@ const StyledNavLink = styled(NavLink).attrs({
     margin-right: 0.16rem;
   }
 
+  &:hover {
+    color: ${({ theme }) => theme.text1};
+  }
+
   &.${activeClassName} {
     color: ${({ theme }) => theme.white1};
     background-color: ${({ theme }) => theme.primary2};
   }
 
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToMedium`
     max-width: 10rem;
     width: 100%;
+    margin: .1rem;
+    padding: 0.4rem 6%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid ${({ theme }) => theme.bg3};
+    font-size: 1.1em;
+  `};
+`
+
+const StyledExternalLink = styled.a`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-decoration: none;
+  font-size: 0.9rem;
+  border-radius: 12px;
+  width: fit-content;
+  padding: 0.3rem 0.5rem;
+  font-weight: 500;
+  color: ${({ theme }) => theme.text2};
+  transition: 0.2s;
+
+  &:not(:last-child) {
+    margin-right: 0.14rem;
+  }
+
+  &:hover {
+    color: ${({ theme }) => theme.text1};
+  }
+
+  .name {
+    margin-right: 0.1rem;
+  }
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    max-width: 10rem;
+    width: 100%;
+    margin: .1rem;
     padding: 0.4rem 6%;
     display: flex;
     align-items: center;
@@ -204,7 +249,7 @@ const StyledNavLink = styled(NavLink).attrs({
 export default function Header() {
   const { account, chainId } = useActiveWeb3React()
   const { t } = useTranslation()
-  const { logo: logoUrl } = useProjectInfo()
+  const { logo: logoUrl, navigationLinks } = useProjectInfo()
 
   return (
     <HeaderFrame>
@@ -216,7 +261,7 @@ export default function Header() {
         </Title>
       </HeaderRow>
 
-      <InternalLinks>
+      <NavlLinks>
         <StyledNavLink id="header-swap-nav-link" to={'/swap'}>
           {t('swap')}
         </StyledNavLink>
@@ -233,7 +278,14 @@ export default function Header() {
         >
           {t('pool')}
         </StyledNavLink>
-      </InternalLinks>
+
+        {Boolean(navigationLinks.length) &&
+          navigationLinks.map((item: { source: string; name: string }, index) => (
+            <StyledExternalLink href={item.source} key={index} target="_blank">
+              <span className="name">{item.name}</span> <RiArrowRightUpLine />
+            </StyledExternalLink>
+          ))}
+      </NavlLinks>
 
       <HeaderControls>
         <HeaderElement>
