@@ -227,5 +227,7 @@
   "priceImpactDescription": "Die Differenz zwischen dem Marktpreis und dem geschätzten Preis aufgrund der Handelsgröße",
   "liquidityProviderFeeDescription": "Ein Teil jedes Handels geht als Protokollanreiz an Liquiditätsanbieter",
   "route": "Route",
-  "routeDescription": "Das Routing durch diese Token führte zum besten Preis für Ihren Handel"
+  "routeDescription": "Das Routing durch diese Token führte zum besten Preis für Ihren Handel",
+  "primaryColor": "Grundfarbe",
+  "menuLinks": "Menü Links"
 }

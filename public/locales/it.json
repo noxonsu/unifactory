@@ -226,5 +226,7 @@
   "priceImpactDescription": "La differenza tra il prezzo di mercato e il prezzo stimato a causa delle dimensioni del commercio",
   "liquidityProviderFeeDescription": "Una parte di ogni operazione va ai fornitori di liquidità come incentivo del protocollo",
   "route": "Percorso",
-  "routeDescription": "Il routing attraverso questi token ha portato al miglior prezzo per il tuo commercio"
+  "routeDescription": "Il routing attraverso questi token ha portato al miglior prezzo per il tuo commercio",
+  "primaryColor": "Colore primario",
+  "menuLinks": "Collegamenti menu"
 }

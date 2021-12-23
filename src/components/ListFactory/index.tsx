@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
-import { Box, Button } from 'rebass'
+import { Box } from 'rebass'
 import { Input } from '@rebass/forms'
-import { CleanButton } from 'components/Button'
+import { CleanButton, ButtonAdd } from 'components/Button'
 import { RiCloseFill } from 'react-icons/ri'
-import { useTranslation } from 'react-i18next'
 import Accordion from '../Accordion'
 
 const List = styled.ul`
@@ -43,27 +42,21 @@ const NewItemInput = styled(Input)<{ error: boolean }>`
 export default function ListFactory({
   title,
   placeholder,
-  onItemChange,
   isValidItem,
-  startItems,
+  items,
+  setItems,
 }: {
   title: string
-  onItemChange: (items: string[]) => void
+  setItems: (callback: any) => void
   isValidItem: (item: string) => boolean
-  startItems: string[]
+  items: string[]
   placeholder?: string
 }) {
-  const { t } = useTranslation()
-
-  const [items, setItems] = useState<string[]>(startItems)
   const [newItem, setNewItem] = useState<string>('')
   const [itemError, setItemError] = useState<boolean>(false)
 
-  useEffect(() => onItemChange(items), [items, onItemChange])
-  useEffect(() => setItems(startItems), [startItems])
-
   const onRemove = (targetIndex: number) => {
-    setItems((prevItems) => prevItems.filter((_, index) => index !== targetIndex))
+    setItems((prevItems: string[]) => prevItems.filter((_, index) => index !== targetIndex))
   }
 
   const onNewItemChange = (event: any) => {
@@ -73,7 +66,7 @@ export default function ListFactory({
 
   const onAdd = () => {
     if (isValidItem(newItem)) {
-      setItems((prevItems) => [...prevItems, newItem])
+      setItems((prevItems: string[]) => [...prevItems, newItem])
       setNewItem('')
     } else {
       setItemError(true)
@@ -95,9 +88,7 @@ export default function ListFactory({
 
       <NewItemWrapper>
         <NewItemInput error={itemError} type="text" placeholder={placeholder || ''} onChange={onNewItemChange} />
-        <Button variant="primary" onClick={onAdd} disabled={!newItem}>
-          {t('add')}
-        </Button>
+        <ButtonAdd onClick={onAdd} disabled={!newItem} />
       </NewItemWrapper>
     </Accordion>
   )

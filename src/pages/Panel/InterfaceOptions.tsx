@@ -14,17 +14,20 @@ import { TokenLists } from './TokenLists'
 import InputPanel from 'components/InputPanel'
 import AddressInputPanel from 'components/AddressInputPanel'
 import ListFactory from 'components/ListFactory'
+import MenuLinksFactory, { LinkItem } from 'components/MenuLinksFactory'
 import { saveProjectOption, fetchOptionsFromContract } from 'utils/storage'
 import { isValidAddress } from 'utils/contract'
 import { storageMethods } from '../../constants'
 import networks from 'networks.json'
 
-const InputWrapper = styled.div`
-  margin: 0.2rem 0;
+const OptionWrapper = styled.div<{ margin?: number }>`
+  margin: ${({ margin }) => margin || 0.2}rem 0;
+  padding: 0.3rem;
 `
 
-const ColorWrapper = styled(InputWrapper)`
-  padding: 0.4rem;
+const Label = styled.span`
+  display: inline-block;
+  margin-bottom: 0.7rem;
 `
 
 const Button = styled(ButtonPrimary)`
@@ -97,12 +100,7 @@ export function InterfaceOptions(props: any) {
   const [logoUrl, setLogoUrl] = useState('')
   const [brandColor, setBrandColor] = useState('')
   const [socialLinks, setSocialLinks] = useState<string[]>([])
-
-  const onSocialLinksChange = (newLinks: string[]) => setSocialLinks(newLinks)
-
-  // const [, setMenuLinks] = useState<string[]>([])
-  // const onMenuLinksChange = (newLinks: string[]) => setMenuLinks(newLinks)
-
+  const [menuLinks, setMenuLinks] = useState<LinkItem[]>([])
   const [tokenLists, setTokenLists] = useState<any>([])
 
   const updateBrandColor = (color: { hex: string }) => setBrandColor(color.hex)
@@ -116,12 +114,13 @@ export function InterfaceOptions(props: any) {
 
       if (data) {
         const { strSettings, tokenLists } = data
-        const { projectName, logoUrl, brandColor, socialLinks } = JSON.parse(strSettings)
+        const { projectName, logoUrl, brandColor, socialLinks, menuLinks } = JSON.parse(strSettings)
 
         if (projectName) setProjectName(projectName)
         if (logoUrl) setLogoUrl(logoUrl)
         if (brandColor) setBrandColor(brandColor)
-        if (socialLinks) setSocialLinks(socialLinks)
+        if (socialLinks?.length) setSocialLinks(socialLinks)
+        if (menuLinks?.length) setMenuLinks(menuLinks)
         if (tokenLists.length) {
           setTokenLists([])
 
@@ -153,6 +152,7 @@ export function InterfaceOptions(props: any) {
           logoUrl,
           brandColor,
           socialLinks,
+          menuLinks,
         }),
         onHash: (hash: string) => {
           addTransaction(
@@ -193,35 +193,45 @@ export function InterfaceOptions(props: any) {
     <section>
       {notification && <p>{notification}</p>}
 
-      <InputWrapper>
+      <OptionWrapper>
         <AddressInputPanel label="Storage contract *" value={storage} onChange={setStorage} disabled />
-      </InputWrapper>
+      </OptionWrapper>
       <Button onClick={fetchProjectOptions} disabled={!storageIsCorrect || pending}>
         {t('fetchOptions')}
       </Button>
 
       <div className={`${pending || !storageIsCorrect ? 'disabled' : ''}`}>
-        <InputWrapper>
+        <OptionWrapper>
           <InputPanel label={`${t('projectName')}`} value={projectName} onChange={setProjectName} />
-        </InputWrapper>
+        </OptionWrapper>
 
-        <InputWrapper>
+        <OptionWrapper>
           <InputPanel label={`${t('logoUrl')}`} value={logoUrl} onChange={setLogoUrl} />
-        </InputWrapper>
+        </OptionWrapper>
 
-        <ListFactory
-          title={t('socialLinks')}
-          placeholder="https://..."
-          startItems={socialLinks}
-          onItemChange={onSocialLinksChange}
-          isValidItem={(address) => Boolean(validUrl.isUri(address))}
-        />
+        <OptionWrapper>
+          <ListFactory
+            title={t('socialLinks')}
+            placeholder="https://..."
+            items={socialLinks}
+            setItems={setSocialLinks}
+            isValidItem={(address) => Boolean(validUrl.isUri(address))}
+          />
+        </OptionWrapper>
 
-        {/* <ListFactory title={t('menuLinks')} placeholder="https://..." onItemChange={onMenuLinksChange} /> */}
+        <OptionWrapper>
+          <MenuLinksFactory
+            title={t('menuLinks')}
+            items={menuLinks}
+            setItems={setMenuLinks}
+            isValidItem={(item: LinkItem) => Boolean(validUrl.isUri(item.source))}
+          />
+        </OptionWrapper>
 
-        <ColorWrapper>
+        <OptionWrapper margin={0.4}>
+          <Label>{t('primaryColor')}</Label>
           <HuePicker color={brandColor} onChangeComplete={updateBrandColor} styles={colorPickerStyles} />
-        </ColorWrapper>
+        </OptionWrapper>
 
         <Button onClick={saveSettings} disabled={!fullUpdateIsAvailable}>
           {t('saveSettings')}

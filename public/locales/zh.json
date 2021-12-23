@@ -214,5 +214,7 @@
   "priceImpactDescription": "市场价格与估计价格之间因交易规模而产生的差额",
   "liquidityProviderFeeDescription": "每笔交易的一部分作为协议激励流向流动性提供者",
   "route": "路线",
-  "routeDescription": "通过这些令牌的路由为您的交易带来了最好的价格"
+  "routeDescription": "通过这些令牌的路由为您的交易带来了最好的价格",
+  "primaryColor": "原色,原色",
+  "menuLinks": "菜单链接"
 }
