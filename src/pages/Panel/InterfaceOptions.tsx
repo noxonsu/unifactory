@@ -99,12 +99,8 @@ export function InterfaceOptions(props: any) {
   const [projectName, setProjectName] = useState('')
   const [logoUrl, setLogoUrl] = useState('')
   const [brandColor, setBrandColor] = useState('')
-
   const [socialLinks, setSocialLinks] = useState<string[]>([])
-
   const [menuLinks, setMenuLinks] = useState<LinkItem[]>([])
-  const onMenuLinksChange = (newLinks: LinkItem[]) => setMenuLinks(newLinks)
-
   const [tokenLists, setTokenLists] = useState<any>([])
 
   const updateBrandColor = (color: { hex: string }) => setBrandColor(color.hex)
@@ -123,8 +119,8 @@ export function InterfaceOptions(props: any) {
         if (projectName) setProjectName(projectName)
         if (logoUrl) setLogoUrl(logoUrl)
         if (brandColor) setBrandColor(brandColor)
-        if (socialLinks?.lenght) setSocialLinks(socialLinks)
-        if (menuLinks?.lenght) setMenuLinks(menuLinks)
+        if (socialLinks?.length) setSocialLinks(socialLinks)
+        if (menuLinks?.length) setMenuLinks(menuLinks)
         if (tokenLists.length) {
           setTokenLists([])
 
@@ -226,8 +222,8 @@ export function InterfaceOptions(props: any) {
         <OptionWrapper>
           <MenuLinksFactory
             title={t('menuLinks')}
-            startItems={menuLinks}
-            onItemChange={onMenuLinksChange}
+            items={menuLinks}
+            setItems={setMenuLinks}
             isValidItem={(item: LinkItem) => Boolean(validUrl.isUri(item.source))}
           />
         </OptionWrapper>

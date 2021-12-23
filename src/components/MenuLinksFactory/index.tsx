@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import { Box } from 'rebass'
 import { Input } from '@rebass/forms'
@@ -47,27 +47,22 @@ export type LinkItem = {
 
 export default function MenuLinksFactory({
   title,
-  onItemChange,
+  items,
   isValidItem,
-  startItems,
+  setItems,
 }: {
   title: string
-  onItemChange: (items: LinkItem[]) => void
+  setItems: (callback: any) => void
   isValidItem: (item: LinkItem) => boolean
-  startItems: LinkItem[]
+  items: LinkItem[]
 }) {
   const { t } = useTranslation()
-  const [items, setItems] = useState<LinkItem[]>(startItems)
-
   const [newName, setNewName] = useState<string>('')
   const [newSource, setNewSource] = useState<string>('')
   const [itemError, setItemError] = useState<boolean>(false)
 
-  useEffect(() => onItemChange(items), [items, onItemChange])
-  useEffect(() => setItems(startItems), [startItems])
-
   const onRemove = (targetIndex: number) => {
-    setItems((prevItems) => prevItems.filter((_, index) => index !== targetIndex))
+    setItems((prevItems: LinkItem[]) => prevItems.filter((_, index) => index !== targetIndex))
   }
 
   const onAdd = () => {
@@ -77,7 +72,7 @@ export default function MenuLinksFactory({
     }
 
     if (isValidItem(newItem)) {
-      setItems((prevItems) => [...prevItems, newItem])
+      setItems((prevItems: LinkItem[]) => [...prevItems, newItem])
       setNewName('')
       setNewSource('')
     } else {
