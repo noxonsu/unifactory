@@ -229,5 +229,6 @@
   "route": "Route",
   "routeDescription": "Das Routing durch diese Token führte zum besten Preis für Ihren Handel",
   "primaryColor": "Grundfarbe",
-  "menuLinks": "Menü Links"
+  "menuLinks": "Menü Links",
+  "navigationLinks": "Navigationslinks"
 }

@@ -88,7 +88,7 @@
     "rpc": "https://data-seed-prebsc-1-s1.binance.org:8545/",
     "chainId": 97,
     "explorer": "https://testnet.bscscan.com/",
-    "registry": "",
+    "registry": "0x3633282Db53416fC2bF2C48f8e2aeDafAd18eB28",
     "multicall": "0xae11C5B5f29A6a25e955F0CB8ddCc416f522AF5C",
     "ENSRegistry": "",
     "wrappedToken": {

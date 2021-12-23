@@ -9,8 +9,9 @@ type Settings = {
   projectName: string
   brandColor: string
   logo: string
-  socialLinks: StorageState['socialLinks']
+  navigationLinks: StorageState['navigationLinks']
   menuLinks: StorageState['menuLinks']
+  socialLinks: StorageState['socialLinks']
 }
 
 export const parseSettings = (settings: string): Settings => {
@@ -18,8 +19,9 @@ export const parseSettings = (settings: string): Settings => {
   let projectName: string = ''
   let brandColor: string = ''
   let logo: string = ''
-  let socialLinks: StorageState['socialLinks'] = []
+  let navigationLinks: StorageState['navigationLinks'] = []
   let menuLinks: Settings['menuLinks'] = []
+  let socialLinks: StorageState['socialLinks'] = []
 
   try {
     if (settings.length) {
@@ -29,19 +31,23 @@ export const parseSettings = (settings: string): Settings => {
         projectName: _projectName,
         brandColor: _brandColor,
         logoUrl: _logoUrl,
-        socialLinks: _socialLinks,
+        navigationLinks: _navigationLinks,
         menuLinks: _menuLinks,
+        socialLinks: _socialLinks,
       } = settingsJSON
 
       if (_domain) domain = _domain
       if (_projectName) projectName = _projectName
       if (_brandColor) brandColor = _brandColor
       if (_logoUrl) logo = _logoUrl
-      if (Array.isArray(_socialLinks) && _socialLinks.length) {
-        socialLinks = _socialLinks
+      if (Array.isArray(_navigationLinks) && _navigationLinks.length) {
+        navigationLinks = _navigationLinks
       }
       if (Array.isArray(_menuLinks) && _menuLinks.length) {
         menuLinks = _menuLinks
+      }
+      if (Array.isArray(_socialLinks) && _socialLinks.length) {
+        socialLinks = _socialLinks
       }
     }
   } catch (error) {
@@ -55,8 +61,9 @@ export const parseSettings = (settings: string): Settings => {
     projectName,
     brandColor,
     logo,
-    socialLinks,
+    navigationLinks,
     menuLinks,
+    socialLinks,
   }
 }
 
@@ -80,8 +87,9 @@ export default function useStorageInfo(): { data: StorageState | null; isLoading
         projectName: '',
         brandColor: '',
         logo: '',
-        socialLinks: [],
+        navigationLinks: [],
         menuLinks: [],
+        socialLinks: [],
       }
       const tokenLists: StorageState['tokenLists'] = []
 

@@ -21,8 +21,9 @@ export type StorageState = {
   readonly brandColor: string
   readonly logo: string
   readonly tokenLists: TokenList[]
-  readonly socialLinks: string[]
+  readonly navigationLinks: { name: string; source: string }[]
   readonly menuLinks: { name: string; source: string }[]
+  readonly socialLinks: string[]
 }
 
 export type ApplicationState = {
@@ -47,6 +48,7 @@ const initialState: ApplicationState = {
   brandColor: '',
   logo: '',
   tokenLists: [],
+  navigationLinks: [],
   menuLinks: [],
   socialLinks: [],
   blockNumber: {},
@@ -75,7 +77,8 @@ export default createReducer(initialState, (builder) =>
       state.storage = storage
     })
     .addCase(updateAppData, (state, action) => {
-      const { domain, projectName, brandColor, logo, tokenLists, socialLinks, menuLinks } = action.payload
+      const { domain, projectName, brandColor, logo, tokenLists, navigationLinks, menuLinks, socialLinks } =
+        action.payload
 
       state.domain = domain
       state.projectName = projectName
@@ -83,8 +86,9 @@ export default createReducer(initialState, (builder) =>
       state.logo = logo
 
       if (tokenLists.length) state.tokenLists = tokenLists
-      if (socialLinks.length) state.socialLinks = socialLinks
+      if (navigationLinks.length) state.navigationLinks = navigationLinks
       if (menuLinks.length) state.menuLinks = menuLinks
+      if (socialLinks.length) state.socialLinks = socialLinks
     })
     .addCase(updateBlockNumber, (state, action) => {
       const { chainId, blockNumber } = action.payload
