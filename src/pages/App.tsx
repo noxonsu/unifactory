@@ -126,70 +126,63 @@ export default function App() {
       )} */}
 
       <Route component={DarkModeQueryParamReader} />
-      <AppWrapper>
-        <Web3ReactManager>
-          <Popups />
+      <Web3ReactManager>
+        <Popups />
 
-          {loading ? (
-            <LoaderWrapper>
-              <Loader size="2.8rem" />
-            </LoaderWrapper>
-          ) : appIsReady && isAvailableNetwork ? (
-            <>
-              {appManagement ? (
-                <BodyWrapper>
-                  <AppBody>
-                    <Panel setDomainDataTrigger={setDomainDataTrigger} />
-                  </AppBody>
-                </BodyWrapper>
-              ) : (
-                <>
-                  {/* addition tag for the flex layout */}
-                  <div>
-                    <HeaderWrapper>
-                      <Header />
-                    </HeaderWrapper>
+        {loading ? (
+          <LoaderWrapper>
+            <Loader size="2.8rem" />
+          </LoaderWrapper>
+        ) : appIsReady && isAvailableNetwork ? (
+          <>
+            {appManagement ? (
+              <BodyWrapper>
+                <AppBody>
+                  <Panel setDomainDataTrigger={setDomainDataTrigger} />
+                </AppBody>
+              </BodyWrapper>
+            ) : (
+              <AppWrapper>
+                {/* addition tag for the flex layout */}
+                <div>
+                  <HeaderWrapper>
+                    <Header />
+                  </HeaderWrapper>
 
-                    <BodyWrapper>
-                      <Switch>
-                        <Route exact strict path="/swap" component={Swap} />
-                        <Route exact strict path="/claim" component={OpenClaimAddressModalAndRedirectToSwap} />
-                        <Route exact strict path="/find" component={PoolFinder} />
-                        <Route exact strict path="/pool" component={Pool} />
-                        <Route exact strict path="/create" component={RedirectToAddLiquidity} />
-                        <Route exact path="/add" component={AddLiquidity} />
-                        <Route exact path="/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
-                        <Route exact path="/add/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
-                        <Route exact path="/create" component={AddLiquidity} />
-                        <Route exact path="/create/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
-                        <Route exact path="/create/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
-                        <Route
-                          exact
-                          strict
-                          path="/remove/:tokens"
-                          component={RedirectOldRemoveLiquidityPathStructure}
-                        />
-                        <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
-                        <Route component={RedirectPathToSwapOnly} />
-                      </Switch>
-                    </BodyWrapper>
-                  </div>
+                  <BodyWrapper>
+                    <Switch>
+                      <Route exact strict path="/swap" component={Swap} />
+                      <Route exact strict path="/claim" component={OpenClaimAddressModalAndRedirectToSwap} />
+                      <Route exact strict path="/find" component={PoolFinder} />
+                      <Route exact strict path="/pool" component={Pool} />
+                      <Route exact strict path="/create" component={RedirectToAddLiquidity} />
+                      <Route exact path="/add" component={AddLiquidity} />
+                      <Route exact path="/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
+                      <Route exact path="/add/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
+                      <Route exact path="/create" component={AddLiquidity} />
+                      <Route exact path="/create/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
+                      <Route exact path="/create/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
+                      <Route exact strict path="/remove/:tokens" component={RedirectOldRemoveLiquidityPathStructure} />
+                      <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
+                      <Route component={RedirectPathToSwapOnly} />
+                    </Switch>
+                  </BodyWrapper>
+                </div>
 
-                  <FooterWrapper>
-                    <Footer />
-                  </FooterWrapper>
-                </>
-              )}
-            </>
-          ) : (
-            <Connection
-              setDomainDataTrigger={setDomainDataTrigger}
-              domainData={domainData}
-              isAvailableNetwork={isAvailableNetwork}
-            />
-          )}
-        </Web3ReactManager>
-      </AppWrapper>
+                <FooterWrapper>
+                  <Footer />
+                </FooterWrapper>
+              </AppWrapper>
+            )}
+          </>
+        ) : (
+          <Connection
+            setDomainDataTrigger={setDomainDataTrigger}
+            domainData={domainData}
+            isAvailableNetwork={isAvailableNetwork}
+          />
+        )}
+      </Web3ReactManager>
     </Suspense>
   )
 }

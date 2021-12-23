@@ -214,5 +214,7 @@
   "priceImpactDescription": "La diferencia entre el precio de mercado y el precio estimado debido al tamaño de la operación",
   "liquidityProviderFeeDescription": "Una parte de cada operación se destina a proveedores de liquidez como incentivo de protocolo",
   "route": "Ruta",
-  "routeDescription": "El enrutamiento a través de estos tokens resultó en el mejor precio para su operación"
+  "routeDescription": "El enrutamiento a través de estos tokens resultó en el mejor precio para su operación",
+  "primaryColor": "Color primario",
+  "menuLinks": "Enlaces de menú"
 }

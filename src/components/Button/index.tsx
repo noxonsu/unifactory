@@ -1,9 +1,10 @@
 import React from 'react'
 import styled from 'styled-components'
 import { darken, lighten } from 'polished'
-
+import { useTranslation } from 'react-i18next'
 import { RowBetween } from '../Row'
 import { ChevronDown } from 'react-feather'
+import { AiOutlinePlus } from 'react-icons/ai'
 import { Button as RebassButton, ButtonProps } from 'rebass/styled-components'
 
 const Base = styled(RebassButton)<{
@@ -172,6 +173,27 @@ const ButtonErrorStyle = styled(Base)`
     border: 1px solid ${({ theme }) => theme.red1};
   }
 `
+
+const ButtonAddStyle = styled(CleanButton)`
+  cursor: pointer;
+  height: 2rem;
+  width: auto;
+  display: flex;
+  alignt-items: center;
+  justify-content: center;
+  background-color: ${({ theme }) => theme.primary2};
+  color: ${({ theme }) => theme.white1};
+`
+
+export function ButtonAdd({ onClick, disabled }: { onClick: () => void; disabled?: boolean }) {
+  const { t } = useTranslation()
+
+  return (
+    <ButtonAddStyle onClick={onClick} disabled={disabled} title={t('add')}>
+      <AiOutlinePlus size="1.6rem" />
+    </ButtonAddStyle>
+  )
+}
 
 export function ButtonConfirmed({
   confirmed,
