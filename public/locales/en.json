@@ -18,7 +18,6 @@
   "installMetamask": "Please visit us after installing Metamask on Chrome or Brave.",
   "disconnected": "Disconnected",
   "swap": "Swap",
-  "swapAnyway": "Swap Anyway",
   "send": "Send",
   "sendAnyway": "Send Anyway",
   "pool": "Pool",
@@ -229,5 +228,11 @@
   "routeDescription": "Routing through these tokens resulted in the best price for your trade",
   "primaryColor": "Primary color",
   "menuLinks": "Menu links",
-  "navigationLinks": "Navigation links"
+  "navigationLinks": "Navigation links",
+  "swapAnyway": "Swap anyway",
+  "confirmSwap": "Confirm swap",
+  "transactionTimeoutDescription": "Your transaction will revert if it is pending for more than this long",
+  "enterValidSlippage": "Enter a valid slippage percentage",
+  "yourTransactionMayFail": "Your transaction may fail",
+  "yourTransactionMayBeFrontrun": "Your transaction may be frontrun"
 }
