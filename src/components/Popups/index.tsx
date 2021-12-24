@@ -1,6 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
 import { useActivePopups } from 'state/application/hooks'
+import { AppState } from 'state'
+import { useSelector } from 'react-redux'
 import { AutoColumn } from '../Column'
 import PopupItem from './PopupItem'
 
@@ -29,9 +31,9 @@ const MobilePopupInner = styled.div`
   }
 `
 
-const FixedPopupColumn = styled(AutoColumn)<{ extraPadding: boolean }>`
+const FixedPopupColumn = styled(AutoColumn)<{ noPadding: boolean; extraPadding: boolean }>`
   position: fixed;
-  top: ${({ extraPadding }) => (extraPadding ? '108px' : '88px')};
+  top: ${({ noPadding, extraPadding }) => (noPadding ? '22px' : extraPadding ? '108px' : '88px')};
   right: 1rem;
   max-width: 355px !important;
   width: 100%;
@@ -44,6 +46,10 @@ const FixedPopupColumn = styled(AutoColumn)<{ extraPadding: boolean }>`
 
 export default function Popups() {
   const activePopups = useActivePopups()
+
+  const appManagement = useSelector<AppState, AppState['application']['appManagement']>(
+    (state) => state.application.appManagement
+  )
 
   // popup component testing
   // if (!activePopups.length) {
@@ -66,7 +72,7 @@ export default function Popups() {
 
   return (
     <>
-      <FixedPopupColumn gap="20px" extraPadding={false}>
+      <FixedPopupColumn gap="20px" noPadding={appManagement} extraPadding={false}>
         {activePopups.map((item) => (
           <PopupItem key={item.key} content={item.content} popKey={item.key} removeAfterMs={item.removeAfterMs} />
         ))}
