@@ -15,7 +15,8 @@ const MEDIA_WIDTHS = {
   upToLarge: 1280,
   // ------------
   laptop: 1024,
-  tablet: 768,
+  tabletL: 880,
+  tabletM: 768,
   mobileL: 425,
   mobileM: 375,
 }
