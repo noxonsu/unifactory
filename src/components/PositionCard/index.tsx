@@ -1,7 +1,7 @@
 import { JSBI, Pair, Percent, TokenAmount } from 'sdk'
 import { darken } from 'polished'
 import React, { useState } from 'react'
-import { ChevronDown, ChevronUp } from 'react-feather'
+import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io'
 import { Link } from 'react-router-dom'
 import { Text } from 'rebass'
 import styled from 'styled-components'
@@ -39,6 +39,14 @@ const StyledPositionCard = styled(LightCard)<{ bgColor: any }>`
   overflow: hidden;
   border: 1px solid ${({ theme }) => theme.primary1};
   background: ${({ theme }) => theme.bg1};
+`
+
+const IconWrapper = styled.div`
+  margin-left: 0.4rem;
+  margin-top: 0.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `
 
 interface PositionCardProps {
@@ -195,12 +203,16 @@ export default function FullPositionCard({ pair, border, stakedBalance }: Positi
               {showMore ? (
                 <>
                   {t('manage')}
-                  <ChevronUp size="52" style={{ marginLeft: '0.4rem', marginTop: '0.2rem' }} />
+                  <IconWrapper>
+                    <IoIosArrowUp size="1.1rem" />
+                  </IconWrapper>
                 </>
               ) : (
                 <>
                   {t('manage')}
-                  <ChevronDown size="52" style={{ marginLeft: '0.4rem', marginTop: '0.2rem' }} />
+                  <IconWrapper>
+                    <IoIosArrowDown size="1.1rem" />
+                  </IconWrapper>
                 </>
               )}
             </ButtonEmpty>

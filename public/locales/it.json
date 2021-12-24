@@ -16,7 +16,6 @@
   "installMetamask": "Perfavore ritorna dopo aver installato Metamask su Chrome o Brave.",
   "disconnected": "Disconnesso",
   "swap": "Scambia",
-  "swapAnyway": "Scambia comunque",
   "send": "Invia",
   "sendAnyway": "Invia comunque",
   "pool": "Riserva",
@@ -229,5 +228,11 @@
   "routeDescription": "Il routing attraverso questi token ha portato al miglior prezzo per il tuo commercio",
   "primaryColor": "Colore primario",
   "menuLinks": "Collegamenti menu",
-  "navigationLinks": "Collegamenti di navigazione"
+  "navigationLinks": "Collegamenti di navigazione",
+  "swapAnyway": "Scambia comunque",
+  "confirmSwap": "Conferma scambio",
+  "transactionTimeoutDescription": "La transazione verrà ripristinata se è in sospeso per più di questo tempo",
+  "enterValidSlippage": "Immettere una percentuale di slippage valida",
+  "yourTransactionMayFail": "La transazione potrebbe non riuscire",
+  "yourTransactionMayBeFrontrun": "La transazione può essere capofila"
 }

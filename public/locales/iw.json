@@ -217,5 +217,11 @@
   "routeDescription": "ניתוב באמצעות אסימונים אלה הביא את המחיר הטוב ביותר עבור המסחר שלך",
   "primaryColor": "צבע ראשי",
   "menuLinks": "קישורי תפריט",
-  "navigationLinks": "קישורי ניווט"
+  "navigationLinks": "קישורי ניווט",
+  "swapAnyway": "החלף בכל מקרה",
+  "confirmSwap": "אישור החלפה",
+  "transactionTimeoutDescription": "העסקה שלך תחזור אם זה תלוי ועומד ליותר מזה זמן",
+  "enterValidSlippage": "הזן אחוז החלקה תקף",
+  "yourTransactionMayFail": "העסקה שלך עלולה להיכשל.",
+  "yourTransactionMayBeFrontrun": "העסקה שלך מועדת להתקפה קדימה (ריצה קדמית)"
 }

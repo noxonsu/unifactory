@@ -151,7 +151,7 @@ export default function SlippageTabs({ rawSlippage, setRawSlippage, deadline, se
           <TYPE.black fontWeight={400} fontSize={14} color={theme.text2}>
             {t('slippageTolerance')}
           </TYPE.black>
-          <QuestionHelper text="Your transaction will revert if the price changes unfavorably by more than this percentage." />
+          <QuestionHelper text={t('minimumReceivedDescription')} />
         </RowFixed>
         <RowBetween>
           <Option
@@ -215,10 +215,10 @@ export default function SlippageTabs({ rawSlippage, setRawSlippage, deadline, se
             }}
           >
             {slippageError === SlippageError.InvalidInput
-              ? 'Enter a valid slippage percentage'
+              ? t('enterValidSlippage')
               : slippageError === SlippageError.RiskyLow
-              ? 'Your transaction may fail'
-              : 'Your transaction may be frontrun'}
+              ? t('yourTransactionMayFail')
+              : t('yourTransactionMayBeFrontrun')}
           </RowBetween>
         )}
       </AutoColumn>
@@ -228,7 +228,7 @@ export default function SlippageTabs({ rawSlippage, setRawSlippage, deadline, se
           <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
             {t('transactionDeadline')}
           </TYPE.black>
-          <QuestionHelper text="Your transaction will revert if it is pending for more than this long." />
+          <QuestionHelper text={t('transactionTimeoutDescription')} />
         </RowFixed>
         <RowFixed>
           <OptionCustom style={{ width: '80px' }} tabIndex={-1}>

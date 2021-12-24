@@ -16,7 +16,6 @@
   "installMetamask": "Bitte besuch uns erneut, nachdem du Metamask oder Brave installiert hast.",
   "disconnected": "Nicht verbunden",
   "swap": "Tauschen",
-  "swapAnyway": "Trotzdem tauschen",
   "send": "Senden",
   "sendAnyway": "Trotzdem senden",
   "pool": "Pool",
@@ -230,5 +229,11 @@
   "routeDescription": "Das Routing durch diese Token führte zum besten Preis für Ihren Handel",
   "primaryColor": "Grundfarbe",
   "menuLinks": "Menü Links",
-  "navigationLinks": "Navigationslinks"
+  "navigationLinks": "Navigationslinks",
+  "swapAnyway": "Swap sowieso",
+  "confirmSwap": "Swap bestätigen",
+  "transactionTimeoutDescription": "Ihre Transaktion wird rückgängig gemacht, wenn sie länger als so lange aussteht",
+  "enterValidSlippage": "Geben Sie einen gültigen Schlupfprozentsatz ein",
+  "yourTransactionMayFail": "Ihre Transaktion kann fehlschlagen",
+  "yourTransactionMayBeFrontrun": "Ihre Transaktion kann Spitzenreiter sein"
 }

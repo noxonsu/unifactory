@@ -217,5 +217,11 @@
   "routeDescription": "El enrutamiento a través de estos tokens resultó en el mejor precio para su operación",
   "primaryColor": "Color primario",
   "menuLinks": "Enlaces de menú",
-  "navigationLinks": "Enlaces de navegación"
+  "navigationLinks": "Enlaces de navegación",
+  "swapAnyway": "Intercambio por cierto",
+  "confirmSwap": "Confirmar swap",
+  "transactionTimeoutDescription": "Su transacción se revertirá si está pendiente por más de este tiempo",
+  "enterValidSlippage": "Introduzca un porcentaje de deslizamiento válido",
+  "yourTransactionMayFail": "Su transacción puede fallar",
+  "yourTransactionMayBeFrontrun": "Su transacción puede ser pionera"
 }

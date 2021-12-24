@@ -217,5 +217,11 @@
   "routeDescription": "通过这些令牌的路由为您的交易带来了最好的价格",
   "primaryColor": "原色,原色",
   "menuLinks": "菜单链接",
-  "navigationLinks": "导航链接"
+  "navigationLinks": "导航链接",
+  "swapAnyway": "无论如何交换",
+  "confirmSwap": "确认交换",
+  "transactionTimeoutDescription": "如果您的交易挂起时间超过此长，您的交易将恢复",
+  "enterValidSlippage": "输入有效的滑点百分比",
+  "yourTransactionMayFail": "您的交易可能会失败",
+  "yourTransactionMayBeFrontrun": "您的交易可能是领跑者"
 }

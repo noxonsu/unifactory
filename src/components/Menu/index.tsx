@@ -173,8 +173,6 @@ const ReturnButton = styled.button`
 `
 
 function LanguageMenu({ close }: { close: () => void }) {
-  const toggle = useToggleModal(ApplicationModal.LANGUAGE)
-
   return (
     <MenuFlyout>
       <ReturnButton onClick={close}>
@@ -182,14 +180,7 @@ function LanguageMenu({ close }: { close: () => void }) {
       </ReturnButton>
 
       {availableLanguages.map((lang) => (
-        <ClickableMenuItem
-          active={i18n.language === lang}
-          key={lang}
-          onClick={() => {
-            i18n.changeLanguage(lang)
-            toggle()
-          }}
-        >
+        <ClickableMenuItem active={i18n.language === lang} key={lang} onClick={() => i18n.changeLanguage(lang)}>
           {LANG_NAME[lang] || lang.toUpperCase()}
         </ClickableMenuItem>
       ))}
