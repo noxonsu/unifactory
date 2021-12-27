@@ -32,7 +32,7 @@
     "rpc": "https://rinkeby.infura.io/v3/212957e8adf14bf8aecf82358083e63e",
     "chainId": 4,
     "explorer": "https://rinkeby.etherscan.io",
-    "registry": "0x8E78EeDb6277D5B8e825CB2b0d8F98a9ceaAA00F",
+    "registry": "0xe941b2b03d0A6eAfAdC547EC20Ba0D9583CfcaD3",
     "multicall": "0x42Ad527de7d4e9d9d011aC45B31D8551f8Fe9821",
     "ENSRegistry": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
     "wrappedToken": {
@@ -71,10 +71,10 @@
   },
   "56": {
     "name": "Binance Smart Chain",
-    "rpc": "https://bsc-dataseed1.ninicoin.io",
+    "rpc": "https://bsc-dataseed.binance.org",
     "chainId": 56,
     "explorer": "https://bscscan.com",
-    "registry": "",
+    "registry": "0x39b6A4E28fF734311Da8b800025dEBD573Be3eaB",
     "multicall": "0x41263cBA59EB80dC200F3E2544eda4ed6A90E76C",
     "ENSRegistry": "",
     "wrappedToken": {
@@ -85,10 +85,10 @@
   },
   "97": {
     "name": "BSC Testnet",
-    "rpc": "https://data-seed-prebsc-1-s1.binance.org:8545/",
+    "rpc": "https://data-seed-prebsc-1-s1.binance.org:8545",
     "chainId": 97,
     "explorer": "https://testnet.bscscan.com/",
-    "registry": "0x3633282Db53416fC2bF2C48f8e2aeDafAd18eB28",
+    "registry": "0x1F0760bF970DDA86F7De29E22FFBA4f841f5bfA0",
     "multicall": "0xae11C5B5f29A6a25e955F0CB8ddCc416f522AF5C",
     "ENSRegistry": "",
     "wrappedToken": {
@@ -102,7 +102,7 @@
     "rpc": "https://rpc-mainnet.matic.network",
     "chainId": 137,
     "explorer": "https://polygonscan.com/",
-    "registry": "",
+    "registry": "0x8746f10E3142987733D3f05D1FBe72E482F521A7",
     "multicall": "0x11ce4B23bD875D7F5C6a31084f55fDe1e9A87507",
     "ENSRegistry": "",
     "wrappedToken": {
@@ -116,7 +116,7 @@
     "rpc": "https://rpc-mumbai.maticvigil.com",
     "chainId": 80001,
     "explorer": "https://mumbai.polygonscan.com/",
-    "registry": "0x3Df4F3022050fA83BC5f0c0757a52A3572619a89",
+    "registry": "0xb7C47aA7bEE0397f03f5D3D038F3240a18102AED",
     "multicall": "0x08411ADd0b5AA8ee47563b146743C13b3556c9Cc",
     "ENSRegistry": "",
     "wrappedToken": {
@@ -200,7 +200,7 @@
     "rpc": "https://sokol.poa.network",
     "chainId": 77,
     "explorer": "https://blockscout.com/poa/sokol",
-    "registry": "",
+    "registry": "0x63207FF111a54D6F35Ae18f82b1a9DEff3fbE3e0",
     "multicall": "",
     "ENSRegistry": "",
     "wrappedToken": {

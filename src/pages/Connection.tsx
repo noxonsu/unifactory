@@ -48,7 +48,20 @@ const SupportedNetworksWrapper = styled.div`
   padding: 1.4rem;
 `
 
-const supportedChainIds = () => {
+const SupportedNetworksList = styled.ul`
+  margin: 0;
+  padding: 0.6rem 0;
+  list-style: none;
+
+  li {
+    margin: 0.4rem 0;
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.4rem;
+    background-color: ${({ theme }) => theme.bg2};
+  }
+`
+
+const supportedNetworks = () => {
   return Object.values(networks).filter(
     (network) => network.registry && network.multicall && Boolean(network.wrappedToken?.address)
   )
@@ -72,7 +85,7 @@ export default function Connection({ domainData, isAvailableNetwork, setDomainDa
       unavailableOrZeroAddr(domainData.factory) ||
       unavailableOrZeroAddr(domainData.router))
 
-  const availableNetworks = supportedChainIds()
+  const networks = supportedNetworks()
 
   return (
     <Wrapper>
@@ -81,11 +94,11 @@ export default function Connection({ domainData, isAvailableNetwork, setDomainDa
           <SupportedNetworksWrapper>
             <h3>{t('youCanNotUseThisNetwork')}</h3>
 
-            {availableNetworks.length && (
+            {networks.length && (
               <>
                 <p>{t('availableNetworks')}</p>
-                <ul>
-                  {availableNetworks.map((network: { name: string; chainId: number }, index) => {
+                <SupportedNetworksList>
+                  {networks.map((network: { name: string; chainId: number }, index) => {
                     const { name, chainId } = network
 
                     return (
@@ -94,7 +107,7 @@ export default function Connection({ domainData, isAvailableNetwork, setDomainDa
                       </li>
                     )
                   })}
-                </ul>
+                </SupportedNetworksList>
               </>
             )}
           </SupportedNetworksWrapper>
