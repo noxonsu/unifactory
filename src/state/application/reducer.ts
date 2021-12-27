@@ -64,17 +64,17 @@ export default createReducer(initialState, (builder) =>
       state.appManagement = status
     })
     .addCase(retrieveDomainData, (state, action) => {
-      let { admin = '', factory = '', router = '', storage = '' } = action.payload
+      let { admin = '', factory = '', router = '', storageAddr = '' } = action.payload
 
       if (admin === ZERO_ADDRESS) admin = ''
       if (factory === ZERO_ADDRESS) factory = ''
       if (router === ZERO_ADDRESS) router = ''
-      if (storage === ZERO_ADDRESS) storage = ''
+      if (storageAddr === ZERO_ADDRESS) storageAddr = ''
 
       state.admin = admin
       state.factory = factory
       state.router = router
-      state.storage = storage
+      state.storage = storageAddr
     })
     .addCase(updateAppData, (state, action) => {
       const { domain, projectName, brandColor, logo, tokenLists, navigationLinks, menuLinks, socialLinks } =
