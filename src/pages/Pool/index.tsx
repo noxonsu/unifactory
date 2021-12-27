@@ -1,6 +1,6 @@
 import React, { useContext, useMemo } from 'react'
 import styled, { ThemeContext } from 'styled-components'
-import { Pair } from 'sdk'
+import { Pair, ETHER } from 'sdk'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { SwapPoolTabs } from 'components/NavigationTabs'
@@ -106,10 +106,10 @@ export default function Pool() {
                 <TYPE.mediumHeader style={{ justifySelf: 'flex-start' }}>{t('yourLiquidity')}</TYPE.mediumHeader>
               </HideSmall>
               <ButtonRow>
-                <ResponsiveButtonPrimary as={Link} padding="6px 10px" to="/create/ETH">
+                <ResponsiveButtonPrimary as={Link} padding="6px 10px" to={`/create/${ETHER.name}`}>
                   {t('createPair')}
                 </ResponsiveButtonPrimary>
-                <ResponsiveButtonPrimary id="join-pool-button" as={Link} padding="6px 10px" to="/add/ETH">
+                <ResponsiveButtonPrimary id="join-pool-button" as={Link} padding="6px 10px" to={`/add/${ETHER.name}`}>
                   <Text fontWeight={500} fontSize={16}>
                     {t('addLiquidity')}
                   </Text>
