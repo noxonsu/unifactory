@@ -75,10 +75,12 @@ contract Registry {
         return _domains;
     }
 
-    function allDomainsData() external view returns(FullDomain[] memory _allDomains) {
+    function allDomainsData() external view returns(FullDomain[] memory) {
+        FullDomain[] memory _allDomains = new FullDomain[](_domains.length);
         for(uint x; x < _domains.length; x++) {
             _allDomains[x] = _domain(_domains[x]);
         }
+        return _allDomains;
     }
 
     function _domain(string memory _name) private view notEmpty(_name) returns(FullDomain memory _data) {
