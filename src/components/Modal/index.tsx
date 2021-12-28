@@ -33,6 +33,12 @@ const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpen, ...r
 })`
   overflow-y: ${({ mobile }) => (mobile ? 'scroll' : 'hidden')};
 
+  ${({ mobile }) =>
+    mobile &&
+    css`
+      transform: translateY(-50%);
+    `}
+
   &[data-reach-dialog-content] {
     margin: 0 0 2rem 0;
     background-color: ${({ theme }) => theme.bg1};
@@ -41,10 +47,9 @@ const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpen, ...r
     width: 50vw;
     overflow-y: ${({ mobile }) => (mobile ? 'scroll' : 'hidden')};
     overflow-x: hidden;
+    align-self: center;
 
-    align-self: ${({ mobile }) => (mobile ? 'flex-end' : 'center')};
-
-    max-width: 420px;
+    max-width: 450px;
     ${({ maxHeight }) =>
       maxHeight &&
       css`
@@ -66,10 +71,8 @@ const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpen, ...r
       ${
         mobile &&
         css`
-          width: 100vw;
+          width: 94vw;
           border-radius: 20px;
-          border-bottom-left-radius: 0;
-          border-bottom-right-radius: 0;
         `
       }
     `}
@@ -100,7 +103,7 @@ export default function Modal({
     leave: { opacity: 0 },
   })
 
-  const [{ y }, set] = useSpring(() => ({ y: 0, config: { mass: 1, tension: 210, friction: 20 } }))
+  const [, set] = useSpring(() => ({ y: 0, config: { mass: 1, tension: 210, friction: 20 } }))
   const bind = useGesture({
     onDrag: (state) => {
       set({
@@ -119,12 +122,7 @@ export default function Modal({
           item && (
             <StyledDialogOverlay key={key} style={props} onDismiss={onDismiss} initialFocusRef={initialFocusRef}>
               <StyledDialogContent
-                {...(isMobile
-                  ? {
-                      ...bind(),
-                      style: { transform: y.interpolate((y) => `translateY(${y > 0 ? y : 0}px)`) },
-                    }
-                  : {})}
+                {...(isMobile ? { ...bind() } : {})}
                 aria-label="dialog content"
                 minHeight={minHeight}
                 maxHeight={maxHeight}

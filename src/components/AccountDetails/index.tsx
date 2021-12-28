@@ -9,7 +9,6 @@ import { shortenAddress } from 'utils'
 import { AutoRow } from '../Row'
 import Copy from './Copy'
 import Transaction from './Transaction'
-import { Text } from 'rebass'
 import { useETHBalances } from 'state/wallet/hooks'
 import { SUPPORTED_WALLETS } from '../../constants'
 import { ReactComponent as Close } from 'assets/images/x.svg'
@@ -118,9 +117,8 @@ const AccountControl = styled.div`
   justify-content: space-between;
   min-width: 0;
   width: 100%;
-
   font-weight: 500;
-  font-size: 1.25rem;
+  font-size: 1.3rem;
 
   a:hover {
     text-decoration: underline;
@@ -200,15 +198,11 @@ const WalletAction = styled(ButtonSecondary)`
   }
 `
 
-const BalanceText = styled(Text)`
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    display: none;
-  `};
+const BalanceText = styled.p`
+  padding: 0;
+  margin: 0;
+  font-weight: 500;
 `
-
-// const MainWalletAction = styled(WalletAction)`
-//   color: ${({ theme }) => theme.primary1};
-// `;
 
 function renderTransactions(transactions: string[]) {
   return (
@@ -323,26 +317,22 @@ export default function AccountDetails({
               <AccountGroupingRow id="web3-account-identifier-row">
                 <AccountControl>
                   {ENSName ? (
-                    <>
-                      <div>
-                        {getStatusIcon()}
-                        <p> {ENSName}</p>
-                      </div>
-                    </>
+                    <div>
+                      {getStatusIcon()}
+                      <p> {ENSName}</p>
+                    </div>
                   ) : (
-                    <>
-                      <div>
-                        {getStatusIcon()}
-                        <p> {account && shortenAddress(account)}</p>
-                      </div>
-                    </>
+                    <div>
+                      {getStatusIcon()}
+                      <p> {account && shortenAddress(account)}</p>
+                    </div>
                   )}
                 </AccountControl>
               </AccountGroupingRow>
 
               <AccountGroupingRow>
                 {account && baseCoinBalance ? (
-                  <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" pr="0.5rem" fontWeight={500}>
+                  <BalanceText>
                     {t('balance')} {baseCoinBalance?.toSignificant(4)}
                   </BalanceText>
                 ) : null}
@@ -350,49 +340,33 @@ export default function AccountDetails({
 
               <AccountGroupingRow>
                 {ENSName ? (
-                  <>
-                    <AccountControl>
-                      <div>
-                        {account && (
-                          <Copy toCopy={account}>
-                            <span style={{ marginLeft: '4px' }}>{t('copyAddress')}</span>
-                          </Copy>
-                        )}
-                        {chainId && account && (
-                          <AddressLink
-                            hasENS={!!ENSName}
-                            isENS={true}
-                            href={chainId ? getExplorerLink(chainId, ENSName, 'address') : ''}
-                          >
-                            <LinkIcon size={16} />
-                            <span style={{ marginLeft: '4px' }}>{t('viewIn')} Explorer</span>
-                          </AddressLink>
-                        )}
-                      </div>
-                    </AccountControl>
-                  </>
+                  <AccountControl>
+                    {account && <Copy toCopy={account}>{t('copyAddress')}</Copy>}
+                    {chainId && account && (
+                      <AddressLink
+                        hasENS={!!ENSName}
+                        isENS={true}
+                        href={chainId ? getExplorerLink(chainId, ENSName, 'address') : ''}
+                      >
+                        <LinkIcon size={16} />
+                        <span style={{ marginLeft: '4px' }}>{t('viewIn')} Explorer</span>
+                      </AddressLink>
+                    )}
+                  </AccountControl>
                 ) : (
-                  <>
-                    <AccountControl>
-                      <div>
-                        {account && (
-                          <Copy toCopy={account}>
-                            <span style={{ marginLeft: '4px' }}>{t('copyAddress')}</span>
-                          </Copy>
-                        )}
-                        {chainId && account && (
-                          <AddressLink
-                            hasENS={!!ENSName}
-                            isENS={false}
-                            href={getExplorerLink(chainId, account, 'address')}
-                          >
-                            <LinkIcon size={16} />
-                            <span style={{ marginLeft: '4px' }}>{t('viewIn')} Explorer</span>
-                          </AddressLink>
-                        )}
-                      </div>
-                    </AccountControl>
-                  </>
+                  <AccountControl>
+                    {account && (
+                      <Copy toCopy={account}>
+                        <span style={{ marginLeft: '4px' }}>{t('copyAddress')}</span>
+                      </Copy>
+                    )}
+                    {chainId && account && (
+                      <AddressLink hasENS={!!ENSName} isENS={false} href={getExplorerLink(chainId, account, 'address')}>
+                        <LinkIcon size={16} />
+                        <span style={{ marginLeft: '4px' }}>{t('viewIn')} Explorer</span>
+                      </AddressLink>
+                    )}
+                  </AccountControl>
                 )}
               </AccountGroupingRow>
             </InfoCard>
