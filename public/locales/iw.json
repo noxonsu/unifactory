@@ -223,5 +223,6 @@
   "transactionTimeoutDescription": "העסקה שלך תחזור אם זה תלוי ועומד ליותר מזה זמן",
   "enterValidSlippage": "הזן אחוז החלקה תקף",
   "yourTransactionMayFail": "העסקה שלך עלולה להיכשל.",
-  "yourTransactionMayBeFrontrun": "העסקה שלך מועדת להתקפה קדימה (ריצה קדמית)"
+  "yourTransactionMayBeFrontrun": "העסקה שלך מועדת להתקפה קדימה (ריצה קדמית)",
+  "noConnectionMethodsAvailable": "אין שיטות חיבור זמינות"
 }

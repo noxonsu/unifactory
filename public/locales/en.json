@@ -234,5 +234,6 @@
   "transactionTimeoutDescription": "Your transaction will revert if it is pending for more than this long",
   "enterValidSlippage": "Enter a valid slippage percentage",
   "yourTransactionMayFail": "Your transaction may fail",
-  "yourTransactionMayBeFrontrun": "Your transaction may be frontrun"
+  "yourTransactionMayBeFrontrun": "Your transaction may be frontrun",
+  "noConnectionMethodsAvailable": "No connection methods available"
 }

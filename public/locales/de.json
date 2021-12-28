@@ -235,5 +235,6 @@
   "transactionTimeoutDescription": "Ihre Transaktion wird rückgängig gemacht, wenn sie länger als so lange aussteht",
   "enterValidSlippage": "Geben Sie einen gültigen Schlupfprozentsatz ein",
   "yourTransactionMayFail": "Ihre Transaktion kann fehlschlagen",
-  "yourTransactionMayBeFrontrun": "Ihre Transaktion kann Spitzenreiter sein"
+  "yourTransactionMayBeFrontrun": "Ihre Transaktion kann Spitzenreiter sein",
+  "noConnectionMethodsAvailable": "Keine Verbindungsmethoden verfügbar"
 }

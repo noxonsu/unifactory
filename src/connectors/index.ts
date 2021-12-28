@@ -1,7 +1,7 @@
 import { Web3Provider } from '@ethersproject/providers'
 import { InjectedConnector } from '@web3-react/injected-connector'
-// import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
-// import { WalletLinkConnector } from '@web3-react/walletlink-connector';
+import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
+import { WalletLinkConnector } from '@web3-react/walletlink-connector'
 import { NetworkConnector } from './NetworkConnector'
 import networks from 'networks.json'
 
@@ -30,16 +30,16 @@ TODO: make interface with all available network options
 => we create a new instance for one of wallets below with that network
 => display connector
 */
-// export const walletconnect = new WalletConnectConnector({
-//   //@ts-ignore
-//   rpc: { [networks[1].chainId]: networks[networks[1].chainId].rpc },
-//   bridge: 'https://bridge.walletconnect.org',
-//   qrcode: true,
-//   pollingInterval: 15000,
-// });
+export const walletconnect = new WalletConnectConnector({
+  //@ts-ignore
+  rpc: { [networks[1].chainId]: networks[networks[1].chainId].rpc },
+  bridge: 'https://bridge.walletconnect.org',
+  qrcode: true,
+  pollingInterval: 15000,
+})
 
-// export const walletlink = new WalletLinkConnector({
-//   url: networks[1].rpc,
-//   appName: 'Swap',
-//   appLogoUrl: '',
-// });
+export const walletlink = new WalletLinkConnector({
+  url: networks[1].rpc,
+  appName: 'Swap',
+  appLogoUrl: '',
+})

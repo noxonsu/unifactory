@@ -26,18 +26,12 @@ const StyledDialogOverlay = styled(AnimatedDialogOverlay)`
 const AnimatedDialogContent = animated(DialogContent)
 // destructure to not pass custom props to Dialog DOM element
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpen, ...rest }) => (
+const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpen, isCentered, ...rest }) => (
   <AnimatedDialogContent {...rest} />
 )).attrs({
   'aria-label': 'dialog',
 })`
   overflow-y: ${({ mobile }) => (mobile ? 'scroll' : 'hidden')};
-
-  ${({ mobile }) =>
-    mobile &&
-    css`
-      transform: translateY(-50%);
-    `}
 
   &[data-reach-dialog-content] {
     margin: 0 0 2rem 0;
@@ -66,13 +60,19 @@ const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpen, ...r
       width: 65vw;
       margin: 0;
     `}
-    ${({ theme, mobile }) => theme.mediaWidth.upToSmall`
+    ${({ theme, mobile, isCentered }) => theme.mediaWidth.upToSmall`
       width:  85vw;
       ${
         mobile &&
         css`
           width: 94vw;
           border-radius: 20px;
+        `
+      }
+      ${
+        isCentered &&
+        css`
+          transform: translateY(-50%);
         `
       }
     `}
@@ -84,6 +84,7 @@ interface ModalProps {
   onDismiss: () => void
   minHeight?: number | false
   maxHeight?: number
+  isCentered?: boolean
   initialFocusRef?: React.RefObject<any>
   children?: React.ReactNode
 }
@@ -93,6 +94,7 @@ export default function Modal({
   onDismiss,
   minHeight = false,
   maxHeight = 90,
+  isCentered,
   initialFocusRef,
   children,
 }: ModalProps) {
@@ -126,6 +128,7 @@ export default function Modal({
                 aria-label="dialog content"
                 minHeight={minHeight}
                 maxHeight={maxHeight}
+                isCentered={isCentered}
                 mobile={isMobile}
               >
                 {/* prevents the automatic focusing of inputs on mobile by the reach dialog */}

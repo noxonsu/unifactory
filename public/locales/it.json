@@ -234,5 +234,6 @@
   "transactionTimeoutDescription": "La transazione verrà ripristinata se è in sospeso per più di questo tempo",
   "enterValidSlippage": "Immettere una percentuale di slippage valida",
   "yourTransactionMayFail": "La transazione potrebbe non riuscire",
-  "yourTransactionMayBeFrontrun": "La transazione può essere capofila"
+  "yourTransactionMayBeFrontrun": "La transazione può essere capofila",
+  "noConnectionMethodsAvailable": "Nessun metodo di connessione disponibile"
 }

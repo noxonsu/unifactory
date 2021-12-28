@@ -223,5 +223,6 @@
   "transactionTimeoutDescription": "Su transacción se revertirá si está pendiente por más de este tiempo",
   "enterValidSlippage": "Introduzca un porcentaje de deslizamiento válido",
   "yourTransactionMayFail": "Su transacción puede fallar",
-  "yourTransactionMayBeFrontrun": "Su transacción puede ser pionera"
+  "yourTransactionMayBeFrontrun": "Su transacción puede ser pionera",
+  "noConnectionMethodsAvailable": "No hay métodos de conexión disponibles"
 }

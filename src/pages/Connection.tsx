@@ -23,6 +23,8 @@ const Wrapper = styled.section`
 `
 
 const ContentWrapper = styled.div`
+  max-width: 26rem;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -37,7 +39,9 @@ const WalletIconWrapper = styled.div`
 `
 
 const Title = styled.h4`
-  margin-bottom: 0.4rem;
+  margin: 1.6rem 0;
+  text-align: center;
+  font-weight: 500;
 `
 
 const NetworkStatus = styled.div`
@@ -120,11 +124,10 @@ export default function Connection({ domainData, isAvailableNetwork, setDomainDa
         <AppBody>
           <ContentWrapper>
             <WalletIconWrapper>
-              <FaWallet size="2rem" color={colors(darkMode).bg1} />
+              <FaWallet size="2.4rem" color={colors(darkMode).bg1} />
             </WalletIconWrapper>
 
-            <Title>{t('connectWallet')}</Title>
-            <p>{t('toGetStartedConnectWallet')}</p>
+            <Title>{t('toGetStartedConnectWallet')}</Title>
 
             <NetworkStatus>
               <Web3Status />

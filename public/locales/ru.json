@@ -221,5 +221,6 @@
   "transactionTimeoutDescription": "Ваша транзакция будет отменена, если не будет подтверждена в течении этого времени",
   "enterValidSlippage": "Введите допустимый процент проскальзывания",
   "yourTransactionMayFail": "Ваша транзакция может завершиться неудачей",
-  "yourTransactionMayBeFrontrun": "Ваша транзакция подвержена атаке на опережение (фронт-раннингу)"
+  "yourTransactionMayBeFrontrun": "Ваша транзакция подвержена атаке на опережение (фронт-раннингу)",
+  "noConnectionMethodsAvailable": "Нет доступных способов подключения"
 }
