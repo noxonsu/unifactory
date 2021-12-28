@@ -23,6 +23,8 @@ const Wrapper = styled.section`
 `
 
 const ContentWrapper = styled.div`
+  max-width: 26rem;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -37,7 +39,9 @@ const WalletIconWrapper = styled.div`
 `
 
 const Title = styled.h4`
-  margin-bottom: 0.4rem;
+  margin: 1.6rem 0;
+  text-align: center;
+  font-weight: 500;
 `
 
 const NetworkStatus = styled.div`
@@ -48,7 +52,20 @@ const SupportedNetworksWrapper = styled.div`
   padding: 1.4rem;
 `
 
-const supportedChainIds = () => {
+const SupportedNetworksList = styled.ul`
+  margin: 0;
+  padding: 0.6rem 0;
+  list-style: none;
+
+  li {
+    margin: 0.4rem 0;
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.4rem;
+    background-color: ${({ theme }) => theme.bg2};
+  }
+`
+
+const supportedNetworks = () => {
   return Object.values(networks).filter(
     (network) => network.registry && network.multicall && Boolean(network.wrappedToken?.address)
   )
@@ -72,7 +89,7 @@ export default function Connection({ domainData, isAvailableNetwork, setDomainDa
       unavailableOrZeroAddr(domainData.factory) ||
       unavailableOrZeroAddr(domainData.router))
 
-  const availableNetworks = supportedChainIds()
+  const networks = supportedNetworks()
 
   return (
     <Wrapper>
@@ -81,11 +98,11 @@ export default function Connection({ domainData, isAvailableNetwork, setDomainDa
           <SupportedNetworksWrapper>
             <h3>{t('youCanNotUseThisNetwork')}</h3>
 
-            {availableNetworks.length && (
+            {networks.length && (
               <>
                 <p>{t('availableNetworks')}</p>
-                <ul>
-                  {availableNetworks.map((network: { name: string; chainId: number }, index) => {
+                <SupportedNetworksList>
+                  {networks.map((network: { name: string; chainId: number }, index) => {
                     const { name, chainId } = network
 
                     return (
@@ -94,7 +111,7 @@ export default function Connection({ domainData, isAvailableNetwork, setDomainDa
                       </li>
                     )
                   })}
-                </ul>
+                </SupportedNetworksList>
               </>
             )}
           </SupportedNetworksWrapper>
@@ -107,11 +124,10 @@ export default function Connection({ domainData, isAvailableNetwork, setDomainDa
         <AppBody>
           <ContentWrapper>
             <WalletIconWrapper>
-              <FaWallet size="2rem" color={colors(darkMode).bg1} />
+              <FaWallet size="2.4rem" color={colors(darkMode).bg1} />
             </WalletIconWrapper>
 
-            <Title>{t('connectWallet')}</Title>
-            <p>{t('toGetStartedConnectWallet')}</p>
+            <Title>{t('toGetStartedConnectWallet')}</Title>
 
             <NetworkStatus>
               <Web3Status />

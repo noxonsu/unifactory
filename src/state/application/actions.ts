@@ -33,7 +33,7 @@ export enum ApplicationModal {
 
 export const setAppManagement = createAction<{ status: boolean }>('application/setAppManagement')
 
-export const retrieveDomainData = createAction<{ admin: string; factory: string; router: string; storage: string }>(
+export const retrieveDomainData = createAction<{ admin: string; factory: string; router: string; storageAddr: string }>(
   'application/retrieveDomainData'
 )
 

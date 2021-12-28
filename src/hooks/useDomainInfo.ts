@@ -1,16 +1,14 @@
 import { useEffect, useState } from 'react'
-import { ZERO_ADDRESS } from 'sdk'
 import { useRegistryContract } from './useContract'
 import { useActiveWeb3React } from 'hooks'
 import networks from 'networks.json'
 
 export default function useDomainInfo(trigger: boolean): {
-  data: { admin: string; factory: string; router: string; storage: string } | null
+  data: { admin: string; factory: string; router: string; storageAddr: string } | null
   isLoading: boolean
   error: Error | null
 } {
   const { chainId } = useActiveWeb3React()
-
   // @ts-ignore
   const registry = useRegistryContract(networks[chainId]?.registry)
   const [data, setData] = useState(null)
@@ -26,12 +24,9 @@ export default function useDomainInfo(trigger: boolean): {
 
       try {
         const currentDomain = window.location.hostname || document.location.host
-        const data = await registry.domainData(currentDomain)
-        let storage = await registry.domainStorage(currentDomain)
+        const data = await registry.domain(currentDomain)
 
-        if (storage === ZERO_ADDRESS) storage = ''
-
-        setData({ ...data, storage })
+        setData({ ...data })
       } catch (error) {
         console.error(error)
         setError(error)

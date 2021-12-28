@@ -234,5 +234,15 @@
   "transactionTimeoutDescription": "La transazione verrà ripristinata se è in sospeso per più di questo tempo",
   "enterValidSlippage": "Immettere una percentuale di slippage valida",
   "yourTransactionMayFail": "La transazione potrebbe non riuscire",
-  "yourTransactionMayBeFrontrun": "La transazione può essere capofila"
+  "yourTransactionMayBeFrontrun": "La transazione può essere capofila",
+  "noConnectionMethodsAvailable": "Nessun metodo di connessione disponibile",
+  "swapContractsDeploymentDescription": "All'inizio devi distribuire contratti di swap. Questi contratti sono responsabili delle principali funzionalità (swap, aggiungere e rimuovere liquidità). Dopo la distribuzione di successo l'applicazione è pronta per l'uso",
+  "storageDeploymentDescription": "Dopo la distribuzione dei contratti di swap è possibile distribuire un contratto di archiviazione per poter personalizzare l'app",
+  "meaningOfSections": "Significato delle sezioni",
+  "deploymentSectionDescription": "le opzioni sono correlate alla distribuzione dei contratti",
+  "swapContractsSectionDescription": "opzioni per i contratti di swap,come l'amministratore, il destinatario della commissione, ecc. Disponibile solo dopo la distribuzione dei contratti di swap",
+  "interface": "Interfaccia",
+  "interfaceSectionDescription": "opzioni relative all'interfaccia dell'app, come il colore dell'app, i collegamenti di navigazione e menu,gli elenchi di token, ecc. Disponibile solo dopo la distribuzione dello storage",
+  "instructions": "Istruzione",
+  "addressesOfTokenLists": "Indirizzi delle liste di token"
 }

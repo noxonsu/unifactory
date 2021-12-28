@@ -2,9 +2,9 @@ import { Currency, ETHER, Token } from 'sdk'
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
 
-import EthereumLogo from '../../assets/images/ethereum-logo.png'
-import useHttpLocations from '../../hooks/useHttpLocations'
-import { WrappedTokenInfo } from '../../state/lists/hooks'
+import { CURRENCY } from 'assets/images'
+import useHttpLocations from 'hooks/useHttpLocations'
+import { WrappedTokenInfo } from 'state/lists/hooks'
 import Logo from '../Logo'
 
 const getTokenLogoURL = (address: string) =>
@@ -50,7 +50,12 @@ export default function CurrencyLogo({
   }, [currency, uriLocations])
 
   if (currency === ETHER) {
-    return <StyledEthereumLogo src={EthereumLogo} size={size} style={style} />
+    //@ts-ignore
+    const source = CURRENCY[ETHER.name ?? '']
+
+    if (source) {
+      return <StyledEthereumLogo src={source} size={size} style={style} />
+    }
   }
 
   return <StyledLogo size={size} srcs={sources} alt={`${currency?.symbol ?? 'token'} logo`} style={style} />

@@ -174,8 +174,7 @@ export default function WalletModal({
   // get wallets user can switch too, depending on device/browser
   function getOptions() {
     const isMetamask = window.ethereum && window.ethereum.isMetaMask
-
-    return Object.keys(SUPPORTED_WALLETS).map((key) => {
+    const availableOptions = Object.keys(SUPPORTED_WALLETS).map((key) => {
       const option = SUPPORTED_WALLETS[key]
       // check for mobile options
       if (isMobile) {
@@ -251,6 +250,8 @@ export default function WalletModal({
         )
       )
     })
+
+    return availableOptions
   }
 
   function getModalContent() {
@@ -271,6 +272,7 @@ export default function WalletModal({
         </UpperSection>
       )
     }
+
     if (account && walletView === WALLET_VIEWS.ACCOUNT) {
       return (
         <AccountDetails
@@ -282,6 +284,10 @@ export default function WalletModal({
         />
       )
     }
+
+    const availableOptions = getOptions()
+    const hasOption = availableOptions.some((option) => option !== null)
+
     return (
       <UpperSection>
         <CloseIcon onClick={toggleWalletModal}>
@@ -312,7 +318,7 @@ export default function WalletModal({
               tryActivation={tryActivation}
             />
           ) : (
-            <OptionGrid>{getOptions()}</OptionGrid>
+            <OptionGrid>{Boolean(hasOption) ? availableOptions : t('noConnectionMethodsAvailable')}</OptionGrid>
           )}
         </ContentWrapper>
       </UpperSection>
@@ -320,7 +326,7 @@ export default function WalletModal({
   }
 
   return (
-    <Modal isOpen={walletModalOpen} onDismiss={toggleWalletModal} minHeight={false} maxHeight={90}>
+    <Modal isOpen={walletModalOpen} onDismiss={toggleWalletModal} minHeight={false}>
       <Wrapper>{getModalContent()}</Wrapper>
     </Modal>
   )

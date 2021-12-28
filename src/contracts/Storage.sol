@@ -16,6 +16,12 @@ contract Storage {
         _;
     }
 
+    modifier notEmpty(string memory _value) {
+        bytes memory byteValue = bytes(_value);
+        require(byteValue.length != 0, 'NO_VALUE');
+        _;
+    }
+
     constructor(address owner_) {
         _owner = owner_;
     }
@@ -41,10 +47,7 @@ contract Storage {
         string memory _oldName,
         string memory _name,
         string memory _data
-    ) external onlyOwner {
-        bytes memory byteOldName = bytes(_oldName);
-        bytes memory byteName = bytes(_name);
-        require(byteOldName.length != 0 || byteName.length != 0, 'NAMES_ARE_REQUIRED');
+    ) external notEmpty(_oldName) notEmpty(_name) onlyOwner {
         for(uint x; x < _tokenLists.length; x++) {
             if (keccak256(abi.encodePacked(_tokenLists[x].name)) == keccak256(abi.encodePacked(_oldName))) {
                 _tokenLists[x].name = _name;
@@ -54,9 +57,7 @@ contract Storage {
         }
     }
 
-    function removeTokenList(string memory _name) external onlyOwner {
-        bytes memory byteName = bytes(_name);
-        require(byteName.length != 0, 'NO_NAME');
+    function removeTokenList(string memory _name) external notEmpty(_name) onlyOwner {
         bool arrayOffset;
         for(uint x; x < _tokenLists.length - 1; x++) {
             if (keccak256(abi.encodePacked(_tokenLists[x].name)) == keccak256(abi.encodePacked(_name))) {
@@ -99,9 +100,7 @@ contract Storage {
         _settings = settings_;
     }
 
-    function _addTokenList(string memory _name, string memory _data) private {
-        bytes memory byteName = bytes(_name);
-        require(byteName.length != 0, 'NO_NAME');
+    function _addTokenList(string memory _name, string memory _data) private notEmpty(_name) {
         bool exist;
         for(uint x; x < _tokenLists.length; x++) {
             if (keccak256(abi.encodePacked(_tokenLists[x].name)) == keccak256(abi.encodePacked(_name))) {

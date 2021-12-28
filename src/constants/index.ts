@@ -2,8 +2,7 @@ import { JSBI, Percent } from 'sdk'
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import {
   injected,
-  // walletconnect,
-  // walletlink
+  // walletconnect, walletlink
 } from '../connectors'
 
 export const storageMethods = {

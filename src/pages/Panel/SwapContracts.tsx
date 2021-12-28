@@ -33,7 +33,7 @@ const InputLabel = styled.div`
   align-items: center;
 `
 
-export function SwapContracts(props: any) {
+export default function SwapContracts(props: any) {
   const { pending, setPending, setError } = props
   const { t } = useTranslation()
   const { library, account } = useActiveWeb3React()
