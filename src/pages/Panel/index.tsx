@@ -14,10 +14,11 @@ import { useProjectInfo } from 'state/application/hooks'
 import { setAppManagement } from 'state/application/actions'
 import { CleanButton, ButtonError, ButtonSecondary } from 'components/Button'
 import ConfirmationModal from 'components/ConfirmationModal'
-import { Wallet } from './Wallet'
-import { Deployment } from './Deployment'
-import { SwapContracts } from './SwapContracts'
-import { InterfaceOptions } from './InterfaceOptions'
+import Instruction from './Instruction'
+import Wallet from './Wallet'
+import Deployment from './Deployment'
+import SwapContracts from './SwapContracts'
+import Interface from './Interface'
 
 const Wrapper = styled.section`
   padding: 1rem;
@@ -150,7 +151,6 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
           </>
         )}
       />
-
       <HeaderButtons>
         {appManagement && (
           <BackButton onClick={backToApp}>
@@ -165,6 +165,8 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
         <span className="monospace">{shortenAddress(account || '')}</span>
       </NetworkInfo>
 
+      <Instruction />
+
       {error && (
         <Error>
           {error?.code && error.code + ': '}
@@ -177,7 +179,7 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
       <Tabs>
         <Tab onClick={() => setTab('deployment')}>{t('deployment')}</Tab>
         <Tab onClick={() => setTab('contracts')}>{t('swapContracts')}</Tab>
-        <Tab onClick={() => setTab('interface')}>{t('interfaceOptions')}</Tab>
+        <Tab onClick={() => setTab('interface')}>{t('interface')}</Tab>
       </Tabs>
 
       <Content>
@@ -193,7 +195,7 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
           />
         )}
         {tab === 'contracts' && <SwapContracts pending={pending} setPending={setPending} setError={setError} />}
-        {tab === 'interface' && <InterfaceOptions pending={pending} setPending={setPending} setError={setError} />}
+        {tab === 'interface' && <Interface pending={pending} setPending={setPending} setError={setError} />}
       </Content>
 
       {Boolean(admin && factory && router) && (

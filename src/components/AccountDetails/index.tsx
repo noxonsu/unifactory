@@ -114,6 +114,7 @@ const LowerSection = styled.div`
 
 const AccountControl = styled.div`
   display: flex;
+  aligh-items: center;
   justify-content: space-between;
   min-width: 0;
   width: 100%;

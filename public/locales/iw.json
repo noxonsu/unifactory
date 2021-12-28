@@ -224,5 +224,13 @@
   "enterValidSlippage": "הזן אחוז החלקה תקף",
   "yourTransactionMayFail": "העסקה שלך עלולה להיכשל.",
   "yourTransactionMayBeFrontrun": "העסקה שלך מועדת להתקפה קדימה (ריצה קדמית)",
-  "noConnectionMethodsAvailable": "אין שיטות חיבור זמינות"
+  "noConnectionMethodsAvailable": "אין שיטות חיבור זמינות",
+  "swapContractsDeploymentDescription": "בהתחלה אתה צריך לפרוס חוזי החלפה. חוזים אלה אחראים לתפקודים העיקריים (החלפה, הוספה והסרה של נזילות). לאחר פריסה מוצלחת האפליקציה מוכנה לשימוש",
+  "storageDeploymentDescription": "לאחר פריסת החוזים החלופיים ניתן לפרוס חוזה אחסון כדי להיות מסוגל להתאים אישית את האפליקציה",
+  "meaningOfSections": "משמעות הסעיפים",
+  "deploymentSectionDescription": "אפשרויות קשורות לפריסת חוזים",
+  "swapContractsSectionDescription": "אפשרויות לחוזי החלפה, כגון admin, מקבל תשלום, וכו'. זמין רק לאחר פריסת חוזי החלפה",
+  "interface": "ממשק",
+  "interfaceSectionDescription": "אפשרויות הקשורות ממשק app, כגון צבע app, ניווט וקישורים לתפריט,רשימות אסימון, וכו זמין רק לאחר פריסת אחסון",
+  "instructions": "הוראות"
 }

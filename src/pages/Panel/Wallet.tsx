@@ -9,7 +9,7 @@ const Wrapper = styled.div`
   width: 100%;
 `
 
-export function Wallet(props: any) {
+export default function Wallet(props: any) {
   const { setPending, setError } = props
   const { t } = useTranslation()
   const { deactivate, activate } = useActiveWeb3React()

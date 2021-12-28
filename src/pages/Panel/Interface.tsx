@@ -47,7 +47,7 @@ const colorPickerStyles = {
   },
 }
 
-export function InterfaceOptions(props: any) {
+export default function Interface(props: any) {
   const { pending, setPending, setError } = props
   const { t } = useTranslation()
   const { library, chainId } = useActiveWeb3React()

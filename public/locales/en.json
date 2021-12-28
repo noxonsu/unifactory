@@ -235,5 +235,13 @@
   "enterValidSlippage": "Enter a valid slippage percentage",
   "yourTransactionMayFail": "Your transaction may fail",
   "yourTransactionMayBeFrontrun": "Your transaction may be frontrun",
-  "noConnectionMethodsAvailable": "No connection methods available"
+  "noConnectionMethodsAvailable": "No connection methods available",
+  "swapContractsDeploymentDescription": "At first you have to deploy swap contracts. These contracts are responsible for main functional (swap, add and remove liquidity). After successful deployment the app is ready to use",
+  "storageDeploymentDescription": "After the swap contracts deployment you can deploy a storage contract to be able to customize the app",
+  "meaningOfSections": "Meaning of sections",
+  "deploymentSectionDescription": "options are related to contracts deployment",
+  "swapContractsSectionDescription": "options for swap contracts, such as the admin, fee recipient, etc. Available only after swap contracts deployment",
+  "interface": "Interface",
+  "interfaceSectionDescription": "options related to app interface, such as app color, navigation and menu links, token lists, etc. Available only after storage deployment",
+  "instructions": "Instructions"
 }

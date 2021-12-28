@@ -224,5 +224,13 @@
   "enterValidSlippage": "输入有效的滑点百分比",
   "yourTransactionMayFail": "您的交易可能会失败",
   "yourTransactionMayBeFrontrun": "您的交易可能是领跑者",
-  "noConnectionMethodsAvailable": "没有可用的连接方法"
+  "noConnectionMethodsAvailable": "没有可用的连接方法",
+  "swapContractsDeploymentDescription": "首先，您必须部署掉期合约。 这些合约负责主要功能（掉期，添加和删除流动性）。 成功部署后，应用程序就可以使用了",
+  "storageDeploymentDescription": "在交换合同部署后，您可以部署存储合同，以便能够自定义应用程序",
+  "meaningOfSections": "各节的含义",
+  "deploymentSectionDescription": "选项与合同部署相关",
+  "swapContractsSectionDescription": "掉期合同的选项,如管理,费用接收者等. 只有在互换合同部署后才可用",
+  "interface": "界面",
+  "interfaceSectionDescription": "与应用程序界面相关的选项，如应用程序颜色，导航和菜单链接，令牌列表等。 仅在存储部署后可用",
+  "instructions": "指示说明"
 }

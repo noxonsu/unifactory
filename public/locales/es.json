@@ -224,5 +224,13 @@
   "enterValidSlippage": "Introduzca un porcentaje de deslizamiento válido",
   "yourTransactionMayFail": "Su transacción puede fallar",
   "yourTransactionMayBeFrontrun": "Su transacción puede ser pionera",
-  "noConnectionMethodsAvailable": "No hay métodos de conexión disponibles"
+  "noConnectionMethodsAvailable": "No hay métodos de conexión disponibles",
+  "swapContractsDeploymentDescription": "Al principio, debe implementar contratos de intercambio. Estos contratos se encargan de las funciones principales (intercambiar, añadir y eliminar liquidez). Después de la implementación exitosa, la aplicación está lista para usar",
+  "storageDeploymentDescription": "Después de la implementación de contratos de intercambio, puede implementar un contrato de almacenamiento para poder personalizar la aplicación",
+  "meaningOfSections": "Significado de las secciones",
+  "deploymentSectionDescription": "las opciones están relacionadas con la implementación de contratos",
+  "swapContractsSectionDescription": "opciones para contratos de intercambio, como el administrador, el destinatario de la tarifa, etc. Disponible solo después de la implementación de contratos de swap",
+  "interface": "Interfaz",
+  "interfaceSectionDescription": "opciones relacionadas con la interfaz de la aplicación, como el color de la aplicación, los enlaces de navegación y menú, las listas de tokens, etc. Disponible solo después de la implementación de almacenamiento",
+  "instructions": "Instrucción"
 }

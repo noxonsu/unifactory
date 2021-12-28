@@ -39,7 +39,7 @@ const Label = styled.div`
   align-items: center;
 `
 
-export function Deployment(props: any) {
+export default function Deployment(props: any) {
   const { pending, setError, wrappedToken, setWrappedToken, setDomainDataTrigger } = props
   const { t } = useTranslation()
   const { library, chainId } = useActiveWeb3React()
