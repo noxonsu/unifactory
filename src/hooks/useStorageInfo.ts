@@ -146,7 +146,7 @@ export default function useStorageInfo(): { data: StorageState | null; isLoading
     }
 
     fetchData()
-  }, [storage, storageAddress])
+  }, [storage, storageAddress, dispatch])
 
   return { data, isLoading, error }
 }
