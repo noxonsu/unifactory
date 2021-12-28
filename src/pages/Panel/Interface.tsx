@@ -17,6 +17,8 @@ import ListFactory from 'components/ListFactory'
 import MenuLinksFactory, { LinkItem } from 'components/MenuLinksFactory'
 import { saveProjectOption, fetchOptionsFromContract } from 'utils/storage'
 import { isValidAddress } from 'utils/contract'
+import { parseENSAddress } from 'utils/parseENSAddress'
+import uriToHttp from 'utils/uriToHttp'
 import { storageMethods } from '../../constants'
 import networks from 'networks.json'
 
@@ -102,6 +104,7 @@ export default function Interface(props: any) {
   const [navigationLinks, setNavigationLinks] = useState<LinkItem[]>([])
   const [menuLinks, setMenuLinks] = useState<LinkItem[]>([])
   const [socialLinks, setSocialLinks] = useState<string[]>([])
+  const [addressesOfTokenLists, setAddressesOfTokenLists] = useState<string[]>([])
   const [tokenLists, setTokenLists] = useState<any>([])
 
   const updateBrandColor = (color: { hex: string }) => setBrandColor(color.hex)
@@ -115,7 +118,8 @@ export default function Interface(props: any) {
 
       if (data) {
         const { strSettings, tokenLists } = data
-        const { projectName, logoUrl, brandColor, navigationLinks, menuLinks, socialLinks } = JSON.parse(strSettings)
+        const { projectName, logoUrl, brandColor, navigationLinks, menuLinks, socialLinks, addressesOfTokenLists } =
+          JSON.parse(strSettings)
 
         if (projectName) setProjectName(projectName)
         if (logoUrl) setLogoUrl(logoUrl)
@@ -123,6 +127,7 @@ export default function Interface(props: any) {
         if (navigationLinks?.length) setNavigationLinks(navigationLinks)
         if (menuLinks?.length) setMenuLinks(menuLinks)
         if (socialLinks?.length) setSocialLinks(socialLinks)
+        if (addressesOfTokenLists?.length) setAddressesOfTokenLists(addressesOfTokenLists)
         if (tokenLists.length) {
           setTokenLists([])
 
@@ -156,6 +161,7 @@ export default function Interface(props: any) {
           navigationLinks,
           menuLinks,
           socialLinks,
+          addressesOfTokenLists,
         }),
         onHash: (hash: string) => {
           addTransaction(
@@ -176,10 +182,12 @@ export default function Interface(props: any) {
   const [fullUpdateIsAvailable, setFullUpdateIsAvailable] = useState(false)
 
   useEffect(() => {
-    const fullUpdateIsAvailable = Boolean(storage && (logoUrl || brandColor || projectName || socialLinks.length))
+    const fullUpdateIsAvailable = Boolean(
+      storage && (logoUrl || brandColor || projectName || socialLinks.length || addressesOfTokenLists.length)
+    )
 
     setFullUpdateIsAvailable(!!fullUpdateIsAvailable)
-  }, [storage, projectName, logoUrl, brandColor, socialLinks])
+  }, [storage, projectName, logoUrl, brandColor, socialLinks, addressesOfTokenLists])
 
   const createNewTokenList = () => {
     setTokenLists((oldData: any) => [
@@ -233,10 +241,20 @@ export default function Interface(props: any) {
         <OptionWrapper>
           <ListFactory
             title={t('socialLinks')}
-            placeholder="https://..."
+            placeholder="https://"
             items={socialLinks}
             setItems={setSocialLinks}
             isValidItem={(address) => Boolean(validUrl.isUri(address))}
+          />
+        </OptionWrapper>
+
+        <OptionWrapper>
+          <ListFactory
+            title={t('addressesOfTokenLists')}
+            placeholder="https:// or ipfs://"
+            items={addressesOfTokenLists}
+            setItems={setAddressesOfTokenLists}
+            isValidItem={(address) => uriToHttp(address).length > 0 || Boolean(parseENSAddress(address))}
           />
         </OptionWrapper>
 

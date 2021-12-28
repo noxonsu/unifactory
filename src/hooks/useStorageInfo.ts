@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { addList } from 'state/lists/actions'
 import { useStorageContract } from './useContract'
 import { useProjectInfo } from 'state/application/hooks'
 import { StorageState } from 'state/application/reducer'
@@ -14,7 +16,9 @@ type Settings = {
   socialLinks: StorageState['socialLinks']
 }
 
-export const parseSettings = (settings: string): Settings => {
+const validArray = (arr: any[]) => Array.isArray(arr) && !!arr.length
+
+export const parseSettings = (settings: string): { application: Settings; lists: any } => {
   let domain: string = ''
   let projectName: string = ''
   let brandColor: string = ''
@@ -22,6 +26,7 @@ export const parseSettings = (settings: string): Settings => {
   let navigationLinks: StorageState['navigationLinks'] = []
   let menuLinks: Settings['menuLinks'] = []
   let socialLinks: StorageState['socialLinks'] = []
+  let addressesOfTokenLists: string[] = []
 
   try {
     if (settings.length) {
@@ -34,21 +39,18 @@ export const parseSettings = (settings: string): Settings => {
         navigationLinks: _navigationLinks,
         menuLinks: _menuLinks,
         socialLinks: _socialLinks,
+        addressesOfTokenLists: _addressesOfTokenLists,
       } = settingsJSON
 
       if (_domain) domain = _domain
       if (_projectName) projectName = _projectName
       if (_brandColor) brandColor = _brandColor
       if (_logoUrl) logo = _logoUrl
-      if (Array.isArray(_navigationLinks) && _navigationLinks.length) {
-        navigationLinks = _navigationLinks
-      }
-      if (Array.isArray(_menuLinks) && _menuLinks.length) {
-        menuLinks = _menuLinks
-      }
-      if (Array.isArray(_socialLinks) && _socialLinks.length) {
-        socialLinks = _socialLinks
-      }
+
+      if (validArray(_navigationLinks)) navigationLinks = _navigationLinks
+      if (validArray(_menuLinks)) menuLinks = _menuLinks
+      if (validArray(_socialLinks)) socialLinks = _socialLinks
+      if (validArray(_addressesOfTokenLists)) addressesOfTokenLists = _addressesOfTokenLists
     }
   } catch (error) {
     console.group('%c Storage settings', 'color: red')
@@ -57,17 +59,13 @@ export const parseSettings = (settings: string): Settings => {
   }
 
   return {
-    domain,
-    projectName,
-    brandColor,
-    logo,
-    navigationLinks,
-    menuLinks,
-    socialLinks,
+    application: { domain, projectName, brandColor, logo, navigationLinks, menuLinks, socialLinks },
+    lists: { addressesOfTokenLists },
   }
 }
 
 export default function useStorageInfo(): { data: StorageState | null; isLoading: boolean; error: Error | null } {
+  const dispatch = useDispatch()
   const { storage: storageAddress } = useProjectInfo()
   const [data, setData] = useState<StorageState | null>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -95,9 +93,13 @@ export default function useStorageInfo(): { data: StorageState | null; isLoading
 
       try {
         const settings = await storage.settings()
-        const parsed = parseSettings(settings)
+        const { application, lists } = parseSettings(settings)
 
-        parsedSettings = parsed
+        if (lists?.addressesOfTokenLists.length) {
+          lists.addressesOfTokenLists.forEach((url: string) => dispatch(addList(url)))
+        }
+
+        parsedSettings = application
       } catch (error) {
         console.group('%c Storage settings', 'color: red')
         console.error(error)

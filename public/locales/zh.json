@@ -232,5 +232,6 @@
   "swapContractsSectionDescription": "掉期合同的选项,如管理,费用接收者等. 只有在互换合同部署后才可用",
   "interface": "界面",
   "interfaceSectionDescription": "与应用程序界面相关的选项，如应用程序颜色，导航和菜单链接，令牌列表等。 仅在存储部署后可用",
-  "instructions": "指示说明"
+  "instructions": "指示说明",
+  "addressesOfTokenLists": "令牌列表的地址"
 }

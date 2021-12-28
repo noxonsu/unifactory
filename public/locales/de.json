@@ -244,5 +244,6 @@
   "swapContractsSectionDescription": "optionen für Swap-Verträge, wie der Administrator, Gebührenempfänger, etc. Nur nach Swap-Verträgen verfügbar.",
   "interface": "Schnittstelle",
   "interfaceSectionDescription": "optionen im Zusammenhang mit der App-Oberfläche, z. B. App-Farbe, Navigations- und Menülinks, Token-Listen usw. Nur nach Speicherbereitstellung verfügbar",
-  "instructions": "Anweisung"
+  "instructions": "Anweisung",
+  "addressesOfTokenLists": "Adressen von Token-Listen"
 }

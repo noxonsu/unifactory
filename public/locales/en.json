@@ -243,5 +243,6 @@
   "swapContractsSectionDescription": "options for swap contracts, such as the admin, fee recipient, etc. Available only after swap contracts deployment",
   "interface": "Interface",
   "interfaceSectionDescription": "options related to app interface, such as app color, navigation and menu links, token lists, etc. Available only after storage deployment",
-  "instructions": "Instructions"
+  "instructions": "Instructions",
+  "addressesOfTokenLists": "Addresses of token lists"
 }

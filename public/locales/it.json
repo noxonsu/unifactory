@@ -243,5 +243,6 @@
   "swapContractsSectionDescription": "opzioni per i contratti di swap,come l'amministratore, il destinatario della commissione, ecc. Disponibile solo dopo la distribuzione dei contratti di swap",
   "interface": "Interfaccia",
   "interfaceSectionDescription": "opzioni relative all'interfaccia dell'app, come il colore dell'app, i collegamenti di navigazione e menu,gli elenchi di token, ecc. Disponibile solo dopo la distribuzione dello storage",
-  "instructions": "Istruzione"
+  "instructions": "Istruzione",
+  "addressesOfTokenLists": "Indirizzi delle liste di token"
 }

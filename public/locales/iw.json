@@ -232,5 +232,6 @@
   "swapContractsSectionDescription": "אפשרויות לחוזי החלפה, כגון admin, מקבל תשלום, וכו'. זמין רק לאחר פריסת חוזי החלפה",
   "interface": "ממשק",
   "interfaceSectionDescription": "אפשרויות הקשורות ממשק app, כגון צבע app, ניווט וקישורים לתפריט,רשימות אסימון, וכו זמין רק לאחר פריסת אחסון",
-  "instructions": "הוראות"
+  "instructions": "הוראות",
+  "addressesOfTokenLists": "כתובות של רשימות אסימון"
 }

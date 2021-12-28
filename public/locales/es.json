@@ -232,5 +232,6 @@
   "swapContractsSectionDescription": "opciones para contratos de intercambio, como el administrador, el destinatario de la tarifa, etc. Disponible solo después de la implementación de contratos de swap",
   "interface": "Interfaz",
   "interfaceSectionDescription": "opciones relacionadas con la interfaz de la aplicación, como el color de la aplicación, los enlaces de navegación y menú, las listas de tokens, etc. Disponible solo después de la implementación de almacenamiento",
-  "instructions": "Instrucción"
+  "instructions": "Instrucción",
+  "addressesOfTokenLists": "Direcciones de listas de tokens"
 }
