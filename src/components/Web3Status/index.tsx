@@ -67,6 +67,7 @@ const ErrorStatusTitle = styled.h3`
   margin-bottom: 0.7rem;
   align-items: center;
   display: flex;
+  font-weight: 500;
 `
 
 const ErrorStatusDescription = styled.p`
@@ -203,7 +204,7 @@ function Web3StatusInner() {
         <Web3StatusError>
           <ErrorStatusTitle>
             <NetworkIcon />
-            <Text>{error instanceof UnsupportedChainIdError ? t('wrongNetwork') : t('error')}</Text>
+            <span>{error instanceof UnsupportedChainIdError ? t('wrongNetwork') : t('error')}</span>
           </ErrorStatusTitle>
 
           <ErrorStatusDescription>{t('pleaseChangeWrongNetwork')}</ErrorStatusDescription>

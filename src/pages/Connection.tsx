@@ -23,7 +23,6 @@ const Wrapper = styled.section`
 `
 
 const ContentWrapper = styled.div`
-  max-width: 26rem;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
