@@ -29,7 +29,7 @@ contract Factory is IFactory {
         protocolFee = 5; 
         totalFee = 997;
         devFeePercent = 20;
-        devFeeTo = 0x5490d25BA5521704a5c4B62058265010Dd82E189;
+        devFeeTo = 0x4086a2CAe8d3FcCd94D1172006516C7d0794C7Ee;
         devFeeSetter = 0x4086a2CAe8d3FcCd94D1172006516C7d0794C7Ee;
     }
 
@@ -94,5 +94,15 @@ contract Factory is IFactory {
 
     function setAllFeeToProtocol(bool _allFeeToProtocol) external override onlyOwner {
         allFeeToProtocol = _allFeeToProtocol;
+    }
+
+    function setProtocolFee(uint _protocolFee) external override onlyOwner {
+        require(_protocolFee >= 0 && _protocolFee <= 2000, 'Factory: FORBIDDEN_FEE');
+        protocolFee = _protocolFee;
+    }
+
+    function setTotalFee(uint _totalFee) external override onlyOwner {
+        require(_totalFee == 0 || _totalFee >= 6 && _totalFee <= 997, 'Factory: FORBIDDEN_FEE');
+        totalFee = _totalFee;
     }
 }

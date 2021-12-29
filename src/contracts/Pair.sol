@@ -93,10 +93,10 @@ contract Pair is ERC20 {
         uint protocolFee = IFactory(factory).protocolFee();
         uint _kLast = kLast; // gas savings
         bool allFeeToProtocol = IFactory(factory).allFeeToProtocol();
-        feeOn = feeTo != address(0);
+        feeOn = feeTo != address(0) && protocolFee != 0;
 
         if (feeOn) {
-            if (_kLast != 0 && protocolFee != 0) {
+            if (_kLast != 0) {
                 uint rootK = Math.sqrt(uint(_reserve0).mul(_reserve1));
                 uint rootKLast = Math.sqrt(_kLast);
                 if (rootK > rootKLast) {
