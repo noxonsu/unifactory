@@ -129,6 +129,7 @@ export function useTradeExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?:
  */
 export function useTradeExactOut(currencyIn?: Currency, currencyAmountOut?: CurrencyAmount): Trade | null {
   const allowedPairs = useAllCommonPairs(currencyIn, currencyAmountOut?.currency)
+  const wrappedToken = useWrappedToken()
   const { factory, pairHash } = useProjectInfo()
   const [singleHopOnly] = useUserSingleHopOnly()
 
@@ -169,5 +170,5 @@ export function useTradeExactOut(currencyIn?: Currency, currencyAmountOut?: Curr
       return bestTradeSoFar
     }
     return null
-  }, [currencyIn, factory, pairHash, currencyAmountOut, allowedPairs, singleHopOnly])
+  }, [currencyIn, factory, pairHash, currencyAmountOut, allowedPairs, singleHopOnly, wrappedToken])
 }
