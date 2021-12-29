@@ -3,6 +3,7 @@ import { useWrappedToken } from 'hooks/useToken'
 import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 import { useMemo } from 'react'
 import ENS_PUBLIC_RESOLVER_ABI from 'constants/abis/ens-public-resolver.json'
+import FACTORY from 'contracts/build/Factory.json'
 import STORAGE from 'contracts/build/Storage.json'
 import REGISTRY from 'contracts/build/Registry.json'
 import ENS_ABI from 'constants/abis/ens-registrar.json'
@@ -57,6 +58,10 @@ function useContract(address: string | undefined, ABI: any, withSignerIfPossible
       return null
     }
   }, [address, ABI, library, withSignerIfPossible, account])
+}
+
+export function useFactoryContract(address: string, withSignerIfPossible?: boolean): Contract | null {
+  return useContract(address, FACTORY.abi, withSignerIfPossible)
 }
 
 export function useTokenContract(tokenAddress?: string, withSignerIfPossible?: boolean): Contract | null {

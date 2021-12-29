@@ -33,9 +33,16 @@ export enum ApplicationModal {
 
 export const setAppManagement = createAction<{ status: boolean }>('application/setAppManagement')
 
-export const retrieveDomainData = createAction<{ admin: string; factory: string; router: string; storageAddr: string }>(
-  'application/retrieveDomainData'
-)
+export const retrieveDomainData = createAction<{
+  admin: string
+  factory: string
+  router: string
+  storageAddr: string
+  pairHash: string
+  protocolFee?: number
+  totalFee?: number
+  allFeeToProtocol?: boolean
+}>('application/retrieveDomainData')
 
 export const updateAppData = createAction<StorageState>('application/updateAppData')
 

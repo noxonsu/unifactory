@@ -1,3 +1,4 @@
+import isNumber from 'is-number'
 import { createReducer, nanoid } from '@reduxjs/toolkit'
 import { TokenList } from '@uniswap/token-lists/dist/types'
 import { ZERO_ADDRESS } from 'sdk'
@@ -32,6 +33,10 @@ export type ApplicationState = {
   readonly factory: string
   readonly router: string
   readonly storage: string
+  readonly pairHash: string
+  readonly protocolFee: number | undefined
+  readonly totalFee: number | undefined
+  readonly allFeeToProtocol: boolean | undefined
   readonly blockNumber: { readonly [chainId: number]: number }
   readonly popupList: PopupList
   readonly openModal: ApplicationModal | null
@@ -43,6 +48,10 @@ const initialState: ApplicationState = {
   factory: '',
   router: '',
   storage: '',
+  pairHash: '',
+  protocolFee: undefined,
+  totalFee: undefined,
+  allFeeToProtocol: undefined,
   domain: '',
   projectName: '',
   brandColor: '',
@@ -64,7 +73,16 @@ export default createReducer(initialState, (builder) =>
       state.appManagement = status
     })
     .addCase(retrieveDomainData, (state, action) => {
-      let { admin = '', factory = '', router = '', storageAddr = '' } = action.payload
+      let {
+        admin = '',
+        factory = '',
+        router = '',
+        storageAddr = '',
+        pairHash = '',
+        protocolFee,
+        totalFee,
+        allFeeToProtocol,
+      } = action.payload
 
       if (admin === ZERO_ADDRESS) admin = ''
       if (factory === ZERO_ADDRESS) factory = ''
@@ -75,6 +93,11 @@ export default createReducer(initialState, (builder) =>
       state.factory = factory
       state.router = router
       state.storage = storageAddr
+      state.pairHash = pairHash
+
+      if (isNumber(protocolFee)) state.protocolFee = Number(protocolFee)
+      if (isNumber(totalFee)) state.totalFee = Number(totalFee)
+      if (typeof allFeeToProtocol === 'boolean') state.allFeeToProtocol = allFeeToProtocol
     })
     .addCase(updateAppData, (state, action) => {
       const { domain, projectName, brandColor, logo, tokenLists, navigationLinks, menuLinks, socialLinks } =

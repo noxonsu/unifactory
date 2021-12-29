@@ -64,13 +64,14 @@ export default function Pool() {
   const { t } = useTranslation()
   const theme = useContext(ThemeContext)
   const { account } = useActiveWeb3React()
-  const { factory } = useProjectInfo()
+  const { factory, pairHash } = useProjectInfo()
 
   // fetch the user's balances of all tracked V2 LP tokens
   const trackedTokenPairs = useTrackedTokenPairs()
   const tokenPairsWithLiquidityTokens = useMemo(
-    () => trackedTokenPairs.map((tokens) => ({ liquidityToken: toV2LiquidityToken(tokens, factory), tokens })),
-    [trackedTokenPairs, factory]
+    () =>
+      trackedTokenPairs.map((tokens) => ({ liquidityToken: toV2LiquidityToken(tokens, factory, pairHash), tokens })),
+    [trackedTokenPairs, factory, pairHash]
   )
   const liquidityTokens = useMemo(
     () => tokenPairsWithLiquidityTokens.map((tpwlt) => tpwlt.liquidityToken),
