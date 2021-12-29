@@ -104,6 +104,12 @@ export default function SwapContracts(props: any) {
       case factoryMethods.setAllFeeToProtocol:
         value = allFeesToAdmin
         break
+      case factoryMethods.setTotalFee:
+        value = liquidityProviderFee
+        break
+      case factoryMethods.setProtocolFee:
+        value = adminFee
+        break
       default:
         value = ''
     }
