@@ -71,7 +71,7 @@ export default function AddressInputPanel({
   id?: string
   label?: string
   disabled?: boolean
-  value: string
+  value: string | number
   onChange: (value: string) => void
 }) {
   const theme = useContext(ThemeContext)
@@ -99,14 +99,12 @@ export default function AddressInputPanel({
             )}
             <Input
               disabled={disabled}
-              // className="recipient-address-input"
               type="text"
               autoComplete="off"
               autoCorrect="off"
               autoCapitalize="off"
               spellCheck="false"
               placeholder="..."
-              // pattern="^(0x[a-fA-F0-9]{40})$"
               onChange={disabled ? () => {} : handleInput}
               value={value}
             />

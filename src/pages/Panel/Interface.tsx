@@ -24,7 +24,7 @@ import networks from 'networks.json'
 
 const OptionWrapper = styled.div<{ margin?: number }>`
   margin: ${({ margin }) => margin || 0.2}rem 0;
-  padding: 0.3rem;
+  padding: 0.3rem 0;
 `
 
 const Label = styled.span`

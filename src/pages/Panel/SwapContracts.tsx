@@ -8,14 +8,25 @@ import styled from 'styled-components'
 import { ButtonPrimary } from 'components/Button'
 import AddressInputPanel from 'components/AddressInputPanel'
 import QuestionHelper from 'components/QuestionHelper'
+import InputPanel from 'components/InputPanel'
 import { isValidAddress, setFactoryOption, getFactoryOptions } from 'utils/contract'
 import { ZERO_ADDRESS } from 'sdk'
 import { factoryMethods } from '../../constants'
+
+const OptionWrapper = styled.div<{ margin?: number }>`
+  margin: ${({ margin }) => margin || 0.2}rem 0;
+  padding: 0.3rem 0;
+`
 
 const Info = styled.p`
   padding: 0.4rem;
   font-size: 0.9rem;
   opacity: 0.6;
+`
+
+const LabelExtended = styled(Label)`
+  display: flex;
+  align-items: center;
 `
 
 const InputWrapper = styled.div`
@@ -51,6 +62,8 @@ export default function SwapContracts(props: any) {
   const [admin, setAdmin] = useState('')
   const [feeRecipient, setFeeRecipient] = useState('')
   const [allFeesToAdmin, setAllFeesToAdmin] = useState(false)
+  const [liquidityProviderFee, setLiquidityProviderFee] = useState<number | string>('')
+  const [adminFee, setAdminFee] = useState<number | string>('')
 
   const updateFeesToAdmin = (event: any) => setAllFeesToAdmin(event.target.checked)
 
@@ -63,17 +76,13 @@ export default function SwapContracts(props: any) {
       const options: any = await getFactoryOptions(library, factory)
 
       if (options) {
-        const {
-          // protocolFee,
-          // totalFee,
-          feeTo,
-          feeToSetter,
-          allFeeToProtocol,
-        } = options
+        const { protocolFee, totalFee, feeTo, feeToSetter, allFeeToProtocol } = options
 
         setAdmin(feeToSetter)
         setFeeRecipient(feeTo === ZERO_ADDRESS ? '' : feeTo)
         setAllFeesToAdmin(allFeeToProtocol)
+        setLiquidityProviderFee(totalFee)
+        setAdminFee(protocolFee)
       }
     } catch (error) {
       setError(error)
@@ -115,46 +124,76 @@ export default function SwapContracts(props: any) {
 
   return (
     <section>
-      <InputWrapper>
-        <AddressInputPanel label={`${t('factoryAddress')} *`} value={factory} onChange={setFactory} />
-      </InputWrapper>
-      <Button
-        onClick={fetchContractOptions}
-        // pending={pending}
-        disabled={!factoryIsCorrect || pending}
-      >
-        {t('fetchOptions')}
-      </Button>
+      <OptionWrapper>
+        <InputWrapper>
+          <AddressInputPanel label={`${t('factoryAddress')} *`} value={factory} onChange={setFactory} />
+        </InputWrapper>
+        <Button
+          onClick={fetchContractOptions}
+          // pending={pending}
+          disabled={!factoryIsCorrect || pending}
+        >
+          {t('fetchOptions')}
+        </Button>
+      </OptionWrapper>
+
       <Info>{t('youCanUseTheSameAddressForBoothInputs')}</Info>
 
       <div className={`${!factoryIsCorrect || pending ? 'disabled' : ''}`}>
-        <AddressInputPanel label={`${t('newAdmin')}`} value={admin} onChange={setAdmin} />
-        <Button onClick={() => saveOption(factoryMethods.setFeeToSetter)} disabled={!admin}>
-          {t('save')}
-        </Button>
+        <OptionWrapper>
+          <AddressInputPanel label={`${t('newAdmin')}`} value={admin} onChange={setAdmin} />
+          <Button onClick={() => saveOption(factoryMethods.setFeeToSetter)} disabled={!admin}>
+            {t('save')}
+          </Button>
+        </OptionWrapper>
+        <OptionWrapper>
+          <AddressInputPanel
+            label={
+              <InputLabel>
+                {t('feeRecipient')} <QuestionHelper text={t('feeIsChargedWhen')} />
+              </InputLabel>
+            }
+            value={feeRecipient}
+            onChange={setFeeRecipient}
+          />
+          <Button onClick={() => saveOption(factoryMethods.setFeeTo)} disabled={!feeRecipient}>
+            {t('save')}
+          </Button>
+        </OptionWrapper>
+        <OptionWrapper margin={0.8}>
+          <Box>
+            <LabelExtended>
+              <Checkbox id="remember" name="remember" onChange={updateFeesToAdmin} />
+              {t('allFeesToAdmin')}
+            </LabelExtended>
+          </Box>
+          <Button onClick={() => saveOption(factoryMethods.setAllFeeToProtocol)} disabled={!factoryIsCorrect}>
+            {t('save')}
+          </Button>
+        </OptionWrapper>
+        <OptionWrapper>
+          <InputPanel
+            label={`${t('liquidityProviderFee')}`}
+            value={liquidityProviderFee}
+            onChange={setLiquidityProviderFee}
+          />
+          <Button
+            onClick={() => saveOption(factoryMethods.setTotalFee)}
+            disabled={!factoryIsCorrect || (!liquidityProviderFee && liquidityProviderFee !== 0)}
+          >
+            {t('save')}
+          </Button>
+        </OptionWrapper>
 
-        <AddressInputPanel
-          label={
-            <InputLabel>
-              {t('feeRecipient')} <QuestionHelper text={t('feeIsChargedWhen')} />
-            </InputLabel>
-          }
-          value={feeRecipient}
-          onChange={setFeeRecipient}
-        />
-        <Button onClick={() => saveOption(factoryMethods.setFeeTo)} disabled={!feeRecipient}>
-          {t('save')}
-        </Button>
-
-        <Box>
-          <Label>
-            <Checkbox id="remember" name="remember" onChange={updateFeesToAdmin} />
-            {t('allFeesToAdmin')}
-          </Label>
-        </Box>
-        <Button onClick={() => saveOption(factoryMethods.setAllFeeToProtocol)} disabled={!factoryIsCorrect}>
-          {t('save')}
-        </Button>
+        <OptionWrapper>
+          <InputPanel label={`${t('adminFee')}`} value={adminFee} onChange={setAdminFee} />
+          <Button
+            onClick={() => saveOption(factoryMethods.setProtocolFee)}
+            disabled={!factoryIsCorrect || (!adminFee && adminFee !== 0)}
+          >
+            {t('save')}
+          </Button>
+        </OptionWrapper>
       </div>
     </section>
   )
