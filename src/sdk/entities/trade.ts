@@ -137,8 +137,14 @@ export class Trade {
    * @param route route of the exact in trade
    * @param amountIn the amount being passed in
    */
-  public static exactIn(route: Route, amountIn: CurrencyAmount, wrappedToken: Token, factory: string): Trade {
-    return new Trade(route, amountIn, TradeType.EXACT_INPUT, wrappedToken, factory)
+  public static exactIn(
+    route: Route,
+    amountIn: CurrencyAmount,
+    wrappedToken: Token,
+    factory: string,
+    pairHash: string
+  ): Trade {
+    return new Trade(route, amountIn, TradeType.EXACT_INPUT, wrappedToken, factory, pairHash)
   }
 
   /**
@@ -146,11 +152,24 @@ export class Trade {
    * @param route route of the exact out trade
    * @param amountOut the amount returned by the trade
    */
-  public static exactOut(route: Route, amountOut: CurrencyAmount, wrappedToken: Token, factory: string): Trade {
-    return new Trade(route, amountOut, TradeType.EXACT_OUTPUT, wrappedToken, factory)
+  public static exactOut(
+    route: Route,
+    amountOut: CurrencyAmount,
+    wrappedToken: Token,
+    factory: string,
+    pairHash: string
+  ): Trade {
+    return new Trade(route, amountOut, TradeType.EXACT_OUTPUT, wrappedToken, factory, pairHash)
   }
 
-  public constructor(route: Route, amount: CurrencyAmount, tradeType: TradeType, wrappedToken: Token, factory: string) {
+  public constructor(
+    route: Route,
+    amount: CurrencyAmount,
+    tradeType: TradeType,
+    wrappedToken: Token,
+    factory: string,
+    pairHash: string
+  ) {
     const amounts: TokenAmount[] = new Array(route.path.length)
     const nextPairs: Pair[] = new Array(route.pairs.length)
 
@@ -160,7 +179,7 @@ export class Trade {
 
       for (let i = 0; i < route.path.length - 1; i++) {
         const pair = route.pairs[i]
-        const [outputAmount, nextPair] = pair.getOutputAmount(amounts[i], factory)
+        const [outputAmount, nextPair] = pair.getOutputAmount(amounts[i], factory, pairHash)
         amounts[i + 1] = outputAmount
         nextPairs[i] = nextPair
       }
@@ -170,7 +189,7 @@ export class Trade {
 
       for (let i = route.path.length - 1; i > 0; i--) {
         const pair = route.pairs[i - 1]
-        const [inputAmount, nextPair] = pair.getInputAmount(amounts[i], factory)
+        const [inputAmount, nextPair] = pair.getInputAmount(amounts[i], factory, pairHash)
         amounts[i - 1] = inputAmount
         nextPairs[i - 1] = nextPair
       }
@@ -261,6 +280,7 @@ export class Trade {
     currencyOut: Currency
     wrappedToken: Token
     factory: string
+    pairHash: string
     options?: BestTradeOptions
     currentPairs?: Pair[]
     originalAmountIn?: CurrencyAmount
@@ -276,6 +296,7 @@ export class Trade {
       bestTrades = [],
       wrappedToken,
       factory,
+      pairHash,
     } = params
     const { maxNumResults = 3, maxHops = 3 } = options
 
@@ -302,7 +323,7 @@ export class Trade {
       let amountOut: TokenAmount
 
       try {
-        ;[amountOut] = pair.getOutputAmount(amountIn, factory)
+        ;[amountOut] = pair.getOutputAmount(amountIn, factory, pairHash)
       } catch (error) {
         // input too low
         if (error.isInsufficientInputAmountError) {
@@ -325,7 +346,8 @@ export class Trade {
             originalAmountIn,
             TradeType.EXACT_INPUT,
             wrappedToken,
-            factory
+            factory,
+            pairHash
           ),
           maxNumResults,
           tradeComparator
@@ -340,6 +362,7 @@ export class Trade {
           currencyOut,
           wrappedToken,
           factory,
+          pairHash,
           options: {
             maxNumResults,
             maxHops: maxHops - 1,
@@ -375,6 +398,7 @@ export class Trade {
     currencyAmountOut: CurrencyAmount
     wrappedToken: Token
     factory: string
+    pairHash: string
     options?: BestTradeOptions
     currentPairs?: Pair[]
     originalAmountOut?: CurrencyAmount
@@ -390,6 +414,7 @@ export class Trade {
       bestTrades = [],
       wrappedToken,
       factory,
+      pairHash,
     } = params
     const { maxNumResults = 3, maxHops = 3 } = options
 
@@ -415,7 +440,7 @@ export class Trade {
 
       let amountIn: TokenAmount
       try {
-        ;[amountIn] = pair.getInputAmount(amountOut, factory)
+        ;[amountIn] = pair.getInputAmount(amountOut, factory, pairHash)
       } catch (error) {
         // not enough liquidity in this pair
         if (error.isInsufficientReservesError) {
@@ -438,7 +463,8 @@ export class Trade {
             originalAmountOut,
             TradeType.EXACT_OUTPUT,
             wrappedToken,
-            factory
+            factory,
+            pairHash
           ),
           maxNumResults,
           tradeComparator
@@ -453,6 +479,7 @@ export class Trade {
           currencyAmountOut: amountIn,
           wrappedToken,
           factory,
+          pairHash,
           options: {
             maxNumResults,
             maxHops: maxHops - 1,

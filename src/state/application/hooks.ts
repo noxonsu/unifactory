@@ -10,42 +10,16 @@ type ProjectInfo = {
   factory: string
   router: string
   storage: string
+  pairHash: string
+  protocolFee?: number | undefined
+  totalFee?: number | undefined
+  allFeeToProtocol?: boolean | undefined
 } & StorageState
 
 // ? seams it does not make sense. We can use state data directly ?
 // TODO: remove this hook?
 export function useProjectInfo(): ProjectInfo {
-  return useSelector((state: AppState) => {
-    const {
-      admin,
-      factory,
-      router,
-      storage,
-      domain,
-      projectName,
-      brandColor,
-      logo,
-      tokenLists,
-      navigationLinks,
-      menuLinks,
-      socialLinks,
-    } = state.application
-
-    return {
-      admin,
-      factory,
-      router,
-      storage,
-      domain,
-      projectName,
-      brandColor,
-      logo,
-      tokenLists,
-      navigationLinks,
-      menuLinks,
-      socialLinks,
-    }
-  })
+  return useSelector((state: AppState) => state.application)
 }
 
 export function useBlockNumber(): number | undefined {

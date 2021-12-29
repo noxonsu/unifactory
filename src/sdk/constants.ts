@@ -1,8 +1,5 @@
 import JSBI from 'jsbi'
 
-// hash is changed if we change anything in the Pair contract
-// is doesn't depend on network or networks type (testnet or mainnet)
-export const INIT_CODE_HASH = '0xe35647106c766ff3e38d4e86aa0976635865970691c5eca7b9c0a49872053df0'
 export const LP_TOKEN_NAME = 'Liquidity-Pool-Token'
 export const LP_TOKEN_SYMBOL = 'LP-TOKEN'
 
