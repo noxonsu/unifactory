@@ -85,7 +85,7 @@ export default function App() {
     router,
     // projectName
   } = useProjectInfo()
-  const appIsReady = active && admin && factory && Boolean(router)
+  const appIsReady = Boolean(active && admin && factory && router)
 
   const [isAvailableNetwork, setIsAvailableNetwork] = useState(true)
 
