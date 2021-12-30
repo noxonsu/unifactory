@@ -83,10 +83,10 @@ export default function Connection({ domainData, isAvailableNetwork, setDomainDa
   const [darkMode] = useDarkModeManager()
 
   const needToConfigure =
-    domainData &&
-    (unavailableOrZeroAddr(domainData.admin) ||
-      unavailableOrZeroAddr(domainData.factory) ||
-      unavailableOrZeroAddr(domainData.router))
+    !domainData ||
+    unavailableOrZeroAddr(domainData.admin) ||
+    unavailableOrZeroAddr(domainData.factory) ||
+    unavailableOrZeroAddr(domainData.router)
 
   const networks = supportedNetworks()
 

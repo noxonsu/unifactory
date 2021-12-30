@@ -244,5 +244,8 @@
   "interface": "Interface",
   "interfaceSectionDescription": "options related to app interface, such as app color, navigation and menu links, token lists, etc. Available only after storage deployment",
   "instructions": "Instructions",
-  "addressesOfTokenLists": "Addresses of token lists"
+  "addressesOfTokenLists": "Addresses of token lists",
+  "beCareful": "Be careful",
+  "deploymentFlowDescription": "When you deploy new contracts, you need to confirm every transaction from your external wallet. You can check the transaction details, but you need to follow the deployment flow. Otherwise it will be difficult to connect these contracts and use them",
+  "consequencesOfDeploymentOfNewContracts": "You can deploy new contracts at any time, but you will rewrite their addresses in the application. In case you have some liquidity in the old contracts, the application will use the new ones with zero liquidity"
 }

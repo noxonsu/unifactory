@@ -245,5 +245,8 @@
   "interface": "Schnittstelle",
   "interfaceSectionDescription": "optionen im Zusammenhang mit der App-Oberfläche, z. B. App-Farbe, Navigations- und Menülinks, Token-Listen usw. Nur nach Speicherbereitstellung verfügbar",
   "instructions": "Anweisung",
-  "addressesOfTokenLists": "Adressen von Token-Listen"
+  "addressesOfTokenLists": "Adressen von Token-Listen",
+  "beCareful": "Seien Sie vorsichtig",
+  "deploymentFlowDescription": "Wenn Sie neue Verträge bereitstellen, müssen Sie jede Transaktion aus Ihrer externen Brieftasche bestätigen. Sie können die Transaktionsdetails überprüfen, müssen jedoch den Bereitstellungsablauf befolgen. Andernfalls wird es schwierig sein, diese Verträge zu verbinden und zu verwenden",
+  "consequencesOfDeploymentOfNewContracts": "Sie können jederzeit neue Verträge bereitstellen, aber Sie werden ihre Adressen in der Anwendung neu schreiben. Falls Sie etwas Liquidität in den alten Verträgen haben, wird die Anwendung die neuen mit Null Liquidität verwenden"
 }

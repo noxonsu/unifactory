@@ -244,5 +244,8 @@
   "interface": "Interfaccia",
   "interfaceSectionDescription": "opzioni relative all'interfaccia dell'app, come il colore dell'app, i collegamenti di navigazione e menu,gli elenchi di token, ecc. Disponibile solo dopo la distribuzione dello storage",
   "instructions": "Istruzione",
-  "addressesOfTokenLists": "Indirizzi delle liste di token"
+  "addressesOfTokenLists": "Indirizzi delle liste di token",
+  "beCareful": "Stia attento",
+  "deploymentFlowDescription": "Quando distribuisci nuovi contratti, devi confermare ogni transazione dal tuo portafoglio esterno. È possibile controllare i dettagli della transazione, ma è necessario seguire il flusso di distribuzione. Altrimenti sarà difficile collegare questi contratti e usarli",
+  "consequencesOfDeploymentOfNewContracts": "È possibile distribuire nuovi contratti in qualsiasi momento, ma sarà riscrivere i loro indirizzi nell'applicazione. Nel caso in cui si dispone di una certa liquidità nei vecchi contratti, l'applicazione utilizzerà quelli nuovi con zero liquidità"
 }
