@@ -23,6 +23,14 @@ const Toogle = styled(CleanButton)`
   justify-content: space-between;
 `
 
+const Section = styled.div`
+  margin: 1.6rem 0;
+
+  :last-child {
+    margin-bottom: 0;
+  }
+`
+
 const IconWrapper = styled.div`
   margin-left: 0.4rem;
   margin-top: 0.2rem;
@@ -32,8 +40,15 @@ const IconWrapper = styled.div`
 `
 
 const Title = styled.h4`
-  margin: 2rem 0 1rem;
+  margin: 0;
+  margin-bottom: 1rem;
   font-weight: 500;
+`
+
+const Paragraph = styled.p`
+  :last-child {
+    margin-bottom: 0;
+  }
 `
 
 const List = styled.ul`
@@ -55,6 +70,12 @@ const Highlight = styled.span`
   font-weight: 500;
 `
 
+const Warring = styled.div`
+  padding: 0.8rem;
+  border-radius: 0.6rem;
+  background-color: ${({ theme }) => theme.yellow1};
+`
+
 export default function Instruction() {
   const [open, setOpen] = useState(false)
   const { t } = useTranslation()
@@ -68,22 +89,33 @@ export default function Instruction() {
 
       {open && (
         <div>
-          <p>1) {t('swapContractsDeploymentDescription')}</p>
-          <p>2) {t('storageDeploymentDescription')}</p>
+          <Section>
+            <Paragraph>1) {t('swapContractsDeploymentDescription')}.</Paragraph>
+            <Paragraph>2) {t('storageDeploymentDescription')}.</Paragraph>
+          </Section>
 
-          <Title>{t('meaningOfSections')}:</Title>
+          <Section>
+            <Title>{t('meaningOfSections')}:</Title>
+            <List>
+              <li>
+                <Highlight>{t('deployment')}:</Highlight> {t('deploymentSectionDescription')}.
+              </li>
+              <li>
+                <Highlight>{t('swapContracts')}:</Highlight> {t('swapContractsSectionDescription')}.
+              </li>
+              <li>
+                <Highlight>{t('interface')}:</Highlight> {t('interfaceSectionDescription')}.
+              </li>
+            </List>
+          </Section>
 
-          <List>
-            <li>
-              <Highlight>{t('deployment')}:</Highlight> {t('deploymentSectionDescription')}
-            </li>
-            <li>
-              <Highlight>{t('swapContracts')}:</Highlight> {t('swapContractsSectionDescription')}
-            </li>
-            <li>
-              <Highlight>{t('interface')}:</Highlight> {t('interfaceSectionDescription')}
-            </li>
-          </List>
+          <Section>
+            <Warring>
+              <Title>{t('beCareful')}:</Title>
+              <Paragraph>{t('deploymentFlowDescription')}.</Paragraph>
+              <Paragraph>{t('consequencesOfDeploymentOfNewContracts')}.</Paragraph>
+            </Warring>
+          </Section>
         </div>
       )}
     </Wrapper>

@@ -27,7 +27,7 @@ const Wrapper = styled.div`
 
 const WarningWrapper = styled(Card)<{ highWarning: boolean }>`
   background-color: ${({ theme, highWarning }) =>
-    highWarning ? transparentize(0.8, theme.red1) : transparentize(0.8, theme.yellow2)};
+    highWarning ? transparentize(0.8, theme.red1) : transparentize(0.8, theme.yellow3)};
   width: fit-content;
 `
 
@@ -118,23 +118,23 @@ export function ImportToken({ tokens, onBack, onDismiss, handleCurrencySelect }:
         })}
 
         <Card
-          style={{ backgroundColor: fromLists ? transparentize(0.8, theme.yellow2) : transparentize(0.8, theme.red1) }}
+          style={{ backgroundColor: fromLists ? transparentize(0.8, theme.yellow3) : transparentize(0.8, theme.red1) }}
         >
           <AutoColumn justify="center" style={{ textAlign: 'center', gap: '16px', marginBottom: '12px' }}>
-            <AlertTriangle stroke={fromLists ? theme.yellow2 : theme.red1} size={32} />
-            <TYPE.body fontWeight={600} fontSize={20} color={fromLists ? theme.yellow2 : theme.red1}>
+            <AlertTriangle stroke={fromLists ? theme.yellow3 : theme.red1} size={32} />
+            <TYPE.body fontWeight={600} fontSize={20} color={fromLists ? theme.yellow3 : theme.red1}>
               {/* {t('')} */}
               Trade at your own risk!
             </TYPE.body>
           </AutoColumn>
 
           <AutoColumn style={{ textAlign: 'center', gap: '16px', marginBottom: '12px' }}>
-            <TYPE.body fontWeight={400} color={fromLists ? theme.yellow2 : theme.red1}>
+            <TYPE.body fontWeight={400} color={fromLists ? theme.yellow3 : theme.red1}>
               {/* {t('')} */}
               Anyone can create a token, including creating fake versions of existing tokens that claim to represent
               projects.
             </TYPE.body>
-            <TYPE.body fontWeight={600} color={fromLists ? theme.yellow2 : theme.red1}>
+            <TYPE.body fontWeight={600} color={fromLists ? theme.yellow3 : theme.red1}>
               {/* {t('')} */}
               If you purchase this token, you may not be able to sell it back.
             </TYPE.body>
@@ -147,7 +147,7 @@ export function ImportToken({ tokens, onBack, onDismiss, handleCurrencySelect }:
               checked={confirmed}
               onChange={() => setConfirmed(!confirmed)}
             />
-            <TYPE.body ml="10px" fontSize="16px" color={fromLists ? theme.yellow2 : theme.red1} fontWeight={500}>
+            <TYPE.body ml="10px" fontSize="16px" color={fromLists ? theme.yellow3 : theme.red1} fontWeight={500}>
               {t('iUnderstand')}
             </TYPE.body>
           </AutoRow>

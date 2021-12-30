@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { useActivePopups } from 'state/application/hooks'
+import { useActivePopups, useProjectInfo } from 'state/application/hooks'
 import { AppState } from 'state'
 import { useSelector } from 'react-redux'
 import { AutoColumn } from '../Column'
@@ -45,11 +45,14 @@ const FixedPopupColumn = styled(AutoColumn)<{ noPadding: boolean; extraPadding: 
 `
 
 export default function Popups() {
+  const { admin } = useProjectInfo()
   const activePopups = useActivePopups()
 
   const appManagement = useSelector<AppState, AppState['application']['appManagement']>(
     (state) => state.application.appManagement
   )
+
+  const noDomainInfo = !admin
 
   // popup component testing
   // if (!activePopups.length) {
@@ -72,7 +75,7 @@ export default function Popups() {
 
   return (
     <>
-      <FixedPopupColumn gap="20px" noPadding={appManagement} extraPadding={false}>
+      <FixedPopupColumn gap="20px" noPadding={appManagement || noDomainInfo} extraPadding={false}>
         {activePopups.map((item) => (
           <PopupItem key={item.key} content={item.content} popKey={item.key} removeAfterMs={item.removeAfterMs} />
         ))}
