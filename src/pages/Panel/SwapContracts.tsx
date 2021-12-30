@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { useActiveWeb3React } from 'hooks'
+import styled from 'styled-components'
 import { Box } from 'rebass'
 import { Label, Checkbox } from '@rebass/forms'
+import { useActiveWeb3React } from 'hooks'
 import { useProjectInfo } from 'state/application/hooks'
+import { useTransactionAdder } from 'state/transactions/hooks'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
 import { ButtonPrimary } from 'components/Button'
 import AddressInputPanel from 'components/AddressInputPanel'
 import QuestionHelper from 'components/QuestionHelper'
@@ -47,8 +48,8 @@ const InputLabel = styled.div`
 export default function SwapContracts(props: any) {
   const { pending, setPending, setError } = props
   const { t } = useTranslation()
-  const { library, account } = useActiveWeb3React()
-
+  const { library, account, chainId } = useActiveWeb3React()
+  const addTransaction = useTransactionAdder()
   const { factory: stateFactory } = useProjectInfo()
   const [factory, setFactory] = useState(stateFactory || '')
   const [factoryIsCorrect, setFactoryIsCorrect] = useState(false)
@@ -117,15 +118,27 @@ export default function SwapContracts(props: any) {
     setPending(true)
 
     try {
-      //@ts-ignore
-      const receipt = await setFactoryOption(library, account, factory, method, value)
-
-      console.log('receipt: ', receipt)
+      await setFactoryOption({
+        //@ts-ignore
+        library,
+        from: account ?? '',
+        factoryAddress: factory,
+        method,
+        value,
+        onHash: (hash: string) => {
+          addTransaction(
+            { hash },
+            {
+              summary: `Chain ${chainId}. Save factory settings`,
+            }
+          )
+        },
+      })
     } catch (error) {
       setError(error)
-    } finally {
-      setPending(false)
     }
+
+    setPending(false)
   }
 
   return (
