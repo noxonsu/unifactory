@@ -11,7 +11,7 @@ import {
   ZERO,
   ONE,
   FIVE,
-  FEES_NUMERATOR,
+  MAX_PERCENT,
   FEES_DENOMINATOR,
   LP_TOKEN_NAME,
   LP_TOKEN_SYMBOL,
@@ -119,13 +119,19 @@ export class Pair {
     return token.equals(this.token0) ? this.reserve0 : this.reserve1
   }
 
-  public getOutputAmount(inputAmount: TokenAmount, factory: string, pairHash: string): [TokenAmount, Pair] {
+  public getOutputAmount(
+    inputAmount: TokenAmount,
+    factory: string,
+    pairHash: string,
+    totalFee: number
+  ): [TokenAmount, Pair] {
     invariant(this.involvesToken(inputAmount.token), 'TOKEN')
 
     if (JSBI.equal(this.reserve0.raw, ZERO) || JSBI.equal(this.reserve1.raw, ZERO)) {
       throw new InsufficientReservesError()
     }
 
+    const FEES_NUMERATOR = JSBI.subtract(MAX_PERCENT, JSBI.BigInt(totalFee))
     const inputReserve = this.reserveOf(inputAmount.token)
     const outputReserve = this.reserveOf(inputAmount.token.equals(this.token0) ? this.token1 : this.token0)
     const inputAmountWithFee = JSBI.multiply(inputAmount.raw, FEES_NUMERATOR)
@@ -146,8 +152,14 @@ export class Pair {
     ]
   }
 
-  public getInputAmount(outputAmount: TokenAmount, factory: string, pairHash: string): [TokenAmount, Pair] {
+  public getInputAmount(
+    outputAmount: TokenAmount,
+    factory: string,
+    pairHash: string,
+    totalFee: number
+  ): [TokenAmount, Pair] {
     invariant(this.involvesToken(outputAmount.token), 'TOKEN')
+
     if (
       JSBI.equal(this.reserve0.raw, ZERO) ||
       JSBI.equal(this.reserve1.raw, ZERO) ||
@@ -156,6 +168,7 @@ export class Pair {
       throw new InsufficientReservesError()
     }
 
+    const FEES_NUMERATOR = JSBI.subtract(MAX_PERCENT, JSBI.BigInt(totalFee))
     const outputReserve = this.reserveOf(outputAmount.token)
     const inputReserve = this.reserveOf(outputAmount.token.equals(this.token0) ? this.token1 : this.token0)
     const numerator = JSBI.multiply(JSBI.multiply(inputReserve.raw, outputAmount.raw), FEES_DENOMINATOR)

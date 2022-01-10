@@ -16,6 +16,7 @@ interface IFactory {
 
     event PairCreated(address indexed token0, address indexed token1, address pair, uint);
 
+    function MAX_PERCENT() external view returns(uint);
     function protocolFee() external view returns(uint);
     function totalFee() external view returns(uint);
     function devFeePercent() external view returns(uint);

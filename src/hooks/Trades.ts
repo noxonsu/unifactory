@@ -76,7 +76,7 @@ const MAX_HOPS = 3
 export function useTradeExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?: Currency): Trade | null {
   const allowedPairs = useAllCommonPairs(currencyAmountIn?.currency, currencyOut)
   const wrappedToken = useWrappedToken()
-  const { factory, pairHash } = useProjectInfo()
+  const { factory, pairHash, totalFee } = useProjectInfo()
   const [singleHopOnly] = useUserSingleHopOnly()
 
   return useMemo(() => {
@@ -91,6 +91,8 @@ export function useTradeExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?:
             wrappedToken,
             factory,
             pairHash,
+            //@ts-ignore
+            totalFee,
             options: { maxHops: 1, maxNumResults: 1 },
           })[0] ?? null
         )
@@ -109,6 +111,8 @@ export function useTradeExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?:
             wrappedToken,
             factory,
             pairHash,
+            //@ts-ignore
+            totalFee,
             options: { maxHops: i, maxNumResults: 1 },
           })[0] ?? null
 
@@ -130,7 +134,7 @@ export function useTradeExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?:
 export function useTradeExactOut(currencyIn?: Currency, currencyAmountOut?: CurrencyAmount): Trade | null {
   const allowedPairs = useAllCommonPairs(currencyIn, currencyAmountOut?.currency)
   const wrappedToken = useWrappedToken()
-  const { factory, pairHash } = useProjectInfo()
+  const { factory, pairHash, totalFee } = useProjectInfo()
   const [singleHopOnly] = useUserSingleHopOnly()
 
   return useMemo(() => {
@@ -145,6 +149,8 @@ export function useTradeExactOut(currencyIn?: Currency, currencyAmountOut?: Curr
             wrappedToken,
             factory,
             pairHash,
+            //@ts-ignore
+            totalFee,
             options: { maxHops: 1, maxNumResults: 1 },
           })[0] ?? null
         )
@@ -161,6 +167,8 @@ export function useTradeExactOut(currencyIn?: Currency, currencyAmountOut?: Curr
             wrappedToken,
             factory,
             pairHash,
+            //@ts-ignore
+            totalFee,
             options: { maxHops: i, maxNumResults: 1 },
           })[0] ?? null
         if (isTradeBetter(bestTradeSoFar, currentTrade, BETTER_TRADE_LESS_HOPS_THRESHOLD)) {

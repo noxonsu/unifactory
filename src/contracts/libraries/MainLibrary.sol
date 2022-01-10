@@ -39,7 +39,8 @@ library MainLibrary {
         require(amountIn > 0, 'MainLibrary: INSUFFICIENT_INPUT_AMOUNT');
         require(reserveIn > 0 && reserveOut > 0, 'MainLibrary: INSUFFICIENT_LIQUIDITY');
         uint totalFee = IFactory(factory).totalFee();
-        uint amountInWithFee = amountIn.mul(totalFee);
+        uint inputFraction =  IFactory(factory).MAX_PERCENT().sub(totalFee);
+        uint amountInWithFee = amountIn.mul(inputFraction);
         uint numerator = amountInWithFee.mul(reserveOut);
         uint denominator = reserveIn.mul(1000).add(amountInWithFee);
         amountOut = numerator / denominator;
@@ -50,8 +51,9 @@ library MainLibrary {
         require(amountOut > 0, 'MainLibrary: INSUFFICIENT_OUTPUT_AMOUNT');
         require(reserveIn > 0 && reserveOut > 0, 'MainLibrary: INSUFFICIENT_LIQUIDITY');
         uint totalFee = IFactory(factory).totalFee();
+        uint inputFraction =  IFactory(factory).MAX_PERCENT().sub(totalFee);
         uint numerator = reserveIn.mul(amountOut).mul(1000);
-        uint denominator = reserveOut.sub(amountOut).mul(totalFee);
+        uint denominator = reserveOut.sub(amountOut).mul(inputFraction);
         amountIn = (numerator / denominator).add(1);
     }
 

@@ -1,27 +1,34 @@
 import { BLOCKED_PRICE_IMPACT_NON_EXPERT } from '../constants'
 import { CurrencyAmount, Fraction, JSBI, Percent, TokenAmount, Trade } from 'sdk'
 import { ALLOWED_PRICE_IMPACT_HIGH, ALLOWED_PRICE_IMPACT_LOW, ALLOWED_PRICE_IMPACT_MEDIUM } from '../constants'
-import { Field } from '../state/swap/actions'
+import { Field } from 'state/swap/actions'
 import { basisPointsToPercent } from './index'
-
-const BASE_FEE = new Percent(JSBI.BigInt(30), JSBI.BigInt(10000))
-const ONE_HUNDRED_PERCENT = new Percent(JSBI.BigInt(10000), JSBI.BigInt(10000))
-const INPUT_FRACTION_AFTER_FEE = ONE_HUNDRED_PERCENT.subtract(BASE_FEE)
 
 // computes price breakdown for the trade
 export function computeTradePriceBreakdown(trade?: Trade | null): {
   priceImpactWithoutFee: Percent | undefined
   realizedLPFee: CurrencyAmount | undefined | null
 } {
-  // for each hop in our trade, take away the x*y=k price impact from 0.3% fees
-  // e.g. for 3 tokens/2 hops: 1 - ((1 - .03) * (1-.03))
+  const BASE_FEE = new Percent(JSBI.BigInt(30), JSBI.BigInt(10000))
+  const ONE_HUNDRED_PERCENT = new Percent(JSBI.BigInt(10000), JSBI.BigInt(10000))
+  const INPUT_FRACTION_AFTER_FEE = ONE_HUNDRED_PERCENT.subtract(BASE_FEE)
+
+  // console.group('%c fees constants', 'color: orange; font-size: 14px')
+  // console.log('BASE_FEE: ', BASE_FEE.toSignificant(8))
+  // console.log('ONE_HUNDRED_PERCENT: ', ONE_HUNDRED_PERCENT.toSignificant(8))
+  // console.log('INPUT_FRACTION_AFTER_FEE: ', INPUT_FRACTION_AFTER_FEE.toSignificant(8))
+  // console.groupEnd()
+  // for each hop in our trade, take away the x*y=k price impact from base fee
+  // e.g. Case with 0.3% fee for 3 tokens/2 hops: 1 - ((1 - .03) * (1-.03))
   const realizedLPFee = !trade
     ? undefined
     : ONE_HUNDRED_PERCENT.subtract(
-        trade.route.pairs.reduce<Fraction>(
-          (currentFee: Fraction): Fraction => currentFee.multiply(INPUT_FRACTION_AFTER_FEE),
-          ONE_HUNDRED_PERCENT
-        )
+        trade.route.pairs.reduce<Fraction>((currentFee: Fraction): Fraction => {
+          // console.group('%c Log', 'color: orange; font-size: 14px')
+          // console.log('currentFee: ', currentFee.toSignificant(8))
+          // console.groupEnd()
+          return currentFee.multiply(INPUT_FRACTION_AFTER_FEE)
+        }, ONE_HUNDRED_PERCENT)
       )
 
   // remove lp fees from price impact
@@ -39,6 +46,16 @@ export function computeTradePriceBreakdown(trade?: Trade | null): {
     (trade.inputAmount instanceof TokenAmount
       ? new TokenAmount(trade.inputAmount.token, realizedLPFee.multiply(trade.inputAmount.raw).quotient)
       : CurrencyAmount.ether(realizedLPFee.multiply(trade.inputAmount.raw).quotient))
+
+  // if (trade) {
+  //   console.group('%c computeTradePriceBreakdown', 'color: green; font-size: 14px')
+  //   console.log('trade: ', trade)
+  //   console.log('realizedLPFee: ', realizedLPFee?.toSignificant(8))
+  //   console.log('priceImpactWithoutFeeFraction: ', priceImpactWithoutFeeFraction?.toSignificant(8))
+  //   console.log('priceImpactWithoutFeePercent: ', priceImpactWithoutFeePercent?.toSignificant(8))
+  //   console.log('realizedLPFeeAmount: ', realizedLPFeeAmount?.toSignificant(8))
+  //   console.groupEnd()
+  // }
 
   return { priceImpactWithoutFee: priceImpactWithoutFeePercent, realizedLPFee: realizedLPFeeAmount }
 }

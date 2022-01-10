@@ -118,7 +118,7 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
   const [tab, setTab] = useState('deployment')
 
   //@ts-ignore
-  const accountPrefix = networks[chainId] ? networks[chainId]?.name || t('account') : ''
+  const accountPrefix = networks[chainId]?.name || t('account')
   const domain = window.location.hostname || document.location.host
 
   const resetDomain = async () => {
@@ -176,10 +176,12 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
         <Wallet setPending={setPending} setError={setError} pending={pending} />
       </HeaderButtons>
 
-      <NetworkInfo>
-        {accountPrefix ? `${accountPrefix}: ` : ' '}
-        <span className="monospace">{shortenAddress(account || '')}</span>
-      </NetworkInfo>
+      {account && (
+        <NetworkInfo>
+          {accountPrefix ? `${accountPrefix}: ` : ' '}
+          <span className="monospace">{shortenAddress(account)}</span>
+        </NetworkInfo>
+      )}
 
       <Instruction />
 

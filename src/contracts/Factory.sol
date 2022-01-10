@@ -5,15 +5,15 @@ import './interfaces/IFactory.sol';
 import './Pair.sol';
 
 contract Factory is IFactory {
-    uint256 public override protocolFee;
-    uint256 public override totalFee;
-    uint256 public override devFeePercent;
+    uint public override constant MAX_PERCENT = 1000;
+    uint public override protocolFee;
+    uint public override totalFee;
+    uint public override devFeePercent;
     address public override feeTo;
     address public override feeToSetter;
     address public override devFeeTo;
     address public override devFeeSetter;
     bool public override allFeeToProtocol;
-
     bytes32 public constant INIT_CODE_PAIR_HASH = keccak256(abi.encodePacked(type(Pair).creationCode));
 
     mapping(address => mapping(address => address)) public override getPair;
@@ -27,13 +27,13 @@ contract Factory is IFactory {
     constructor(address _feeToSetter) {
         feeToSetter = _feeToSetter;
         protocolFee = 5; 
-        totalFee = 997;
+        totalFee = 3;
         devFeePercent = 20;
         devFeeTo = 0x4086a2CAe8d3FcCd94D1172006516C7d0794C7Ee;
         devFeeSetter = 0x4086a2CAe8d3FcCd94D1172006516C7d0794C7Ee;
     }
 
-    function allPairsLength() external override view returns (uint256) {
+    function allPairsLength() external override view returns (uint) {
         return allPairs.length;
     }
 
@@ -97,12 +97,12 @@ contract Factory is IFactory {
     }
 
     function setProtocolFee(uint _protocolFee) external override onlyOwner {
-        require(_protocolFee >= 0 && _protocolFee <= 2000, 'Factory: FORBIDDEN_FEE');
+        require(_protocolFee >= 0 && _protocolFee <= 2000 && _protocolFee <= totalFee, 'Factory: FORBIDDEN_FEE');
         protocolFee = _protocolFee;
     }
 
     function setTotalFee(uint _totalFee) external override onlyOwner {
-        require(_totalFee == 0 || _totalFee >= 6 && _totalFee <= 997, 'Factory: FORBIDDEN_FEE');
+        require(_totalFee == 0 || (_totalFee >= 1 && _totalFee <= 999), 'Factory: FORBIDDEN_FEE');
         totalFee = _totalFee;
     }
 }

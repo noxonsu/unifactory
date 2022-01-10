@@ -97,6 +97,12 @@ export function useSwapCallback(
 
   const swapCalls = useSwapCallArguments(trade, allowedSlippage, recipientAddressOrName)
 
+  if (swapCalls.length) {
+    console.group('%c useSwapCallback', 'color: orange; font-size: 14px')
+    console.log('swapCalls: ', swapCalls)
+    console.groupEnd()
+  }
+
   const addTransaction = useTransactionAdder()
 
   const { address: recipientAddress } = useENS(recipientAddressOrName)
