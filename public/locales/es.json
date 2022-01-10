@@ -236,5 +236,6 @@
   "addressesOfTokenLists": "Direcciones de listas de tokens",
   "beCareful": "Ten cuidado",
   "deploymentFlowDescription": "Cuando implemente nuevos contratos, debe confirmar todas las transacciones de su billetera externa. Puede verificar los detalles de la transacción, pero debe seguir el flujo de implementación. De lo contrario, será difícil conectar estos contratos y usarlos",
-  "consequencesOfDeploymentOfNewContracts": "Puede implementar nuevos contratos en cualquier momento, pero reescribirá sus direcciones en la aplicación. En caso de que tenga algo de liquidez en los contratos antiguos, la aplicación utilizará los nuevos con liquidez cero"
+  "consequencesOfDeploymentOfNewContracts": "Puede implementar nuevos contratos en cualquier momento, pero reescribirá sus direcciones en la aplicación. En caso de que tenga algo de liquidez en los contratos antiguos, la aplicación utilizará los nuevos con liquidez cero",
+  "adminFee": "Cuota de administración"
 }

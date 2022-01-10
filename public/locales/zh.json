@@ -236,5 +236,6 @@
   "addressesOfTokenLists": "令牌列表的地址",
   "beCareful": "戒哉！",
   "deploymentFlowDescription": "当您部署新合约时，您需要从外部钱包确认每笔交易。 您可以检查事务详细信息，但需要遵循部署流程。 否则将很难连接这些合同并使用它们",
-  "consequencesOfDeploymentOfNewContracts": "您可以随时部署新合同，但您将在应用程序中重写它们的地址。 如果您在旧合约中有一些流动性，应用程序将使用零流动性的新合约"
+  "consequencesOfDeploymentOfNewContracts": "您可以随时部署新合同，但您将在应用程序中重写它们的地址。 如果您在旧合约中有一些流动性，应用程序将使用零流动性的新合约",
+  "adminFee": "行政费"
 }

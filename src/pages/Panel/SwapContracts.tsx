@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
+// import { BigNumber } from '@ethersproject/bignumber'
 import { Box } from 'rebass'
 import { Label, Checkbox } from '@rebass/forms'
 import { useActiveWeb3React } from 'hooks'
@@ -82,8 +83,8 @@ export default function SwapContracts(props: any) {
         setAdmin(feeToSetter)
         setFeeRecipient(feeTo === ZERO_ADDRESS ? '' : feeTo)
         setAllFeesToAdmin(allFeeToProtocol)
-        setLiquidityProviderFee(totalFee)
-        setAdminFee(protocolFee)
+        setLiquidityProviderFee(totalFee / 10)
+        setAdminFee(protocolFee / 100)
       }
     } catch (error) {
       setError(error)
@@ -106,10 +107,13 @@ export default function SwapContracts(props: any) {
         value = allFeesToAdmin
         break
       case factoryMethods.setTotalFee:
-        value = liquidityProviderFee
+        // TODO: fix bignum problem. We can't use native operations, there are not integer numbers
+        //@ts-ignore
+        value = liquidityProviderFee * 10 // BigNumber.from(liquidityProviderFee).mul(10).toNumber()
         break
       case factoryMethods.setProtocolFee:
-        value = adminFee
+        //@ts-ignore
+        value = adminFee * 100 // BigNumber.from(adminFee).mul(100).toNumber()
         break
       default:
         value = ''
