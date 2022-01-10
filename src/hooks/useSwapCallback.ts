@@ -96,13 +96,6 @@ export function useSwapCallback(
   const { account, chainId, library } = useActiveWeb3React()
 
   const swapCalls = useSwapCallArguments(trade, allowedSlippage, recipientAddressOrName)
-
-  if (swapCalls.length) {
-    console.group('%c useSwapCallback', 'color: orange; font-size: 14px')
-    console.log('swapCalls: ', swapCalls)
-    console.groupEnd()
-  }
-
   const addTransaction = useTransactionAdder()
 
   const { address: recipientAddress } = useENS(recipientAddressOrName)

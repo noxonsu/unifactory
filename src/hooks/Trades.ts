@@ -125,7 +125,7 @@ export function useTradeExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?:
     }
 
     return null
-  }, [allowedPairs, factory, pairHash, currencyAmountIn, currencyOut, singleHopOnly, wrappedToken])
+  }, [allowedPairs, factory, pairHash, currencyAmountIn, currencyOut, singleHopOnly, wrappedToken, totalFee])
 }
 
 /**
@@ -178,5 +178,5 @@ export function useTradeExactOut(currencyIn?: Currency, currencyAmountOut?: Curr
       return bestTradeSoFar
     }
     return null
-  }, [currencyIn, factory, pairHash, currencyAmountOut, allowedPairs, singleHopOnly, wrappedToken])
+  }, [currencyIn, factory, pairHash, currencyAmountOut, allowedPairs, singleHopOnly, wrappedToken, totalFee])
 }
