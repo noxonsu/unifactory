@@ -5,6 +5,8 @@ import './interfaces/IFactory.sol';
 import './Pair.sol';
 
 contract Factory is IFactory {
+    using SafeMath for uint;
+
     uint public override constant MAX_PERCENT = 1000;
     uint public override protocolFee;
     uint public override totalFee;
@@ -97,12 +99,13 @@ contract Factory is IFactory {
     }
 
     function setProtocolFee(uint _protocolFee) external override onlyOwner {
-        require(_protocolFee >= 0 && _protocolFee <= 2000 && _protocolFee <= totalFee, 'Factory: FORBIDDEN_FEE');
+        uint totalFeeWithExtraDigitPlace = totalFee.mul(10);
+        require(_protocolFee >= 0 && _protocolFee <= totalFeeWithExtraDigitPlace, 'Factory: FORBIDDEN_FEE');
         protocolFee = _protocolFee;
     }
 
     function setTotalFee(uint _totalFee) external override onlyOwner {
-        require(_totalFee == 0 || (_totalFee >= 1 && _totalFee <= 999), 'Factory: FORBIDDEN_FEE');
+        require(_totalFee >= 0 && _totalFee <= 999, 'Factory: FORBIDDEN_FEE');
         totalFee = _totalFee;
     }
 }
