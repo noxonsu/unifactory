@@ -185,7 +185,7 @@ export default function SwapContracts(props: any) {
     max: number
     maxDecimals: number
   }) => {
-    let validValue = v.replace(/\-/g, '')
+    let validValue = v.replace(/-/g, '')
     const bigNum = new BigNumber(validValue)
 
     if (bigNum.isLessThan(min) || bigNum.isGreaterThan(max)) return
@@ -285,7 +285,7 @@ export default function SwapContracts(props: any) {
               />
               <Button
                 onClick={() => saveOption(factoryMethods.setTotalFee)}
-                disabled={!factoryIsCorrect || (!totalFee && totalFee !== 0)}
+                disabled={!factoryIsCorrect || (!totalFee && totalFee !== 0) || totalFee < adminFee}
               >
                 {t('save')}
               </Button>
@@ -295,7 +295,7 @@ export default function SwapContracts(props: any) {
               <InputPanel
                 type="number"
                 min={0}
-                max={99}
+                max={Number(totalFee)}
                 step={0.01}
                 label={`${t('adminFee')} (0% - 99%)`}
                 value={adminFee}
@@ -304,7 +304,7 @@ export default function SwapContracts(props: any) {
                     v,
                     set: setAdminFee,
                     min: 0,
-                    max: 99,
+                    max: Number(totalFee),
                     maxDecimals: 2,
                   })
                 }

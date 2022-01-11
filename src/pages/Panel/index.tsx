@@ -40,7 +40,7 @@ const BackButton = styled(CleanButton)`
 `
 
 const NetworkInfo = styled.div`
-  margin-top: 0.6rem;
+  margin: 0.6rem;
   display: flex;
   justify-content: space-between;
 `
