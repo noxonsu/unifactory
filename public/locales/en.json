@@ -250,5 +250,9 @@
   "consequencesOfDeploymentOfNewContracts": "You can deploy new contracts at any time, but you will rewrite their addresses in the application. In case you have some liquidity in the old contracts, the application will use the new ones with zero liquidity",
   "adminFee": "Admin fee",
   "feeSettings": "Fee settings",
-  "feesDescription": "The liquidity provider fee (LP fee) is charged at each swap and accumulates in the liquidity pool of an additional amount in the LP token. You can receive accumulated fees after the removal of liquidity. If the LP fee is 0%, then no fees, including for the admin, are charged. If % of the admin fee is equal to the LP fee all fees go to the admin address"
+  "feesDescription": "The liquidity provider fee (LP fee) is charged at each swap and accumulates in the liquidity pool of an additional amount in the LP token. You can receive accumulated fees after the removal of liquidity",
+  "caseWhenNoFeesCharged": "If the LP fee is 0%, then no fees, including for the admin, are charged",
+  "caseWhenAllFeesToAdmin": "If % of the admin fee is equal to the LP fee all fees go to the admin address",
+  "LPFeeCanNotBeLessThenAdminFee": "Liquidity provider fee cannot be less than admin fee",
+  "adminFeeCanNotBeMoreThenLPFee": "Admin fee cannot be more than LP fee"
 }

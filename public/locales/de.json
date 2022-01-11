@@ -251,5 +251,9 @@
   "consequencesOfDeploymentOfNewContracts": "Sie können jederzeit neue Verträge bereitstellen, aber Sie werden ihre Adressen in der Anwendung neu schreiben. Falls Sie etwas Liquidität in den alten Verträgen haben, wird die Anwendung die neuen mit Null Liquidität verwenden",
   "adminFee": "Verwaltungsgebühr",
   "feeSettings": "Gebühreneinstellungen",
-  "feesDescription": "Die Liquidity Provider Fee (LP Fee) wird bei jedem Swap erhoben und akkumuliert im Liquiditätspool einen zusätzlichen Betrag im LP Token. Sie können kumulierte Gebühren nach dem Entfernen der Liquidität erhalten. Wenn die LP-Gebühr 0% beträgt, werden keine Gebühren, einschließlich für den Administrator, erhoben. Wenn% der Verwaltungsgebühr der LP-Gebühr entspricht, gehen alle Gebühren an die Administratoradresse"
+  "feesDescription": "Die Liquidity Provider Fee (LP Fee) wird bei jedem Swap erhoben und akkumuliert im Liquiditätspool einen zusätzlichen Betrag im LP Token. Sie können kumulierte Gebühren nach dem Entfernen der Liquidität erhalten",
+  "caseWhenNoFeesCharged": "Wenn die LP-Gebühr 0% beträgt, werden keine Gebühren, einschließlich für den Administrator, erhoben",
+  "caseWhenAllFeesToAdmin": "Wenn% der Verwaltungsgebühr der LP-Gebühr entspricht, gehen alle Gebühren an die Administratoradresse",
+  "LPFeeCanNotBeLessThenAdminFee": "Die Gebühr für Liquiditätsanbieter darf nicht unter der Verwaltungsgebühr liegen",
+  "adminFeeCanNotBeMoreThenLPFee": "Admin gebühr kann nicht mehr als LP gebühr"
 }

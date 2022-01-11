@@ -21,10 +21,20 @@ const OptionWrapper = styled.div<{ margin?: number }>`
   padding: 0.3rem 0;
 `
 
-const Info = styled.p`
+const Info = styled.div`
+  margin: 0.2rem 0;
   padding: 0.4rem;
   font-size: 0.9rem;
   opacity: 0.6;
+`
+
+const List = styled.ul`
+  padding: 0;
+  padding-left: 1rem;
+
+  li:not(:last-child) {
+    margin-bottom: 0.4rem;
+  }
 `
 
 const LabelExtended = styled(Label)`
@@ -243,9 +253,17 @@ export default function SwapContracts(props: any) {
             </Button>
           </OptionWrapper>
 
-          <Info>{t('feesDescription')}</Info>
+          <Info>
+            {t('feesDescription')}.
+            <List>
+              <li>{t('caseWhenNoFeesCharged')}</li>
+              <li>{t('caseWhenAllFeesToAdmin')}</li>
+              <li>{t('LPFeeCanNotBeLessThenAdminFee')}</li>
+              <li>{t('adminFeeCanNotBeMoreThenLPFee')}</li>
+            </List>
+          </Info>
 
-          {/* form tag for the validation */}
+          {/* form tag for the native validation */}
           <form action="" onSubmit={() => false}>
             <OptionWrapper>
               <InputPanel

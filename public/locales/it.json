@@ -250,5 +250,9 @@
   "consequencesOfDeploymentOfNewContracts": "È possibile distribuire nuovi contratti in qualsiasi momento, ma sarà riscrivere i loro indirizzi nell'applicazione. Nel caso in cui si dispone di una certa liquidità nei vecchi contratti, l'applicazione utilizzerà quelli nuovi con zero liquidità",
   "adminFee": "Tassa di amministrazione",
   "feeSettings": "Impostazioni tariffe",
-  "feesDescription": "La commissione del liquidity provider (LP fee) viene addebitata ad ogni swap e accumula nel pool di liquidità un importo aggiuntivo nel token LP. È possibile ricevere commissioni accumulate dopo la rimozione della liquidità. Se la tariffa LP è dello 0%, non vengono addebitate commissioni, anche per l'amministratore. Se % della tassa di amministrazione è uguale alla tassa LP tutte le tasse vanno all'indirizzo admin"
+  "feesDescription": "La commissione del liquidity provider (LP fee) viene addebitata ad ogni swap e accumula nel pool di liquidità un importo aggiuntivo nel token LP. È possibile ricevere commissioni accumulate dopo la rimozione della liquidità",
+  "caseWhenNoFeesCharged": "Se la tariffa LP è dello 0%, non vengono addebitate commissioni, incluse quelle per l'amministratore",
+  "caseWhenAllFeesToAdmin": "Se % della tassa di amministrazione è uguale alla tassa LP tutte le tasse vanno all'indirizzo admin",
+  "LPFeeCanNotBeLessThenAdminFee": "La commissione del fornitore di liquidità non può essere inferiore alla commissione amministrativa",
+  "adminFeeCanNotBeMoreThenLPFee": "La tassa di amministrazione non può essere superiore alla tassa LP"
 }
