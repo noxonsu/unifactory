@@ -103,9 +103,11 @@ export default function Deployment(props: any) {
               summary: `Chain ${chainId}. Deploy router`,
             }
           )
-          setAttemptingTxn(false)
         },
-        onSuccessfulDeploy: () => setDomainDataTrigger((state: boolean) => !state),
+        onSuccessfulDeploy: () => {
+          setAttemptingTxn(false)
+          setDomainDataTrigger((state: boolean) => !state)
+        },
       })
     } catch (error) {
       setError(error)

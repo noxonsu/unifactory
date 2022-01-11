@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-// import { BigNumber } from '@ethersproject/bignumber'
+import { BigNumber } from 'bignumber.js'
 import { Box } from 'rebass'
 import { Label, Checkbox } from '@rebass/forms'
 import { useActiveWeb3React } from 'hooks'
@@ -46,6 +46,25 @@ const InputLabel = styled.div`
   align-items: center;
 `
 
+enum Representations {
+  contract,
+  interface,
+}
+
+const TOTAL_FEE_RATIO = 10
+const ADMIN_FEE_RATIO = 100
+
+const convertFee = (percent: number | string, ratio: number, representation: Representations) => {
+  switch (representation) {
+    case Representations.interface:
+      return new BigNumber(percent).div(ratio).toNumber()
+    case Representations.contract:
+      return new BigNumber(percent).times(ratio).toNumber()
+    default:
+      return
+  }
+}
+
 export default function SwapContracts(props: any) {
   const { pending, setPending, setError } = props
   const { t } = useTranslation()
@@ -64,7 +83,7 @@ export default function SwapContracts(props: any) {
   const [admin, setAdmin] = useState('')
   const [feeRecipient, setFeeRecipient] = useState('')
   const [allFeesToAdmin, setAllFeesToAdmin] = useState(false)
-  const [liquidityProviderFee, setLiquidityProviderFee] = useState<number | string>('')
+  const [totalFee, setTotalFee] = useState<number | string>('')
   const [adminFee, setAdminFee] = useState<number | string>('')
 
   const updateFeesToAdmin = (event: any) => setAllFeesToAdmin(event.target.checked)
@@ -83,8 +102,8 @@ export default function SwapContracts(props: any) {
         setAdmin(feeToSetter)
         setFeeRecipient(feeTo === ZERO_ADDRESS ? '' : feeTo)
         setAllFeesToAdmin(allFeeToProtocol)
-        setLiquidityProviderFee(totalFee / 10)
-        setAdminFee(protocolFee / 100)
+        setTotalFee(convertFee(totalFee, TOTAL_FEE_RATIO, Representations.interface) || '')
+        setAdminFee(convertFee(protocolFee, ADMIN_FEE_RATIO, Representations.interface) || '')
       }
     } catch (error) {
       setError(error)
@@ -107,13 +126,10 @@ export default function SwapContracts(props: any) {
         value = allFeesToAdmin
         break
       case factoryMethods.setTotalFee:
-        // TODO: fix bignum problem. We can't use native operations, there are not integer numbers
-        //@ts-ignore
-        value = liquidityProviderFee * 10 // BigNumber.from(liquidityProviderFee).mul(10).toNumber()
+        value = convertFee(totalFee, TOTAL_FEE_RATIO, Representations.contract)
         break
       case factoryMethods.setProtocolFee:
-        //@ts-ignore
-        value = adminFee * 100 // BigNumber.from(adminFee).mul(100).toNumber()
+        value = convertFee(adminFee, ADMIN_FEE_RATIO, Representations.contract)
         break
       default:
         value = ''
@@ -195,14 +211,10 @@ export default function SwapContracts(props: any) {
           </Button>
         </OptionWrapper>
         <OptionWrapper>
-          <InputPanel
-            label={`${t('liquidityProviderFee')}`}
-            value={liquidityProviderFee}
-            onChange={setLiquidityProviderFee}
-          />
+          <InputPanel label={`${t('liquidityProviderFee')}`} value={totalFee} onChange={setTotalFee} />
           <Button
             onClick={() => saveOption(factoryMethods.setTotalFee)}
-            disabled={!factoryIsCorrect || (!liquidityProviderFee && liquidityProviderFee !== 0)}
+            disabled={!factoryIsCorrect || (!totalFee && totalFee !== 0)}
           >
             {t('save')}
           </Button>

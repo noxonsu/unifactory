@@ -105,7 +105,8 @@ contract Factory is IFactory {
     }
 
     function setTotalFee(uint _totalFee) external override onlyOwner {
-        require(_totalFee >= 0 && _totalFee <= 999, 'Factory: FORBIDDEN_FEE');
+        uint newFeeWithExtraDigitPlace = _totalFee.mul(10);
+        require(_totalFee >= 0 && _totalFee <= 999 && newFeeWithExtraDigitPlace >= protocolFee, 'Factory: FORBIDDEN_FEE');
         totalFee = _totalFee;
     }
 }
