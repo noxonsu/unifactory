@@ -65,12 +65,20 @@ export default function AddressInputPanel({
   id,
   label,
   disabled = false,
+  type = 'text',
+  min,
+  max,
+  step,
   value,
   onChange,
 }: {
   id?: string
   label?: string
   disabled?: boolean
+  type?: string
+  min?: number
+  max?: number
+  step?: number
   value: string | number
   onChange: (value: string) => void
 }) {
@@ -99,7 +107,7 @@ export default function AddressInputPanel({
             )}
             <Input
               disabled={disabled}
-              type="text"
+              type={type}
               autoComplete="off"
               autoCorrect="off"
               autoCapitalize="off"
@@ -107,6 +115,9 @@ export default function AddressInputPanel({
               placeholder="..."
               onChange={disabled ? () => {} : handleInput}
               value={value}
+              min={min}
+              max={max}
+              step={step}
             />
           </AutoColumn>
         </InputContainer>

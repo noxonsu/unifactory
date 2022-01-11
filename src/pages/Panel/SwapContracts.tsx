@@ -8,6 +8,7 @@ import { useProjectInfo } from 'state/application/hooks'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useTranslation } from 'react-i18next'
 import { ButtonPrimary } from 'components/Button'
+import Accordion from 'components/Accordion'
 import AddressInputPanel from 'components/AddressInputPanel'
 import QuestionHelper from 'components/QuestionHelper'
 import InputPanel from 'components/InputPanel'
@@ -161,6 +162,35 @@ export default function SwapContracts(props: any) {
     setPending(false)
   }
 
+  const setValidValue = ({
+    v,
+    set,
+    min,
+    max,
+    maxDecimals,
+  }: {
+    v: string
+    set: (v: any) => void
+    min: number
+    max: number
+    maxDecimals: number
+  }) => {
+    let validValue = v.replace(/\-/g, '')
+    const bigNum = new BigNumber(validValue)
+
+    if (bigNum.isLessThan(min) || bigNum.isGreaterThan(max)) return
+
+    const floatCoincidence = validValue.match(/\..+/)
+
+    if (floatCoincidence) {
+      const floatNums = floatCoincidence[0].slice(1)
+
+      if (floatNums.length <= maxDecimals) set(validValue)
+    } else {
+      set(validValue)
+    }
+  }
+
   return (
     <section>
       <OptionWrapper>
@@ -199,36 +229,77 @@ export default function SwapContracts(props: any) {
             {t('save')}
           </Button>
         </OptionWrapper>
-        <OptionWrapper margin={0.8}>
-          <Box>
-            <LabelExtended>
-              <Checkbox id="remember" name="remember" onChange={updateFeesToAdmin} />
-              {t('allFeesToAdmin')}
-            </LabelExtended>
-          </Box>
-          <Button onClick={() => saveOption(factoryMethods.setAllFeeToProtocol)} disabled={!factoryIsCorrect}>
-            {t('save')}
-          </Button>
-        </OptionWrapper>
-        <OptionWrapper>
-          <InputPanel label={`${t('liquidityProviderFee')}`} value={totalFee} onChange={setTotalFee} />
-          <Button
-            onClick={() => saveOption(factoryMethods.setTotalFee)}
-            disabled={!factoryIsCorrect || (!totalFee && totalFee !== 0)}
-          >
-            {t('save')}
-          </Button>
-        </OptionWrapper>
 
-        <OptionWrapper>
-          <InputPanel label={`${t('adminFee')}`} value={adminFee} onChange={setAdminFee} />
-          <Button
-            onClick={() => saveOption(factoryMethods.setProtocolFee)}
-            disabled={!factoryIsCorrect || (!adminFee && adminFee !== 0)}
-          >
-            {t('save')}
-          </Button>
-        </OptionWrapper>
+        <Accordion title={t('feeSettings')}>
+          <OptionWrapper margin={1}>
+            <Box>
+              <LabelExtended>
+                <Checkbox name="all fees to the admin" onChange={updateFeesToAdmin} />
+                {t('allFeesToAdmin')}
+              </LabelExtended>
+            </Box>
+            <Button onClick={() => saveOption(factoryMethods.setAllFeeToProtocol)} disabled={!factoryIsCorrect}>
+              {t('save')}
+            </Button>
+          </OptionWrapper>
+
+          <Info>{t('feesDescription')}</Info>
+
+          {/* form tag for the validation */}
+          <form action="" onSubmit={() => false}>
+            <OptionWrapper>
+              <InputPanel
+                type="number"
+                min={0}
+                max={99}
+                step={0.1}
+                label={`${t('liquidityProviderFee')} (0% - 99%)`}
+                value={totalFee}
+                onChange={(v) =>
+                  setValidValue({
+                    v,
+                    set: setTotalFee,
+                    min: 0,
+                    max: 99,
+                    maxDecimals: 1,
+                  })
+                }
+              />
+              <Button
+                onClick={() => saveOption(factoryMethods.setTotalFee)}
+                disabled={!factoryIsCorrect || (!totalFee && totalFee !== 0)}
+              >
+                {t('save')}
+              </Button>
+            </OptionWrapper>
+
+            <OptionWrapper>
+              <InputPanel
+                type="number"
+                min={0}
+                max={99}
+                step={0.01}
+                label={`${t('adminFee')} (0% - 99%)`}
+                value={adminFee}
+                onChange={(v) =>
+                  setValidValue({
+                    v,
+                    set: setAdminFee,
+                    min: 0,
+                    max: 99,
+                    maxDecimals: 2,
+                  })
+                }
+              />
+              <Button
+                onClick={() => saveOption(factoryMethods.setProtocolFee)}
+                disabled={!factoryIsCorrect || (!adminFee && adminFee !== 0)}
+              >
+                {t('save')}
+              </Button>
+            </OptionWrapper>
+          </form>
+        </Accordion>
       </div>
     </section>
   )

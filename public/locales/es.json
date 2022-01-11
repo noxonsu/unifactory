@@ -237,5 +237,7 @@
   "beCareful": "Ten cuidado",
   "deploymentFlowDescription": "Cuando implemente nuevos contratos, debe confirmar todas las transacciones de su billetera externa. Puede verificar los detalles de la transacción, pero debe seguir el flujo de implementación. De lo contrario, será difícil conectar estos contratos y usarlos",
   "consequencesOfDeploymentOfNewContracts": "Puede implementar nuevos contratos en cualquier momento, pero reescribirá sus direcciones en la aplicación. En caso de que tenga algo de liquidez en los contratos antiguos, la aplicación utilizará los nuevos con liquidez cero",
-  "adminFee": "Cuota de administración"
+  "adminFee": "Cuota de administración",
+  "feeSettings": "Configuración de tarifas",
+  "feesDescription": "La comisión del proveedor de liquidez (comisión LP) se cobra en cada swap y se acumula en el fondo de liquidez de una cantidad adicional en el token LP. Puede recibir comisiones acumuladas después de la eliminación de liquidez. Si la tarifa de LP es del 0%, no se cobrará ninguna tarifa, incluso para el administrador. Si el % de la tarifa de administración es igual a la tarifa de LP, todas las tarifas van a la dirección de administración"
 }
