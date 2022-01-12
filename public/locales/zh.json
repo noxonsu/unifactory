@@ -241,7 +241,5 @@
   "feeSettings": "费用设定",
   "feesDescription": "流动性提供者费用（LP费用）在每次掉期时收取，并在LP令牌的流动性池中累积额外金额。 您可以在移除流动资金后收到累积费用",
   "caseWhenNoFeesCharged": "如果LP费用为0％，则不收取任何费用，包括管理员费用",
-  "caseWhenAllFeesToAdmin": "如果管理费的%等于LP费，所有费用将转到管理地址",
-  "LPFeeCanNotBeLessThenAdminFee": "流动性提供者费用不能低于管理费",
-  "adminFeeCanNotBeMoreThenLPFee": "管理费不能超过LP费"
+  "adminFeeIsPercentOfTotalFee": "管理费是LP费用的百分比"
 }

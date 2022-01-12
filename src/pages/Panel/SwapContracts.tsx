@@ -257,9 +257,9 @@ export default function SwapContracts(props: any) {
             {t('feesDescription')}.
             <List>
               <li>{t('caseWhenNoFeesCharged')}</li>
-              <li>{t('caseWhenAllFeesToAdmin')}</li>
-              <li>{t('LPFeeCanNotBeLessThenAdminFee')}</li>
-              <li>{t('adminFeeCanNotBeMoreThenLPFee')}</li>
+              <li>
+                <strong>{t('adminFeeIsPercentOfTotalFee')}</strong>
+              </li>
             </List>
           </Info>
 
@@ -295,16 +295,16 @@ export default function SwapContracts(props: any) {
               <InputPanel
                 type="number"
                 min={0}
-                max={Number(totalFee)}
+                max={100}
                 step={0.01}
-                label={`${t('adminFee')} (0% - 99%)`}
+                label={`${t('adminFee')} (0% - 100%)`}
                 value={adminFee}
                 onChange={(v) =>
                   setValidValue({
                     v,
                     set: setAdminFee,
                     min: 0,
-                    max: Number(totalFee),
+                    max: 100,
                     maxDecimals: 2,
                   })
                 }

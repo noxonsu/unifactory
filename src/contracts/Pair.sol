@@ -121,6 +121,7 @@ contract Pair is ERC20 {
     }
 
     function _protocolLiquidity(uint rootK, uint rootKLast) internal view returns(uint liquidity) {
+        require(rootK > 0 && rootKLast > 0, 'Pair: ROOT_K_ZERO');
         bool allFeeToProtocol = IFactory(factory).allFeeToProtocol();
         uint maxProtocolPercent = IFactory(factory).MAX_PROTOCOL_FEE_PERCENT();
         uint protocolFee = IFactory(factory).protocolFee();

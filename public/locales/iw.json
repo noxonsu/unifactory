@@ -241,7 +241,5 @@
   "feeSettings": "הגדרות עמלות",
   "feesDescription": "דמי ספק הנזילות (דמי LP) מחויבים בכל החלפה ומצטברים בבריכת הנזילות של סכום נוסף אסימון LP. אתה יכול לקבל דמי שנצברו לאחר הסרת נזילות",
   "caseWhenNoFeesCharged": "אם דמי LP הוא 0%, אז אין עמלות, כולל עבור מנהל, מחויבים",
-  "caseWhenAllFeesToAdmin": "אם % מעמלת הניהול שווה לעמלת ה-LP כל העמלות מגיעות לכתובת הניהול",
-  "LPFeeCanNotBeLessThenAdminFee": "דמי ספק נזילות לא יכול להיות פחות דמי מנהל",
-  "adminFeeCanNotBeMoreThenLPFee": "דמי מנהל לא יכול להיות יותר דמי LP"
+  "adminFeeIsPercentOfTotalFee": "דמי הניהול הוא אחוז של דמי LP"
 }

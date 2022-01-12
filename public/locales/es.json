@@ -241,7 +241,5 @@
   "feeSettings": "Configuración de tarifas",
   "feesDescription": "La comisión del proveedor de liquidez (comisión LP) se cobra en cada swap y se acumula en el fondo de liquidez de una cantidad adicional en el token LP. Puede recibir comisiones acumuladas después de la eliminación de liquidez",
   "caseWhenNoFeesCharged": "Si la tarifa de LP es del 0%, no se cobra ninguna tarifa, incluida la del administrador",
-  "caseWhenAllFeesToAdmin": "Si el % de la tarifa de administración es igual a la tarifa de LP, todas las tarifas van a la dirección de administración",
-  "LPFeeCanNotBeLessThenAdminFee": "La tarifa del proveedor de liquidez no puede ser inferior a la tarifa de administración",
-  "adminFeeCanNotBeMoreThenLPFee": "La tarifa de administración no puede ser superior a la tarifa de LP"
+  "adminFeeIsPercentOfTotalFee": "La tarifa de administración es un porcentaje de la tarifa de LP"
 }

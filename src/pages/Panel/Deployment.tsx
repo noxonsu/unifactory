@@ -7,7 +7,7 @@ import styled from 'styled-components'
 import { Text } from 'rebass'
 import networks from 'networks.json'
 import { ButtonPrimary } from 'components/Button'
-import QuestionHelper from 'components/QuestionHelper'
+// import QuestionHelper from 'components/QuestionHelper'
 import InputPanel from 'components/InputPanel'
 import AddressInputPanel from 'components/AddressInputPanel'
 import TransactionConfirmationModal, { ConfirmationModalContent } from 'components/TransactionConfirmationModal'
@@ -34,13 +34,19 @@ const InputWrapper = styled.div`
   margin: 0.2rem 0;
 `
 
-const Label = styled.div`
-  display: flex;
-  align-items: center;
-`
+// const Label = styled.div`
+//   display: flex;
+//   align-items: center;
+// `
 
 export default function Deployment(props: any) {
-  const { pending, setError, wrappedToken, setWrappedToken, setDomainDataTrigger } = props
+  const {
+    pending,
+    setError,
+    wrappedToken,
+    // setWrappedToken,
+    setDomainDataTrigger,
+  } = props
   const { t } = useTranslation()
   const { library, chainId } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
@@ -202,7 +208,7 @@ export default function Deployment(props: any) {
 
       <Title>1) {t('deploySwapContracts')}</Title>
 
-      <AddressInputPanel
+      {/* <AddressInputPanel
         label={
           <Label>
             {t('wrappedToken')} * <QuestionHelper text={t('wrappedTokenDescription')} />
@@ -216,7 +222,7 @@ export default function Deployment(props: any) {
           //@ts-ignore
           networks[chainId]?.wrappedToken?.address && wrappedToken
         }
-      />
+      /> */}
       <Button
         onClick={() => {
           setDeployableOption(DeployOption.Swap)

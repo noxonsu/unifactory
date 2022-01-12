@@ -29,22 +29,24 @@ const InputContainer = styled.div`
 `
 
 const Input = styled.input<{ disabled: boolean }>`
-  font-size: 1.25rem;
   outline: none;
   border: none;
+  width: 100%;
+  padding: 0px;
   flex: 1 1 auto;
-  width: 0;
   background-color: ${({ theme }) => theme.bg1};
   transition: color 300ms step-start;
   color: ${({ theme }) => theme.text1};
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: 1.25rem;
   font-weight: 500;
-  width: 100%;
+
+  ${({ disabled }) => (disabled ? 'opacity: 0.5' : '')};
+
   ::placeholder {
     color: ${({ theme }) => theme.text4};
   }
-  padding: 0px;
   -webkit-appearance: textfield;
 
   ::-webkit-search-decoration {
