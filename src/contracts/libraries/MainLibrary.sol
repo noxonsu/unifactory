@@ -38,12 +38,12 @@ library MainLibrary {
     function getAmountOut(address factory, uint amountIn, uint reserveIn, uint reserveOut) internal view returns (uint amountOut) {
         require(amountIn > 0, 'MainLibrary: INSUFFICIENT_INPUT_AMOUNT');
         require(reserveIn > 0 && reserveOut > 0, 'MainLibrary: INSUFFICIENT_LIQUIDITY');
-        uint MAX_PERCENT = IFactory(factory).MAX_PERCENT();
+        uint maxPercent = IFactory(factory).MAX_TOTAL_FEE_PERCENT();
         uint totalFee = IFactory(factory).totalFee();
-        uint inputFraction = MAX_PERCENT.sub(totalFee);
+        uint inputFraction = maxPercent.sub(totalFee);
         uint amountInWithFee = amountIn.mul(inputFraction);
         uint numerator = amountInWithFee.mul(reserveOut);
-        uint denominator = reserveIn.mul(MAX_PERCENT).add(amountInWithFee);
+        uint denominator = reserveIn.mul(maxPercent).add(amountInWithFee);
         amountOut = numerator / denominator;
     }
 
@@ -51,10 +51,10 @@ library MainLibrary {
     function getAmountIn(address factory, uint amountOut, uint reserveIn, uint reserveOut) internal view returns (uint amountIn) {
         require(amountOut > 0, 'MainLibrary: INSUFFICIENT_OUTPUT_AMOUNT');
         require(reserveIn > 0 && reserveOut > 0, 'MainLibrary: INSUFFICIENT_LIQUIDITY');
-        uint MAX_PERCENT = IFactory(factory).MAX_PERCENT();
+        uint maxPercent = IFactory(factory).MAX_TOTAL_FEE_PERCENT();
         uint totalFee = IFactory(factory).totalFee();
-        uint inputFraction = MAX_PERCENT.sub(totalFee);
-        uint numerator = reserveIn.mul(amountOut).mul(MAX_PERCENT);
+        uint inputFraction = maxPercent.sub(totalFee);
+        uint numerator = reserveIn.mul(amountOut).mul(maxPercent);
         uint denominator = reserveOut.sub(amountOut).mul(inputFraction);
         amountIn = (numerator / denominator).add(1);
     }

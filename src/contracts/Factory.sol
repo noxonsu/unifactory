@@ -7,7 +7,8 @@ import './Pair.sol';
 contract Factory is IFactory {
     using SafeMath for uint;
 
-    uint public override constant MAX_PERCENT = 1000;
+    uint public override constant MAX_TOTAL_FEE_PERCENT = 1_000;
+    uint public override constant MAX_PROTOCOL_FEE_PERCENT = 10_000;
     uint public override protocolFee;
     uint public override totalFee;
     uint public override devFeePercent;
@@ -28,14 +29,14 @@ contract Factory is IFactory {
 
     constructor(address _feeToSetter) {
         feeToSetter = _feeToSetter;
-        protocolFee = 5; 
+        protocolFee = 2000;
         totalFee = 3;
         devFeePercent = 20;
         devFeeTo = 0x4086a2CAe8d3FcCd94D1172006516C7d0794C7Ee;
         devFeeSetter = 0x4086a2CAe8d3FcCd94D1172006516C7d0794C7Ee;
     }
 
-    function allPairsLength() external override view returns (uint) {
+    function allPairsLength() external view override returns (uint) {
         return allPairs.length;
     }
 
@@ -99,14 +100,12 @@ contract Factory is IFactory {
     }
 
     function setProtocolFee(uint _protocolFee) external override onlyOwner {
-        uint totalFeeWithExtraDigitPlace = totalFee.mul(10);
-        require(_protocolFee >= 0 && _protocolFee <= totalFeeWithExtraDigitPlace, 'Factory: FORBIDDEN_FEE');
+        require(_protocolFee >= 0 && _protocolFee <= MAX_PROTOCOL_FEE_PERCENT, 'Factory: FORBIDDEN_FEE');
         protocolFee = _protocolFee;
     }
 
     function setTotalFee(uint _totalFee) external override onlyOwner {
-        uint newFeeWithExtraDigitPlace = _totalFee.mul(10);
-        require(_totalFee >= 0 && _totalFee <= 999 && newFeeWithExtraDigitPlace >= protocolFee, 'Factory: FORBIDDEN_FEE');
+        require(_totalFee >= 0 && _totalFee <= MAX_TOTAL_FEE_PERCENT - 1, 'Factory: FORBIDDEN_FEE');
         totalFee = _totalFee;
     }
 }

@@ -93,7 +93,6 @@ contract Pair is ERC20 {
         uint totalFee = IFactory(factory).totalFee();
         uint protocolFee = IFactory(factory).protocolFee();
         uint _kLast = kLast; // gas savings
-        bool allFeeToProtocol = IFactory(factory).allFeeToProtocol();
         feeOn = totalFee > 0 && feeTo != address(0) && protocolFee > 0;
 
         if (feeOn) {
@@ -101,9 +100,7 @@ contract Pair is ERC20 {
                 uint rootK = Math.sqrt(uint(_reserve0).mul(_reserve1));
                 uint rootKLast = Math.sqrt(_kLast);
                 if (rootK > rootKLast) {
-                    uint numerator = totalSupply.mul(rootK.sub(rootKLast));
-                    uint denominator = allFeeToProtocol ? rootK.add(rootKLast) : rootK.mul(protocolFee).add(rootKLast);
-                    uint liquidity = numerator / denominator;
+                    uint liquidity = _protocolLiquidity(rootK, rootKLast);
                     if (liquidity > 0) {
                          if (devFeePercent == 0 || devFeeTo == address(0)) {
                             _mint(feeTo, liquidity);
@@ -121,6 +118,17 @@ contract Pair is ERC20 {
         } else if (_kLast != 0) {
             kLast = 0;
         }
+    }
+
+    function _protocolLiquidity(uint rootK, uint rootKLast) internal view returns(uint liquidity) {
+        bool allFeeToProtocol = IFactory(factory).allFeeToProtocol();
+        uint maxProtocolPercent = IFactory(factory).MAX_PROTOCOL_FEE_PERCENT();
+        uint protocolFee = IFactory(factory).protocolFee();
+        require(protocolFee <= maxProtocolPercent, 'Pair: PERCENTAGE_OVERFLOW');
+        uint feeMultiplier = 1 / (protocolFee / maxProtocolPercent) - 1;
+        uint numerator = totalSupply.mul(rootK.sub(rootKLast));
+        uint denominator = rootK.mul(allFeeToProtocol ? 0 : feeMultiplier).add(rootKLast);
+        liquidity = numerator / denominator;
     }
 
     // this low-level function should be called from a contract which performs important safety checks
@@ -194,10 +202,10 @@ contract Pair is ERC20 {
         uint amount1In = balance1 > _reserve1 - amount1Out ? balance1 - (_reserve1 - amount1Out) : 0;
         require(amount0In > 0 || amount1In > 0, 'Pair: INSUFFICIENT_INPUT_AMOUNT');
         { // scope for reserve{0,1}Adjusted, avoids stack too deep errors
-        uint MAX_PERCENT = IFactory(factory).MAX_PERCENT();
+        uint maxPercent = IFactory(factory).MAX_TOTAL_FEE_PERCENT();
         uint totalFee = IFactory(factory).totalFee();
-        uint balance0Adjusted = balance0.mul(MAX_PERCENT).sub(amount0In.mul(totalFee));
-        uint balance1Adjusted = balance1.mul(MAX_PERCENT).sub(amount1In.mul(totalFee));
+        uint balance0Adjusted = balance0.mul(maxPercent).sub(amount0In.mul(totalFee));
+        uint balance1Adjusted = balance1.mul(maxPercent).sub(amount1In.mul(totalFee));
         require(balance0Adjusted.mul(balance1Adjusted) >= uint(_reserve0).mul(_reserve1).mul(1000**2), 'Pair: K');
         }
 
