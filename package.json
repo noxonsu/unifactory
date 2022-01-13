@@ -87,6 +87,7 @@
     "react-window": "1.8.6",
     "rebass": "4.0.7",
     "redux-localstorage-simple": "2.4.1",
+    "rewire": "^6.0.0",
     "styled-components": "5.3.0",
     "ts-jest": "^27.1.2",
     "typescript": "3.9.10",
@@ -98,6 +99,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "build_clean": "node ./scripts/build-non-split.js",
     "test": "react-scripts test --env=jsdom",
     "test-add-liquidity": "jest test/e2e/addLiquidity.test.ts --detectOpenHandles",
     "eject": "react-scripts eject",
