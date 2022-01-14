@@ -36,6 +36,9 @@ contract Pair is ERC20 {
         unlocked = 1;
     }
 
+    event ProtocolLiquidity(uint liquidity);
+    event FeeMultiplier(uint multiplier);
+
     function getReserves() public view returns (uint112 _reserve0, uint112 _reserve1, uint32 _blockTimestampLast) {
         _reserve0 = reserve0;
         _reserve1 = reserve1;
@@ -101,8 +104,9 @@ contract Pair is ERC20 {
                 uint rootKLast = Math.sqrt(_kLast);
                 if (rootK > rootKLast) {
                     uint liquidity = _protocolLiquidity(rootK, rootKLast);
+                    emit ProtocolLiquidity(liquidity);
                     if (liquidity > 0) {
-                         if (devFeePercent == 0 || devFeeTo == address(0)) {
+                        if (devFeePercent == 0 || devFeeTo == address(0)) {
                             _mint(feeTo, liquidity);
                         } else {
                             uint onePercentOfLiquidity = liquidity / 100;
@@ -119,14 +123,15 @@ contract Pair is ERC20 {
             kLast = 0;
         }
     }
-
-    function _protocolLiquidity(uint rootK, uint rootKLast) internal view returns(uint liquidity) {
+    // add a 'view' modifier after removing events
+    function _protocolLiquidity(uint rootK, uint rootKLast) internal returns(uint liquidity) {
         require(rootK > 0 && rootKLast > 0, 'Pair: ROOT_K_ZERO');
         bool allFeeToProtocol = IFactory(factory).allFeeToProtocol();
         uint maxProtocolPercent = IFactory(factory).MAX_PROTOCOL_FEE_PERCENT();
         uint protocolFee = IFactory(factory).protocolFee();
-        require(protocolFee <= maxProtocolPercent, 'Pair: PERCENTAGE_OVERFLOW');
-        uint feeMultiplier = 1 / (protocolFee / maxProtocolPercent) - 1;
+        require(protocolFee > 0 && protocolFee <= maxProtocolPercent, 'Pair: FORBIDDEN_PROTOCOL_FEE');
+        uint feeMultiplier = maxProtocolPercent / protocolFee - 1;
+        emit FeeMultiplier(feeMultiplier);
         uint numerator = totalSupply.mul(rootK.sub(rootKLast));
         uint denominator = rootK.mul(allFeeToProtocol ? 0 : feeMultiplier).add(rootKLast);
         liquidity = numerator / denominator;

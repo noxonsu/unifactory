@@ -264,7 +264,13 @@ export default function SwapContracts(props: any) {
           </Info>
 
           {/* form tag for the native validation */}
-          <form action="" onSubmit={() => false}>
+          <form
+            action=""
+            onSubmit={(event) => {
+              event.preventDefault()
+              return false
+            }}
+          >
             <OptionWrapper>
               <InputPanel
                 type="number"

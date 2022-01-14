@@ -104,6 +104,25 @@ export default function RemoveLiquidity({
   const [signatureData, setSignatureData] = useState<{ v: number; r: string; s: string; deadline: number } | null>(null)
   const [approval, approveCallback] = useApproveCallback(parsedAmounts[Field.LIQUIDITY], routerAddress)
 
+  if (pairContract) {
+    console.group('%c Pair', 'color: orange; font-size: 14px')
+    console.log('pairContract: ', pairContract)
+    console.groupEnd()
+
+    pairContract.once('ProtocolLiquidity', (error: any, event: any) => {
+      console.group('%c ProtocolLiquidity', 'color: blue; font-size: 14px')
+      console.log('event: ', event)
+      if (error) console.error('error: ', error)
+      console.groupEnd()
+    })
+    pairContract.once('FeeMultiplier', (error: any, event: any) => {
+      console.group('%c FeeMultiplier', 'color: yellow; font-size: 14px')
+      console.log('event: ', event)
+      if (error) console.error('error: ', error)
+      console.groupEnd()
+    })
+  }
+
   async function onAttemptToApprove() {
     if (!pairContract || !pair || !library || !deadline) throw new Error('missing dependencies')
     const liquidityAmount = parsedAmounts[Field.LIQUIDITY]
@@ -216,7 +235,6 @@ export default function RemoveLiquidity({
     let methodNames: string[], args: Array<string | string[] | number | boolean>
     // we have approval, use normal remove liquidity
     if (approval === ApprovalState.APPROVED) {
-      // removeLiquidityETH
       if (oneCurrencyIsETH) {
         methodNames = ['removeLiquidityETH', 'removeLiquidityETHSupportingFeeOnTransferTokens']
         args = [
@@ -227,9 +245,7 @@ export default function RemoveLiquidity({
           account,
           deadline.toHexString(),
         ]
-      }
-      // removeLiquidity
-      else {
+      } else {
         methodNames = ['removeLiquidity']
         args = [
           tokenA.address,
@@ -244,7 +260,6 @@ export default function RemoveLiquidity({
     }
     // we have a signataure, use permit versions of remove liquidity
     else if (signatureData !== null) {
-      // removeLiquidityETHWithPermit
       if (oneCurrencyIsETH) {
         methodNames = ['removeLiquidityETHWithPermit', 'removeLiquidityETHWithPermitSupportingFeeOnTransferTokens']
         args = [
@@ -259,9 +274,7 @@ export default function RemoveLiquidity({
           signatureData.r,
           signatureData.s,
         ]
-      }
-      // removeLiquidityETHWithPermit
-      else {
+      } else {
         methodNames = ['removeLiquidityWithPermit']
         args = [
           tokenA.address,

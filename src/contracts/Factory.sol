@@ -7,6 +7,7 @@ import './Pair.sol';
 contract Factory is IFactory {
     using SafeMath for uint;
 
+    uint[30] public POSSIBLE_PROTOCOL_PERCENT = [10000, 5000, 3300, 2500, 2000, 1600, 1400, 1200, 1100, 1000, 900, 800, 700, 600, 500, 400, 300, 200, 100, 90, 80, 70, 60, 50, 40, 30, 20, 10, 5, 1];
     uint public override constant MAX_TOTAL_FEE_PERCENT = 1_000;
     uint public override constant MAX_PROTOCOL_FEE_PERCENT = 10_000;
     uint public override protocolFee;
@@ -101,6 +102,15 @@ contract Factory is IFactory {
 
     function setProtocolFee(uint _protocolFee) external override onlyOwner {
         require(_protocolFee >= 0 && _protocolFee <= MAX_PROTOCOL_FEE_PERCENT, 'Factory: FORBIDDEN_FEE');
+        if (_protocolFee != 0) {
+            bool allowed;
+            for(uint x; x < POSSIBLE_PROTOCOL_PERCENT.length; x++) {
+                if (!allowed && _protocolFee == POSSIBLE_PROTOCOL_PERCENT[x]) {
+                    allowed = true;
+                }
+            }
+            if (!allowed) revert('Factory: FORBIDDEN_FEE');
+        }
         protocolFee = _protocolFee;
     }
 
