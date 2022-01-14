@@ -19,8 +19,9 @@ export const factoryMethods = {
   setFeeTo: 'setFeeTo',
   setFeeToSetter: 'setFeeToSetter',
   setAllFeeToProtocol: 'setAllFeeToProtocol',
-  setProtocolFee: 'setProtocolFee',
+  setMainFees: 'setMainFees',
   setTotalFee: 'setTotalFee',
+  setProtocolFee: 'setProtocolFee',
 }
 
 export interface WalletInfo {

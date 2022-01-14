@@ -43,6 +43,7 @@ interface IFactory {
     function setDevFeeTo(address) external;
     function setDevFeeSetter(address) external;
     function setAllFeeToProtocol(bool) external;
+    function setMainFees(uint _totalFee, uint _protocolFee) external;
     function setProtocolFee(uint) external;
     function setTotalFee(uint) external;
 }

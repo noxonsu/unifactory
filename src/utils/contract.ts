@@ -162,14 +162,14 @@ export const setFactoryOption = async (params: {
   from: string
   factoryAddress: string
   method: string
-  value: any
+  values: any[]
   onHash?: (hash: string) => void
 }) => {
-  const { library, from, factoryAddress, method, value, onHash } = params
+  const { library, from, factoryAddress, method, values, onHash } = params
   const factory = getContractInstance(library, factoryAddress, Factory.abi)
 
   return new Promise((resolve, reject) => {
-    factory.methods[method](value)
+    factory.methods[method](...values)
       .send({
         from,
       })

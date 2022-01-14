@@ -103,7 +103,26 @@ contract Factory is IFactory {
         allFeeToProtocol = _allFeeToProtocol;
     }
 
+    function setMainFees(uint _totalFee, uint _protocolFee) external override onlyOwner {
+        _setTotalFee(_totalFee);
+        _setProtocolFee(_protocolFee);
+        require(totalFee == _totalFee && protocolFee == _protocolFee, 'Factory: CANNOT_CHANGE');
+    }
+
+    function setTotalFee(uint _totalFee) external override onlyOwner {
+        _setTotalFee(_totalFee);
+    }
+
     function setProtocolFee(uint _protocolFee) external override onlyOwner {
+        _setProtocolFee(_protocolFee);
+    }
+
+    function _setTotalFee(uint _totalFee) private {
+        require(_totalFee >= 0 && _totalFee <= MAX_TOTAL_FEE_PERCENT - 1, 'Factory: FORBIDDEN_FEE');
+        totalFee = _totalFee;
+    }
+
+    function _setProtocolFee(uint _protocolFee) private {
         require(_protocolFee >= 0 && _protocolFee <= MAX_PROTOCOL_FEE_PERCENT, 'Factory: FORBIDDEN_FEE');
         if (_protocolFee != 0) {
             bool allowed;
@@ -115,10 +134,5 @@ contract Factory is IFactory {
             if (!allowed) revert('Factory: FORBIDDEN_FEE');
         }
         protocolFee = _protocolFee;
-    }
-
-    function setTotalFee(uint _totalFee) external override onlyOwner {
-        require(_totalFee >= 0 && _totalFee <= MAX_TOTAL_FEE_PERCENT - 1, 'Factory: FORBIDDEN_FEE');
-        totalFee = _totalFee;
     }
 }

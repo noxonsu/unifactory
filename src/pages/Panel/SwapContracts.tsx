@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import isNumber from 'is-number'
 import styled, { withTheme } from 'styled-components'
 import { BigNumber } from 'bignumber.js'
 import { Box } from 'rebass'
@@ -11,6 +12,7 @@ import { useTransactionAdder } from 'state/transactions/hooks'
 import { useTranslation } from 'react-i18next'
 import { ButtonPrimary } from 'components/Button'
 import Accordion from 'components/Accordion'
+import InputPanel from 'components/InputPanel'
 import AddressInputPanel from 'components/AddressInputPanel'
 import QuestionHelper from 'components/QuestionHelper'
 import { isValidAddress, setFactoryOption, getFactoryOptions } from 'utils/contract'
@@ -109,7 +111,12 @@ function SwapContracts(props: any) {
   const { t } = useTranslation()
   const { library, account, chainId } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
-  const { factory: stateFactory, protocolFee: currentProtocolFee, possibleProtocolPercent } = useProjectInfo()
+  const {
+    factory: stateFactory,
+    totalFee: currentTotalFee,
+    protocolFee: currentProtocolFee,
+    possibleProtocolPercent,
+  } = useProjectInfo()
   const [factory, setFactory] = useState(stateFactory || '')
   const [factoryIsCorrect, setFactoryIsCorrect] = useState(false)
 
@@ -122,7 +129,9 @@ function SwapContracts(props: any) {
   const [admin, setAdmin] = useState('')
   const [feeRecipient, setFeeRecipient] = useState('')
   const [allFeesToAdmin, setAllFeesToAdmin] = useState(false)
-  const [totalFee, setTotalFee] = useState<number | string>('')
+  const [totalFee, setTotalFee] = useState<number | string>(
+    currentTotalFee ? new BigNumber(currentTotalFee).div(TOTAL_FEE_RATIO).toNumber() : ''
+  )
   const [protocolFee, setProtocolFee] = useState<number | string>('')
 
   const updateFeesToAdmin = (event: any) => setAllFeesToAdmin(event.target.checked)
@@ -153,26 +162,24 @@ function SwapContracts(props: any) {
   }
 
   const saveOption = async (method: string) => {
-    let value
+    const values: any[] = []
 
     switch (method) {
       case factoryMethods.setFeeToSetter:
-        value = admin
+        values.push(admin)
         break
       case factoryMethods.setFeeTo:
-        value = feeRecipient
+        values.push(feeRecipient)
         break
       case factoryMethods.setAllFeeToProtocol:
-        value = allFeesToAdmin
+        values.push(allFeesToAdmin)
         break
       case factoryMethods.setTotalFee:
-        value = convertFee(totalFee, TOTAL_FEE_RATIO, Representations.contract)
+        values.push(convertFee(totalFee, TOTAL_FEE_RATIO, Representations.contract))
         break
       case factoryMethods.setProtocolFee:
-        value = convertFee(protocolFee, PROTOCOL_FEE_RATIO, Representations.contract)
+        values.push(convertFee(protocolFee, PROTOCOL_FEE_RATIO, Representations.contract))
         break
-      default:
-        value = ''
     }
 
     setPending(true)
@@ -184,7 +191,7 @@ function SwapContracts(props: any) {
         from: account ?? '',
         factoryAddress: factory,
         method,
-        value,
+        values,
         onHash: (hash: string) => {
           addTransaction(
             { hash },
@@ -195,21 +202,66 @@ function SwapContracts(props: any) {
         },
       })
     } catch (error) {
-      setError(error)
+      const rejectionCode = 4001
+
+      if (error.code !== rejectionCode) setError(error)
     }
 
     setPending(false)
   }
 
-  const sliderMarks = possibleProtocolPercent?.length
-    ? possibleProtocolPercent.reduce((acc, percent, i) => {
-        const humanPercent = new BigNumber(percent).div(PROTOCOL_FEE_RATIO).toNumber()
+  const setValidValue = ({
+    v,
+    set,
+    min,
+    max,
+    maxDecimals,
+  }: {
+    v: string
+    set: (v: any) => void
+    min: number
+    max: number
+    maxDecimals: number
+  }) => {
+    let validValue = v.replace(/-/g, '')
+    const bigNum = new BigNumber(validValue)
 
-        return {
-          ...acc,
-          [humanPercent]: i === 0 || i === possibleProtocolPercent?.length - 1 ? `${humanPercent}%` : '',
-        }
-      }, {})
+    if (bigNum.isLessThan(min) || bigNum.isGreaterThan(max)) return
+
+    const floatCoincidence = validValue.match(/\..+/)
+
+    if (floatCoincidence) {
+      const floatNums = floatCoincidence[0].slice(1)
+
+      if (floatNums.length <= maxDecimals) set(validValue)
+    } else {
+      set(validValue)
+    }
+  }
+  //@ts-ignore
+  const isEqualCurrentFee = (currentFee, fee, ratio) =>
+    isNumber(currentFee) &&
+    //@ts-ignore: currentFee can't be equal undefined
+    new BigNumber(fee).times(ratio).isEqualTo(currentFee)
+
+  const sliderMarks = possibleProtocolPercent?.length
+    ? possibleProtocolPercent.reduce(
+        (acc, percent, i) => {
+          const humanPercent = new BigNumber(percent).div(PROTOCOL_FEE_RATIO).toNumber()
+          // reduce available protocol percent for now
+          const allowed = [0.05, 0.1, 0.5, 1, 3, 5, 8, 10, 14]
+
+          if (humanPercent < 16 && !allowed.includes(humanPercent)) {
+            return acc
+          }
+
+          return {
+            ...acc,
+            [humanPercent]: humanPercent === 0 || humanPercent === 100 ? `${humanPercent}%` : '',
+          }
+        },
+        { 0: '0%' }
+      )
     : { 1: 1, 100: 100 }
 
   return (
@@ -274,10 +326,44 @@ function SwapContracts(props: any) {
             </List>
           </Info>
 
+          <OptionWrapper>
+            <InputPanel
+              type="number"
+              min={0}
+              max={99}
+              step={0.1}
+              label={`${t('totalFee')} (0% - 99%)`}
+              value={totalFee}
+              onChange={(v) =>
+                setValidValue({
+                  v,
+                  set: setTotalFee,
+                  min: 0,
+                  max: 99,
+                  maxDecimals: 1,
+                })
+              }
+            />
+            <Button
+              onClick={() => saveOption(factoryMethods.setTotalFee)}
+              disabled={
+                !factoryIsCorrect ||
+                (!totalFee && totalFee !== 0) ||
+                isEqualCurrentFee(currentTotalFee, totalFee, TOTAL_FEE_RATIO)
+              }
+            >
+              {t('save')}
+            </Button>
+          </OptionWrapper>
+
           <SliderWrapper>
             <div className="top">
-              <span>{t('admin')}</span>
-              <span>{t('liquidityProviders')}</span>
+              <span>
+                {t('admin')} ({protocolFee}%)
+              </span>
+              <span>
+                {t('liquidityProviders')} ({new BigNumber(MAX_PERCENT).minus(protocolFee).toString()}%)
+              </span>
             </div>
 
             <div className="bottom">
@@ -290,10 +376,7 @@ function SwapContracts(props: any) {
                 marks={sliderMarks}
                 step={null}
                 handle={handleSliderChange}
-                onChange={(protocolFee) => {
-                  setProtocolFee(protocolFee)
-                  setTotalFee(MAX_PERCENT - protocolFee)
-                }}
+                onChange={setProtocolFee}
                 trackStyle={{ backgroundColor: theme.primary2 }}
                 railStyle={{ backgroundColor: theme.bg3 }}
               />
@@ -302,7 +385,11 @@ function SwapContracts(props: any) {
 
           <Button
             onClick={() => saveOption(factoryMethods.setProtocolFee)}
-            disabled={!factoryIsCorrect || (!protocolFee && protocolFee !== 0)}
+            disabled={
+              !factoryIsCorrect ||
+              (!protocolFee && protocolFee !== 0) ||
+              isEqualCurrentFee(currentProtocolFee, protocolFee, PROTOCOL_FEE_RATIO)
+            }
           >
             {t('save')}
           </Button>
