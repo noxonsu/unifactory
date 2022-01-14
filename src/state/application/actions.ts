@@ -42,6 +42,7 @@ export const retrieveDomainData = createAction<{
   protocolFee?: number
   totalFee?: number
   allFeeToProtocol?: boolean
+  possibleProtocolPercent?: number[]
 }>('application/retrieveDomainData')
 
 export const updateAppData = createAction<StorageState>('application/updateAppData')

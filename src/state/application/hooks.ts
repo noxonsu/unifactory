@@ -14,6 +14,7 @@ type ProjectInfo = {
   protocolFee?: number | undefined
   totalFee?: number | undefined
   allFeeToProtocol?: boolean | undefined
+  possibleProtocolPercent?: number[]
 } & StorageState
 
 // ? seams it does not make sense. We can use state data directly ?

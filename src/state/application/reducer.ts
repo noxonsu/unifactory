@@ -37,6 +37,7 @@ export type ApplicationState = {
   readonly protocolFee: number | undefined
   readonly totalFee: number | undefined
   readonly allFeeToProtocol: boolean | undefined
+  readonly possibleProtocolPercent: number[]
   readonly blockNumber: { readonly [chainId: number]: number }
   readonly popupList: PopupList
   readonly openModal: ApplicationModal | null
@@ -52,6 +53,7 @@ const initialState: ApplicationState = {
   protocolFee: undefined,
   totalFee: undefined,
   allFeeToProtocol: undefined,
+  possibleProtocolPercent: [],
   domain: '',
   projectName: '',
   brandColor: '',
@@ -82,12 +84,14 @@ export default createReducer(initialState, (builder) =>
         protocolFee,
         totalFee,
         allFeeToProtocol,
+        possibleProtocolPercent,
       } = action.payload
 
       if (admin === ZERO_ADDRESS) admin = ''
       if (factory === ZERO_ADDRESS) factory = ''
       if (router === ZERO_ADDRESS) router = ''
       if (storageAddr === ZERO_ADDRESS) storageAddr = ''
+      if (possibleProtocolPercent?.length) state.possibleProtocolPercent = possibleProtocolPercent
 
       state.admin = admin
       state.factory = factory

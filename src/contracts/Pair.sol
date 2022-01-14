@@ -37,7 +37,6 @@ contract Pair is ERC20 {
     }
 
     event ProtocolLiquidity(uint liquidity);
-    event FeeMultiplier(uint multiplier);
 
     function getReserves() public view returns (uint112 _reserve0, uint112 _reserve1, uint32 _blockTimestampLast) {
         _reserve0 = reserve0;
@@ -123,15 +122,14 @@ contract Pair is ERC20 {
             kLast = 0;
         }
     }
-    // add a 'view' modifier after removing events
-    function _protocolLiquidity(uint rootK, uint rootKLast) internal returns(uint liquidity) {
+
+    function _protocolLiquidity(uint rootK, uint rootKLast) internal view returns(uint liquidity) {
         require(rootK > 0 && rootKLast > 0, 'Pair: ROOT_K_ZERO');
         bool allFeeToProtocol = IFactory(factory).allFeeToProtocol();
         uint maxProtocolPercent = IFactory(factory).MAX_PROTOCOL_FEE_PERCENT();
         uint protocolFee = IFactory(factory).protocolFee();
         require(protocolFee > 0 && protocolFee <= maxProtocolPercent, 'Pair: FORBIDDEN_PROTOCOL_FEE');
         uint feeMultiplier = maxProtocolPercent / protocolFee - 1;
-        emit FeeMultiplier(feeMultiplier);
         uint numerator = totalSupply.mul(rootK.sub(rootKLast));
         uint denominator = rootK.mul(allFeeToProtocol ? 0 : feeMultiplier).add(rootKLast);
         liquidity = numerator / denominator;

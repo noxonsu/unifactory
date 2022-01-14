@@ -3,6 +3,9 @@ pragma solidity >=0.5.0;
 
 interface IFactory {
     struct AllInfo {
+        uint[30] POSSIBLE_PROTOCOL_PERCENT;
+        uint MAX_TOTAL_FEE_PERCENT;
+        uint MAX_PROTOCOL_FEE_PERCENT;
         uint protocolFee;
         uint totalFee;
         uint devFeePercent;

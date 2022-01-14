@@ -51,6 +51,9 @@ contract Factory is IFactory {
             devFeeTo: devFeeTo,
             devFeeSetter: devFeeSetter,
             allFeeToProtocol: allFeeToProtocol,
+            POSSIBLE_PROTOCOL_PERCENT: POSSIBLE_PROTOCOL_PERCENT,
+            MAX_TOTAL_FEE_PERCENT: MAX_TOTAL_FEE_PERCENT,
+            MAX_PROTOCOL_FEE_PERCENT: MAX_PROTOCOL_FEE_PERCENT,
             INIT_CODE_PAIR_HASH: INIT_CODE_PAIR_HASH
         });
     }
