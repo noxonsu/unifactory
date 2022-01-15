@@ -250,15 +250,13 @@ export default function Header() {
   const { account, chainId } = useActiveWeb3React()
   const { t } = useTranslation()
   const { logo: logoUrl, navigationLinks } = useProjectInfo()
-  // @ts-ignore
-  const wpLogo = window?.SO_Definance?.Logo
 
   return (
     <HeaderFrame>
       <HeaderRow>
         <Title href=".">
           <Icon>
-            <LogoImage src={(wpLogo && (wpLogo !== '')) ? wpLogo : logoUrl || TempLogo} alt="logo" />
+            <LogoImage src={logoUrl || TempLogo} alt="logo" />
           </Icon>
         </Title>
       </HeaderRow>
