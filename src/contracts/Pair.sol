@@ -36,8 +36,6 @@ contract Pair is ERC20 {
         unlocked = 1;
     }
 
-    event ProtocolLiquidity(uint liquidity);
-
     function getReserves() public view returns (uint112 _reserve0, uint112 _reserve1, uint32 _blockTimestampLast) {
         _reserve0 = reserve0;
         _reserve1 = reserve1;
@@ -60,6 +58,7 @@ contract Pair is ERC20 {
         address indexed to
     );
     event Sync(uint112 reserve0, uint112 reserve1);
+    event ProtocolLiquidity(uint liquidity);
 
     constructor() {
         factory = msg.sender;

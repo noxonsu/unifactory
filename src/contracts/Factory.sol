@@ -127,8 +127,9 @@ contract Factory is IFactory {
         if (_protocolFee != 0) {
             bool allowed;
             for(uint x; x < POSSIBLE_PROTOCOL_PERCENT.length; x++) {
-                if (!allowed && _protocolFee == POSSIBLE_PROTOCOL_PERCENT[x]) {
+                if (_protocolFee == POSSIBLE_PROTOCOL_PERCENT[x]) {
                     allowed = true;
+                    break;
                 }
             }
             if (!allowed) revert('Factory: FORBIDDEN_FEE');
