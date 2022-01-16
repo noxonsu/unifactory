@@ -243,5 +243,6 @@
   "caseWhenNoFeesCharged": "אם המחיר הכולל הוא 0%, אז אין עמלות, כולל עבור המנהל, מחויבים",
   "adminFeeIsPercentOfTotalFee": "דמי הניהול הם אחוז מהעמלה הכוללת",
   "totalFee": "סה כ תשלום",
-  "liquidityProviders": "ספקי נזילות"
+  "liquidityProviders": "ספקי נזילות",
+  "adminAndProvidersFeesDoNotWork": "דמי ניהול וספקים לא עובדים"
 }

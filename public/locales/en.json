@@ -254,5 +254,6 @@
   "caseWhenNoFeesCharged": "If the total fee is 0%, then no fees, including for the admin, are charged",
   "adminFeeIsPercentOfTotalFee": "The admin fee is a percentage of the total fee",
   "totalFee": "Total fee",
-  "liquidityProviders": "Liquidity providers"
+  "liquidityProviders": "Liquidity providers",
+  "adminAndProvidersFeesDoNotWork": "Admin and providers fees do not work"
 }

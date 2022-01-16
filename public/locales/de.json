@@ -255,5 +255,6 @@
   "caseWhenNoFeesCharged": "Wenn die Gesamtgebühr 0% beträgt, werden keine Gebühren, einschließlich für den Administrator, erhoben",
   "adminFeeIsPercentOfTotalFee": "Die Verwaltungsgebühr ist ein Prozentsatz der Gesamtgebühr",
   "totalFee": "Gesamtgebühr",
-  "liquidityProviders": "Liquiditätsanbieter"
+  "liquidityProviders": "Liquiditätsanbieter",
+  "adminAndProvidersFeesDoNotWork": "Admin- und Providergebühren funktionieren nicht"
 }

@@ -6,6 +6,7 @@ import { Box } from 'rebass'
 import { Label, Checkbox } from '@rebass/forms'
 import Slider, { SliderTooltip } from 'rc-slider'
 import 'rc-slider/assets/index.css'
+import { RiErrorWarningLine } from 'react-icons/ri'
 import { useActiveWeb3React } from 'hooks'
 import { useProjectInfo } from 'state/application/hooks'
 import { useTransactionAdder } from 'state/transactions/hooks'
@@ -24,11 +25,13 @@ const OptionWrapper = styled.div<{ margin?: number }>`
   padding: 0.3rem 0;
 `
 
-const Info = styled.div`
+const Info = styled.div<{ flex?: boolean }>`
   margin: 0.2rem 0;
   padding: 0.4rem;
   font-size: 0.9rem;
   opacity: 0.6;
+
+  ${({ flex }) => (flex ? 'display: flex; align-items: center;' : '')}
 `
 
 const List = styled.ul`
@@ -62,17 +65,18 @@ const InputLabel = styled.div`
 
 const SliderWrapper = styled.div`
   margin-bottom: 1.4rem;
-  padding: 0.4rem 0.4rem;
+  padding: 0.4rem 0;
 
   .top {
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.5rem;
+    padding: 0 0.4rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
   }
 
   .bottom {
-    padding: 0 0.3rem;
+    padding: 0 0.7rem;
   }
 `
 
@@ -130,9 +134,21 @@ function SwapContracts(props: any) {
   const [feeRecipient, setFeeRecipient] = useState('')
   const [allFeesToAdmin, setAllFeesToAdmin] = useState(false)
   const [totalFee, setTotalFee] = useState<number | string>(
-    currentTotalFee ? new BigNumber(currentTotalFee).div(TOTAL_FEE_RATIO).toNumber() : ''
+    //@ts-ignore
+    isNumber(currentTotalFee) ? new BigNumber(currentTotalFee).div(TOTAL_FEE_RATIO).toNumber() : ''
   )
   const [protocolFee, setProtocolFee] = useState<number | string>('')
+
+  useEffect(() => {
+    if (isNumber(currentTotalFee)) {
+      //@ts-ignore
+      setTotalFee(convertFee(currentTotalFee, TOTAL_FEE_RATIO, Representations.interface))
+    }
+    if (isNumber(currentProtocolFee)) {
+      //@ts-ignore
+      setProtocolFee(convertFee(currentProtocolFee, PROTOCOL_FEE_RATIO, Representations.interface))
+    }
+  }, [currentProtocolFee, currentTotalFee])
 
   const updateFeesToAdmin = (event: any) => setAllFeesToAdmin(event.target.checked)
 
@@ -357,12 +373,21 @@ function SwapContracts(props: any) {
           </OptionWrapper>
 
           <SliderWrapper>
+            {currentTotalFee === 0 && (
+              <Info flex>
+                <RiErrorWarningLine style={{ marginRight: '.5rem' }} /> {t('totalFee')} = 0%.{' '}
+                {t('adminAndProvidersFeesDoNotWork')}
+              </Info>
+            )}
+
             <div className="top">
               <span>
-                {t('admin')} ({protocolFee}%)
+                {t('admin')}
+                {isNumber(protocolFee) && ` (${protocolFee})%`}
               </span>
               <span>
-                {t('liquidityProviders')} ({new BigNumber(MAX_PERCENT).minus(protocolFee).toString()}%)
+                {t('liquidityProviders')}
+                {isNumber(protocolFee) && ` (${new BigNumber(MAX_PERCENT).minus(protocolFee).toString()}%)`}
               </span>
             </div>
 

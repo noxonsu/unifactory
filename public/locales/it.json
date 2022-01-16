@@ -254,5 +254,6 @@
   "caseWhenNoFeesCharged": "Se la commissione totale è dello 0%, non vengono addebitate commissioni, incluse quelle per l'amministratore",
   "adminFeeIsPercentOfTotalFee": "La commissione amministrativa è una percentuale della commissione totale",
   "totalFee": "Canone totale",
-  "liquidityProviders": "Fornitori di liquidità"
+  "liquidityProviders": "Fornitori di liquidità",
+  "adminAndProvidersFeesDoNotWork": "Le commissioni di amministrazione e fornitori non funzionano"
 }

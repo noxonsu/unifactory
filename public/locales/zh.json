@@ -243,5 +243,6 @@
   "caseWhenNoFeesCharged": "如果总费用为0%，则不收取任何费用，包括行政费用",
   "adminFeeIsPercentOfTotalFee": "管理费是总费用的百分比",
   "totalFee": "总费用",
-  "liquidityProviders": "流动资金提供者"
+  "liquidityProviders": "流动资金提供者",
+  "adminAndProvidersFeesDoNotWork": "管理和供应商费用不起作用"
 }
