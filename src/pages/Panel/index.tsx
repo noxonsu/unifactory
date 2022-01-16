@@ -40,7 +40,7 @@ const BackButton = styled(CleanButton)`
 `
 
 const NetworkInfo = styled.div`
-  margin-top: 0.6rem;
+  margin: 0.6rem;
   display: flex;
   justify-content: space-between;
 `
@@ -50,14 +50,16 @@ const Tabs = styled.div`
   flex-wrap: wrap;
 `
 
-const Tab = styled.button`
+const Tab = styled.button<{ active?: boolean }>`
   cursor: pointer;
   padding: 0.3rem 0.6rem;
   margin: 0.2rem 0 0.4rem;
   border-radius: 0.5rem;
   border: none;
-  font-size: 0.9em;
-  background-color: ${({ theme }) => theme.bg3};
+  font-size: 1.1em;
+  font-weight: 500;
+  border: 1px solid ${({ theme }) => theme.bg3};
+  background-color: ${({ theme, active }) => (active ? theme.bg3 : 'transparent')};
   color: ${({ theme }) => theme.text1};
 
   &:not(:last-child) {
@@ -116,7 +118,7 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
   const [tab, setTab] = useState('deployment')
 
   //@ts-ignore
-  const accountPrefix = networks[chainId] ? networks[chainId]?.name || t('account') : ''
+  const accountPrefix = networks[chainId]?.name || t('account')
   const domain = window.location.hostname || document.location.host
 
   const resetDomain = async () => {
@@ -132,6 +134,20 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
   }
 
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
+
+  const returnTabs = () => {
+    return [
+      { tabKey: 'deployment', tabName: 'deployment' },
+      { tabKey: 'contracts', tabName: 'swapContracts' },
+      { tabKey: 'interface', tabName: 'interface' },
+    ].map((info, index) => {
+      return (
+        <Tab key={index} active={tab === info.tabKey} onClick={() => setTab(info.tabKey)}>
+          {t(info.tabName)}
+        </Tab>
+      )
+    })
+  }
 
   return (
     <Wrapper>
@@ -160,10 +176,12 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
         <Wallet setPending={setPending} setError={setError} pending={pending} />
       </HeaderButtons>
 
-      <NetworkInfo>
-        {accountPrefix ? `${accountPrefix}: ` : ' '}
-        <span className="monospace">{shortenAddress(account || '')}</span>
-      </NetworkInfo>
+      {account && (
+        <NetworkInfo>
+          {accountPrefix ? `${accountPrefix}: ` : ' '}
+          <span className="monospace">{shortenAddress(account)}</span>
+        </NetworkInfo>
+      )}
 
       <Instruction />
 
@@ -176,11 +194,7 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
 
       <p>* {t('requiredField')}</p>
 
-      <Tabs>
-        <Tab onClick={() => setTab('deployment')}>{t('deployment')}</Tab>
-        <Tab onClick={() => setTab('contracts')}>{t('swapContracts')}</Tab>
-        <Tab onClick={() => setTab('interface')}>{t('interface')}</Tab>
-      </Tabs>
+      <Tabs>{returnTabs()}</Tabs>
 
       <Content>
         {tab === 'deployment' && (

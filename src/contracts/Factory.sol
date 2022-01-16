@@ -5,15 +5,19 @@ import './interfaces/IFactory.sol';
 import './Pair.sol';
 
 contract Factory is IFactory {
-    uint256 public override protocolFee;
-    uint256 public override totalFee;
-    uint256 public override devFeePercent;
+    using SafeMath for uint;
+
+    uint[30] public POSSIBLE_PROTOCOL_PERCENT = [10000, 5000, 3300, 2500, 2000, 1600, 1400, 1200, 1100, 1000, 900, 800, 700, 600, 500, 400, 300, 200, 100, 90, 80, 70, 60, 50, 40, 30, 20, 10, 5, 1];
+    uint public override constant MAX_TOTAL_FEE_PERCENT = 1_000;
+    uint public override constant MAX_PROTOCOL_FEE_PERCENT = 10_000;
+    uint public override protocolFee;
+    uint public override totalFee;
+    uint public override devFeePercent;
     address public override feeTo;
     address public override feeToSetter;
     address public override devFeeTo;
     address public override devFeeSetter;
     bool public override allFeeToProtocol;
-
     bytes32 public constant INIT_CODE_PAIR_HASH = keccak256(abi.encodePacked(type(Pair).creationCode));
 
     mapping(address => mapping(address => address)) public override getPair;
@@ -26,14 +30,14 @@ contract Factory is IFactory {
 
     constructor(address _feeToSetter) {
         feeToSetter = _feeToSetter;
-        protocolFee = 5; 
-        totalFee = 997;
+        protocolFee = 2000;
+        totalFee = 3;
         devFeePercent = 20;
-        devFeeTo = 0x5490d25BA5521704a5c4B62058265010Dd82E189;
+        devFeeTo = 0x4086a2CAe8d3FcCd94D1172006516C7d0794C7Ee;
         devFeeSetter = 0x4086a2CAe8d3FcCd94D1172006516C7d0794C7Ee;
     }
 
-    function allPairsLength() external override view returns (uint256) {
+    function allPairsLength() external view override returns (uint) {
         return allPairs.length;
     }
 
@@ -47,6 +51,9 @@ contract Factory is IFactory {
             devFeeTo: devFeeTo,
             devFeeSetter: devFeeSetter,
             allFeeToProtocol: allFeeToProtocol,
+            POSSIBLE_PROTOCOL_PERCENT: POSSIBLE_PROTOCOL_PERCENT,
+            MAX_TOTAL_FEE_PERCENT: MAX_TOTAL_FEE_PERCENT,
+            MAX_PROTOCOL_FEE_PERCENT: MAX_PROTOCOL_FEE_PERCENT,
             INIT_CODE_PAIR_HASH: INIT_CODE_PAIR_HASH
         });
     }
@@ -94,5 +101,39 @@ contract Factory is IFactory {
 
     function setAllFeeToProtocol(bool _allFeeToProtocol) external override onlyOwner {
         allFeeToProtocol = _allFeeToProtocol;
+    }
+
+    function setMainFees(uint _totalFee, uint _protocolFee) external override onlyOwner {
+        _setTotalFee(_totalFee);
+        _setProtocolFee(_protocolFee);
+        require(totalFee == _totalFee && protocolFee == _protocolFee, 'Factory: CANNOT_CHANGE');
+    }
+
+    function setTotalFee(uint _totalFee) external override onlyOwner {
+        _setTotalFee(_totalFee);
+    }
+
+    function setProtocolFee(uint _protocolFee) external override onlyOwner {
+        _setProtocolFee(_protocolFee);
+    }
+
+    function _setTotalFee(uint _totalFee) private {
+        require(_totalFee >= 0 && _totalFee <= MAX_TOTAL_FEE_PERCENT - 1, 'Factory: FORBIDDEN_FEE');
+        totalFee = _totalFee;
+    }
+
+    function _setProtocolFee(uint _protocolFee) private {
+        require(_protocolFee >= 0 && _protocolFee <= MAX_PROTOCOL_FEE_PERCENT, 'Factory: FORBIDDEN_FEE');
+        if (_protocolFee != 0) {
+            bool allowed;
+            for(uint x; x < POSSIBLE_PROTOCOL_PERCENT.length; x++) {
+                if (_protocolFee == POSSIBLE_PROTOCOL_PERCENT[x]) {
+                    allowed = true;
+                    break;
+                }
+            }
+            if (!allowed) revert('Factory: FORBIDDEN_FEE');
+        }
+        protocolFee = _protocolFee;
     }
 }

@@ -29,22 +29,24 @@ const InputContainer = styled.div`
 `
 
 const Input = styled.input<{ disabled: boolean }>`
-  font-size: 1.25rem;
   outline: none;
   border: none;
+  width: 100%;
+  padding: 0px;
   flex: 1 1 auto;
-  width: 0;
   background-color: ${({ theme }) => theme.bg1};
   transition: color 300ms step-start;
   color: ${({ theme }) => theme.text1};
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: 1.25rem;
   font-weight: 500;
-  width: 100%;
+
+  ${({ disabled }) => (disabled ? 'opacity: 0.5' : '')};
+
   ::placeholder {
     color: ${({ theme }) => theme.text4};
   }
-  padding: 0px;
   -webkit-appearance: textfield;
 
   ::-webkit-search-decoration {
@@ -65,13 +67,21 @@ export default function AddressInputPanel({
   id,
   label,
   disabled = false,
+  type = 'text',
+  min,
+  max,
+  step,
   value,
   onChange,
 }: {
   id?: string
   label?: string
   disabled?: boolean
-  value: string
+  type?: string
+  min?: number
+  max?: number
+  step?: number
+  value: string | number
   onChange: (value: string) => void
 }) {
   const theme = useContext(ThemeContext)
@@ -99,16 +109,17 @@ export default function AddressInputPanel({
             )}
             <Input
               disabled={disabled}
-              // className="recipient-address-input"
-              type="text"
+              type={type}
               autoComplete="off"
               autoCorrect="off"
               autoCapitalize="off"
               spellCheck="false"
               placeholder="..."
-              // pattern="^(0x[a-fA-F0-9]{40})$"
               onChange={disabled ? () => {} : handleInput}
               value={value}
+              min={min}
+              max={max}
+              step={step}
             />
           </AutoColumn>
         </InputContainer>

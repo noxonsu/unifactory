@@ -51,9 +51,15 @@ export default function useDomainInfo(trigger: boolean): {
           // in the updated contract verion we can extract all data at the same time
           // if there is no such method, then this is not a critical problem
           const factoryInfo = await factory.methods.allInfo().call()
-          const { protocolFee, totalFee, allFeeToProtocol } = factoryInfo
+          const { protocolFee, totalFee, allFeeToProtocol, POSSIBLE_PROTOCOL_PERCENT } = factoryInfo
 
-          fullData = { ...fullData, protocolFee, totalFee, allFeeToProtocol }
+          fullData = {
+            ...fullData,
+            protocolFee,
+            totalFee,
+            allFeeToProtocol,
+            possibleProtocolPercent: POSSIBLE_PROTOCOL_PERCENT,
+          }
         } catch (error) {
           if (error.message.match(/\.allInfo is not a function/)) {
             console.group('%c Factory', 'color: orange;')

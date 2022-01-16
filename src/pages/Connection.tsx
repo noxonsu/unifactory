@@ -3,6 +3,7 @@ import { ZERO_ADDRESS } from 'sdk'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import { FaWallet } from 'react-icons/fa'
+import { useWeb3React } from '@web3-react/core'
 import networks from 'networks.json'
 import { useDarkModeManager } from 'state/user/hooks'
 import AppBody from './AppBody'
@@ -79,14 +80,16 @@ interface ComponentProps {
 }
 
 export default function Connection({ domainData, isAvailableNetwork, setDomainDataTrigger }: ComponentProps) {
+  const { active } = useWeb3React()
   const { t } = useTranslation()
   const [darkMode] = useDarkModeManager()
 
   const needToConfigure =
-    !domainData ||
-    unavailableOrZeroAddr(domainData.admin) ||
-    unavailableOrZeroAddr(domainData.factory) ||
-    unavailableOrZeroAddr(domainData.router)
+    active &&
+    (!domainData ||
+      unavailableOrZeroAddr(domainData.admin) ||
+      unavailableOrZeroAddr(domainData.factory) ||
+      unavailableOrZeroAddr(domainData.router))
 
   const networks = supportedNetworks()
 

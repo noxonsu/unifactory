@@ -24,7 +24,7 @@ import { useCurrency, useAllTokens } from 'hooks/Tokens'
 import { ApprovalState, useApproveCallbackFromTrade } from 'hooks/useApproveCallback'
 import { useSwapCallback } from 'hooks/useSwapCallback'
 import useWrapCallback, { WrapType } from 'hooks/useWrapCallback'
-import { useToggleSettingsMenu, useWalletModalToggle } from 'state/application/hooks'
+import { useToggleSettingsMenu, useWalletModalToggle, useProjectInfo } from 'state/application/hooks'
 import { Field } from 'state/swap/actions'
 import { useDefaultsFromURLSearch, useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from 'state/swap/hooks'
 import { useExpertModeManager, useUserSlippageTolerance, useUserSingleHopOnly } from 'state/user/hooks'
@@ -38,6 +38,7 @@ import Loader from 'components/Loader'
 export default function Swap() {
   const loadedUrlParams = useDefaultsFromURLSearch()
   const { t } = useTranslation()
+  const { totalFee } = useProjectInfo()
 
   // token warning stuff
   const [loadedInputCurrency, loadedOutputCurrency] = [
@@ -160,7 +161,7 @@ export default function Swap() {
   // the callback to execute the swap
   const { callback: swapCallback, error: swapCallbackError } = useSwapCallback(trade, allowedSlippage, recipient)
 
-  const { priceImpactWithoutFee } = computeTradePriceBreakdown(trade)
+  const { priceImpactWithoutFee } = computeTradePriceBreakdown(trade, totalFee)
 
   const [singleHopOnly] = useUserSingleHopOnly()
 

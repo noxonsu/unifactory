@@ -247,5 +247,13 @@
   "addressesOfTokenLists": "Indirizzi delle liste di token",
   "beCareful": "Stia attento",
   "deploymentFlowDescription": "Quando distribuisci nuovi contratti, devi confermare ogni transazione dal tuo portafoglio esterno. È possibile controllare i dettagli della transazione, ma è necessario seguire il flusso di distribuzione. Altrimenti sarà difficile collegare questi contratti e usarli",
-  "consequencesOfDeploymentOfNewContracts": "È possibile distribuire nuovi contratti in qualsiasi momento, ma sarà riscrivere i loro indirizzi nell'applicazione. Nel caso in cui si dispone di una certa liquidità nei vecchi contratti, l'applicazione utilizzerà quelli nuovi con zero liquidità"
+  "consequencesOfDeploymentOfNewContracts": "È possibile distribuire nuovi contratti in qualsiasi momento, ma sarà riscrivere i loro indirizzi nell'applicazione. Nel caso in cui si dispone di una certa liquidità nei vecchi contratti, l'applicazione utilizzerà quelli nuovi con zero liquidità",
+  "adminFee": "Tassa di amministrazione",
+  "feeSettings": "Impostazioni tariffe",
+  "feesDescription": "La commissione totale viene addebitata ad ogni swap e si accumula nel pool di liquidità di un importo aggiuntivo nel token LP. È possibile ricevere commissioni accumulate dopo la rimozione della liquidità",
+  "caseWhenNoFeesCharged": "Se la commissione totale è dello 0%, non vengono addebitate commissioni, incluse quelle per l'amministratore",
+  "adminFeeIsPercentOfTotalFee": "La commissione amministrativa è una percentuale della commissione totale",
+  "totalFee": "Canone totale",
+  "liquidityProviders": "Fornitori di liquidità",
+  "adminAndProvidersFeesDoNotWork": "Le commissioni di amministrazione e fornitori non funzionano"
 }

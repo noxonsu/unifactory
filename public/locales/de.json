@@ -248,5 +248,13 @@
   "addressesOfTokenLists": "Adressen von Token-Listen",
   "beCareful": "Seien Sie vorsichtig",
   "deploymentFlowDescription": "Wenn Sie neue Verträge bereitstellen, müssen Sie jede Transaktion aus Ihrer externen Brieftasche bestätigen. Sie können die Transaktionsdetails überprüfen, müssen jedoch den Bereitstellungsablauf befolgen. Andernfalls wird es schwierig sein, diese Verträge zu verbinden und zu verwenden",
-  "consequencesOfDeploymentOfNewContracts": "Sie können jederzeit neue Verträge bereitstellen, aber Sie werden ihre Adressen in der Anwendung neu schreiben. Falls Sie etwas Liquidität in den alten Verträgen haben, wird die Anwendung die neuen mit Null Liquidität verwenden"
+  "consequencesOfDeploymentOfNewContracts": "Sie können jederzeit neue Verträge bereitstellen, aber Sie werden ihre Adressen in der Anwendung neu schreiben. Falls Sie etwas Liquidität in den alten Verträgen haben, wird die Anwendung die neuen mit Null Liquidität verwenden",
+  "adminFee": "Verwaltungsgebühr",
+  "feeSettings": "Gebühreneinstellungen",
+  "feesDescription": "Die Gesamtgebühr wird bei jedem Swap erhoben und sammelt sich im Liquiditätspool eines zusätzlichen Betrags im LP-Token an. Sie können kumulierte Gebühren nach dem Entfernen der Liquidität erhalten",
+  "caseWhenNoFeesCharged": "Wenn die Gesamtgebühr 0% beträgt, werden keine Gebühren, einschließlich für den Administrator, erhoben",
+  "adminFeeIsPercentOfTotalFee": "Die Verwaltungsgebühr ist ein Prozentsatz der Gesamtgebühr",
+  "totalFee": "Gesamtgebühr",
+  "liquidityProviders": "Liquiditätsanbieter",
+  "adminAndProvidersFeesDoNotWork": "Admin- und Providergebühren funktionieren nicht"
 }

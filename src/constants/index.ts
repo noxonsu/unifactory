@@ -15,10 +15,13 @@ export const storageMethods = {
 }
 
 export const factoryMethods = {
+  allInfo: 'allInfo',
   setFeeTo: 'setFeeTo',
   setFeeToSetter: 'setFeeToSetter',
   setAllFeeToProtocol: 'setAllFeeToProtocol',
-  allInfo: 'allInfo',
+  setMainFees: 'setMainFees',
+  setTotalFee: 'setTotalFee',
+  setProtocolFee: 'setProtocolFee',
 }
 
 export interface WalletInfo {

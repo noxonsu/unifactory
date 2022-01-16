@@ -5,6 +5,7 @@ import { Text } from 'rebass'
 import { useTranslation } from 'react-i18next'
 import { ThemeContext } from 'styled-components'
 import { Field } from 'state/swap/actions'
+import { useProjectInfo } from 'state/application/hooks'
 import { TYPE } from 'theme'
 import {
   computeSlippageAdjustedAmounts,
@@ -33,13 +34,17 @@ export default function SwapModalFooter({
   disabledConfirm: boolean
 }) {
   const { t } = useTranslation()
+  const { totalFee } = useProjectInfo()
   const [showInverted, setShowInverted] = useState<boolean>(false)
   const theme = useContext(ThemeContext)
   const slippageAdjustedAmounts = useMemo(
     () => computeSlippageAdjustedAmounts(trade, allowedSlippage),
     [allowedSlippage, trade]
   )
-  const { priceImpactWithoutFee, realizedLPFee } = useMemo(() => computeTradePriceBreakdown(trade), [trade])
+  const { priceImpactWithoutFee, realizedLPFee } = useMemo(
+    () => computeTradePriceBreakdown(trade, totalFee),
+    [trade, totalFee]
+  )
   const severity = warningSeverity(priceImpactWithoutFee)
 
   return (

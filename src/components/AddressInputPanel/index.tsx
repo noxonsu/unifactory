@@ -37,7 +37,6 @@ const Input = styled.input<{ error?: boolean; disabled: boolean }>`
   outline: none;
   border: none;
   flex: 1 1 auto;
-  width: 0;
   background-color: ${({ theme }) => theme.bg1};
   transition: color 300ms ${({ error }) => (error ? 'step-end' : 'step-start')};
   color: ${({ error, theme }) => (error ? theme.red1 : theme.text1)};
@@ -45,6 +44,9 @@ const Input = styled.input<{ error?: boolean; disabled: boolean }>`
   text-overflow: ellipsis;
   font-weight: 500;
   width: 100%;
+
+  ${({ disabled }) => (disabled ? 'opacity: 0.5' : '')};
+
   ::placeholder {
     color: ${({ theme }) => theme.text4};
   }
@@ -77,9 +79,7 @@ export default function AddressInputPanel({
   label?: string | JSX.Element
   disabled?: boolean
   placeholder?: boolean | undefined
-  // the typed string value
   value: string
-  // triggers whenever the typed value changes
   onChange: (value: string) => void
 }) {
   const { chainId } = useActiveWeb3React()

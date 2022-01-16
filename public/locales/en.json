@@ -247,5 +247,13 @@
   "addressesOfTokenLists": "Addresses of token lists",
   "beCareful": "Be careful",
   "deploymentFlowDescription": "When you deploy new contracts, you need to confirm every transaction from your external wallet. You can check the transaction details, but you need to follow the deployment flow. Otherwise it will be difficult to connect these contracts and use them",
-  "consequencesOfDeploymentOfNewContracts": "You can deploy new contracts at any time, but you will rewrite their addresses in the application. In case you have some liquidity in the old contracts, the application will use the new ones with zero liquidity"
+  "consequencesOfDeploymentOfNewContracts": "You can deploy new contracts at any time, but you will rewrite their addresses in the application. In case you have some liquidity in the old contracts, the application will use the new ones with zero liquidity",
+  "adminFee": "Admin fee",
+  "feeSettings": "Fee settings",
+  "feesDescription": "The total fee is charged at each swap and accumulates in the liquidity pool of an additional amount in the LP token. You can receive accumulated fees after the removal of liquidity",
+  "caseWhenNoFeesCharged": "If the total fee is 0%, then no fees, including for the admin, are charged",
+  "adminFeeIsPercentOfTotalFee": "The admin fee is a percentage of the total fee",
+  "totalFee": "Total fee",
+  "liquidityProviders": "Liquidity providers",
+  "adminAndProvidersFeesDoNotWork": "Admin and providers fees do not work"
 }

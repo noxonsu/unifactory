@@ -157,19 +157,24 @@ export const getFactoryOptions = async (library: Web3Provider, factoryAddress: s
   })
 }
 
-export const setFactoryOption = async (
-  library: Web3Provider,
-  from: string,
-  factoryAddress: string,
-  method: string,
-  value: any
-) => {
+export const setFactoryOption = async (params: {
+  library: Web3Provider
+  from: string
+  factoryAddress: string
+  method: string
+  values: any[]
+  onHash?: (hash: string) => void
+}) => {
+  const { library, from, factoryAddress, method, values, onHash } = params
   const factory = getContractInstance(library, factoryAddress, Factory.abi)
 
   return new Promise((resolve, reject) => {
-    factory.methods[method](value)
+    factory.methods[method](...values)
       .send({
         from,
+      })
+      .on('transactionHash', (hash: string) => {
+        if (typeof onHash === 'function') onHash(hash)
       })
       .then(resolve)
       .catch(reject)

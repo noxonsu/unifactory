@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import styled, { keyframes } from 'styled-components'
-import { TYPE, ExternalLink } from '../../theme'
-
-import { useBlockNumber } from '../../state/application/hooks'
-import { getExplorerLink } from '../../utils'
-import { useActiveWeb3React } from '../../hooks'
+import { TYPE, ExternalLink } from 'theme'
+import { useBlockNumber } from 'state/application/hooks'
+import { getExplorerLink } from 'utils'
+import { useActiveWeb3React } from 'hooks'
 
 const StyledPolling = styled.div`
   position: fixed;
