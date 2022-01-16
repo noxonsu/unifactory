@@ -210,7 +210,7 @@ contract Pair is ERC20 {
         uint totalFee = IFactory(factory).totalFee();
         uint balance0Adjusted = balance0.mul(maxPercent).sub(amount0In.mul(totalFee));
         uint balance1Adjusted = balance1.mul(maxPercent).sub(amount1In.mul(totalFee));
-        require(balance0Adjusted.mul(balance1Adjusted) >= uint(_reserve0).mul(_reserve1).mul(1000**2), 'Pair: K');
+        require(balance0Adjusted.mul(balance1Adjusted) >= uint(_reserve0).mul(_reserve1).mul(maxPercent**2), 'Pair: K');
         }
 
         _update(balance0, balance1, _reserve0, _reserve1);

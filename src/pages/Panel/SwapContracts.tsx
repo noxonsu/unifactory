@@ -62,7 +62,7 @@ const InputLabel = styled.div`
 
 const SliderWrapper = styled.div`
   margin-bottom: 1.4rem;
-  padding: 0.4rem 1rem;
+  padding: 0.4rem 0.4rem;
 
   .top {
     margin-bottom: 0.4rem;
