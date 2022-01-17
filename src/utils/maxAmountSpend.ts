@@ -1,4 +1,4 @@
-import { BaseCurrency, CurrencyAmount, JSBI } from 'sdk'
+import { BaseCurrency, BaseCurrencyAmount, CurrencyAmount, JSBI } from 'sdk'
 import { MIN_ETH } from '../constants'
 
 /**
@@ -13,10 +13,10 @@ export function maxAmountSpend(
 
   if (currencyAmount.currency === baseCurrency) {
     if (JSBI.greaterThan(currencyAmount.raw, MIN_ETH)) {
-      return CurrencyAmount.ether(JSBI.subtract(currencyAmount.raw, MIN_ETH))
+      return new BaseCurrencyAmount(baseCurrency, JSBI.subtract(currencyAmount.raw, MIN_ETH))
     }
 
-    return CurrencyAmount.ether(JSBI.BigInt(0))
+    return new BaseCurrencyAmount(baseCurrency, JSBI.BigInt(0))
   }
 
   return currencyAmount

@@ -1,12 +1,13 @@
 import isNumber from 'is-number'
 import { BLOCKED_PRICE_IMPACT_NON_EXPERT } from '../constants'
-import { CurrencyAmount, Fraction, JSBI, Percent, TokenAmount, Trade } from 'sdk'
+import { BaseCurrency, BaseCurrencyAmount, CurrencyAmount, Fraction, JSBI, Percent, TokenAmount, Trade } from 'sdk'
 import { ALLOWED_PRICE_IMPACT_HIGH, ALLOWED_PRICE_IMPACT_LOW, ALLOWED_PRICE_IMPACT_MEDIUM } from '../constants'
 import { Field } from 'state/swap/actions'
 import { basisPointsToPercent } from './index'
 
 // computes price breakdown for the trade
 export function computeTradePriceBreakdown(
+  baseCurrency: BaseCurrency | null,
   trade?: Trade | null,
   totalFee?: number
 ): {
@@ -44,7 +45,7 @@ export function computeTradePriceBreakdown(
     trade &&
     (trade.inputAmount instanceof TokenAmount
       ? new TokenAmount(trade.inputAmount.token, realizedLPFee.multiply(trade.inputAmount.raw).quotient)
-      : CurrencyAmount.ether(realizedLPFee.multiply(trade.inputAmount.raw).quotient))
+      : new BaseCurrencyAmount(baseCurrency, realizedLPFee.multiply(trade.inputAmount.raw).quotient))
 
   return { priceImpactWithoutFee: priceImpactWithoutFeePercent, realizedLPFee: realizedLPFeeAmount }
 }
@@ -52,12 +53,14 @@ export function computeTradePriceBreakdown(
 // computes the minimum amount out and maximum amount in for a trade given a user specified allowed slippage in bips
 export function computeSlippageAdjustedAmounts(
   trade: Trade | undefined,
-  allowedSlippage: number
+  allowedSlippage: number,
+  baseCurrency: BaseCurrency | null
 ): { [field in Field]?: CurrencyAmount } {
   const pct = basisPointsToPercent(allowedSlippage)
+
   return {
-    [Field.INPUT]: trade?.maximumAmountIn(pct),
-    [Field.OUTPUT]: trade?.minimumAmountOut(pct),
+    [Field.INPUT]: trade?.maximumAmountIn(baseCurrency, pct),
+    [Field.OUTPUT]: trade?.minimumAmountOut(baseCurrency, pct),
   }
 }
 

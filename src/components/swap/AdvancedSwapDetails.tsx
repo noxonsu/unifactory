@@ -5,6 +5,7 @@ import { ThemeContext } from 'styled-components'
 import { Field } from 'state/swap/actions'
 import { useProjectInfo } from 'state/application/hooks'
 import { useUserSlippageTolerance } from 'state/user/hooks'
+import { useBaseCurrency } from 'hooks/useCurrency'
 import { TYPE } from 'theme'
 import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown } from 'utils/prices'
 import { AutoColumn } from '../Column'
@@ -17,9 +18,10 @@ function TradeSummary({ trade, allowedSlippage }: { trade: Trade; allowedSlippag
   const theme = useContext(ThemeContext)
   const { t } = useTranslation()
   const { totalFee } = useProjectInfo()
-  const { priceImpactWithoutFee, realizedLPFee } = computeTradePriceBreakdown(trade, totalFee)
+  const baseCurrency = useBaseCurrency()
+  const { priceImpactWithoutFee, realizedLPFee } = computeTradePriceBreakdown(baseCurrency, trade, totalFee)
   const isExactIn = trade.tradeType === TradeType.EXACT_INPUT
-  const slippageAdjustedAmounts = computeSlippageAdjustedAmounts(trade, allowedSlippage)
+  const slippageAdjustedAmounts = computeSlippageAdjustedAmounts(trade, allowedSlippage, baseCurrency)
 
   return (
     <>

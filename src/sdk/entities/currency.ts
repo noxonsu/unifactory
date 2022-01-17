@@ -30,7 +30,7 @@ export class Currency {
 export class BaseCurrency extends Currency {
   constructor(chainId: number) {
     //@ts-ignore
-    const { decimals, name, symbol } = networks[chainId] ? networks[chainId]?.baseCurrency : networks[1]?.baseCurrency
+    const { decimals, name, symbol } = networks[chainId]?.baseCurrency || networks[1]?.baseCurrency
 
     super(decimals, symbol, name)
   }

@@ -3,7 +3,7 @@ import { BaseCurrency } from 'sdk'
 import { ONE, TradeType, ZERO } from '../constants'
 import { sortedInsert } from '../utils'
 import { Currency } from './currency'
-import { CurrencyAmount } from './fractions/currencyAmount'
+import { CurrencyAmount, BaseCurrencyAmount } from './fractions/currencyAmount'
 import { Fraction } from './fractions/fraction'
 import { Percent } from './fractions/percent'
 import { Price } from './fractions/price'
@@ -232,13 +232,13 @@ export class Trade {
       tradeType === TradeType.EXACT_INPUT
         ? amount
         : route.input === baseCurrency
-        ? CurrencyAmount.ether(amounts[0].raw)
+        ? new BaseCurrencyAmount(baseCurrency, amounts[0].raw)
         : amounts[0]
     this.outputAmount =
       tradeType === TradeType.EXACT_OUTPUT
         ? amount
         : route.output === baseCurrency
-        ? CurrencyAmount.ether(amounts[amounts.length - 1].raw)
+        ? new BaseCurrencyAmount(baseCurrency, amounts[amounts.length - 1].raw)
         : amounts[amounts.length - 1]
     this.executionPrice = new Price(
       this.inputAmount.currency,
@@ -261,8 +261,9 @@ export class Trade {
    * Get the minimum amount that must be received from this trade for the given slippage tolerance
    * @param slippageTolerance tolerance of unfavorable slippage from the execution price of this trade
    */
-  public minimumAmountOut(slippageTolerance: Percent): CurrencyAmount {
+  public minimumAmountOut(baseCurrency: BaseCurrency | null, slippageTolerance: Percent): CurrencyAmount {
     invariant(!slippageTolerance.lessThan(ZERO), 'SLIPPAGE_TOLERANCE')
+
     if (this.tradeType === TradeType.EXACT_OUTPUT) {
       return this.outputAmount
     } else {
@@ -270,9 +271,10 @@ export class Trade {
         .add(slippageTolerance)
         .invert()
         .multiply(this.outputAmount.raw).quotient
+
       return this.outputAmount instanceof TokenAmount
         ? new TokenAmount(this.outputAmount.token, slippageAdjustedAmountOut)
-        : CurrencyAmount.ether(slippageAdjustedAmountOut)
+        : new BaseCurrencyAmount(baseCurrency, slippageAdjustedAmountOut)
     }
   }
 
@@ -280,7 +282,7 @@ export class Trade {
    * Get the maximum amount in that can be spent via this trade for the given slippage tolerance
    * @param slippageTolerance tolerance of unfavorable slippage from the execution price of this trade
    */
-  public maximumAmountIn(slippageTolerance: Percent): CurrencyAmount {
+  public maximumAmountIn(baseCurrency: BaseCurrency | null, slippageTolerance: Percent): CurrencyAmount {
     invariant(!slippageTolerance.lessThan(ZERO), 'SLIPPAGE_TOLERANCE')
     if (this.tradeType === TradeType.EXACT_INPUT) {
       return this.inputAmount
@@ -288,7 +290,7 @@ export class Trade {
       const slippageAdjustedAmountIn = new Fraction(ONE).add(slippageTolerance).multiply(this.inputAmount.raw).quotient
       return this.inputAmount instanceof TokenAmount
         ? new TokenAmount(this.inputAmount.token, slippageAdjustedAmountIn)
-        : CurrencyAmount.ether(slippageAdjustedAmountIn)
+        : new BaseCurrencyAmount(baseCurrency, slippageAdjustedAmountIn)
     }
   }
 

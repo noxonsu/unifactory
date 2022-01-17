@@ -32,7 +32,10 @@ export default function useWrapCallback(
   const wrappedToken = useWrappedToken()
   const balance = useCurrencyBalance(account ?? undefined, inputCurrency)
   // we can always parse the amount typed as the input currency, since wrapping is 1:1
-  const inputAmount = useMemo(() => tryParseAmount(typedValue, inputCurrency), [inputCurrency, typedValue])
+  const inputAmount = useMemo(
+    () => tryParseAmount(baseCurrency, typedValue, inputCurrency),
+    [inputCurrency, typedValue]
+  )
   const addTransaction = useTransactionAdder()
 
   return useMemo(() => {

@@ -163,7 +163,7 @@ export default function Swap() {
   // the callback to execute the swap
   const { callback: swapCallback, error: swapCallbackError } = useSwapCallback(trade, allowedSlippage, recipient)
 
-  const { priceImpactWithoutFee } = computeTradePriceBreakdown(trade, totalFee)
+  const { priceImpactWithoutFee } = computeTradePriceBreakdown(baseCurrency, trade, totalFee)
 
   const [singleHopOnly] = useUserSingleHopOnly()
 

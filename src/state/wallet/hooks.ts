@@ -1,4 +1,4 @@
-import { Currency, CurrencyAmount, JSBI, Token, TokenAmount } from 'sdk'
+import { Currency, CurrencyAmount, BaseCurrencyAmount, JSBI, Token, TokenAmount } from 'sdk'
 import { useMemo } from 'react'
 import ERC20_INTERFACE from 'constants/abis/erc20'
 import { useAllTokens } from 'hooks/Tokens'
@@ -15,6 +15,7 @@ export function useETHBalances(uncheckedAddresses?: (string | undefined)[]): {
   [address: string]: CurrencyAmount | undefined
 } {
   const multicallContract = useMulticallContract()
+  const baseCurrency = useBaseCurrency()
 
   const addresses: string[] = useMemo(
     () =>
@@ -37,10 +38,10 @@ export function useETHBalances(uncheckedAddresses?: (string | undefined)[]): {
     () =>
       addresses.reduce<{ [address: string]: CurrencyAmount }>((memo, address, i) => {
         const value = results?.[i]?.result?.[0]
-        if (value) memo[address] = CurrencyAmount.ether(JSBI.BigInt(value.toString()))
+        if (value) memo[address] = new BaseCurrencyAmount(baseCurrency, JSBI.BigInt(value.toString()))
         return memo
       }, {}),
-    [addresses, results]
+    [addresses, results, baseCurrency]
   )
 }
 
