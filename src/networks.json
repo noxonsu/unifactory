@@ -194,8 +194,8 @@
     "rpc": "https://rinkeby.arbitrum.io/rpc",
     "chainId": 421611,
     "explorer": "https://rinkeby-explorer.arbitrum.io",
-    "registry": "",
-    "multicall": "",
+    "registry": "0x0755ba6D3e0B799AC7Cd6707AddE7B72208DE08e",
+    "multicall": "0x04ad4Ce6015141F6f582A7451Cb7CD6866609298",
     "ENSRegistry": "",
     "baseCurrency": {
       "decimals": 18,
@@ -231,7 +231,7 @@
     "name": "Optimism Kovan",
     "rpc": "https://kovan.optimism.io/",
     "chainId": 69,
-    "explorer": "https://optimism.io",
+    "explorer": "https://kovan-optimistic.etherscan.io/",
     "registry": "",
     "multicall": "",
     "ENSRegistry": "",
@@ -271,7 +271,7 @@
     "chainId": 77,
     "explorer": "https://blockscout.com/poa/sokol",
     "registry": "0x63207FF111a54D6F35Ae18f82b1a9DEff3fbE3e0",
-    "multicall": "",
+    "multicall": "0x7864F845a4Da54d93A106F6eb125a27507b02320",
     "ENSRegistry": "",
     "baseCurrency": {
       "decimals": 18,
@@ -299,16 +299,16 @@
     },
     "wrappedToken": {
       "address": "",
-      "name": "Wrapped Ether",
-      "symbol": "WETH"
+      "name": "Wrapped RBTC",
+      "symbol": "RBTC"
     }
   },
   "31": {
     "name": "RSK testnet",
     "rpc": "https://public-node.testnet.rsk.co",
     "chainId": 31,
-    "explorer": "https://rsk.co",
-    "registry": "",
+    "explorer": "https://explorer.testnet.rsk.co",
+    "registry": "0x9664EC984D1c0d44dD22C161da1D06f7f72Ae092",
     "multicall": "0x9E469E1FC7Fb4c5d17897b68eaF1aFC9df39f103",
     "ENSRegistry": "",
     "baseCurrency": {
@@ -317,9 +317,9 @@
       "symbol": "RBTC"
     },
     "wrappedToken": {
-      "address": "",
-      "name": "Wrapped Ether",
-      "symbol": "WETH"
+      "address": "0x79D5C019F2515Cbc0596170Da44FCd26412c4f83",
+      "name": "Wrapped RBTC",
+      "symbol": "WRBTC"
     }
   }
 }
