@@ -2,6 +2,7 @@ import { isTradeBetter } from 'utils/trades'
 import { Currency, CurrencyAmount, Pair, Token, Trade } from 'sdk'
 import flatMap from 'lodash.flatmap'
 import { useMemo } from 'react'
+import { useBaseCurrency } from 'hooks/useCurrency'
 import { useWrappedToken } from 'hooks/useToken'
 import { useProjectInfo } from 'state/application/hooks'
 
@@ -14,12 +15,16 @@ import { useUserSingleHopOnly } from 'state/user/hooks'
 
 function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): Pair[] {
   const { chainId } = useActiveWeb3React()
+  const baseCurrency = useBaseCurrency()
   const wrappedToken = useWrappedToken()
 
   const bases: Token[] = chainId && wrappedToken ? [wrappedToken] : []
 
   const [tokenA, tokenB] = chainId
-    ? [wrappedCurrency(currencyA, chainId, wrappedToken), wrappedCurrency(currencyB, chainId, wrappedToken)]
+    ? [
+        wrappedCurrency(currencyA, chainId, wrappedToken, baseCurrency),
+        wrappedCurrency(currencyB, chainId, wrappedToken, baseCurrency),
+      ]
     : [undefined, undefined]
 
   const basePairs: [Token, Token][] = useMemo(

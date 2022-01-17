@@ -1,13 +1,14 @@
-import { Currency, CurrencyAmount, currencyEquals, ETHER, Token } from 'sdk'
+import { Currency, BaseCurrency, CurrencyAmount, currencyEquals, Token } from 'sdk'
 import React, { CSSProperties, MutableRefObject, useCallback, useEffect, useMemo, useState } from 'react'
 import { FixedSizeList } from 'react-window'
 import { Text } from 'rebass'
 import styled from 'styled-components'
-import { useActiveWeb3React } from '../../hooks'
-import { WrappedTokenInfo, useCombinedActiveList } from '../../state/lists/hooks'
+import { useActiveWeb3React } from 'hooks'
+import { WrappedTokenInfo, useCombinedActiveList } from 'state/lists/hooks'
 import { getBalance } from 'utils/token'
-import { TYPE } from '../../theme'
-import { useIsUserAddedToken, useAllInactiveTokens } from '../../hooks/Tokens'
+import { TYPE } from 'theme'
+import { useIsUserAddedToken, useAllInactiveTokens } from 'hooks/Tokens'
+import { useBaseCurrency } from 'hooks/useCurrency'
 import { useWrappedToken } from 'hooks/useToken'
 import Column from '../Column'
 import { RowFixed } from '../Row'
@@ -15,12 +16,12 @@ import CurrencyLogo from '../CurrencyLogo'
 import { MouseoverTooltip } from '../Tooltip'
 import { MenuItem } from './styleds'
 import Loader from '../Loader'
-import { isTokenOnList } from '../../utils'
+import { isTokenOnList } from 'utils'
 import ImportRow from './ImportRow'
 import { wrappedCurrency } from 'utils/wrappedCurrency'
 
-function currencyKey(currency: Currency): string {
-  return currency instanceof Token ? currency.address : currency === ETHER ? ETHER.name || '' : ''
+function currencyKey(currency: Currency, baseCurrency: BaseCurrency | null): string {
+  return currency instanceof Token ? currency.address : currency === baseCurrency ? baseCurrency.name || '' : ''
 }
 
 const StyledBalanceText = styled(Text)`
@@ -96,16 +97,17 @@ function CurrencyRow({
   style: CSSProperties
 }) {
   const { chainId = 0, account, library } = useActiveWeb3React()
-  const key = currencyKey(currency)
+  const baseCurrency = useBaseCurrency()
+  const key = currencyKey(currency, baseCurrency)
   const selectedTokenList = useCombinedActiveList(chainId)
-  const isOnSelectedList = isTokenOnList(selectedTokenList, currency)
+  const isOnSelectedList = isTokenOnList(selectedTokenList, baseCurrency, currency)
   const customAdded = useIsUserAddedToken(currency)
 
   const [balance, setBalance] = useState<CurrencyAmount | undefined>(undefined)
 
   useEffect(() => {
     async function fetch() {
-      const balance = await getBalance({ account: account ?? undefined, currency, library })
+      const balance = await getBalance({ account: account ?? undefined, currency, baseCurrency, library })
 
       if (balance) setBalance(balance)
     }
@@ -160,10 +162,11 @@ export default function CurrencyList({
   showImportView: () => void
   setImportToken: (token: Token) => void
 }) {
-  const itemData = useMemo(() => (showETH ? [ETHER, ...currencies] : currencies), [currencies, showETH])
-
   const { chainId } = useActiveWeb3React()
+  const baseCurrency = useBaseCurrency()
   const wrappedToken = useWrappedToken()
+
+  const itemData = useMemo(() => (showETH ? [baseCurrency, ...currencies] : currencies), [currencies, showETH])
 
   const inactiveTokens: {
     [address: string]: Token
@@ -176,7 +179,7 @@ export default function CurrencyList({
       const otherSelected = Boolean(otherCurrency && currencyEquals(otherCurrency, currency))
       const handleSelect = () => onCurrencySelect(currency)
 
-      const token = wrappedCurrency(currency, chainId, wrappedToken)
+      const token = wrappedCurrency(currency, chainId, wrappedToken, baseCurrency)
 
       const showImport = inactiveTokens && token && Object.keys(inactiveTokens).includes(token.address)
 
@@ -214,7 +217,7 @@ export default function CurrencyList({
     ]
   )
 
-  const itemKey = useCallback((index: number, data: any) => currencyKey(data[index]), [])
+  const itemKey = useCallback((index: number, data: any) => currencyKey(data[index], baseCurrency), [])
 
   return (
     <FixedSizeList

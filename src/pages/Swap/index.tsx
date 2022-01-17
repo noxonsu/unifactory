@@ -23,6 +23,7 @@ import { useActiveWeb3React } from 'hooks'
 import { useCurrency, useAllTokens } from 'hooks/Tokens'
 import { ApprovalState, useApproveCallbackFromTrade } from 'hooks/useApproveCallback'
 import { useSwapCallback } from 'hooks/useSwapCallback'
+import { useBaseCurrency } from 'hooks/useCurrency'
 import useWrapCallback, { WrapType } from 'hooks/useWrapCallback'
 import { useToggleSettingsMenu, useWalletModalToggle, useProjectInfo } from 'state/application/hooks'
 import { Field } from 'state/swap/actions'
@@ -39,6 +40,7 @@ export default function Swap() {
   const loadedUrlParams = useDefaultsFromURLSearch()
   const { t } = useTranslation()
   const { totalFee } = useProjectInfo()
+  const baseCurrency = useBaseCurrency()
 
   // token warning stuff
   const [loadedInputCurrency, loadedOutputCurrency] = [
@@ -155,7 +157,7 @@ export default function Swap() {
     }
   }, [approval, approvalSubmitted])
 
-  const maxAmountInput: CurrencyAmount | undefined = maxAmountSpend(currencyBalances[Field.INPUT])
+  const maxAmountInput: CurrencyAmount | undefined = maxAmountSpend(currencyBalances[Field.INPUT], baseCurrency)
   const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Field.INPUT]?.equalTo(maxAmountInput))
 
   // the callback to execute the swap

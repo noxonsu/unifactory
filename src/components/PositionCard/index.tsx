@@ -12,6 +12,7 @@ import { useTokenBalance } from 'state/wallet/hooks'
 import { currencyId } from 'utils/currencyId'
 import { unwrappedToken } from 'utils/wrappedCurrency'
 import { ButtonPrimary, ButtonEmpty } from '../Button'
+import { useBaseCurrency } from 'hooks/useCurrency'
 import { useWrappedToken } from 'hooks/useToken'
 import { useColor } from 'hooks/useColor'
 
@@ -59,10 +60,19 @@ interface PositionCardProps {
 export function MinimalPositionCard({ pair, showUnwrapped = false, border }: PositionCardProps) {
   const { t } = useTranslation()
   const { account } = useActiveWeb3React()
+  const baseCurrency = useBaseCurrency()
   const wrappedToken = useWrappedToken()
 
-  const currency0 = showUnwrapped ? pair.token0 : wrappedToken ? unwrappedToken(pair.token0, wrappedToken) : undefined
-  const currency1 = showUnwrapped ? pair.token1 : wrappedToken ? unwrappedToken(pair.token1, wrappedToken) : undefined
+  const currency0 = showUnwrapped
+    ? pair.token0
+    : wrappedToken
+    ? unwrappedToken(pair.token0, wrappedToken, baseCurrency)
+    : undefined
+  const currency1 = showUnwrapped
+    ? pair.token1
+    : wrappedToken
+    ? unwrappedToken(pair.token1, wrappedToken, baseCurrency)
+    : undefined
 
   const [showMore, setShowMore] = useState(false)
 
@@ -157,9 +167,10 @@ export function MinimalPositionCard({ pair, showUnwrapped = false, border }: Pos
 export default function FullPositionCard({ pair, border, stakedBalance }: PositionCardProps) {
   const { t } = useTranslation()
   const { account } = useActiveWeb3React()
+  const baseCurrency = useBaseCurrency()
   const wrappedToken = useWrappedToken()
-  const currency0 = wrappedToken ? unwrappedToken(pair.token0, wrappedToken) : undefined
-  const currency1 = wrappedToken ? unwrappedToken(pair.token1, wrappedToken) : undefined
+  const currency0 = wrappedToken ? unwrappedToken(pair.token0, wrappedToken, baseCurrency) : undefined
+  const currency1 = wrappedToken ? unwrappedToken(pair.token1, wrappedToken, baseCurrency) : undefined
 
   const [showMore, setShowMore] = useState(false)
 

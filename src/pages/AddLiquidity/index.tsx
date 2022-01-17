@@ -1,6 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionResponse } from '@ethersproject/providers'
-import { Currency, ETHER, TokenAmount } from 'sdk'
+import { Currency, TokenAmount } from 'sdk'
 import React, { useCallback, useContext, useState } from 'react'
 import { Plus } from 'react-feather'
 import { RouteComponentProps } from 'react-router-dom'
@@ -19,6 +19,7 @@ import Row, { RowBetween, RowFlat } from 'components/Row'
 import { PairState } from 'data/Reserves'
 import { useActiveWeb3React } from 'hooks'
 import { useCurrency } from 'hooks/Tokens'
+import { useBaseCurrency } from 'hooks/useCurrency'
 import { ApprovalState, useApproveCallback } from 'hooks/useApproveCallback'
 import useTransactionDeadline from 'hooks/useTransactionDeadline'
 import { useWalletModalToggle } from 'state/application/hooks'
@@ -46,6 +47,7 @@ export default function AddLiquidity({
 }: RouteComponentProps<{ currencyIdA?: string; currencyIdB?: string }>) {
   const { account, chainId, library } = useActiveWeb3React()
   const { router: routerAddress } = useProjectInfo()
+  const baseCurrency = useBaseCurrency()
   const wrappedToken = useWrappedToken()
   const theme = useContext(ThemeContext)
   const { t } = useTranslation()
@@ -96,7 +98,7 @@ export default function AddLiquidity({
     (accumulator, field) => {
       return {
         ...accumulator,
-        [field]: maxAmountSpend(currencyBalances[field]),
+        [field]: maxAmountSpend(currencyBalances[field], baseCurrency),
       }
     },
     {}
@@ -136,12 +138,12 @@ export default function AddLiquidity({
       method: (...args: any) => Promise<TransactionResponse>,
       args: Array<string | string[] | number>,
       value: BigNumber | null
-    if (currencyA === ETHER || currencyB === ETHER) {
-      const tokenBIsETH = currencyB === ETHER
+    if (currencyA === baseCurrency || currencyB === baseCurrency) {
+      const tokenBIsETH = currencyB === baseCurrency
       estimate = router.estimateGas.addLiquidityETH
       method = router.addLiquidityETH
       args = [
-        wrappedCurrency(tokenBIsETH ? currencyA : currencyB, chainId, wrappedToken)?.address ?? '', // token
+        wrappedCurrency(tokenBIsETH ? currencyA : currencyB, chainId, wrappedToken, baseCurrency)?.address ?? '', // token
         (tokenBIsETH ? parsedAmountA : parsedAmountB).raw.toString(), // token desired
         amountsMin[tokenBIsETH ? Field.CURRENCY_A : Field.CURRENCY_B].toString(), // token min
         amountsMin[tokenBIsETH ? Field.CURRENCY_B : Field.CURRENCY_A].toString(), // eth min
@@ -153,8 +155,8 @@ export default function AddLiquidity({
       estimate = router.estimateGas.addLiquidity
       method = router.addLiquidity
       args = [
-        wrappedCurrency(currencyA, chainId, wrappedToken)?.address ?? '',
-        wrappedCurrency(currencyB, chainId, wrappedToken)?.address ?? '',
+        wrappedCurrency(currencyA, chainId, wrappedToken, baseCurrency)?.address ?? '',
+        wrappedCurrency(currencyB, chainId, wrappedToken, baseCurrency)?.address ?? '',
         parsedAmountA.raw.toString(),
         parsedAmountB.raw.toString(),
         amountsMin[Field.CURRENCY_A].toString(),
@@ -278,7 +280,7 @@ export default function AddLiquidity({
           history.push(`/add/${newCurrencyIdB}`)
         }
       } else {
-        history.push(`/add/${currencyIdA ? currencyIdA : ETHER.name}/${newCurrencyIdB}`)
+        history.push(`/add/${currencyIdA ? currencyIdA : baseCurrency?.name}/${newCurrencyIdB}`)
       }
     },
     [currencyIdA, history, currencyIdB]

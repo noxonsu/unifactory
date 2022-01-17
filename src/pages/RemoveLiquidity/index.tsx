@@ -1,7 +1,7 @@
 import { splitSignature } from '@ethersproject/bytes'
 import { Contract } from '@ethersproject/contracts'
 import { TransactionResponse } from '@ethersproject/providers'
-import { Currency, currencyEquals, ETHER, Percent, LP_TOKEN_NAME } from 'sdk'
+import { Currency, currencyEquals, Percent, LP_TOKEN_NAME } from 'sdk'
 import React, { useCallback, useContext, useMemo, useState } from 'react'
 import { ArrowDown, Plus } from 'react-feather'
 import { RouteComponentProps } from 'react-router'
@@ -20,6 +20,7 @@ import Row, { RowBetween, RowFixed } from 'components/Row'
 import Slider from 'components/Slider'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { useActiveWeb3React } from 'hooks'
+import { useBaseCurrency } from 'hooks/useCurrency'
 import { useWrappedToken } from 'hooks/useToken'
 import { useCurrency } from 'hooks/Tokens'
 import { usePairContract } from 'hooks/useContract'
@@ -52,10 +53,14 @@ export default function RemoveLiquidity({
 
   const { account, chainId, library } = useActiveWeb3React()
   const { router: routerAddress } = useProjectInfo()
+  const baseCurrency = useBaseCurrency()
   const wrappedToken = useWrappedToken()
 
   const [tokenA, tokenB] = useMemo(
-    () => [wrappedCurrency(currencyA, chainId, wrappedToken), wrappedCurrency(currencyB, chainId, wrappedToken)],
+    () => [
+      wrappedCurrency(currencyA, chainId, wrappedToken, baseCurrency),
+      wrappedCurrency(currencyB, chainId, wrappedToken, baseCurrency),
+    ],
     [currencyA, currencyB, chainId, wrappedToken]
   )
 
@@ -208,8 +213,8 @@ export default function RemoveLiquidity({
     const liquidityAmount = parsedAmounts[Field.LIQUIDITY]
     if (!liquidityAmount) throw new Error('missing liquidity amount')
 
-    const currencyBIsETH = currencyB === ETHER
-    const oneCurrencyIsETH = currencyA === ETHER || currencyBIsETH
+    const currencyBIsETH = currencyB === baseCurrency
+    const oneCurrencyIsETH = currencyA === baseCurrency || currencyBIsETH
 
     if (!tokenA || !tokenB) throw new Error('could not wrap')
 
@@ -416,7 +421,7 @@ export default function RemoveLiquidity({
     [onUserInput]
   )
 
-  const oneCurrencyIsETH = currencyA === ETHER || currencyB === ETHER
+  const oneCurrencyIsETH = currencyA === baseCurrency || currencyB === baseCurrency
   const oneCurrencyIsWETH = Boolean(
     chainId &&
       ((currencyA && wrappedToken && currencyEquals(wrappedToken, currencyA)) ||
@@ -559,8 +564,8 @@ export default function RemoveLiquidity({
                       <RowBetween style={{ justifyContent: 'flex-end' }}>
                         {oneCurrencyIsETH ? (
                           <StyledInternalLink
-                            to={`/remove/${currencyA === ETHER ? wrappedToken?.address : currencyIdA}/${
-                              currencyB === ETHER ? wrappedToken?.address : currencyIdB
+                            to={`/remove/${currencyA === baseCurrency ? wrappedToken?.address : currencyIdA}/${
+                              currencyB === baseCurrency ? wrappedToken?.address : currencyIdB
                             }`}
                           >
                             {t('receive')} {wrappedToken?.name}
@@ -569,15 +574,15 @@ export default function RemoveLiquidity({
                           <StyledInternalLink
                             to={`/remove/${
                               currencyA && wrappedToken && currencyEquals(currencyA, wrappedToken)
-                                ? ETHER.name
+                                ? baseCurrency?.name
                                 : currencyIdA
                             }/${
                               currencyB && wrappedToken && currencyEquals(currencyB, wrappedToken)
-                                ? ETHER.name
+                                ? baseCurrency?.name
                                 : currencyIdB
                             }`}
                           >
-                            {t('receive')} {ETHER.name}
+                            {t('receive')} {baseCurrency?.name}
                           </StyledInternalLink>
                         ) : null}
                       </RowBetween>

@@ -4,18 +4,20 @@ import { ChevronRight } from 'react-feather'
 import { Flex } from 'rebass'
 import { ThemeContext } from 'styled-components'
 import { TYPE } from 'theme'
+import { useBaseCurrency } from 'hooks/useCurrency'
 import { useWrappedToken } from 'hooks/useToken'
 import { unwrappedToken } from 'utils/wrappedCurrency'
 
 export default memo(function SwapRoute({ trade }: { trade: Trade }) {
   const theme = useContext(ThemeContext)
+  const baseCurrency = useBaseCurrency()
   const wrappedToken = useWrappedToken()
 
   return (
     <Flex flexWrap="wrap" width="100%" justifyContent="flex-end" alignItems="center">
       {trade.route.path.map((token, i, path) => {
         const isLastItem: boolean = i === path.length - 1
-        const currency = wrappedToken && unwrappedToken(token, wrappedToken)
+        const currency = wrappedToken && unwrappedToken(token, wrappedToken, baseCurrency)
 
         return (
           <Fragment key={i}>

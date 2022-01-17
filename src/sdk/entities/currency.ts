@@ -27,16 +27,11 @@ export class Currency {
   }
 }
 
-class BaseCurrency extends Currency {
-  constructor() {
-    const { decimals, name, symbol } = networks[1].baseCurrency
+export class BaseCurrency extends Currency {
+  constructor(chainId: number) {
+    //@ts-ignore
+    const { decimals, name, symbol } = networks[chainId] ? networks[chainId]?.baseCurrency : networks[1]?.baseCurrency
 
     super(decimals, symbol, name)
   }
 }
-/**
- * The only instance of the base class `Currency`.
- */
-const ETHER = new BaseCurrency()
-
-export { ETHER }

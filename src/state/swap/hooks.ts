@@ -1,11 +1,12 @@
 import useENS from 'hooks/useENS'
 import { parseUnits } from '@ethersproject/units'
-import { Currency, CurrencyAmount, ETHER, JSBI, Token, TokenAmount, Trade } from 'sdk'
+import { Currency, BaseCurrency, CurrencyAmount, JSBI, Token, TokenAmount, Trade } from 'sdk'
 import { ParsedQs } from 'qs'
 import { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useActiveWeb3React } from 'hooks'
 import { useCurrency } from 'hooks/Tokens'
+import { useBaseCurrency } from 'hooks/useCurrency'
 import { useProjectInfo } from 'state/application/hooks'
 import { useTradeExactIn, useTradeExactOut } from 'hooks/Trades'
 import useParsedQueryString from 'hooks/useParsedQueryString'
@@ -28,12 +29,14 @@ export function useSwapActionHandlers(): {
   onChangeRecipient: (recipient: string | null) => void
 } {
   const dispatch = useDispatch<AppDispatch>()
+  const baseCurrency = useBaseCurrency()
   const onCurrencySelection = useCallback(
     (field: Field, currency: Currency) => {
       dispatch(
         selectCurrency({
           field,
-          currencyId: currency instanceof Token ? currency.address : currency === ETHER ? ETHER.name ?? '' : '',
+          currencyId:
+            currency instanceof Token ? currency.address : currency === baseCurrency ? baseCurrency.name ?? '' : '',
         })
       )
     },
@@ -195,14 +198,15 @@ export function useDerivedSwapInfo(): {
   }
 }
 
-function parseCurrencyFromURLParameter(urlParam: any): string {
+function parseCurrencyFromURLParameter(urlParam: any, baseCurrency: BaseCurrency | null): string {
   if (typeof urlParam === 'string') {
     const valid = isAddress(urlParam)
     if (valid) return valid
-    if (urlParam.toUpperCase() === ETHER.name) return ETHER.name
-    if (valid === false) return ETHER.name ?? ''
+    if (urlParam.toUpperCase() === baseCurrency?.name) return baseCurrency?.name
+    if (valid === false) return baseCurrency?.name ?? ''
   }
-  return ETHER.name ?? ''
+
+  return baseCurrency?.name ?? ''
 }
 
 function parseTokenAmountURLParameter(urlParam: any): string {
@@ -224,9 +228,10 @@ function validatedRecipient(recipient: any): string | null {
   return null
 }
 
-export function queryParametersToSwapState(parsedQs: ParsedQs): SwapState {
-  let inputCurrency = parseCurrencyFromURLParameter(parsedQs.inputCurrency)
-  let outputCurrency = parseCurrencyFromURLParameter(parsedQs.outputCurrency)
+function queryParametersToSwapState(parsedQs: ParsedQs, baseCurrency: BaseCurrency | null): SwapState {
+  let inputCurrency = parseCurrencyFromURLParameter(parsedQs.inputCurrency, baseCurrency)
+  let outputCurrency = parseCurrencyFromURLParameter(parsedQs.outputCurrency, baseCurrency)
+
   if (inputCurrency === outputCurrency) {
     if (typeof parsedQs.outputCurrency === 'string') {
       inputCurrency = ''
@@ -255,6 +260,7 @@ export function useDefaultsFromURLSearch():
   | { inputCurrencyId: string | undefined; outputCurrencyId: string | undefined }
   | undefined {
   const { chainId } = useActiveWeb3React()
+  const baseCurrency = useBaseCurrency()
   const dispatch = useDispatch<AppDispatch>()
   const parsedQs = useParsedQueryString()
   const [result, setResult] = useState<
@@ -263,7 +269,7 @@ export function useDefaultsFromURLSearch():
 
   useEffect(() => {
     if (!chainId) return
-    const parsed = queryParametersToSwapState(parsedQs)
+    const parsed = queryParametersToSwapState(parsedQs, baseCurrency)
 
     dispatch(
       replaceSwapState({
