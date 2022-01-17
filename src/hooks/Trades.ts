@@ -80,6 +80,7 @@ const MAX_HOPS = 3
  */
 export function useTradeExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?: Currency): Trade | null {
   const allowedPairs = useAllCommonPairs(currencyAmountIn?.currency, currencyOut)
+  const baseCurrency = useBaseCurrency()
   const wrappedToken = useWrappedToken()
   const { factory, pairHash, totalFee } = useProjectInfo()
   const [singleHopOnly] = useUserSingleHopOnly()
@@ -92,6 +93,8 @@ export function useTradeExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?:
             pairs: allowedPairs,
             currencyAmountIn,
             currencyOut,
+            //@ts-ignore
+            baseCurrency,
             //@ts-ignore
             wrappedToken,
             factory,
@@ -112,6 +115,8 @@ export function useTradeExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?:
             pairs: allowedPairs,
             currencyAmountIn,
             currencyOut,
+            //@ts-ignore
+            baseCurrency,
             //@ts-ignore
             wrappedToken,
             factory,
@@ -138,6 +143,7 @@ export function useTradeExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?:
  */
 export function useTradeExactOut(currencyIn?: Currency, currencyAmountOut?: CurrencyAmount): Trade | null {
   const allowedPairs = useAllCommonPairs(currencyIn, currencyAmountOut?.currency)
+  const baseCurrency = useBaseCurrency()
   const wrappedToken = useWrappedToken()
   const { factory, pairHash, totalFee } = useProjectInfo()
   const [singleHopOnly] = useUserSingleHopOnly()
@@ -150,6 +156,8 @@ export function useTradeExactOut(currencyIn?: Currency, currencyAmountOut?: Curr
             pairs: allowedPairs,
             currencyIn,
             currencyAmountOut,
+            //@ts-ignore
+            baseCurrency,
             //@ts-ignore
             wrappedToken,
             factory,
@@ -168,6 +176,8 @@ export function useTradeExactOut(currencyIn?: Currency, currencyAmountOut?: Curr
             pairs: allowedPairs,
             currencyIn,
             currencyAmountOut,
+            //@ts-ignore
+            baseCurrency,
             //@ts-ignore
             wrappedToken,
             factory,

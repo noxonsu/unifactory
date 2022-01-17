@@ -82,6 +82,9 @@ export default function PoolFinder() {
     </LightCard>
   )
 
+  const currency0Id = currency0 && currencyId(currency0, baseCurrency)
+  const currency1Id = currency1 && currencyId(currency1, baseCurrency)
+
   return (
     <AppBody>
       <FindPoolTabs />
@@ -158,7 +161,7 @@ export default function PoolFinder() {
               <LightCard padding="45px 10px">
                 <AutoColumn gap="sm" justify="center">
                   <Text textAlign="center">{t('youDoNotHaveLiquidity')}</Text>
-                  <StyledInternalLink to={`/add/${currencyId(currency0)}/${currencyId(currency1)}`}>
+                  <StyledInternalLink to={`/add/${currency0Id}/${currency1Id}`}>
                     <Text textAlign="center">{t('addLiquidity')}</Text>
                   </StyledInternalLink>
                 </AutoColumn>
@@ -168,9 +171,7 @@ export default function PoolFinder() {
             <LightCard padding="45px 10px">
               <AutoColumn gap="sm" justify="center">
                 <Text textAlign="center">{t('noPoolFound')}</Text>
-                <StyledInternalLink to={`/add/${currencyId(currency0)}/${currencyId(currency1)}`}>
-                  {t('createPool')}
-                </StyledInternalLink>
+                <StyledInternalLink to={`/add/${currency0Id}/${currency1Id}`}>{t('createPool')}</StyledInternalLink>
               </AutoColumn>
             </LightCard>
           ) : pairState === PairState.INVALID ? (

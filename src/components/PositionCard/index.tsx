@@ -198,6 +198,8 @@ export default function FullPositionCard({ pair, border, stakedBalance }: Positi
       : [undefined, undefined]
 
   const backgroundColor = useColor(pair?.token0)
+  const currency0Id = currency0 && currencyId(currency0, baseCurrency)
+  const currency1Id = currency1 && currencyId(currency1, baseCurrency)
 
   return (
     <StyledPositionCard border={border} bgColor={backgroundColor}>
@@ -302,7 +304,7 @@ export default function FullPositionCard({ pair, border, stakedBalance }: Positi
                 <ButtonPrimary
                   padding="8px"
                   as={Link}
-                  to={`/add/${currency0 && currencyId(currency0)}/${currency1 && currencyId(currency1)}`}
+                  to={`/add/${currency0 && currency0Id}/${currency1 && currency1Id}`}
                   width="48%"
                 >
                   {t('add')}
@@ -311,7 +313,7 @@ export default function FullPositionCard({ pair, border, stakedBalance }: Positi
                   padding="8px"
                   as={Link}
                   width="48%"
-                  to={`/remove/${currency0 && currencyId(currency0)}/${currency1 && currencyId(currency1)}`}
+                  to={`/remove/${currency0 && currency0Id}/${currency1 && currency1Id}`}
                 >
                   {t('remove')}
                 </ButtonPrimary>
@@ -321,7 +323,7 @@ export default function FullPositionCard({ pair, border, stakedBalance }: Positi
               <ButtonPrimary
                 padding="8px"
                 as={Link}
-                to={`/uni/${currency0 && currencyId(currency0)}/${currency1 && currencyId(currency1)}`}
+                to={`/uni/${currency0 && currency0Id}/${currency1 && currency1Id}`}
                 width="100%"
               >
                 {t('manageLiquidityInPool')}

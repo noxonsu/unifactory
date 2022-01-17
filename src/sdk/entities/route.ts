@@ -1,5 +1,5 @@
 import invariant from 'tiny-invariant'
-import { Currency, ETHER } from './currency'
+import { Currency, BaseCurrency } from './currency'
 import { Token } from './token'
 import { Pair } from './pair'
 import { Price } from './fractions/price'
@@ -10,8 +10,14 @@ export class Route {
   public readonly output: Currency
   public readonly midPrice: Price
 
-  public constructor(params: { pairs: Pair[]; input: Currency; output?: Currency; wrappedToken: Token }) {
-    const { pairs, input, output, wrappedToken } = params
+  public constructor(params: {
+    pairs: Pair[]
+    input: Currency
+    output?: Currency
+    baseCurrency: BaseCurrency
+    wrappedToken: Token
+  }) {
+    const { pairs, input, baseCurrency, output, wrappedToken } = params
 
     invariant(pairs.length > 0, 'PAIRS')
     invariant(
@@ -20,13 +26,13 @@ export class Route {
     )
     invariant(
       (input instanceof Token && pairs[0].involvesToken(input)) ||
-        (input === ETHER && pairs[0].involvesToken(wrappedToken)),
+        (input === baseCurrency && pairs[0].involvesToken(wrappedToken)),
       'INPUT'
     )
     invariant(
       typeof output === 'undefined' ||
         (output instanceof Token && pairs[pairs.length - 1].involvesToken(output)) ||
-        (output === ETHER && pairs[pairs.length - 1].involvesToken(wrappedToken)),
+        (output === baseCurrency && pairs[pairs.length - 1].involvesToken(wrappedToken)),
       'OUTPUT'
     )
 

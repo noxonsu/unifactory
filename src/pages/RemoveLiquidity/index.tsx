@@ -430,20 +430,24 @@ export default function RemoveLiquidity({
 
   const handleSelectCurrencyA = useCallback(
     (currency: Currency) => {
-      if (currencyIdB && currencyId(currency) === currencyIdB) {
-        history.push(`/remove/${currencyId(currency)}/${currencyIdA}`)
+      const id = currencyId(currency, baseCurrency)
+
+      if (currencyIdB && id === currencyIdB) {
+        history.push(`/remove/${id}/${currencyIdA}`)
       } else {
-        history.push(`/remove/${currencyId(currency)}/${currencyIdB}`)
+        history.push(`/remove/${id}/${currencyIdB}`)
       }
     },
     [currencyIdA, currencyIdB, history]
   )
   const handleSelectCurrencyB = useCallback(
     (currency: Currency) => {
-      if (currencyIdA && currencyId(currency) === currencyIdA) {
-        history.push(`/remove/${currencyIdB}/${currencyId(currency)}`)
+      const id = currencyId(currency, baseCurrency)
+
+      if (currencyIdA && id === currencyIdA) {
+        history.push(`/remove/${currencyIdB}/${id}`)
       } else {
-        history.push(`/remove/${currencyIdA}/${currencyId(currency)}`)
+        history.push(`/remove/${currencyIdA}/${id}`)
       }
     },
     [currencyIdA, currencyIdB, history]
