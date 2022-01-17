@@ -7,9 +7,14 @@
     "registry": "",
     "multicall": "0xeefBa1e63905eF1D7ACbA5a8513c70307C1cE441",
     "ENSRegistry": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "ETH",
+      "symbol": "ETH"
+    },
     "wrappedToken": {
       "address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-      "name": "Wrapped ETH",
+      "name": "Wrapped Etherer",
       "symbol": "WETH"
     }
   },
@@ -21,9 +26,14 @@
     "registry": "",
     "multicall": "0x53C43764255c17BD724F74c4eF150724AC50a3ed",
     "ENSRegistry": "",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "ETH",
+      "symbol": "ETH"
+    },
     "wrappedToken": {
       "address": "0xc778417E063141139Fce010982780140Aa0cD5Ab",
-      "name": "Wrapped ETH",
+      "name": "Wrapped Ether",
       "symbol": "WETH"
     }
   },
@@ -35,9 +45,14 @@
     "registry": "0xe941b2b03d0A6eAfAdC547EC20Ba0D9583CfcaD3",
     "multicall": "0x42Ad527de7d4e9d9d011aC45B31D8551f8Fe9821",
     "ENSRegistry": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "ETH",
+      "symbol": "ETH"
+    },
     "wrappedToken": {
       "address": "0xc778417E063141139Fce010982780140Aa0cD5Ab",
-      "name": "Wrapped ETH",
+      "name": "Wrapped Ether",
       "symbol": "WETH"
     }
   },
@@ -49,9 +64,14 @@
     "registry": "",
     "multicall": "0x77dCa2C955b15e9dE4dbBCf1246B4B85b651e50e",
     "ENSRegistry": "",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "ETH",
+      "symbol": "ETH"
+    },
     "wrappedToken": {
       "address": "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
-      "name": "Wrapped ETH",
+      "name": "Wrapped Ether",
       "symbol": "WETH"
     }
   },
@@ -63,9 +83,14 @@
     "registry": "",
     "multicall": "0x2cc8688C5f75E365aaEEb4ea8D6a480405A48D2A",
     "ENSRegistry": "",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "ETH",
+      "symbol": "ETH"
+    },
     "wrappedToken": {
       "address": "0xd0A1E359811322d97991E03f863a0C30C2cF029C",
-      "name": "Wrapped ETH",
+      "name": "Wrapped Ether",
       "symbol": "WETH"
     }
   },
@@ -77,10 +102,15 @@
     "registry": "0x39b6A4E28fF734311Da8b800025dEBD573Be3eaB",
     "multicall": "0x41263cBA59EB80dC200F3E2544eda4ed6A90E76C",
     "ENSRegistry": "",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "BNB",
+      "symbol": "BNB"
+    },
     "wrappedToken": {
       "address": "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
-      "name": "Wrapped ETH",
-      "symbol": "WETH"
+      "name": "Wrapped BNB",
+      "symbol": "WBNB"
     }
   },
   "97": {
@@ -91,10 +121,15 @@
     "registry": "0x1F0760bF970DDA86F7De29E22FFBA4f841f5bfA0",
     "multicall": "0xae11C5B5f29A6a25e955F0CB8ddCc416f522AF5C",
     "ENSRegistry": "",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "BNB",
+      "symbol": "BNB"
+    },
     "wrappedToken": {
       "address": "0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd",
-      "name": "Wrapped ETH",
-      "symbol": "WETH"
+      "name": "Wrapped BNB",
+      "symbol": "WBNB"
     }
   },
   "137": {
@@ -105,10 +140,15 @@
     "registry": "0x8746f10E3142987733D3f05D1FBe72E482F521A7",
     "multicall": "0x11ce4B23bD875D7F5C6a31084f55fDe1e9A87507",
     "ENSRegistry": "",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "Matic",
+      "symbol": "MATIC"
+    },
     "wrappedToken": {
       "address": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
-      "name": "Wrapped ETH",
-      "symbol": "WETH"
+      "name": "Wrapped Matic",
+      "symbol": "WMATIC"
     }
   },
   "80001": {
@@ -119,10 +159,15 @@
     "registry": "0xb7C47aA7bEE0397f03f5D3D038F3240a18102AED",
     "multicall": "0x08411ADd0b5AA8ee47563b146743C13b3556c9Cc",
     "ENSRegistry": "",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "Matic",
+      "symbol": "MATIC"
+    },
     "wrappedToken": {
       "address": "0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889",
-      "name": "Wrapped ETH",
-      "symbol": "WETH"
+      "name": "Wrapped Matic",
+      "symbol": "WMATIC"
     }
   },
   "42161": {
@@ -133,9 +178,14 @@
     "registry": "",
     "multicall": "",
     "ENSRegistry": "",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "ETH",
+      "symbol": "ETH"
+    },
     "wrappedToken": {
       "address": "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
-      "name": "Wrapped ETH",
+      "name": "Wrapped Ether",
       "symbol": "WETH"
     }
   },
@@ -147,9 +197,14 @@
     "registry": "",
     "multicall": "",
     "ENSRegistry": "",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "ETH",
+      "symbol": "ETH"
+    },
     "wrappedToken": {
       "address": "0xB47e6A5f8b33b3F17603C83a0535A9dcD7E32681",
-      "name": "Wrapped ETH",
+      "name": "Wrapped Ether",
       "symbol": "WETH"
     }
   },
@@ -161,9 +216,14 @@
     "registry": "",
     "multicall": "",
     "ENSRegistry": "",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "ETH",
+      "symbol": "ETH"
+    },
     "wrappedToken": {
       "address": "0x4200000000000000000000000000000000000006",
-      "name": "Wrapped ETH",
+      "name": "Wrapped Ether",
       "symbol": "WETH"
     }
   },
@@ -175,9 +235,14 @@
     "registry": "",
     "multicall": "",
     "ENSRegistry": "",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "ETH",
+      "symbol": "ETH"
+    },
     "wrappedToken": {
       "address": "0x4200000000000000000000000000000000000006",
-      "name": "Wrapped ETH",
+      "name": "Wrapped Ether",
       "symbol": "WETH"
     }
   },
@@ -189,10 +254,15 @@
     "registry": "",
     "multicall": "0xb5b692a88BDFc81ca69dcB1d924f59f0413A602a",
     "ENSRegistry": "",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "xDAI",
+      "symbol": "XDAI"
+    },
     "wrappedToken": {
       "address": "0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d",
-      "name": "Wrapped ETH",
-      "symbol": "WETH"
+      "name": "Wrapped XDAI",
+      "symbol": "WXDAI"
     }
   },
   "77": {
@@ -203,10 +273,15 @@
     "registry": "0x63207FF111a54D6F35Ae18f82b1a9DEff3fbE3e0",
     "multicall": "",
     "ENSRegistry": "",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "xDAI",
+      "symbol": "XDAI"
+    },
     "wrappedToken": {
       "address": "0x79D5C019F2515Cbc0596170Da44FCd26412c4f83",
-      "name": "Wrapped ETH",
-      "symbol": "WETH"
+      "name": "Wrapped XDAI",
+      "symbol": "WXDAI"
     }
   },
   "30": {
@@ -217,9 +292,14 @@
     "registry": "",
     "multicall": "0x6C62BF5440De2Cb157205B15C424BCEb5C3368F5",
     "ENSRegistry": "",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "RBTC",
+      "symbol": "RBTC"
+    },
     "wrappedToken": {
       "address": "",
-      "name": "Wrapped ETH",
+      "name": "Wrapped Ether",
       "symbol": "WETH"
     }
   },
@@ -231,9 +311,14 @@
     "registry": "",
     "multicall": "0x9E469E1FC7Fb4c5d17897b68eaF1aFC9df39f103",
     "ENSRegistry": "",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "RBTC",
+      "symbol": "RBTC"
+    },
     "wrappedToken": {
       "address": "",
-      "name": "Wrapped ETH",
+      "name": "Wrapped Ether",
       "symbol": "WETH"
     }
   }

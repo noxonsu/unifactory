@@ -160,7 +160,7 @@ export default function CurrencyList({
   showImportView: () => void
   setImportToken: (token: Token) => void
 }) {
-  const itemData = useMemo(() => (showETH ? [Currency.ETHER, ...currencies] : currencies), [currencies, showETH])
+  const itemData = useMemo(() => (showETH ? [ETHER, ...currencies] : currencies), [currencies, showETH])
 
   const { chainId } = useActiveWeb3React()
   const wrappedToken = useWrappedToken()

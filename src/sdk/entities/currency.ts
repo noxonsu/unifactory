@@ -1,6 +1,7 @@
 import JSBI from 'jsbi'
 import { SolidityType } from '../constants'
 import { validateSolidityTypeInstance } from '../utils'
+import networks from 'networks.json'
 
 /**
  * A currency is any fungible financial instrument on Ethereum, including Ether and all ERC20 tokens.
@@ -13,12 +14,6 @@ export class Currency {
   public readonly name?: string
 
   /**
-   * The only instance of the base class `Currency`.
-   */
-  public static readonly ETHER: Currency = new Currency(18, 'ETH', 'ETH')
-
-  /**
-   * Constructs an instance of the base class `Currency`. The only instance of the base class `Currency` is `Currency.ETHER`.
    * @param decimals decimals of the currency
    * @param symbol symbol of the currency
    * @param name of the currency
@@ -32,5 +27,16 @@ export class Currency {
   }
 }
 
-const ETHER = Currency.ETHER
+class BaseCurrency extends Currency {
+  constructor() {
+    const { decimals, name, symbol } = networks[1].baseCurrency
+
+    super(decimals, symbol, name)
+  }
+}
+/**
+ * The only instance of the base class `Currency`.
+ */
+const ETHER = new BaseCurrency()
+
 export { ETHER }

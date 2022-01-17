@@ -255,5 +255,9 @@
   "adminFeeIsPercentOfTotalFee": "La commissione amministrativa è una percentuale della commissione totale",
   "totalFee": "Canone totale",
   "liquidityProviders": "Fornitori di liquidità",
-  "adminAndProvidersFeesDoNotWork": "Le commissioni di amministrazione e fornitori non funzionano"
+  "adminAndProvidersFeesDoNotWork": "Le commissioni di amministrazione e fornitori non funzionano",
+  "tradeAtYourOwnRisk": "Commercio a proprio rischio!",
+  "fakeTokenCreationWarning": "Chiunque può creare un token, inclusa la creazione di versioni false di token esistenti che affermano di rappresentare progetti",
+  "fakeTokenPurchaseWarning": "Se acquisti questo token, potresti non essere in grado di venderlo",
+  "iUnderstand": "Io comprendo"
 }

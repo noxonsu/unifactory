@@ -244,5 +244,9 @@
   "adminFeeIsPercentOfTotalFee": "דמי הניהול הם אחוז מהעמלה הכוללת",
   "totalFee": "סה כ תשלום",
   "liquidityProviders": "ספקי נזילות",
-  "adminAndProvidersFeesDoNotWork": "דמי ניהול וספקים לא עובדים"
+  "adminAndProvidersFeesDoNotWork": "דמי ניהול וספקים לא עובדים",
+  "tradeAtYourOwnRisk": "לסחור על אחריותך בלבד!",
+  "fakeTokenCreationWarning": "כל אחד יכול ליצור אסימון, כולל יצירת גרסאות מזויפות של אסימונים קיימים הטוענים לייצג פרויקטים",
+  "fakeTokenPurchaseWarning": "אם אתה רוכש אסימון זה, ייתכן שלא תוכל למכור אותו בחזרה",
+  "iUnderstand": "אני מבין"
 }

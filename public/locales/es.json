@@ -244,5 +244,9 @@
   "adminFeeIsPercentOfTotalFee": "La tarifa de administración es un porcentaje de la tarifa total",
   "totalFee": "Tasa total",
   "liquidityProviders": "Proveedores de liquidez",
-  "adminAndProvidersFeesDoNotWork": "Las tarifas de administración y proveedores no funcionan"
+  "adminAndProvidersFeesDoNotWork": "Las tarifas de administración y proveedores no funcionan",
+  "tradeAtYourOwnRisk": "Opere bajo su propio riesgo!",
+  "fakeTokenCreationWarning": "Cualquier persona puede crear un token, incluida la creación de versiones falsas de tokens existentes que afirman representar proyectos",
+  "fakeTokenPurchaseWarning": "Si compra este token, es posible que no pueda volver a venderlo",
+  "iUnderstand": "Entiendo"
 }
