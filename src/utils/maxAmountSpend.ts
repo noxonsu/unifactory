@@ -1,5 +1,6 @@
 import { BaseCurrency, BaseCurrencyAmount, CurrencyAmount, JSBI } from 'sdk'
 import { MIN_ETH } from '../constants'
+import { isAssetEqual } from '.'
 
 /**
  * Given some token amount, return the max that can be spent of it
@@ -11,7 +12,7 @@ export function maxAmountSpend(
 ): CurrencyAmount | undefined {
   if (!currencyAmount || !baseCurrency) return undefined
 
-  if (currencyAmount.currency === baseCurrency) {
+  if (isAssetEqual(currencyAmount.currency, baseCurrency)) {
     if (JSBI.greaterThan(currencyAmount.raw, MIN_ETH)) {
       return new BaseCurrencyAmount(baseCurrency, JSBI.subtract(currencyAmount.raw, MIN_ETH))
     }

@@ -34,11 +34,11 @@ export default function SwapModalHeader({
   const baseCurrency = useBaseCurrency()
   const slippageAdjustedAmounts = useMemo(
     () => computeSlippageAdjustedAmounts(trade, allowedSlippage, baseCurrency),
-    [trade, allowedSlippage]
+    [trade, allowedSlippage, baseCurrency]
   )
   const { priceImpactWithoutFee } = useMemo(
     () => computeTradePriceBreakdown(baseCurrency, trade, totalFee),
-    [trade, totalFee]
+    [trade, totalFee, baseCurrency]
   )
   const priceImpactSeverity = warningSeverity(priceImpactWithoutFee)
 

@@ -1,4 +1,5 @@
 import { BaseCurrency, Currency, CurrencyAmount, Token, TokenAmount } from 'sdk'
+import { isAssetEqual } from 'utils'
 
 export function wrappedCurrency(
   currency: Currency | undefined,
@@ -6,7 +7,7 @@ export function wrappedCurrency(
   wrappedToken: Token | undefined | null,
   baseCurrency: BaseCurrency | null
 ): Token | undefined {
-  return chainId && currency === baseCurrency && wrappedToken
+  return chainId && isAssetEqual(currency, baseCurrency) && wrappedToken
     ? wrappedToken
     : currency instanceof Token
     ? currency

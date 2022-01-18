@@ -10,7 +10,7 @@ import { useBaseCurrency } from 'hooks/useCurrency'
 import { useProjectInfo } from 'state/application/hooks'
 import { useTradeExactIn, useTradeExactOut } from 'hooks/Trades'
 import useParsedQueryString from 'hooks/useParsedQueryString'
-import { isAddress } from 'utils'
+import { isAddress, isAssetEqual } from 'utils'
 import { AppDispatch, AppState } from '../index'
 import { useCurrencyBalances } from '../wallet/hooks'
 import { Field, replaceSwapState, selectCurrency, setRecipient, switchCurrencies, typeInput } from './actions'
@@ -36,11 +36,15 @@ export function useSwapActionHandlers(): {
         selectCurrency({
           field,
           currencyId:
-            currency instanceof Token ? currency.address : currency === baseCurrency ? baseCurrency.name ?? '' : '',
+            currency instanceof Token
+              ? currency.address
+              : isAssetEqual(currency, baseCurrency)
+              ? baseCurrency?.name ?? ''
+              : '',
         })
       )
     },
-    [dispatch]
+    [dispatch, baseCurrency]
   )
 
   const onSwitchTokens = useCallback(() => {

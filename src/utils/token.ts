@@ -2,22 +2,23 @@ import { Web3Provider } from '@ethersproject/providers'
 import TokenAbi from 'human-standard-token-abi'
 import { Currency, BaseCurrency, TokenAmount } from 'sdk'
 import { getWeb3Library } from './getLibrary'
+import { isAssetEqual } from '.'
 
 export async function getBalance(params: {
   account?: string | undefined
-  currency: Currency
+  currency: Currency | BaseCurrency
   baseCurrency: BaseCurrency | null
   library?: Web3Provider | undefined
 }): Promise<TokenAmount | undefined> {
   const { account, currency, baseCurrency, library } = params
 
-  if (!account || !library) return undefined
+  if (!account || !library || !baseCurrency) return undefined
 
   try {
     const web3 = getWeb3Library(library.provider)
     let unitBalance: string
 
-    if (currency === baseCurrency) {
+    if (isAssetEqual(currency, baseCurrency)) {
       unitBalance = await web3.eth.getBalance(account)
     } else {
       //@ts-ignore

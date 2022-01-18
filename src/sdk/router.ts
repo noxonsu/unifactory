@@ -1,5 +1,6 @@
 import { TradeType } from './constants'
 import invariant from 'tiny-invariant'
+import { isAssetEqual } from 'utils'
 import { validateAndParseAddress } from './utils'
 import { BaseCurrency, CurrencyAmount, Percent, Trade } from './entities'
 
@@ -79,8 +80,8 @@ export abstract class Router {
   public static swapCallParameters(trade: Trade, options: TradeOptions | TradeOptionsDeadline): SwapParameters {
     const { baseCurrency, allowedSlippage, recipient } = options
 
-    const etherIn = trade.inputAmount.currency === baseCurrency
-    const etherOut = trade.outputAmount.currency === baseCurrency
+    const etherIn = isAssetEqual(trade.inputAmount.currency, baseCurrency)
+    const etherOut = isAssetEqual(trade.outputAmount.currency, baseCurrency)
     // the router does not support both ether in and out
     invariant(!(etherIn && etherOut), 'ETHER_IN_OUT')
     invariant(!('ttl' in options) || options.ttl > 0, 'TTL')

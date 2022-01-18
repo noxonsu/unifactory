@@ -6,6 +6,7 @@ import { CURRENCY } from 'assets/images'
 import { useBaseCurrency } from 'hooks/useCurrency'
 import useHttpLocations from 'hooks/useHttpLocations'
 import { WrappedTokenInfo } from 'state/lists/hooks'
+import { isAssetEqual } from 'utils'
 import Logo from '../Logo'
 
 const getTokenLogoURL = (address: string) =>
@@ -39,7 +40,7 @@ export default function CurrencyLogo({
   const uriLocations = useHttpLocations(currency instanceof WrappedTokenInfo ? currency.logoURI : undefined)
 
   const sources: string[] = useMemo(() => {
-    if (currency === baseCurrency) return []
+    if (isAssetEqual(currency, baseCurrency)) return []
 
     if (currency instanceof Token) {
       if (currency instanceof WrappedTokenInfo) {
@@ -49,9 +50,9 @@ export default function CurrencyLogo({
       return [getTokenLogoURL(currency.address)]
     }
     return []
-  }, [currency, uriLocations])
+  }, [currency, uriLocations, baseCurrency])
 
-  if (currency === baseCurrency) {
+  if (isAssetEqual(currency, baseCurrency)) {
     //@ts-ignore
     const source = CURRENCY[baseCurrency.symbol?.toUpperCase() ?? '']
 

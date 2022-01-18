@@ -6,7 +6,7 @@ import { useTokenAllowance } from 'data/Allowances'
 import { Field } from 'state/swap/actions'
 import { useTransactionAdder, useHasPendingApproval } from 'state/transactions/hooks'
 import { computeSlippageAdjustedAmounts } from 'utils/prices'
-import { calculateGasMargin } from 'utils'
+import { calculateGasMargin, isAssetEqual } from 'utils'
 import { useTokenContract } from './useContract'
 import { useProjectInfo } from 'state/application/hooks'
 import { useBaseCurrency } from 'hooks/useCurrency'
@@ -33,7 +33,7 @@ export function useApproveCallback(
   // check the current approval status
   const approvalState: ApprovalState = useMemo(() => {
     if (!amountToApprove || !spender) return ApprovalState.UNKNOWN
-    if (amountToApprove.currency === baseCurrency) return ApprovalState.APPROVED
+    if (isAssetEqual(amountToApprove.currency, baseCurrency)) return ApprovalState.APPROVED
     // we might not have enough data to know whether or not we need to approve
     if (!currentAllowance) return ApprovalState.UNKNOWN
 
@@ -43,7 +43,7 @@ export function useApproveCallback(
         ? ApprovalState.PENDING
         : ApprovalState.NOT_APPROVED
       : ApprovalState.APPROVED
-  }, [amountToApprove, currentAllowance, pendingApproval, spender])
+  }, [amountToApprove, currentAllowance, pendingApproval, spender, baseCurrency])
 
   const tokenContract = useTokenContract(token?.address)
   const addTransaction = useTransactionAdder()
@@ -106,7 +106,7 @@ export function useApproveCallbackFromTrade(trade?: Trade, allowedSlippage = 0) 
 
   const amountToApprove = useMemo(
     () => (trade ? computeSlippageAdjustedAmounts(trade, allowedSlippage, baseCurrency)[Field.INPUT] : undefined),
-    [trade, allowedSlippage]
+    [trade, allowedSlippage, baseCurrency]
   )
 
   return useApproveCallback(amountToApprove, router)

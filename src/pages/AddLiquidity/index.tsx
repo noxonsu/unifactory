@@ -15,7 +15,6 @@ import CurrencyInputPanel from 'components/CurrencyInputPanel'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
 import { AddRemoveTabs } from 'components/NavigationTabs'
 import Row, { RowBetween, RowFlat } from 'components/Row'
-
 import { PairState } from 'data/Reserves'
 import { useActiveWeb3React } from 'hooks'
 import { useCurrency } from 'hooks/Tokens'
@@ -29,7 +28,7 @@ import { useProjectInfo } from 'state/application/hooks'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useIsExpertMode, useUserSlippageTolerance } from 'state/user/hooks'
 import { TYPE } from 'theme'
-import { calculateGasMargin, calculateSlippageAmount, getRouterContract } from 'utils'
+import { calculateGasMargin, calculateSlippageAmount, getRouterContract, isAssetEqual } from 'utils'
 import { maxAmountSpend } from 'utils/maxAmountSpend'
 import { wrappedCurrency } from 'utils/wrappedCurrency'
 import { useWrappedToken } from 'hooks/useToken'
@@ -138,8 +137,9 @@ export default function AddLiquidity({
       method: (...args: any) => Promise<TransactionResponse>,
       args: Array<string | string[] | number>,
       value: BigNumber | null
-    if (currencyA === baseCurrency || currencyB === baseCurrency) {
-      const tokenBIsETH = currencyB === baseCurrency
+    if (isAssetEqual(currencyA, baseCurrency) || isAssetEqual(currencyB, baseCurrency)) {
+      const tokenBIsETH = isAssetEqual(currencyB, baseCurrency)
+
       estimate = router.estimateGas.addLiquidityETH
       method = router.addLiquidityETH
       args = [
@@ -268,7 +268,7 @@ export default function AddLiquidity({
         history.push(`/add/${newCurrencyIdA}/${currencyIdB}`)
       }
     },
-    [currencyIdB, history, currencyIdA]
+    [currencyIdB, history, currencyIdA, baseCurrency]
   )
   const handleCurrencyBSelect = useCallback(
     (currencyB: Currency) => {
@@ -283,7 +283,7 @@ export default function AddLiquidity({
         history.push(`/add/${currencyIdA ? currencyIdA : baseCurrency?.name}/${newCurrencyIdB}`)
       }
     },
-    [currencyIdA, history, currencyIdB]
+    [currencyIdA, history, currencyIdB, baseCurrency]
   )
 
   const handleDismissConfirmation = useCallback(() => {

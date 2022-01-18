@@ -103,12 +103,31 @@ export function escapeRegExp(string: string): string {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
 }
 
+type Asset = Currency | BaseCurrency | Token
+type Argument = Asset | undefined | null
+
+export function isAssetEqual(asset1: Argument, asset2: Argument) {
+  if (!asset1 || !asset2) return false
+
+  const keys1 = Object.keys(asset1)
+  const keys2 = Object.keys(asset2)
+
+  if (keys1.length !== keys2.length) return false
+
+  for (let k of keys1) {
+    //@ts-ignore
+    if (asset1[k] !== asset2[k]) return false
+  }
+
+  return true
+}
+
 export function isTokenOnList(
   defaultTokens: TokenAddressMap,
   baseCurrency: BaseCurrency | null,
   currency?: Currency
 ): boolean {
-  if (currency === baseCurrency) return true
+  if (isAssetEqual(currency, baseCurrency)) return true
 
   return Boolean(currency instanceof Token && defaultTokens[currency.chainId]?.[currency.address])
 }

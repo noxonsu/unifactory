@@ -30,7 +30,7 @@ export function usePairs(currencies: [Currency | undefined, Currency | undefined
         wrappedCurrency(currencyA, chainId, wrappedToken, baseCurrency),
         wrappedCurrency(currencyB, chainId, wrappedToken, baseCurrency),
       ]),
-    [chainId, currencies, wrappedToken]
+    [chainId, currencies, wrappedToken, baseCurrency]
   )
 
   const pairAddresses = useMemo(

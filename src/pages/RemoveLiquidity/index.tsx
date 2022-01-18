@@ -28,7 +28,7 @@ import useTransactionDeadline from 'hooks/useTransactionDeadline'
 
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { StyledInternalLink, TYPE } from 'theme'
-import { calculateGasMargin, calculateSlippageAmount, getRouterContract } from 'utils'
+import { calculateGasMargin, calculateSlippageAmount, getRouterContract, isAssetEqual } from 'utils'
 import { currencyId } from 'utils/currencyId'
 import useDebouncedChangeHandler from 'utils/useDebouncedChangeHandler'
 import { wrappedCurrency } from 'utils/wrappedCurrency'
@@ -61,7 +61,7 @@ export default function RemoveLiquidity({
       wrappedCurrency(currencyA, chainId, wrappedToken, baseCurrency),
       wrappedCurrency(currencyB, chainId, wrappedToken, baseCurrency),
     ],
-    [currencyA, currencyB, chainId, wrappedToken]
+    [currencyA, currencyB, chainId, wrappedToken, baseCurrency]
   )
 
   const { t } = useTranslation()
@@ -213,8 +213,8 @@ export default function RemoveLiquidity({
     const liquidityAmount = parsedAmounts[Field.LIQUIDITY]
     if (!liquidityAmount) throw new Error('missing liquidity amount')
 
-    const currencyBIsETH = currencyB === baseCurrency
-    const oneCurrencyIsETH = currencyA === baseCurrency || currencyBIsETH
+    const currencyBIsETH = isAssetEqual(currencyB, baseCurrency)
+    const oneCurrencyIsETH = isAssetEqual(currencyA, baseCurrency) || currencyBIsETH
 
     if (!tokenA || !tokenB) throw new Error('could not wrap')
 
@@ -421,7 +421,7 @@ export default function RemoveLiquidity({
     [onUserInput]
   )
 
-  const oneCurrencyIsETH = currencyA === baseCurrency || currencyB === baseCurrency
+  const oneCurrencyIsETH = isAssetEqual(currencyA, baseCurrency) || isAssetEqual(currencyB, baseCurrency)
   const oneCurrencyIsWETH = Boolean(
     chainId &&
       ((currencyA && wrappedToken && currencyEquals(wrappedToken, currencyA)) ||
@@ -438,7 +438,7 @@ export default function RemoveLiquidity({
         history.push(`/remove/${id}/${currencyIdB}`)
       }
     },
-    [currencyIdA, currencyIdB, history]
+    [currencyIdA, currencyIdB, history, baseCurrency]
   )
   const handleSelectCurrencyB = useCallback(
     (currency: Currency) => {
@@ -450,7 +450,7 @@ export default function RemoveLiquidity({
         history.push(`/remove/${currencyIdA}/${id}`)
       }
     },
-    [currencyIdA, currencyIdB, history]
+    [currencyIdA, currencyIdB, history, baseCurrency]
   )
 
   const handleDismissConfirmation = useCallback(() => {
@@ -568,9 +568,9 @@ export default function RemoveLiquidity({
                       <RowBetween style={{ justifyContent: 'flex-end' }}>
                         {oneCurrencyIsETH ? (
                           <StyledInternalLink
-                            to={`/remove/${currencyA === baseCurrency ? wrappedToken?.address : currencyIdA}/${
-                              currencyB === baseCurrency ? wrappedToken?.address : currencyIdB
-                            }`}
+                            to={`/remove/${
+                              isAssetEqual(currencyA, baseCurrency) ? wrappedToken?.address : currencyIdA
+                            }/${isAssetEqual(currencyB, baseCurrency) ? wrappedToken?.address : currencyIdB}`}
                           >
                             {t('receive')} {wrappedToken?.name}
                           </StyledInternalLink>

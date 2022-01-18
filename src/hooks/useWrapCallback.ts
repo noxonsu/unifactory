@@ -5,6 +5,7 @@ import { useWrappedToken } from 'hooks/useToken'
 import { tryParseAmount } from 'state/swap/hooks'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useCurrencyBalance } from 'state/wallet/hooks'
+import { isAssetEqual } from 'utils'
 import { useActiveWeb3React } from './index'
 import { useWETHContract } from './useContract'
 
@@ -34,7 +35,7 @@ export default function useWrapCallback(
   // we can always parse the amount typed as the input currency, since wrapping is 1:1
   const inputAmount = useMemo(
     () => tryParseAmount(baseCurrency, typedValue, inputCurrency),
-    [inputCurrency, typedValue]
+    [inputCurrency, typedValue, baseCurrency]
   )
   const addTransaction = useTransactionAdder()
 
@@ -43,7 +44,7 @@ export default function useWrapCallback(
 
     const sufficientBalance = inputAmount && balance && !balance.lessThan(inputAmount)
 
-    if (inputCurrency === baseCurrency && wrappedToken && currencyEquals(wrappedToken, outputCurrency)) {
+    if (isAssetEqual(inputCurrency, baseCurrency) && wrappedToken && currencyEquals(wrappedToken, outputCurrency)) {
       return {
         wrapType: WrapType.WRAP,
         execute:
@@ -52,16 +53,20 @@ export default function useWrapCallback(
                 try {
                   const txReceipt = await wethContract.deposit({ value: `0x${inputAmount.raw.toString(16)}` })
                   addTransaction(txReceipt, {
-                    summary: `Wrap ${inputAmount.toSignificant(6)} ${baseCurrency.name} to ${wrappedToken?.name}`,
+                    summary: `Wrap ${inputAmount.toSignificant(6)} ${baseCurrency?.name} to ${wrappedToken?.name}`,
                   })
                 } catch (error) {
                   console.error('Could not deposit', error)
                 }
               }
             : undefined,
-        inputError: sufficientBalance ? undefined : `Insufficient ${baseCurrency.name} balance`,
+        inputError: sufficientBalance ? undefined : `Insufficient ${baseCurrency?.name} balance`,
       }
-    } else if (wrappedToken && currencyEquals(wrappedToken, inputCurrency) && outputCurrency === baseCurrency) {
+    } else if (
+      wrappedToken &&
+      currencyEquals(wrappedToken, inputCurrency) &&
+      isAssetEqual(outputCurrency, baseCurrency)
+    ) {
       return {
         wrapType: WrapType.UNWRAP,
         execute:
@@ -70,7 +75,7 @@ export default function useWrapCallback(
                 try {
                   const txReceipt = await wethContract.withdraw(`0x${inputAmount.raw.toString(16)}`)
                   addTransaction(txReceipt, {
-                    summary: `Unwrap ${inputAmount.toSignificant(6)} ${wrappedToken?.name} to ${baseCurrency.name}`,
+                    summary: `Unwrap ${inputAmount.toSignificant(6)} ${wrappedToken?.name} to ${baseCurrency?.name}`,
                   })
                 } catch (error) {
                   console.error('Could not withdraw', error)
@@ -82,5 +87,15 @@ export default function useWrapCallback(
     } else {
       return NOT_APPLICABLE
     }
-  }, [wethContract, wrappedToken, chainId, inputCurrency, outputCurrency, inputAmount, balance, addTransaction])
+  }, [
+    wethContract,
+    wrappedToken,
+    baseCurrency,
+    chainId,
+    inputCurrency,
+    outputCurrency,
+    inputAmount,
+    balance,
+    addTransaction,
+  ])
 }

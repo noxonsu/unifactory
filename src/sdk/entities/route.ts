@@ -1,4 +1,5 @@
 import invariant from 'tiny-invariant'
+import { isAssetEqual } from 'utils'
 import { Currency, BaseCurrency } from './currency'
 import { Token } from './token'
 import { Pair } from './pair'
@@ -26,13 +27,13 @@ export class Route {
     )
     invariant(
       (input instanceof Token && pairs[0].involvesToken(input)) ||
-        (input === baseCurrency && pairs[0].involvesToken(wrappedToken)),
+        (isAssetEqual(input, baseCurrency) && pairs[0].involvesToken(wrappedToken)),
       'INPUT'
     )
     invariant(
       typeof output === 'undefined' ||
         (output instanceof Token && pairs[pairs.length - 1].involvesToken(output)) ||
-        (output === baseCurrency && pairs[pairs.length - 1].involvesToken(wrappedToken)),
+        (isAssetEqual(output, baseCurrency) && pairs[pairs.length - 1].involvesToken(wrappedToken)),
       'OUTPUT'
     )
 

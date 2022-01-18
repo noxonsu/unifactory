@@ -16,12 +16,16 @@ import CurrencyLogo from '../CurrencyLogo'
 import { MouseoverTooltip } from '../Tooltip'
 import { MenuItem } from './styleds'
 import Loader from '../Loader'
-import { isTokenOnList } from 'utils'
+import { isTokenOnList, isAssetEqual } from 'utils'
 import ImportRow from './ImportRow'
 import { wrappedCurrency } from 'utils/wrappedCurrency'
 
 function currencyKey(currency: Currency, baseCurrency: BaseCurrency | null): string {
-  return currency instanceof Token ? currency.address : currency === baseCurrency ? baseCurrency.name || '' : ''
+  return currency instanceof Token
+    ? currency.address
+    : isAssetEqual(currency, baseCurrency)
+    ? baseCurrency?.name || ''
+    : ''
 }
 
 const StyledBalanceText = styled(Text)`
@@ -113,7 +117,7 @@ function CurrencyRow({
     }
 
     fetch()
-  }, [account, currency, library])
+  }, [account, currency, library, baseCurrency])
 
   // only show add or remove buttons if not on selected list
   return (
@@ -166,7 +170,10 @@ export default function CurrencyList({
   const baseCurrency = useBaseCurrency()
   const wrappedToken = useWrappedToken()
 
-  const itemData = useMemo(() => (showETH ? [baseCurrency, ...currencies] : currencies), [currencies, showETH])
+  const itemData = useMemo(
+    () => (showETH ? [baseCurrency, ...currencies] : currencies),
+    [currencies, showETH, baseCurrency]
+  )
 
   const inactiveTokens: {
     [address: string]: Token
@@ -208,6 +215,7 @@ export default function CurrencyList({
     [
       chainId,
       wrappedToken,
+      baseCurrency,
       inactiveTokens,
       onCurrencySelect,
       otherCurrency,
@@ -217,7 +225,7 @@ export default function CurrencyList({
     ]
   )
 
-  const itemKey = useCallback((index: number, data: any) => currencyKey(data[index], baseCurrency), [])
+  const itemKey = useCallback((index: number, data: any) => currencyKey(data[index], baseCurrency), [baseCurrency])
 
   return (
     <FixedSizeList

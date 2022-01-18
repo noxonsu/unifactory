@@ -1,4 +1,5 @@
 import invariant from 'tiny-invariant'
+import { isAssetEqual } from 'utils'
 import { BaseCurrency } from 'sdk'
 import { ONE, TradeType, ZERO } from '../constants'
 import { sortedInsert } from '../utils'
@@ -94,13 +95,13 @@ function wrappedAmount(
   baseCurrency: BaseCurrency
 ): TokenAmount {
   if (currencyAmount instanceof TokenAmount) return currencyAmount
-  if (currencyAmount.currency === baseCurrency) return new TokenAmount(wrappedToken, currencyAmount.raw)
+  if (isAssetEqual(currencyAmount.currency, baseCurrency)) return new TokenAmount(wrappedToken, currencyAmount.raw)
   invariant(false, 'CURRENCY')
 }
 
 function wrappedCurrency(currency: Currency, chainId: number, wrappedToken: Token, baseCurrency: BaseCurrency): Token {
   if (currency instanceof Token) return currency
-  if (currency === baseCurrency) return wrappedToken
+  if (isAssetEqual(currency, baseCurrency)) return wrappedToken
   invariant(false, 'CURRENCY')
 }
 
@@ -231,13 +232,13 @@ export class Trade {
     this.inputAmount =
       tradeType === TradeType.EXACT_INPUT
         ? amount
-        : route.input === baseCurrency
+        : isAssetEqual(route.input, baseCurrency)
         ? new BaseCurrencyAmount(baseCurrency, amounts[0].raw)
         : amounts[0]
     this.outputAmount =
       tradeType === TradeType.EXACT_OUTPUT
         ? amount
-        : route.output === baseCurrency
+        : isAssetEqual(route.output, baseCurrency)
         ? new BaseCurrencyAmount(baseCurrency, amounts[amounts.length - 1].raw)
         : amounts[amounts.length - 1]
     this.executionPrice = new Price(

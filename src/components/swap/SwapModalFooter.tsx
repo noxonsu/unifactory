@@ -41,11 +41,11 @@ export default function SwapModalFooter({
   const theme = useContext(ThemeContext)
   const slippageAdjustedAmounts = useMemo(
     () => computeSlippageAdjustedAmounts(trade, allowedSlippage, baseCurrency),
-    [allowedSlippage, trade]
+    [allowedSlippage, trade, baseCurrency]
   )
   const { priceImpactWithoutFee, realizedLPFee } = useMemo(
     () => computeTradePriceBreakdown(baseCurrency, trade, totalFee),
-    [trade, totalFee]
+    [trade, totalFee, baseCurrency]
   )
   const severity = warningSeverity(priceImpactWithoutFee)
 
