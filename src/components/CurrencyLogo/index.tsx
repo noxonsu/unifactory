@@ -1,8 +1,8 @@
 import { Currency, Token } from 'sdk'
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
-
 import { CURRENCY } from 'assets/images'
+import { useActiveWeb3React } from 'hooks'
 import { useBaseCurrency } from 'hooks/useCurrency'
 import useHttpLocations from 'hooks/useHttpLocations'
 import { WrappedTokenInfo } from 'state/lists/hooks'
@@ -36,6 +36,7 @@ export default function CurrencyLogo({
   size?: string
   style?: React.CSSProperties
 }) {
+  const { chainId } = useActiveWeb3React()
   const baseCurrency = useBaseCurrency()
   const uriLocations = useHttpLocations(currency instanceof WrappedTokenInfo ? currency.logoURI : undefined)
 
@@ -54,7 +55,7 @@ export default function CurrencyLogo({
 
   if (isAssetEqual(currency, baseCurrency)) {
     //@ts-ignore
-    const source = CURRENCY[baseCurrency.symbol?.toUpperCase() ?? '']
+    const source = CURRENCY[chainId] || CURRENCY[baseCurrency.symbol?.toUpperCase() ?? '']
 
     if (source) {
       return <StyledEthereumLogo src={source} size={size} style={style} />
