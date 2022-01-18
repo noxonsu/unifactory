@@ -1,10 +1,11 @@
 import { currencyEquals } from '../token'
-import { Currency, ETHER } from '../currency'
+import { Currency } from '../currency'
 import invariant from 'tiny-invariant'
 import JSBI from 'jsbi'
 import _Big from 'big.js'
 import toFormat from 'toformat'
-
+import networks from 'networks.json'
+import { BaseCurrency } from '..'
 import { BigintIsh, Rounding, TEN, SolidityType } from '../../constants'
 import { parseBigintIsh, validateSolidityTypeInstance } from '../../utils'
 import { Fraction } from './fraction'
@@ -13,14 +14,6 @@ const Big = toFormat(_Big)
 
 export class CurrencyAmount extends Fraction {
   public readonly currency: Currency
-
-  /**
-   * Helper that calls the constructor with the ETHER currency
-   * @param amount ether amount in wei
-   */
-  public static ether(amount: BigintIsh): CurrencyAmount {
-    return new CurrencyAmount(ETHER, amount)
-  }
 
   // amount _must_ be raw, i.e. in the native representation
   protected constructor(currency: Currency, amount: BigintIsh) {
@@ -65,5 +58,11 @@ export class CurrencyAmount extends Fraction {
   public toExact(format: object = { groupSeparator: '' }): string {
     Big.DP = this.currency.decimals
     return new Big(this.numerator.toString()).div(this.denominator.toString()).toFormat(format)
+  }
+}
+
+export class BaseCurrencyAmount extends CurrencyAmount {
+  constructor(baseCurrency: BaseCurrency | null | undefined, amount: BigintIsh) {
+    super(baseCurrency || networks[1]?.baseCurrency, amount)
   }
 }

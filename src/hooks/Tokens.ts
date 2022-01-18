@@ -1,16 +1,15 @@
 import { parseBytes32String } from '@ethersproject/strings'
 import { toChecksumAddress } from 'web3-utils'
 import { arrayify } from 'ethers/lib/utils'
-import { Currency, ETHER, Token, currencyEquals } from 'sdk'
+import { Currency, BaseCurrency, Token, currencyEquals } from 'sdk'
 import { useMemo } from 'react'
 import { TokenAddressMap } from 'state/lists/hooks'
 import { useCombinedActiveList, useCombinedInactiveList } from 'state/lists/hooks'
 import { useProjectInfo } from 'state/application/hooks'
 import { NEVER_RELOAD, useSingleCallResult } from 'state/multicall/hooks'
-
 import { useUserAddedTokens } from 'state/user/hooks'
+import { useBaseCurrency } from 'hooks/useCurrency'
 import { isAddress } from 'utils'
-
 import { useActiveWeb3React } from './index'
 import { useBytes32TokenContract, useTokenContract } from './useContract'
 import { filterTokens } from 'components/SearchModal/filtering'
@@ -189,8 +188,10 @@ export function useToken(tokenAddress?: string): Token | undefined | null {
   ])
 }
 
-export function useCurrency(currencyId: string | undefined): Currency | null | undefined {
-  const isETH = currencyId?.toUpperCase() === ETHER.name
-  const token = useToken(isETH ? undefined : currencyId)
-  return isETH ? ETHER : token
+export function useCurrency(currencyId: string | undefined): Currency | BaseCurrency | null | undefined {
+  const baseCurrency = useBaseCurrency()
+  const isBaseCurrency = baseCurrency && currencyId?.toUpperCase() === baseCurrency.name
+  const token = useToken(isBaseCurrency ? undefined : currencyId)
+
+  return isBaseCurrency ? baseCurrency : token
 }

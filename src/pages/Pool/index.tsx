@@ -1,6 +1,6 @@
 import React, { useContext, useMemo } from 'react'
 import styled, { ThemeContext } from 'styled-components'
-import { Pair, ETHER } from 'sdk'
+import { Pair } from 'sdk'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { SwapPoolTabs } from 'components/NavigationTabs'
@@ -15,6 +15,7 @@ import { ButtonPrimary } from 'components/Button'
 import { AutoColumn } from 'components/Column'
 import { useProjectInfo } from 'state/application/hooks'
 import { useActiveWeb3React } from 'hooks'
+import { useBaseCurrency } from 'hooks/useCurrency'
 import { usePairs } from 'data/Reserves'
 import { toV2LiquidityToken, useTrackedTokenPairs } from 'state/user/hooks'
 import { Dots } from 'components/swap/styleds'
@@ -65,6 +66,7 @@ export default function Pool() {
   const theme = useContext(ThemeContext)
   const { account } = useActiveWeb3React()
   const { factory, pairHash } = useProjectInfo()
+  const baseCurrency = useBaseCurrency()
 
   // fetch the user's balances of all tracked V2 LP tokens
   const trackedTokenPairs = useTrackedTokenPairs()
@@ -107,10 +109,15 @@ export default function Pool() {
                 <TYPE.mediumHeader style={{ justifySelf: 'flex-start' }}>{t('yourLiquidity')}</TYPE.mediumHeader>
               </HideSmall>
               <ButtonRow>
-                <ResponsiveButtonPrimary as={Link} padding="6px 10px" to={`/create/${ETHER.name}`}>
+                <ResponsiveButtonPrimary as={Link} padding="6px 10px" to={`/create/${baseCurrency?.name}`}>
                   {t('createPair')}
                 </ResponsiveButtonPrimary>
-                <ResponsiveButtonPrimary id="join-pool-button" as={Link} padding="6px 10px" to={`/add/${ETHER.name}`}>
+                <ResponsiveButtonPrimary
+                  id="join-pool-button"
+                  as={Link}
+                  padding="6px 10px"
+                  to={`/add/${baseCurrency?.name}`}
+                >
                   <Text fontWeight={500} fontSize={16}>
                     {t('addLiquidity')}
                   </Text>

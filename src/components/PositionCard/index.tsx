@@ -12,6 +12,7 @@ import { useTokenBalance } from 'state/wallet/hooks'
 import { currencyId } from 'utils/currencyId'
 import { unwrappedToken } from 'utils/wrappedCurrency'
 import { ButtonPrimary, ButtonEmpty } from '../Button'
+import { useBaseCurrency } from 'hooks/useCurrency'
 import { useWrappedToken } from 'hooks/useToken'
 import { useColor } from 'hooks/useColor'
 
@@ -59,10 +60,19 @@ interface PositionCardProps {
 export function MinimalPositionCard({ pair, showUnwrapped = false, border }: PositionCardProps) {
   const { t } = useTranslation()
   const { account } = useActiveWeb3React()
+  const baseCurrency = useBaseCurrency()
   const wrappedToken = useWrappedToken()
 
-  const currency0 = showUnwrapped ? pair.token0 : wrappedToken ? unwrappedToken(pair.token0, wrappedToken) : undefined
-  const currency1 = showUnwrapped ? pair.token1 : wrappedToken ? unwrappedToken(pair.token1, wrappedToken) : undefined
+  const currency0 = showUnwrapped
+    ? pair.token0
+    : wrappedToken
+    ? unwrappedToken(pair.token0, wrappedToken, baseCurrency)
+    : undefined
+  const currency1 = showUnwrapped
+    ? pair.token1
+    : wrappedToken
+    ? unwrappedToken(pair.token1, wrappedToken, baseCurrency)
+    : undefined
 
   const [showMore, setShowMore] = useState(false)
 
@@ -157,9 +167,10 @@ export function MinimalPositionCard({ pair, showUnwrapped = false, border }: Pos
 export default function FullPositionCard({ pair, border, stakedBalance }: PositionCardProps) {
   const { t } = useTranslation()
   const { account } = useActiveWeb3React()
+  const baseCurrency = useBaseCurrency()
   const wrappedToken = useWrappedToken()
-  const currency0 = wrappedToken ? unwrappedToken(pair.token0, wrappedToken) : undefined
-  const currency1 = wrappedToken ? unwrappedToken(pair.token1, wrappedToken) : undefined
+  const currency0 = wrappedToken ? unwrappedToken(pair.token0, wrappedToken, baseCurrency) : undefined
+  const currency1 = wrappedToken ? unwrappedToken(pair.token1, wrappedToken, baseCurrency) : undefined
 
   const [showMore, setShowMore] = useState(false)
 
@@ -187,6 +198,8 @@ export default function FullPositionCard({ pair, border, stakedBalance }: Positi
       : [undefined, undefined]
 
   const backgroundColor = useColor(pair?.token0)
+  const currency0Id = currency0 && currencyId(currency0, baseCurrency)
+  const currency1Id = currency1 && currencyId(currency1, baseCurrency)
 
   return (
     <StyledPositionCard border={border} bgColor={backgroundColor}>
@@ -291,7 +304,7 @@ export default function FullPositionCard({ pair, border, stakedBalance }: Positi
                 <ButtonPrimary
                   padding="8px"
                   as={Link}
-                  to={`/add/${currency0 && currencyId(currency0)}/${currency1 && currencyId(currency1)}`}
+                  to={`/add/${currency0 && currency0Id}/${currency1 && currency1Id}`}
                   width="48%"
                 >
                   {t('add')}
@@ -300,7 +313,7 @@ export default function FullPositionCard({ pair, border, stakedBalance }: Positi
                   padding="8px"
                   as={Link}
                   width="48%"
-                  to={`/remove/${currency0 && currencyId(currency0)}/${currency1 && currencyId(currency1)}`}
+                  to={`/remove/${currency0 && currency0Id}/${currency1 && currency1Id}`}
                 >
                   {t('remove')}
                 </ButtonPrimary>
@@ -310,7 +323,7 @@ export default function FullPositionCard({ pair, border, stakedBalance }: Positi
               <ButtonPrimary
                 padding="8px"
                 as={Link}
-                to={`/uni/${currency0 && currencyId(currency0)}/${currency1 && currencyId(currency1)}`}
+                to={`/uni/${currency0 && currency0Id}/${currency1 && currency1Id}`}
                 width="100%"
               >
                 {t('manageLiquidityInPool')}

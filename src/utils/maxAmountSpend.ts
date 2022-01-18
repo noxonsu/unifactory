@@ -1,18 +1,24 @@
-import { CurrencyAmount, ETHER, JSBI } from 'sdk'
+import { BaseCurrency, BaseCurrencyAmount, CurrencyAmount, JSBI } from 'sdk'
 import { MIN_ETH } from '../constants'
+import { isAssetEqual } from '.'
 
 /**
  * Given some token amount, return the max that can be spent of it
  * @param currencyAmount to return max of
  */
-export function maxAmountSpend(currencyAmount?: CurrencyAmount): CurrencyAmount | undefined {
-  if (!currencyAmount) return undefined
-  if (currencyAmount.currency === ETHER) {
+export function maxAmountSpend(
+  currencyAmount?: CurrencyAmount,
+  baseCurrency?: BaseCurrency | null
+): CurrencyAmount | undefined {
+  if (!currencyAmount || !baseCurrency) return undefined
+
+  if (isAssetEqual(currencyAmount.currency, baseCurrency)) {
     if (JSBI.greaterThan(currencyAmount.raw, MIN_ETH)) {
-      return CurrencyAmount.ether(JSBI.subtract(currencyAmount.raw, MIN_ETH))
-    } else {
-      return CurrencyAmount.ether(JSBI.BigInt(0))
+      return new BaseCurrencyAmount(baseCurrency, JSBI.subtract(currencyAmount.raw, MIN_ETH))
     }
+
+    return new BaseCurrencyAmount(baseCurrency, JSBI.BigInt(0))
   }
+
   return currencyAmount
 }

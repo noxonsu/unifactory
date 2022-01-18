@@ -2,10 +2,11 @@ import { TokenAmount, Pair, Currency } from 'sdk'
 import { useMemo } from 'react'
 import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 import { Interface } from '@ethersproject/abi'
-import { useActiveWeb3React } from '../hooks'
+import { useActiveWeb3React } from 'hooks'
 import { useWrappedToken } from 'hooks/useToken'
-import { useMultipleContractSingleData } from '../state/multicall/hooks'
-import { wrappedCurrency } from '../utils/wrappedCurrency'
+import { useMultipleContractSingleData } from 'state/multicall/hooks'
+import { useBaseCurrency } from 'hooks/useCurrency'
+import { wrappedCurrency } from 'utils/wrappedCurrency'
 import { useProjectInfo } from 'state/application/hooks'
 
 const PAIR_INTERFACE = new Interface(IUniswapV2PairABI)
@@ -20,15 +21,16 @@ export enum PairState {
 export function usePairs(currencies: [Currency | undefined, Currency | undefined][]): [PairState, Pair | null][] {
   const { chainId } = useActiveWeb3React()
   const { factory, pairHash } = useProjectInfo()
+  const baseCurrency = useBaseCurrency()
   const wrappedToken = useWrappedToken()
 
   const tokens = useMemo(
     () =>
       currencies.map(([currencyA, currencyB]) => [
-        wrappedCurrency(currencyA, chainId, wrappedToken),
-        wrappedCurrency(currencyB, chainId, wrappedToken),
+        wrappedCurrency(currencyA, chainId, wrappedToken, baseCurrency),
+        wrappedCurrency(currencyB, chainId, wrappedToken, baseCurrency),
       ]),
-    [chainId, currencies, wrappedToken]
+    [chainId, currencies, wrappedToken, baseCurrency]
   )
 
   const pairAddresses = useMemo(

@@ -2,6 +2,7 @@ import { isTradeBetter } from 'utils/trades'
 import { Currency, CurrencyAmount, Pair, Token, Trade } from 'sdk'
 import flatMap from 'lodash.flatmap'
 import { useMemo } from 'react'
+import { useBaseCurrency } from 'hooks/useCurrency'
 import { useWrappedToken } from 'hooks/useToken'
 import { useProjectInfo } from 'state/application/hooks'
 
@@ -14,12 +15,16 @@ import { useUserSingleHopOnly } from 'state/user/hooks'
 
 function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): Pair[] {
   const { chainId } = useActiveWeb3React()
+  const baseCurrency = useBaseCurrency()
   const wrappedToken = useWrappedToken()
 
   const bases: Token[] = chainId && wrappedToken ? [wrappedToken] : []
 
   const [tokenA, tokenB] = chainId
-    ? [wrappedCurrency(currencyA, chainId, wrappedToken), wrappedCurrency(currencyB, chainId, wrappedToken)]
+    ? [
+        wrappedCurrency(currencyA, chainId, wrappedToken, baseCurrency),
+        wrappedCurrency(currencyB, chainId, wrappedToken, baseCurrency),
+      ]
     : [undefined, undefined]
 
   const basePairs: [Token, Token][] = useMemo(
@@ -75,6 +80,7 @@ const MAX_HOPS = 3
  */
 export function useTradeExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?: Currency): Trade | null {
   const allowedPairs = useAllCommonPairs(currencyAmountIn?.currency, currencyOut)
+  const baseCurrency = useBaseCurrency()
   const wrappedToken = useWrappedToken()
   const { factory, pairHash, totalFee } = useProjectInfo()
   const [singleHopOnly] = useUserSingleHopOnly()
@@ -87,6 +93,8 @@ export function useTradeExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?:
             pairs: allowedPairs,
             currencyAmountIn,
             currencyOut,
+            //@ts-ignore
+            baseCurrency,
             //@ts-ignore
             wrappedToken,
             factory,
@@ -108,6 +116,8 @@ export function useTradeExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?:
             currencyAmountIn,
             currencyOut,
             //@ts-ignore
+            baseCurrency,
+            //@ts-ignore
             wrappedToken,
             factory,
             pairHash,
@@ -125,7 +135,17 @@ export function useTradeExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?:
     }
 
     return null
-  }, [allowedPairs, factory, pairHash, currencyAmountIn, currencyOut, singleHopOnly, wrappedToken, totalFee])
+  }, [
+    allowedPairs,
+    factory,
+    pairHash,
+    currencyAmountIn,
+    currencyOut,
+    singleHopOnly,
+    wrappedToken,
+    baseCurrency,
+    totalFee,
+  ])
 }
 
 /**
@@ -133,6 +153,7 @@ export function useTradeExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?:
  */
 export function useTradeExactOut(currencyIn?: Currency, currencyAmountOut?: CurrencyAmount): Trade | null {
   const allowedPairs = useAllCommonPairs(currencyIn, currencyAmountOut?.currency)
+  const baseCurrency = useBaseCurrency()
   const wrappedToken = useWrappedToken()
   const { factory, pairHash, totalFee } = useProjectInfo()
   const [singleHopOnly] = useUserSingleHopOnly()
@@ -145,6 +166,8 @@ export function useTradeExactOut(currencyIn?: Currency, currencyAmountOut?: Curr
             pairs: allowedPairs,
             currencyIn,
             currencyAmountOut,
+            //@ts-ignore
+            baseCurrency,
             //@ts-ignore
             wrappedToken,
             factory,
@@ -164,6 +187,8 @@ export function useTradeExactOut(currencyIn?: Currency, currencyAmountOut?: Curr
             currencyIn,
             currencyAmountOut,
             //@ts-ignore
+            baseCurrency,
+            //@ts-ignore
             wrappedToken,
             factory,
             pairHash,
@@ -178,5 +203,15 @@ export function useTradeExactOut(currencyIn?: Currency, currencyAmountOut?: Curr
       return bestTradeSoFar
     }
     return null
-  }, [currencyIn, factory, pairHash, currencyAmountOut, allowedPairs, singleHopOnly, wrappedToken, totalFee])
+  }, [
+    currencyIn,
+    factory,
+    pairHash,
+    currencyAmountOut,
+    allowedPairs,
+    singleHopOnly,
+    wrappedToken,
+    baseCurrency,
+    totalFee,
+  ])
 }

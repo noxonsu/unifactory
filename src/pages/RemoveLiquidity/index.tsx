@@ -1,7 +1,7 @@
 import { splitSignature } from '@ethersproject/bytes'
 import { Contract } from '@ethersproject/contracts'
 import { TransactionResponse } from '@ethersproject/providers'
-import { Currency, currencyEquals, ETHER, Percent, LP_TOKEN_NAME } from 'sdk'
+import { Currency, currencyEquals, Percent, LP_TOKEN_NAME } from 'sdk'
 import React, { useCallback, useContext, useMemo, useState } from 'react'
 import { ArrowDown, Plus } from 'react-feather'
 import { RouteComponentProps } from 'react-router'
@@ -20,6 +20,7 @@ import Row, { RowBetween, RowFixed } from 'components/Row'
 import Slider from 'components/Slider'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { useActiveWeb3React } from 'hooks'
+import { useBaseCurrency } from 'hooks/useCurrency'
 import { useWrappedToken } from 'hooks/useToken'
 import { useCurrency } from 'hooks/Tokens'
 import { usePairContract } from 'hooks/useContract'
@@ -27,7 +28,7 @@ import useTransactionDeadline from 'hooks/useTransactionDeadline'
 
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { StyledInternalLink, TYPE } from 'theme'
-import { calculateGasMargin, calculateSlippageAmount, getRouterContract } from 'utils'
+import { calculateGasMargin, calculateSlippageAmount, getRouterContract, isAssetEqual } from 'utils'
 import { currencyId } from 'utils/currencyId'
 import useDebouncedChangeHandler from 'utils/useDebouncedChangeHandler'
 import { wrappedCurrency } from 'utils/wrappedCurrency'
@@ -52,11 +53,15 @@ export default function RemoveLiquidity({
 
   const { account, chainId, library } = useActiveWeb3React()
   const { router: routerAddress } = useProjectInfo()
+  const baseCurrency = useBaseCurrency()
   const wrappedToken = useWrappedToken()
 
   const [tokenA, tokenB] = useMemo(
-    () => [wrappedCurrency(currencyA, chainId, wrappedToken), wrappedCurrency(currencyB, chainId, wrappedToken)],
-    [currencyA, currencyB, chainId, wrappedToken]
+    () => [
+      wrappedCurrency(currencyA, chainId, wrappedToken, baseCurrency),
+      wrappedCurrency(currencyB, chainId, wrappedToken, baseCurrency),
+    ],
+    [currencyA, currencyB, chainId, wrappedToken, baseCurrency]
   )
 
   const { t } = useTranslation()
@@ -208,8 +213,8 @@ export default function RemoveLiquidity({
     const liquidityAmount = parsedAmounts[Field.LIQUIDITY]
     if (!liquidityAmount) throw new Error('missing liquidity amount')
 
-    const currencyBIsETH = currencyB === ETHER
-    const oneCurrencyIsETH = currencyA === ETHER || currencyBIsETH
+    const currencyBIsETH = isAssetEqual(currencyB, baseCurrency)
+    const oneCurrencyIsETH = isAssetEqual(currencyA, baseCurrency) || currencyBIsETH
 
     if (!tokenA || !tokenB) throw new Error('could not wrap')
 
@@ -416,7 +421,7 @@ export default function RemoveLiquidity({
     [onUserInput]
   )
 
-  const oneCurrencyIsETH = currencyA === ETHER || currencyB === ETHER
+  const oneCurrencyIsETH = isAssetEqual(currencyA, baseCurrency) || isAssetEqual(currencyB, baseCurrency)
   const oneCurrencyIsWETH = Boolean(
     chainId &&
       ((currencyA && wrappedToken && currencyEquals(wrappedToken, currencyA)) ||
@@ -425,23 +430,27 @@ export default function RemoveLiquidity({
 
   const handleSelectCurrencyA = useCallback(
     (currency: Currency) => {
-      if (currencyIdB && currencyId(currency) === currencyIdB) {
-        history.push(`/remove/${currencyId(currency)}/${currencyIdA}`)
+      const id = currencyId(currency, baseCurrency)
+
+      if (currencyIdB && id === currencyIdB) {
+        history.push(`/remove/${id}/${currencyIdA}`)
       } else {
-        history.push(`/remove/${currencyId(currency)}/${currencyIdB}`)
+        history.push(`/remove/${id}/${currencyIdB}`)
       }
     },
-    [currencyIdA, currencyIdB, history]
+    [currencyIdA, currencyIdB, history, baseCurrency]
   )
   const handleSelectCurrencyB = useCallback(
     (currency: Currency) => {
-      if (currencyIdA && currencyId(currency) === currencyIdA) {
-        history.push(`/remove/${currencyIdB}/${currencyId(currency)}`)
+      const id = currencyId(currency, baseCurrency)
+
+      if (currencyIdA && id === currencyIdA) {
+        history.push(`/remove/${currencyIdB}/${id}`)
       } else {
-        history.push(`/remove/${currencyIdA}/${currencyId(currency)}`)
+        history.push(`/remove/${currencyIdA}/${id}`)
       }
     },
-    [currencyIdA, currencyIdB, history]
+    [currencyIdA, currencyIdB, history, baseCurrency]
   )
 
   const handleDismissConfirmation = useCallback(() => {
@@ -559,9 +568,9 @@ export default function RemoveLiquidity({
                       <RowBetween style={{ justifyContent: 'flex-end' }}>
                         {oneCurrencyIsETH ? (
                           <StyledInternalLink
-                            to={`/remove/${currencyA === ETHER ? wrappedToken?.address : currencyIdA}/${
-                              currencyB === ETHER ? wrappedToken?.address : currencyIdB
-                            }`}
+                            to={`/remove/${
+                              isAssetEqual(currencyA, baseCurrency) ? wrappedToken?.address : currencyIdA
+                            }/${isAssetEqual(currencyB, baseCurrency) ? wrappedToken?.address : currencyIdB}`}
                           >
                             {t('receive')} {wrappedToken?.name}
                           </StyledInternalLink>
@@ -569,15 +578,15 @@ export default function RemoveLiquidity({
                           <StyledInternalLink
                             to={`/remove/${
                               currencyA && wrappedToken && currencyEquals(currencyA, wrappedToken)
-                                ? ETHER.name
+                                ? baseCurrency?.name
                                 : currencyIdA
                             }/${
                               currencyB && wrappedToken && currencyEquals(currencyB, wrappedToken)
-                                ? ETHER.name
+                                ? baseCurrency?.name
                                 : currencyIdB
                             }`}
                           >
-                            {t('receive')} {ETHER.name}
+                            {t('receive')} {baseCurrency?.name}
                           </StyledInternalLink>
                         ) : null}
                       </RowBetween>

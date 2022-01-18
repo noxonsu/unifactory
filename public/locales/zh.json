@@ -244,5 +244,9 @@
   "adminFeeIsPercentOfTotalFee": "管理费是总费用的百分比",
   "totalFee": "总费用",
   "liquidityProviders": "流动资金提供者",
-  "adminAndProvidersFeesDoNotWork": "管理和供应商费用不起作用"
+  "adminAndProvidersFeesDoNotWork": "管理和供应商费用不起作用",
+  "tradeAtYourOwnRisk": "交易风险自负！",
+  "fakeTokenCreationWarning": "任何人都可以创建令牌，包括创建声称代表项目的现有令牌的假版本",
+  "fakeTokenPurchaseWarning": "如果您购买此令牌，您可能无法将其售回",
+  "iUnderstand": "我明白了。"
 }

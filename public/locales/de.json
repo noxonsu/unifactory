@@ -256,5 +256,9 @@
   "adminFeeIsPercentOfTotalFee": "Die Verwaltungsgebühr ist ein Prozentsatz der Gesamtgebühr",
   "totalFee": "Gesamtgebühr",
   "liquidityProviders": "Liquiditätsanbieter",
-  "adminAndProvidersFeesDoNotWork": "Admin- und Providergebühren funktionieren nicht"
+  "adminAndProvidersFeesDoNotWork": "Admin- und Providergebühren funktionieren nicht",
+  "tradeAtYourOwnRisk": "Handel auf eigenes Risiko!",
+  "fakeTokenCreationWarning": "Jeder kann ein Token erstellen, einschließlich der Erstellung gefälschter Versionen vorhandener Token, die behaupten, Projekte darzustellen",
+  "fakeTokenPurchaseWarning": "Wenn Sie dieses Token kaufen, können Sie es möglicherweise nicht zurückverkaufen",
+  "iUnderstand": "Ich verstehe"
 }

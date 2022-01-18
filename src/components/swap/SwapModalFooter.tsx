@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { ThemeContext } from 'styled-components'
 import { Field } from 'state/swap/actions'
 import { useProjectInfo } from 'state/application/hooks'
+import { useBaseCurrency } from 'hooks/useCurrency'
 import { TYPE } from 'theme'
 import {
   computeSlippageAdjustedAmounts,
@@ -35,15 +36,16 @@ export default function SwapModalFooter({
 }) {
   const { t } = useTranslation()
   const { totalFee } = useProjectInfo()
+  const baseCurrency = useBaseCurrency()
   const [showInverted, setShowInverted] = useState<boolean>(false)
   const theme = useContext(ThemeContext)
   const slippageAdjustedAmounts = useMemo(
-    () => computeSlippageAdjustedAmounts(trade, allowedSlippage),
-    [allowedSlippage, trade]
+    () => computeSlippageAdjustedAmounts(trade, allowedSlippage, baseCurrency),
+    [allowedSlippage, trade, baseCurrency]
   )
   const { priceImpactWithoutFee, realizedLPFee } = useMemo(
-    () => computeTradePriceBreakdown(trade, totalFee),
-    [trade, totalFee]
+    () => computeTradePriceBreakdown(baseCurrency, trade, totalFee),
+    [trade, totalFee, baseCurrency]
   )
   const severity = warningSeverity(priceImpactWithoutFee)
 

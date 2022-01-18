@@ -4,8 +4,8 @@ import { AddressZero } from '@ethersproject/constants'
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { BigNumber } from '@ethersproject/bignumber'
 import { abi as IUniswapV2Router02ABI } from '@uniswap/v2-periphery/build/IUniswapV2Router02.json'
-import { JSBI, Percent, Token, CurrencyAmount, Currency, ETHER } from 'sdk'
-import { TokenAddressMap } from '../state/lists/hooks'
+import { JSBI, Percent, Token, CurrencyAmount, Currency, BaseCurrency } from 'sdk'
+import { TokenAddressMap } from 'state/lists/hooks'
 import networks from 'networks.json'
 
 export const getTimestamp = () => {
@@ -103,7 +103,31 @@ export function escapeRegExp(string: string): string {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
 }
 
-export function isTokenOnList(defaultTokens: TokenAddressMap, currency?: Currency): boolean {
-  if (currency === ETHER) return true
+type Asset = Currency | BaseCurrency | Token
+type Argument = Asset | undefined | null
+
+export function isAssetEqual(asset1: Argument, asset2: Argument) {
+  if (!asset1 || !asset2) return false
+
+  const keys1 = Object.keys(asset1)
+  const keys2 = Object.keys(asset2)
+
+  if (keys1.length !== keys2.length) return false
+
+  for (let k of keys1) {
+    //@ts-ignore
+    if (asset1[k] !== asset2[k]) return false
+  }
+
+  return true
+}
+
+export function isTokenOnList(
+  defaultTokens: TokenAddressMap,
+  baseCurrency: BaseCurrency | null,
+  currency?: Currency
+): boolean {
+  if (isAssetEqual(currency, baseCurrency)) return true
+
   return Boolean(currency instanceof Token && defaultTokens[currency.chainId]?.[currency.address])
 }

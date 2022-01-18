@@ -1,12 +1,12 @@
-import { Currency, ETHER, Token } from 'sdk'
+import { BaseCurrency, Currency, Token } from 'sdk'
 import React, { KeyboardEvent, RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FixedSizeList } from 'react-window'
 import { Text } from 'rebass'
 import AutoSizer from 'react-virtualized-auto-sizer'
-import { useAllTokens, useToken, useIsUserAddedToken, useFoundOnInactiveList } from '../../hooks/Tokens'
-import { CloseIcon, TYPE, ButtonText, IconWrapper } from '../../theme'
-import { isAddress } from '../../utils'
+import { useAllTokens, useToken, useIsUserAddedToken, useFoundOnInactiveList } from 'hooks/Tokens'
+import { CloseIcon, TYPE, ButtonText, IconWrapper } from 'theme'
+import { isAddress } from 'utils'
 import Column from '../Column'
 import Row, { RowBetween, RowFixed } from '../Row'
 import CurrencyList from './CurrencyList'
@@ -15,6 +15,7 @@ import { useTokenComparator } from './sorting'
 import { PaddedColumn, SearchInput, Separator } from './styleds'
 import styled from 'styled-components'
 import useToggle from 'hooks/useToggle'
+import { useBaseCurrency } from 'hooks/useCurrency'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import useTheme from 'hooks/useTheme'
 import ImportRow from './ImportRow'
@@ -64,6 +65,7 @@ export function CurrencySearch({
 }: CurrencySearchProps) {
   const { t } = useTranslation()
   const theme = useTheme()
+  const baseCurrency = useBaseCurrency()
 
   // refs for fixed size lists
   const fixedList = useRef<FixedSizeList>()
@@ -120,7 +122,7 @@ export function CurrencySearch({
   }, [filteredTokens, searchQuery, tokenComparator])
 
   const handleCurrencySelect = useCallback(
-    (currency: Currency) => {
+    (currency: Currency | BaseCurrency) => {
       onCurrencySelect(currency)
       onDismiss()
     },
@@ -145,8 +147,9 @@ export function CurrencySearch({
     (e: KeyboardEvent<HTMLInputElement>) => {
       if (e.key === 'Enter') {
         const s = searchQuery.toLowerCase().trim()
-        if (s === 'eth') {
-          handleCurrencySelect(ETHER)
+        if (baseCurrency && s === baseCurrency.symbol?.toLowerCase()) {
+          //@ts-ignore
+          handleCurrencySelect(baseCurrency)
         } else if (filteredSortedTokens.length > 0) {
           if (
             filteredSortedTokens[0].symbol?.toLowerCase() === searchQuery.trim().toLowerCase() ||
@@ -157,7 +160,7 @@ export function CurrencySearch({
         }
       }
     },
-    [filteredSortedTokens, handleCurrencySelect, searchQuery]
+    [filteredSortedTokens, handleCurrencySelect, searchQuery, baseCurrency]
   )
 
   // menu ui

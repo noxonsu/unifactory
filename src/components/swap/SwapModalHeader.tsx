@@ -6,6 +6,7 @@ import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
 import { Field } from 'state/swap/actions'
 import { useProjectInfo } from 'state/application/hooks'
+import { useBaseCurrency } from 'hooks/useCurrency'
 import { TYPE } from 'theme'
 import { ButtonPrimary } from '../Button'
 import { isAddress, shortenAddress } from 'utils'
@@ -30,11 +31,15 @@ export default function SwapModalHeader({
 }) {
   const { t } = useTranslation()
   const { totalFee } = useProjectInfo()
+  const baseCurrency = useBaseCurrency()
   const slippageAdjustedAmounts = useMemo(
-    () => computeSlippageAdjustedAmounts(trade, allowedSlippage),
-    [trade, allowedSlippage]
+    () => computeSlippageAdjustedAmounts(trade, allowedSlippage, baseCurrency),
+    [trade, allowedSlippage, baseCurrency]
   )
-  const { priceImpactWithoutFee } = useMemo(() => computeTradePriceBreakdown(trade, totalFee), [trade, totalFee])
+  const { priceImpactWithoutFee } = useMemo(
+    () => computeTradePriceBreakdown(baseCurrency, trade, totalFee),
+    [trade, totalFee, baseCurrency]
+  )
   const priceImpactSeverity = warningSeverity(priceImpactWithoutFee)
 
   const theme = useContext(ThemeContext)

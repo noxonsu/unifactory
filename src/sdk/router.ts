@@ -1,7 +1,8 @@
 import { TradeType } from './constants'
 import invariant from 'tiny-invariant'
+import { isAssetEqual } from 'utils'
 import { validateAndParseAddress } from './utils'
-import { CurrencyAmount, ETHER, Percent, Trade } from './entities'
+import { BaseCurrency, CurrencyAmount, Percent, Trade } from './entities'
 
 /**
  * Options for producing the arguments to send call to the router.
@@ -21,7 +22,10 @@ export interface TradeOptions {
    * The account that should receive the output of the swap.
    */
   recipient: string
-
+  /**
+   * The main currency for the current network
+   */
+  baseCurrency: BaseCurrency | null
   /**
    * Whether any of the tokens in the path are fee on transfer tokens, which should be handled with special methods
    */
@@ -74,15 +78,17 @@ export abstract class Router {
    * @param options options for the call parameters
    */
   public static swapCallParameters(trade: Trade, options: TradeOptions | TradeOptionsDeadline): SwapParameters {
-    const etherIn = trade.inputAmount.currency === ETHER
-    const etherOut = trade.outputAmount.currency === ETHER
+    const { baseCurrency, allowedSlippage, recipient } = options
+
+    const etherIn = isAssetEqual(trade.inputAmount.currency, baseCurrency)
+    const etherOut = isAssetEqual(trade.outputAmount.currency, baseCurrency)
     // the router does not support both ether in and out
     invariant(!(etherIn && etherOut), 'ETHER_IN_OUT')
     invariant(!('ttl' in options) || options.ttl > 0, 'TTL')
 
-    const to: string = validateAndParseAddress(options.recipient)
-    const amountIn: string = toHex(trade.maximumAmountIn(options.allowedSlippage))
-    const amountOut: string = toHex(trade.minimumAmountOut(options.allowedSlippage))
+    const to: string = validateAndParseAddress(recipient)
+    const amountIn: string = toHex(trade.maximumAmountIn(baseCurrency, allowedSlippage))
+    const amountOut: string = toHex(trade.minimumAmountOut(baseCurrency, allowedSlippage))
     const path: string[] = trade.route.path.map((token) => token.address)
     const deadline =
       'ttl' in options

@@ -1,15 +1,16 @@
 import useENS from 'hooks/useENS'
 import { parseUnits } from '@ethersproject/units'
-import { Currency, CurrencyAmount, ETHER, JSBI, Token, TokenAmount, Trade } from 'sdk'
+import { Currency, BaseCurrency, CurrencyAmount, BaseCurrencyAmount, JSBI, Token, TokenAmount, Trade } from 'sdk'
 import { ParsedQs } from 'qs'
 import { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useActiveWeb3React } from 'hooks'
 import { useCurrency } from 'hooks/Tokens'
+import { useBaseCurrency } from 'hooks/useCurrency'
 import { useProjectInfo } from 'state/application/hooks'
 import { useTradeExactIn, useTradeExactOut } from 'hooks/Trades'
 import useParsedQueryString from 'hooks/useParsedQueryString'
-import { isAddress } from 'utils'
+import { isAddress, isAssetEqual } from 'utils'
 import { AppDispatch, AppState } from '../index'
 import { useCurrencyBalances } from '../wallet/hooks'
 import { Field, replaceSwapState, selectCurrency, setRecipient, switchCurrencies, typeInput } from './actions'
@@ -28,16 +29,22 @@ export function useSwapActionHandlers(): {
   onChangeRecipient: (recipient: string | null) => void
 } {
   const dispatch = useDispatch<AppDispatch>()
+  const baseCurrency = useBaseCurrency()
   const onCurrencySelection = useCallback(
     (field: Field, currency: Currency) => {
       dispatch(
         selectCurrency({
           field,
-          currencyId: currency instanceof Token ? currency.address : currency === ETHER ? ETHER.name ?? '' : '',
+          currencyId:
+            currency instanceof Token
+              ? currency.address
+              : isAssetEqual(currency, baseCurrency)
+              ? baseCurrency?.name ?? ''
+              : '',
         })
       )
     },
-    [dispatch]
+    [dispatch, baseCurrency]
   )
 
   const onSwitchTokens = useCallback(() => {
@@ -67,16 +74,21 @@ export function useSwapActionHandlers(): {
 }
 
 // try to parse a user entered amount for a given token
-export function tryParseAmount(value?: string, currency?: Currency): CurrencyAmount | undefined {
+export function tryParseAmount(
+  baseCurrency: BaseCurrency | null,
+  value?: string,
+  currency?: Currency
+): CurrencyAmount | undefined {
   if (!value || !currency) {
     return undefined
   }
+
   try {
     const typedValueParsed = parseUnits(value, currency.decimals).toString()
     if (typedValueParsed !== '0') {
       return currency instanceof Token
         ? new TokenAmount(currency, JSBI.BigInt(typedValueParsed))
-        : CurrencyAmount.ether(JSBI.BigInt(typedValueParsed))
+        : new BaseCurrencyAmount(baseCurrency, JSBI.BigInt(typedValueParsed))
     }
   } catch (error) {
     // should fail if the user specifies too many decimal places of precision (or maybe exceed max uint?)
@@ -110,6 +122,7 @@ export function useDerivedSwapInfo(): {
 } {
   const { account } = useActiveWeb3React()
   const { factory, router } = useProjectInfo()
+  const baseCurrency = useBaseCurrency()
 
   const {
     independentField,
@@ -130,7 +143,11 @@ export function useDerivedSwapInfo(): {
   ])
 
   const isExactIn: boolean = independentField === Field.INPUT
-  const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined)
+  const parsedAmount = tryParseAmount(
+    baseCurrency,
+    typedValue,
+    (isExactIn ? inputCurrency : outputCurrency) ?? undefined
+  )
 
   const bestTradeExactIn = useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined)
   const bestTradeExactOut = useTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined)
@@ -174,7 +191,8 @@ export function useDerivedSwapInfo(): {
 
   const [allowedSlippage] = useUserSlippageTolerance()
 
-  const slippageAdjustedAmounts = v2Trade && allowedSlippage && computeSlippageAdjustedAmounts(v2Trade, allowedSlippage)
+  const slippageAdjustedAmounts =
+    v2Trade && allowedSlippage && computeSlippageAdjustedAmounts(v2Trade, allowedSlippage, baseCurrency)
 
   // compare input balance to max input based on version
   const [balanceIn, amountIn] = [
@@ -195,14 +213,15 @@ export function useDerivedSwapInfo(): {
   }
 }
 
-function parseCurrencyFromURLParameter(urlParam: any): string {
+function parseCurrencyFromURLParameter(urlParam: any, baseCurrency: BaseCurrency | null): string {
   if (typeof urlParam === 'string') {
     const valid = isAddress(urlParam)
     if (valid) return valid
-    if (urlParam.toUpperCase() === ETHER.name) return ETHER.name
-    if (valid === false) return ETHER.name ?? ''
+    if (urlParam.toUpperCase() === baseCurrency?.name) return baseCurrency?.name
+    if (valid === false) return baseCurrency?.name ?? ''
   }
-  return ETHER.name ?? ''
+
+  return baseCurrency?.name ?? ''
 }
 
 function parseTokenAmountURLParameter(urlParam: any): string {
@@ -224,9 +243,10 @@ function validatedRecipient(recipient: any): string | null {
   return null
 }
 
-export function queryParametersToSwapState(parsedQs: ParsedQs): SwapState {
-  let inputCurrency = parseCurrencyFromURLParameter(parsedQs.inputCurrency)
-  let outputCurrency = parseCurrencyFromURLParameter(parsedQs.outputCurrency)
+function queryParametersToSwapState(parsedQs: ParsedQs, baseCurrency: BaseCurrency | null): SwapState {
+  let inputCurrency = parseCurrencyFromURLParameter(parsedQs.inputCurrency, baseCurrency)
+  let outputCurrency = parseCurrencyFromURLParameter(parsedQs.outputCurrency, baseCurrency)
+
   if (inputCurrency === outputCurrency) {
     if (typeof parsedQs.outputCurrency === 'string') {
       inputCurrency = ''
@@ -255,6 +275,7 @@ export function useDefaultsFromURLSearch():
   | { inputCurrencyId: string | undefined; outputCurrencyId: string | undefined }
   | undefined {
   const { chainId } = useActiveWeb3React()
+  const baseCurrency = useBaseCurrency()
   const dispatch = useDispatch<AppDispatch>()
   const parsedQs = useParsedQueryString()
   const [result, setResult] = useState<
@@ -263,7 +284,7 @@ export function useDefaultsFromURLSearch():
 
   useEffect(() => {
     if (!chainId) return
-    const parsed = queryParametersToSwapState(parsedQs)
+    const parsed = queryParametersToSwapState(parsedQs, baseCurrency)
 
     dispatch(
       replaceSwapState({

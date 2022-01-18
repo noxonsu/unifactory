@@ -1,8 +1,10 @@
 import invariant from 'tiny-invariant'
+import { isAssetEqual } from 'utils'
+import { BaseCurrency } from 'sdk'
 import { ONE, TradeType, ZERO } from '../constants'
 import { sortedInsert } from '../utils'
-import { Currency, ETHER } from './currency'
-import { CurrencyAmount } from './fractions/currencyAmount'
+import { Currency } from './currency'
+import { CurrencyAmount, BaseCurrencyAmount } from './fractions/currencyAmount'
 import { Fraction } from './fractions/fraction'
 import { Percent } from './fractions/percent'
 import { Price } from './fractions/price'
@@ -83,18 +85,23 @@ export interface BestTradeOptions {
 
 /**
  * Given a currency amount and a chain ID, returns the equivalent representation as the token amount.
- * In other words, if the currency is ETHER, returns the WRAPPED_TOKEN token amount for the given chain. Otherwise, returns
+ * In other words, if the currency is baseCurrency, returns the WRAPPED_TOKEN token amount for the given chain. Otherwise, returns
  * the input currency amount.
  */
-function wrappedAmount(currencyAmount: CurrencyAmount, chainId: number, wrappedToken: Token): TokenAmount {
+function wrappedAmount(
+  currencyAmount: CurrencyAmount,
+  chainId: number,
+  wrappedToken: Token,
+  baseCurrency: BaseCurrency
+): TokenAmount {
   if (currencyAmount instanceof TokenAmount) return currencyAmount
-  if (currencyAmount.currency === ETHER) return new TokenAmount(wrappedToken, currencyAmount.raw)
+  if (isAssetEqual(currencyAmount.currency, baseCurrency)) return new TokenAmount(wrappedToken, currencyAmount.raw)
   invariant(false, 'CURRENCY')
 }
 
-function wrappedCurrency(currency: Currency, chainId: number, wrappedToken: Token): Token {
+function wrappedCurrency(currency: Currency, chainId: number, wrappedToken: Token, baseCurrency: BaseCurrency): Token {
   if (currency instanceof Token) return currency
-  if (currency === ETHER) return wrappedToken
+  if (isAssetEqual(currency, baseCurrency)) return wrappedToken
   invariant(false, 'CURRENCY')
 }
 
@@ -143,9 +150,19 @@ export class Trade {
     wrappedToken: Token,
     factory: string,
     pairHash: string,
-    totalFee: number
+    totalFee: number,
+    baseCurrency: BaseCurrency
   ): Trade {
-    return new Trade(route, amountIn, TradeType.EXACT_INPUT, wrappedToken, factory, pairHash, totalFee)
+    return new Trade({
+      route,
+      amount: amountIn,
+      tradeType: TradeType.EXACT_INPUT,
+      wrappedToken,
+      factory,
+      pairHash,
+      totalFee,
+      baseCurrency,
+    })
   }
 
   /**
@@ -159,26 +176,38 @@ export class Trade {
     wrappedToken: Token,
     factory: string,
     pairHash: string,
-    totalFee: number
+    totalFee: number,
+    baseCurrency: BaseCurrency
   ): Trade {
-    return new Trade(route, amountOut, TradeType.EXACT_OUTPUT, wrappedToken, factory, pairHash, totalFee)
+    return new Trade({
+      route,
+      amount: amountOut,
+      tradeType: TradeType.EXACT_OUTPUT,
+      wrappedToken,
+      factory,
+      pairHash,
+      totalFee,
+      baseCurrency,
+    })
   }
 
-  public constructor(
-    route: Route,
-    amount: CurrencyAmount,
-    tradeType: TradeType,
-    wrappedToken: Token,
-    factory: string,
-    pairHash: string,
+  public constructor(params: {
+    route: Route
+    amount: CurrencyAmount
+    tradeType: TradeType
+    wrappedToken: Token
+    factory: string
+    pairHash: string
     totalFee: number
-  ) {
+    baseCurrency: BaseCurrency
+  }) {
+    const { route, amount, tradeType, wrappedToken, factory, pairHash, totalFee, baseCurrency } = params
     const amounts: TokenAmount[] = new Array(route.path.length)
     const nextPairs: Pair[] = new Array(route.pairs.length)
 
     if (tradeType === TradeType.EXACT_INPUT) {
       invariant(currencyEquals(amount.currency, route.input), 'INPUT')
-      amounts[0] = wrappedAmount(amount, route.chainId, wrappedToken)
+      amounts[0] = wrappedAmount(amount, route.chainId, wrappedToken, baseCurrency)
 
       for (let i = 0; i < route.path.length - 1; i++) {
         const pair = route.pairs[i]
@@ -188,7 +217,7 @@ export class Trade {
       }
     } else {
       invariant(currencyEquals(amount.currency, route.output), 'OUTPUT')
-      amounts[amounts.length - 1] = wrappedAmount(amount, route.chainId, wrappedToken)
+      amounts[amounts.length - 1] = wrappedAmount(amount, route.chainId, wrappedToken, baseCurrency)
 
       for (let i = route.path.length - 1; i > 0; i--) {
         const pair = route.pairs[i - 1]
@@ -203,14 +232,14 @@ export class Trade {
     this.inputAmount =
       tradeType === TradeType.EXACT_INPUT
         ? amount
-        : route.input === ETHER
-        ? CurrencyAmount.ether(amounts[0].raw)
+        : isAssetEqual(route.input, baseCurrency)
+        ? new BaseCurrencyAmount(baseCurrency, amounts[0].raw)
         : amounts[0]
     this.outputAmount =
       tradeType === TradeType.EXACT_OUTPUT
         ? amount
-        : route.output === ETHER
-        ? CurrencyAmount.ether(amounts[amounts.length - 1].raw)
+        : isAssetEqual(route.output, baseCurrency)
+        ? new BaseCurrencyAmount(baseCurrency, amounts[amounts.length - 1].raw)
         : amounts[amounts.length - 1]
     this.executionPrice = new Price(
       this.inputAmount.currency,
@@ -222,6 +251,7 @@ export class Trade {
       new Route({
         pairs: nextPairs,
         input: route.input,
+        baseCurrency,
         wrappedToken,
       })
     )
@@ -232,8 +262,9 @@ export class Trade {
    * Get the minimum amount that must be received from this trade for the given slippage tolerance
    * @param slippageTolerance tolerance of unfavorable slippage from the execution price of this trade
    */
-  public minimumAmountOut(slippageTolerance: Percent): CurrencyAmount {
+  public minimumAmountOut(baseCurrency: BaseCurrency | null, slippageTolerance: Percent): CurrencyAmount {
     invariant(!slippageTolerance.lessThan(ZERO), 'SLIPPAGE_TOLERANCE')
+
     if (this.tradeType === TradeType.EXACT_OUTPUT) {
       return this.outputAmount
     } else {
@@ -241,9 +272,10 @@ export class Trade {
         .add(slippageTolerance)
         .invert()
         .multiply(this.outputAmount.raw).quotient
+
       return this.outputAmount instanceof TokenAmount
         ? new TokenAmount(this.outputAmount.token, slippageAdjustedAmountOut)
-        : CurrencyAmount.ether(slippageAdjustedAmountOut)
+        : new BaseCurrencyAmount(baseCurrency, slippageAdjustedAmountOut)
     }
   }
 
@@ -251,7 +283,7 @@ export class Trade {
    * Get the maximum amount in that can be spent via this trade for the given slippage tolerance
    * @param slippageTolerance tolerance of unfavorable slippage from the execution price of this trade
    */
-  public maximumAmountIn(slippageTolerance: Percent): CurrencyAmount {
+  public maximumAmountIn(baseCurrency: BaseCurrency | null, slippageTolerance: Percent): CurrencyAmount {
     invariant(!slippageTolerance.lessThan(ZERO), 'SLIPPAGE_TOLERANCE')
     if (this.tradeType === TradeType.EXACT_INPUT) {
       return this.inputAmount
@@ -259,7 +291,7 @@ export class Trade {
       const slippageAdjustedAmountIn = new Fraction(ONE).add(slippageTolerance).multiply(this.inputAmount.raw).quotient
       return this.inputAmount instanceof TokenAmount
         ? new TokenAmount(this.inputAmount.token, slippageAdjustedAmountIn)
-        : CurrencyAmount.ether(slippageAdjustedAmountIn)
+        : new BaseCurrencyAmount(baseCurrency, slippageAdjustedAmountIn)
     }
   }
 
@@ -281,6 +313,7 @@ export class Trade {
     pairs: Pair[]
     currencyAmountIn: CurrencyAmount
     currencyOut: Currency
+    baseCurrency: BaseCurrency
     wrappedToken: Token
     factory: string
     pairHash: string
@@ -298,6 +331,7 @@ export class Trade {
       currentPairs = [],
       originalAmountIn = currencyAmountIn,
       bestTrades = [],
+      baseCurrency,
       wrappedToken,
       factory,
       pairHash,
@@ -316,8 +350,8 @@ export class Trade {
         : undefined
     invariant(chainId !== undefined, 'CHAIN_ID')
 
-    const amountIn = wrappedAmount(currencyAmountIn, chainId, wrappedToken)
-    const tokenOut = wrappedCurrency(currencyOut, chainId, wrappedToken)
+    const amountIn = wrappedAmount(currencyAmountIn, chainId, wrappedToken, baseCurrency)
+    const tokenOut = wrappedCurrency(currencyOut, chainId, wrappedToken, baseCurrency)
 
     for (let i = 0; i < pairs.length; i++) {
       const pair = pairs[i]
@@ -341,20 +375,22 @@ export class Trade {
       if (amountOut.token.equals(tokenOut)) {
         sortedInsert(
           bestTrades,
-          new Trade(
-            new Route({
+          new Trade({
+            route: new Route({
               pairs: [...currentPairs, pair],
               input: originalAmountIn.currency,
               output: currencyOut,
+              baseCurrency,
               wrappedToken,
             }),
-            originalAmountIn,
-            TradeType.EXACT_INPUT,
+            amount: originalAmountIn,
+            tradeType: TradeType.EXACT_INPUT,
             wrappedToken,
             factory,
             pairHash,
-            totalFee
-          ),
+            totalFee,
+            baseCurrency,
+          }),
           maxNumResults,
           tradeComparator
         )
@@ -366,6 +402,7 @@ export class Trade {
           pairs: pairsExcludingThisPair,
           currencyAmountIn: amountOut,
           currencyOut,
+          baseCurrency,
           wrappedToken,
           factory,
           pairHash,
@@ -403,6 +440,7 @@ export class Trade {
     pairs: Pair[]
     currencyIn: Currency
     currencyAmountOut: CurrencyAmount
+    baseCurrency: BaseCurrency
     wrappedToken: Token
     factory: string
     pairHash: string
@@ -420,6 +458,7 @@ export class Trade {
       currentPairs = [],
       originalAmountOut = currencyAmountOut,
       bestTrades = [],
+      baseCurrency,
       wrappedToken,
       factory,
       pairHash,
@@ -438,8 +477,8 @@ export class Trade {
         : undefined
     invariant(chainId !== undefined, 'CHAIN_ID')
 
-    const amountOut = wrappedAmount(currencyAmountOut, chainId, wrappedToken)
-    const tokenIn = wrappedCurrency(currencyIn, chainId, wrappedToken)
+    const amountOut = wrappedAmount(currencyAmountOut, chainId, wrappedToken, baseCurrency)
+    const tokenIn = wrappedCurrency(currencyIn, chainId, wrappedToken, baseCurrency)
 
     for (let i = 0; i < pairs.length; i++) {
       const pair = pairs[i]
@@ -462,20 +501,22 @@ export class Trade {
       if (amountIn.token.equals(tokenIn)) {
         sortedInsert(
           bestTrades,
-          new Trade(
-            new Route({
+          new Trade({
+            route: new Route({
               pairs: [pair, ...currentPairs],
               input: currencyIn,
               output: originalAmountOut.currency,
+              baseCurrency,
               wrappedToken,
             }),
-            originalAmountOut,
-            TradeType.EXACT_OUTPUT,
+            amount: originalAmountOut,
+            tradeType: TradeType.EXACT_OUTPUT,
             wrappedToken,
             factory,
             pairHash,
-            totalFee
-          ),
+            totalFee,
+            baseCurrency,
+          }),
           maxNumResults,
           tradeComparator
         )
@@ -488,6 +529,7 @@ export class Trade {
           currencyIn,
           currencyAmountOut: amountIn,
           wrappedToken,
+          baseCurrency,
           factory,
           pairHash,
           totalFee,

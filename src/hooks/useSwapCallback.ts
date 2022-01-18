@@ -3,10 +3,11 @@ import { Contract } from '@ethersproject/contracts'
 import { JSBI, Percent, Router, SwapParameters, Trade, TradeType } from 'sdk'
 import { useMemo } from 'react'
 import { BIPS_BASE, INITIAL_ALLOWED_SLIPPAGE } from '../constants'
-import { useTransactionAdder } from '../state/transactions/hooks'
+import { useTransactionAdder } from 'state/transactions/hooks'
 import { useProjectInfo } from 'state/application/hooks'
-import { calculateGasMargin, getRouterContract, isAddress, shortenAddress } from '../utils'
-import isZero from '../utils/isZero'
+import { useBaseCurrency } from 'hooks/useCurrency'
+import { calculateGasMargin, getRouterContract, isAddress, shortenAddress } from 'utils'
+import isZero from 'utils/isZero'
 import { useActiveWeb3React } from './index'
 import useTransactionDeadline from './useTransactionDeadline'
 import useENS from './useENS'
@@ -47,6 +48,7 @@ function useSwapCallArguments(
 ): SwapCall[] {
   const { account, chainId, library } = useActiveWeb3React()
   const { router } = useProjectInfo()
+  const baseCurrency = useBaseCurrency()
 
   const { address: recipientAddress } = useENS(recipientAddressOrName)
   const recipient = recipientAddressOrName === null ? account : recipientAddress
@@ -64,6 +66,7 @@ function useSwapCallArguments(
 
     swapMethods.push(
       Router.swapCallParameters(trade, {
+        baseCurrency,
         feeOnTransfer: false,
         allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
         recipient,
@@ -74,6 +77,7 @@ function useSwapCallArguments(
     if (trade.tradeType === TradeType.EXACT_INPUT) {
       swapMethods.push(
         Router.swapCallParameters(trade, {
+          baseCurrency,
           feeOnTransfer: true,
           allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
           recipient,
@@ -83,7 +87,7 @@ function useSwapCallArguments(
     }
 
     return swapMethods.map((parameters) => ({ parameters, contract }))
-  }, [account, router, allowedSlippage, chainId, deadline, library, recipient, trade])
+  }, [account, router, allowedSlippage, chainId, deadline, library, recipient, trade, baseCurrency])
 }
 
 // returns a function that will execute a swap, if the parameters are all valid
