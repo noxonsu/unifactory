@@ -5,6 +5,7 @@ import { useStorageContract } from './useContract'
 import { useProjectInfo } from 'state/application/hooks'
 import { StorageState } from 'state/application/reducer'
 import { returnValidList } from 'utils/getTokenList'
+import { useActiveWeb3React } from 'hooks'
 
 type Settings = {
   domain: string
@@ -70,12 +71,18 @@ export default function useStorageInfo(): { data: StorageState | null; isLoading
   const [data, setData] = useState<StorageState | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
+  const { library } = useActiveWeb3React()
 
   const storage = useStorageContract(storageAddress)
 
   useEffect(() => {
     const fetchData = async () => {
       if (!storageAddress || !storage) return setData(null)
+      // get address code on network switching and don't do anything
+      // if we get '0x' code (means we still haven't updated the storage address)
+      const code = await library?.getCode(storageAddress)
+
+      if (code === '0x') return setData(null)
 
       setError(null)
       setIsLoading(true)
@@ -146,7 +153,7 @@ export default function useStorageInfo(): { data: StorageState | null; isLoading
     }
 
     fetchData()
-  }, [storage, storageAddress, dispatch])
+  }, [storageAddress, storage, library, dispatch])
 
   return { data, isLoading, error }
 }
