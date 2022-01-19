@@ -213,6 +213,7 @@ contract Pair is ERC20 {
         }
 
         _update(balance0, balance1, _reserve0, _reserve1);
+        if (IFactory(factory).totalSwaps() < type(uint).max) IFactory(factory).increaseNumberOfSwaps(token0, token1);
         emit Swap(msg.sender, amount0In, amount1In, amount0Out, amount1Out, to);
     }
 
