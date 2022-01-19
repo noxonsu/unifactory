@@ -107,7 +107,7 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
   useEffect(() => {
     if (chainId) {
       //@ts-ignore
-      setWrappedToken(networks[chainId].wrappedToken.address)
+      setWrappedToken(networks[chainId]?.wrappedToken?.address)
     }
   }, [chainId])
 
@@ -204,7 +204,6 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
             setPending={setPending}
             setError={setError}
             wrappedToken={wrappedToken}
-            setWrappedToken={setWrappedToken}
             setDomainDataTrigger={setDomainDataTrigger}
           />
         )}

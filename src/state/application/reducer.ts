@@ -93,10 +93,6 @@ export default createReducer(initialState, (builder) =>
         totalSwaps,
       } = action.payload
 
-      console.group('%c Log', 'color: orange; font-size: 14px')
-      console.log('action.payload: ', action.payload)
-      console.groupEnd()
-
       if (admin === ZERO_ADDRESS) admin = ''
       if (factory === ZERO_ADDRESS) factory = ''
       if (router === ZERO_ADDRESS) router = ''
