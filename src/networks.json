@@ -321,5 +321,157 @@
       "name": "Wrapped RBTC",
       "symbol": "WRBTC"
     }
+  },
+  "43114": {
+    "name": "Avalanche Mainnet C-Chain",
+    "rpc": "https://api.avax.network/ext/bc/C/rpc",
+    "chainId": 43114,
+    "explorer": "https://snowtrace.io",
+    "registry": "",
+    "multicall": "",
+    "ENSRegistry": "",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "AVAX",
+      "symbol": "AVAX"
+    },
+    "wrappedToken": {
+      "address": "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7",
+      "name": "Wrapped AVAX",
+      "symbol": "WAVAX"
+    }
+  },
+  "43113": {
+    "name": "Avalanche FUJI C-Chain",
+    "rpc": "https://api.avax-test.network/ext/bc/C/rpc",
+    "chainId": 43113,
+    "explorer": "https://testnet.snowtrace.io",
+    "registry": "0x79D5C019F2515Cbc0596170Da44FCd26412c4f83",
+    "multicall": "0x9664EC984D1c0d44dD22C161da1D06f7f72Ae092",
+    "ENSRegistry": "",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "AVAX",
+      "symbol": "AVAX"
+    },
+    "wrappedToken": {
+      "address": "0xd00ae08403b9bbb9124bb305c09058e32c39a48c",
+      "name": "Wrapped AVAX",
+      "symbol": "WAVAX"
+    }
+  },
+  "88": {
+    "name": "TomoChain",
+    "rpc": "https://rpc.tomochain.com",
+    "chainId": 88,
+    "explorer": "https://tomoscan.io",
+    "registry": "",
+    "multicall": "",
+    "ENSRegistry": "",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "TOMO",
+      "symbol": "TOMO"
+    },
+    "wrappedToken": {
+      "address": "0xB1f66997A5760428D3a87D68b90BfE0aE64121cC",
+      "name": "Wrapped TOMO",
+      "symbol": "WTOMO"
+    }
+  },
+  "89": {
+    "name": "TomoChain Testnet",
+    "rpc": "https://rpc.testnet.tomochain.com",
+    "chainId": 89,
+    "explorer": "https://scan.testnet.tomochain.com",
+    "registry": "",
+    "multicall": "",
+    "ENSRegistry": "",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "TOMO",
+      "symbol": "TOMO"
+    },
+    "wrappedToken": {
+      "address": "0xC8f35A163F69223bDd91D8Db1236fe165cf167Ff",
+      "name": "Wrapped TOMO",
+      "symbol": "WTOMO"
+    }
+  },
+  "25": {
+    "name": "Cronos",
+    "rpc": "https://evm-cronos.crypto.org",
+    "chainId": 25,
+    "explorer": "https://cronos.crypto.org/explorer",
+    "registry": "",
+    "multicall": "",
+    "ENSRegistry": "",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "CRO",
+      "symbol": "CRO"
+    },
+    "wrappedToken": {
+      "address": "0x5C7F8A570d578ED84E63fdFA7b1eE72dEae1AE23",
+      "name": "Wrapped CRO",
+      "symbol": "WCRO"
+    }
+  },
+  "338": {
+    "name": "Cronos Testnet",
+    "rpc": "https://cronos-testnet-3.crypto.org:8545",
+    "chainId": 338,
+    "explorer": "https://cronos.crypto.org/explorer/testnet3",
+    "registry": "0x79D5C019F2515Cbc0596170Da44FCd26412c4f83",
+    "multicall": "0x9664EC984D1c0d44dD22C161da1D06f7f72Ae092",
+    "ENSRegistry": "",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "TCRO",
+      "symbol": "TCRO"
+    },
+    "wrappedToken": {
+      "address": "0x6a3173618859C7cd40fAF6921b5E9eB6A76f1fD4",
+      "name": "Wrapped TCRO",
+      "symbol": "WTCRO"
+    }
+  },
+  "128": {
+    "name": "Huobi ECO Chain",
+    "rpc": "https://http-mainnet.hecochain.com",
+    "chainId": 128,
+    "explorer": "https://hecoinfo.com",
+    "registry": "",
+    "multicall": "",
+    "ENSRegistry": "",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "HT",
+      "symbol": "HT"
+    },
+    "wrappedToken": {
+      "address": "0x5545153CCFcA01fbd7Dd11C0b23ba694D9509A6F",
+      "name": "Wrapped HT",
+      "symbol": "WHT"
+    }
+  },
+  "256": {
+    "name": "Huobi ECO Chain Testnet",
+    "rpc": "https://http-testnet.hecochain.com",
+    "chainId": 256,
+    "explorer": "https://testnet.hecoinfo.com",
+    "registry": "0x79D5C019F2515Cbc0596170Da44FCd26412c4f83",
+    "multicall": "0x9664EC984D1c0d44dD22C161da1D06f7f72Ae092",
+    "ENSRegistry": "",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "HT",
+      "symbol": "HT"
+    },
+    "wrappedToken": {
+      "address": "0x7aF326B6351C8A9b8fb8CD205CBe11d4Ac5FA836",
+      "name": "Wrapped HT",
+      "symbol": "WHT"
+    }
   }
 }

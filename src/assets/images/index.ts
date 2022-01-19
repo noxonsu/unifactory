@@ -6,6 +6,9 @@ import OPTIMISTIC_ETH from './optimisticEth.svg'
 import XDAI from './xdai.png'
 import RBTC from './rbtc.png'
 import AVAX from './avax.png'
+import TOMO from './tomo.png'
+import CRO from './cro.png'
+import HT from './ht.png'
 
 export const CURRENCY = {
   ETH,
@@ -30,4 +33,12 @@ export const CURRENCY = {
   77: XDAI,
   30: RBTC,
   31: RBTC,
+  43114: AVAX,
+  43113: AVAX,
+  88: TOMO,
+  89: TOMO,
+  25: CRO,
+  338: CRO,
+  128: HT,
+  256: HT,
 }
