@@ -38,6 +38,8 @@ export type ApplicationState = {
   readonly totalFee: number | undefined
   readonly allFeeToProtocol: boolean | undefined
   readonly possibleProtocolPercent: number[]
+  readonly devFeeSetter: string | undefined
+  readonly totalSwaps: number | undefined
   readonly blockNumber: { readonly [chainId: number]: number }
   readonly popupList: PopupList
   readonly openModal: ApplicationModal | null
@@ -54,6 +56,8 @@ const initialState: ApplicationState = {
   totalFee: undefined,
   allFeeToProtocol: undefined,
   possibleProtocolPercent: [],
+  devFeeSetter: '',
+  totalSwaps: undefined,
   domain: '',
   projectName: '',
   brandColor: '',
@@ -85,22 +89,32 @@ export default createReducer(initialState, (builder) =>
         totalFee,
         allFeeToProtocol,
         possibleProtocolPercent,
+        devFeeSetter,
+        totalSwaps,
       } = action.payload
+
+      console.group('%c Log', 'color: orange; font-size: 14px')
+      console.log('action.payload: ', action.payload)
+      console.groupEnd()
 
       if (admin === ZERO_ADDRESS) admin = ''
       if (factory === ZERO_ADDRESS) factory = ''
       if (router === ZERO_ADDRESS) router = ''
       if (storageAddr === ZERO_ADDRESS) storageAddr = ''
-      if (possibleProtocolPercent?.length) state.possibleProtocolPercent = possibleProtocolPercent
+      if (devFeeSetter === ZERO_ADDRESS) devFeeSetter = ''
+      if (possibleProtocolPercent?.length)
+        state.possibleProtocolPercent = possibleProtocolPercent.map((strN) => Number(strN))
 
       state.admin = admin
       state.factory = factory
       state.router = router
       state.storage = storageAddr
       state.pairHash = pairHash
+      state.devFeeSetter = devFeeSetter
 
       if (isNumber(protocolFee)) state.protocolFee = Number(protocolFee)
       if (isNumber(totalFee)) state.totalFee = Number(totalFee)
+      if (isNumber(totalSwaps)) state.totalSwaps = Number(totalSwaps)
       if (typeof allFeeToProtocol === 'boolean') state.allFeeToProtocol = allFeeToProtocol
     })
     .addCase(updateAppData, (state, action) => {

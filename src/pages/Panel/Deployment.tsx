@@ -6,6 +6,7 @@ import { useProjectInfo } from 'state/application/hooks'
 import styled from 'styled-components'
 import { Text } from 'rebass'
 import networks from 'networks.json'
+import { DEV_FEE_ADMIN } from '../../constants'
 import { ButtonPrimary } from 'components/Button'
 // import QuestionHelper from 'components/QuestionHelper'
 import InputPanel from 'components/InputPanel'
@@ -91,6 +92,7 @@ export default function Deployment(props: any) {
         registryAddress: networks[chainId]?.registry,
         library,
         admin: adminAddress,
+        devFeeAdmin: DEV_FEE_ADMIN,
         wrappedToken,
         onFactoryHash: (hash: string) => {
           setTxHash(hash)

@@ -5,6 +5,8 @@ import {
   // walletconnect, walletlink
 } from '../connectors'
 
+export const DEV_FEE_ADMIN = '0x6D1EB33c063CBe69d064EE22537dBF107e8816f6'
+
 export const storageMethods = {
   setSettings: 'setSettings',
   addTokenList: 'addTokenList',
