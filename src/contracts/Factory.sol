@@ -10,6 +10,7 @@ contract Factory is IFactory {
     uint[30] public POSSIBLE_PROTOCOL_PERCENT = [10000, 5000, 3300, 2500, 2000, 1600, 1400, 1200, 1100, 1000, 900, 800, 700, 600, 500, 400, 300, 200, 100, 90, 80, 70, 60, 50, 40, 30, 20, 10, 5, 1];
     uint public override constant MAX_TOTAL_FEE_PERCENT = 1_000;
     uint public override constant MAX_PROTOCOL_FEE_PERCENT = 10_000;
+    uint public override totalSwaps;
     uint public override protocolFee;
     uint public override totalFee;
     uint public override devFeePercent;
@@ -28,13 +29,12 @@ contract Factory is IFactory {
         _;
     }
 
-    constructor(address _feeToSetter) {
+    constructor(address _feeToSetter, address _devFeeSetter) {
         feeToSetter = _feeToSetter;
-        protocolFee = 2000;
+        devFeeSetter = _devFeeSetter;
         totalFee = 3;
+        protocolFee = 2000;
         devFeePercent = 20;
-        devFeeTo = 0x4086a2CAe8d3FcCd94D1172006516C7d0794C7Ee;
-        devFeeSetter = 0x4086a2CAe8d3FcCd94D1172006516C7d0794C7Ee;
     }
 
     function allPairsLength() external view override returns (uint) {
@@ -43,6 +43,7 @@ contract Factory is IFactory {
 
     function allInfo() external view override returns(AllInfo memory) {
         return AllInfo({
+            totalSwaps: totalSwaps,
             protocolFee: protocolFee,
             totalFee: totalFee,
             devFeePercent: devFeePercent,
@@ -115,6 +116,11 @@ contract Factory is IFactory {
 
     function setProtocolFee(uint _protocolFee) external override onlyOwner {
         _setProtocolFee(_protocolFee);
+    }
+
+    function increaseNumberOfSwaps(address token0, address token1) external override {
+        require(msg.sender == getPair[token0][token1], 'Factory: FORBIDDEN');
+        if (totalSwaps < type(uint).max) totalSwaps += 1;
     }
 
     function _setTotalFee(uint _totalFee) private {

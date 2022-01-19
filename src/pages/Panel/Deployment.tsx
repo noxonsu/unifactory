@@ -6,8 +6,8 @@ import { useProjectInfo } from 'state/application/hooks'
 import styled from 'styled-components'
 import { Text } from 'rebass'
 import networks from 'networks.json'
+import { DEV_FEE_ADMIN } from '../../constants'
 import { ButtonPrimary } from 'components/Button'
-// import QuestionHelper from 'components/QuestionHelper'
 import InputPanel from 'components/InputPanel'
 import AddressInputPanel from 'components/AddressInputPanel'
 import TransactionConfirmationModal, { ConfirmationModalContent } from 'components/TransactionConfirmationModal'
@@ -34,19 +34,8 @@ const InputWrapper = styled.div`
   margin: 0.2rem 0;
 `
 
-// const Label = styled.div`
-//   display: flex;
-//   align-items: center;
-// `
-
 export default function Deployment(props: any) {
-  const {
-    pending,
-    setError,
-    wrappedToken,
-    // setWrappedToken,
-    setDomainDataTrigger,
-  } = props
+  const { pending, setError, wrappedToken, setDomainDataTrigger } = props
   const { t } = useTranslation()
   const { library, chainId } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
@@ -91,6 +80,7 @@ export default function Deployment(props: any) {
         registryAddress: networks[chainId]?.registry,
         library,
         admin: adminAddress,
+        devFeeAdmin: DEV_FEE_ADMIN,
         wrappedToken,
         onFactoryHash: (hash: string) => {
           setTxHash(hash)
@@ -208,21 +198,6 @@ export default function Deployment(props: any) {
 
       <Title>1) {t('deploySwapContracts')}</Title>
 
-      {/* <AddressInputPanel
-        label={
-          <Label>
-            {t('wrappedToken')} * <QuestionHelper text={t('wrappedTokenDescription')} />
-          </Label>
-        }
-        value={wrappedToken}
-        onChange={setWrappedToken}
-        disabled={
-          // don't allow the user to change a token address
-          // in case if we have it in our config
-          //@ts-ignore
-          networks[chainId]?.wrappedToken?.address && wrappedToken
-        }
-      /> */}
       <Button
         onClick={() => {
           setDeployableOption(DeployOption.Swap)
