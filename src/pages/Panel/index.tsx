@@ -16,7 +16,6 @@ import { CleanButton, ButtonError, ButtonSecondary } from 'components/Button'
 import ConfirmationModal from 'components/ConfirmationModal'
 import Instruction from './Instruction'
 import Wallet from './Wallet'
-import Deployment from './Deployment'
 import SwapContracts from './SwapContracts'
 import Interface from './Interface'
 
@@ -51,15 +50,14 @@ const Tabs = styled.div`
 `
 
 const Tab = styled.button<{ active?: boolean }>`
+  flex: 1;
   cursor: pointer;
-  padding: 0.3rem 0.6rem;
-  margin: 0.2rem 0 0.4rem;
+  padding: 0.4rem 0.7rem;
+  margin: 0.1rem 0 0.4rem;
   border-radius: 0.5rem;
-  border: none;
-  font-size: 1.1em;
-  font-weight: 500;
+  font-size: 1em;
   border: 1px solid ${({ theme }) => theme.bg3};
-  background-color: ${({ theme, active }) => (active ? theme.bg3 : 'transparent')};
+  background-color: ${({ theme, active }) => (active ? theme.bg2 : 'transparent')};
   color: ${({ theme }) => theme.text1};
 
   &:not(:last-child) {
@@ -96,7 +94,9 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
   const [pending, setPending] = useState<boolean>(false)
   const { chainId, account, library } = useActiveWeb3React()
   const { admin, factory, router } = useProjectInfo()
+
   const [error, setError] = useState<any | false>(false)
+  const [domain] = useState(window.location.hostname || document.location.host)
 
   const appManagement = useSelector<AppState, AppState['application']['appManagement']>(
     (state) => state.application.appManagement
@@ -115,11 +115,11 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
     dispatch(setAppManagement({ status: false }))
   }
 
-  const [tab, setTab] = useState('deployment')
+  const [tab, setTab] = useState('contracts')
+  const [showConfirm, setShowConfirm] = useState<boolean>(false)
 
   //@ts-ignore
   const accountPrefix = networks[chainId]?.name || t('account')
-  const domain = window.location.hostname || document.location.host
 
   const resetDomain = async () => {
     setShowConfirm(false)
@@ -129,15 +129,11 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
     await registry.methods.removeDomain(domain).send({
       from: account,
     })
-
     setDomainDataTrigger((state: boolean) => !state)
   }
 
-  const [showConfirm, setShowConfirm] = useState<boolean>(false)
-
   const returnTabs = () => {
     return [
-      { tabKey: 'deployment', tabName: 'deployment' },
       { tabKey: 'contracts', tabName: 'swapContracts' },
       { tabKey: 'interface', tabName: 'interface' },
     ].map((info, index) => {
@@ -197,18 +193,19 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
       <Tabs>{returnTabs()}</Tabs>
 
       <Content>
-        {tab === 'deployment' && (
-          <Deployment
+        {tab === 'contracts' && (
+          <SwapContracts
+            domain={domain}
             pending={pending}
-            error={error}
             setPending={setPending}
             setError={setError}
             wrappedToken={wrappedToken}
             setDomainDataTrigger={setDomainDataTrigger}
           />
         )}
-        {tab === 'contracts' && <SwapContracts pending={pending} setPending={setPending} setError={setError} />}
-        {tab === 'interface' && <Interface pending={pending} setPending={setPending} setError={setError} />}
+        {tab === 'interface' && (
+          <Interface domain={domain} pending={pending} setPending={setPending} setError={setError} />
+        )}
       </Content>
 
       {Boolean(admin && factory && router) && (

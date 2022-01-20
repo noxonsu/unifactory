@@ -248,5 +248,13 @@
   "tradeAtYourOwnRisk": "Opere bajo su propio riesgo!",
   "fakeTokenCreationWarning": "Cualquier persona puede crear un token, incluida la creación de versiones falsas de tokens existentes que afirman representar proyectos",
   "fakeTokenPurchaseWarning": "Si compra este token, es posible que no pueda volver a venderlo",
-  "iUnderstand": "Entiendo"
+  "iUnderstand": "Entiendo",
+  "address": "Dirección",
+  "your": "su",
+  "deploy":  "Desplegar",
+  "youHaveToConfirmTheseTxs": "Tienes que confirmar estas transacciones",
+  "deployFactoryContract": "Contrato de implementación de fábrica",
+  "deployRouterContract": "Implementar Router contrato",
+  "saveInfoToDomainRegistry": "Guardar información en el contrato de registro de dominio",
+  "storageContract": "Contrato de almacenamiento"
 }

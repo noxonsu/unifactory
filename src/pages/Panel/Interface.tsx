@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import validUrl from 'valid-url'
 import styled from 'styled-components'
@@ -16,11 +16,12 @@ import AddressInputPanel from 'components/AddressInputPanel'
 import ListFactory from 'components/ListFactory'
 import MenuLinksFactory, { LinkItem } from 'components/MenuLinksFactory'
 import { saveProjectOption, fetchOptionsFromContract } from 'utils/storage'
-import { isValidAddress } from 'utils/contract'
+import { isValidAddress, deployStorage } from 'utils/contract'
 import { parseENSAddress } from 'utils/parseENSAddress'
 import uriToHttp from 'utils/uriToHttp'
 import { storageMethods } from '../../constants'
 import networks from 'networks.json'
+import ConfirmationModal from './ConfirmationModal'
 
 const OptionWrapper = styled.div<{ margin?: number }>`
   margin: ${({ margin }) => margin || 0.2}rem 0;
@@ -41,6 +42,14 @@ const Title = styled.h3`
   font-weight: 400;
 `
 
+const NumList = styled.ol`
+  padding: 0 0 0 1rem;
+
+  li:not(:last-child) {
+    margin-bottom: 0.4rem;
+  }
+`
+
 const colorPickerStyles = {
   default: {
     picker: {
@@ -50,17 +59,27 @@ const colorPickerStyles = {
 }
 
 export default function Interface(props: any) {
-  const { pending, setPending, setError } = props
+  const { domain, pending, setPending, setError } = props
   const { t } = useTranslation()
   const { library, chainId } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
   //@ts-ignore
   const registry = useRegistryContract(networks[chainId]?.registry)
 
-  const { storage: stateStorage } = useProjectInfo()
+  const { admin: stateAdmin, factory: stateFactory, router: stateRouter, storage: stateStorage } = useProjectInfo()
 
   const [notification, setNotification] = useState<false | string>('')
+  const [showConfirm, setShowConfirm] = useState<boolean>(false)
+  const [txHash, setTxHash] = useState<string>('')
+  const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false)
+  const [canDeployStorage, setCanDeployStorage] = useState(false)
   const [storage, setStorage] = useState(stateStorage || '')
+
+  useEffect(() => {
+    //@ts-ignore
+    setCanDeployStorage(stateFactory && stateRouter)
+  }, [library, stateFactory, stateRouter])
+
   const [storageIsCorrect, setStorageIsCorrect] = useState(false)
 
   useEffect(() => {
@@ -71,6 +90,38 @@ export default function Interface(props: any) {
       setError(storage && !isStorageCorrect ? new Error('Incorrect address') : false)
     }
   }, [setError, library, storage])
+
+  const onStorageDeployment = async () => {
+    setAttemptingTxn(true)
+
+    try {
+      await deployStorage({
+        domain,
+        //@ts-ignore
+        registryAddress: networks[chainId]?.registry,
+        onHash: (hash: string) => {
+          setTxHash(hash)
+          addTransaction(
+            { hash },
+            {
+              summary: `Chain ${chainId}. Deploy storage`,
+            }
+          )
+          setAttemptingTxn(false)
+        },
+        library,
+        admin: stateAdmin,
+      })
+    } catch (error) {
+      setError(error)
+      setAttemptingTxn(false)
+    }
+  }
+
+  const handleDismissConfirmation = useCallback(() => {
+    setShowConfirm(false)
+    setTxHash('')
+  }, [])
 
   const [timer, setTimer] = useState(0)
   const SECOND = 1_000
@@ -131,9 +182,7 @@ export default function Interface(props: any) {
         if (tokenLists.length) {
           setTokenLists([])
 
-          tokenLists.forEach(async (tokenLists: any) =>
-            setTokenLists((oldData: any) => [...oldData, JSON.parse(tokenLists)])
-          )
+          tokenLists.forEach((tokenLists: any) => setTokenLists((oldData: any) => [...oldData, JSON.parse(tokenLists)]))
         }
       }
     } catch (error) {
@@ -186,7 +235,7 @@ export default function Interface(props: any) {
       storage && (logoUrl || brandColor || projectName || socialLinks.length || addressesOfTokenLists.length)
     )
 
-    setFullUpdateIsAvailable(!!fullUpdateIsAvailable)
+    setFullUpdateIsAvailable(fullUpdateIsAvailable)
   }, [storage, projectName, logoUrl, brandColor, socialLinks, addressesOfTokenLists])
 
   const createNewTokenList = () => {
@@ -202,7 +251,30 @@ export default function Interface(props: any) {
 
   return (
     <section>
+      <ConfirmationModal
+        open={showConfirm}
+        onDismiss={handleDismissConfirmation}
+        onDeployment={onStorageDeployment}
+        txHash={txHash}
+        attemptingTxn={attemptingTxn}
+        titleId={'storageContract'}
+        confirmBtnMessageId={'deploy'}
+        content={
+          <div>
+            {t('youAreDeployingStorage')}. {t('youHaveToConfirmTheseTxs')}:
+            <NumList>
+              <li>{t('deployStorageContract')}</li>
+              <li>{t('saveInfoToDomainRegistry')}</li>
+            </NumList>
+          </div>
+        }
+      />
       {notification && <p>{notification}</p>}
+      <Button onClick={() => setShowConfirm(true)} disabled={pending || !canDeployStorage}>
+        {t('deployStorage')}
+      </Button>
+
+      <Title>{t('settings')}</Title>
 
       <OptionWrapper>
         <AddressInputPanel label="Storage contract *" value={storage} onChange={setStorage} disabled />
