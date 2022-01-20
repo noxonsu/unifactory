@@ -42,6 +42,14 @@ const Title = styled.h3`
   font-weight: 400;
 `
 
+const NumList = styled.ol`
+  padding: 0 0 0 1rem;
+
+  li:not(:last-child) {
+    margin-bottom: 0.4rem;
+  }
+`
+
 const colorPickerStyles = {
   default: {
     picker: {
@@ -174,9 +182,7 @@ export default function Interface(props: any) {
         if (tokenLists.length) {
           setTokenLists([])
 
-          tokenLists.forEach( (tokenLists: any) =>
-            setTokenLists((oldData: any) => [...oldData, JSON.parse(tokenLists)])
-          )
+          tokenLists.forEach((tokenLists: any) => setTokenLists((oldData: any) => [...oldData, JSON.parse(tokenLists)]))
         }
       }
     } catch (error) {
@@ -250,21 +256,25 @@ export default function Interface(props: any) {
         onDismiss={handleDismissConfirmation}
         onDeployment={onStorageDeployment}
         txHash={txHash}
-        // todo: message about three trx (1. deploy Storage 2. Save info to the Registry)
-        // pendingText={''}
         attemptingTxn={attemptingTxn}
-        messageId={'youAreDeployingStorage'}
+        titleId={'storageContract'}
+        confirmBtnMessageId={'deploy'}
+        content={
+          <div>
+            {t('youAreDeployingStorage')}. {t('youHaveToConfirmTheseTxs')}:
+            <NumList>
+              <li>{t('deployStorageContract')}</li>
+              <li>{t('saveInfoToDomainRegistry')}</li>
+            </NumList>
+          </div>
+        }
       />
-
       {notification && <p>{notification}</p>}
-
-      {/* @todo condition: if user didn't deploy swap contracts, block this form */}
-      <Button
-        onClick={() => setShowConfirm(true)}
-        disabled={pending || !canDeployStorage}
-      >
+      <Button onClick={() => setShowConfirm(true)} disabled={pending || !canDeployStorage}>
         {t('deployStorage')}
       </Button>
+
+      <Title>{t('settings')}</Title>
 
       <OptionWrapper>
         <AddressInputPanel label="Storage contract *" value={storage} onChange={setStorage} disabled />

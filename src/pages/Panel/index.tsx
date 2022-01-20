@@ -50,14 +50,14 @@ const Tabs = styled.div`
 `
 
 const Tab = styled.button<{ active?: boolean }>`
+  flex: 1;
   cursor: pointer;
-  padding: 0.3rem 0.6rem;
-  margin: 0.2rem 0 0.4rem;
+  padding: 0.4rem 0.7rem;
+  margin: 0.1rem 0 0.4rem;
   border-radius: 0.5rem;
-  font-size: 1.1em;
-  font-weight: 500;
+  font-size: 1em;
   border: 1px solid ${({ theme }) => theme.bg3};
-  background-color: ${({ theme, active }) => (active ? theme.bg3 : 'transparent')};
+  background-color: ${({ theme, active }) => (active ? theme.bg2 : 'transparent')};
   color: ${({ theme }) => theme.text1};
 
   &:not(:last-child) {
@@ -115,7 +115,7 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
     dispatch(setAppManagement({ status: false }))
   }
 
-  const [tab, setTab] = useState('deployment')
+  const [tab, setTab] = useState('contracts')
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
 
   //@ts-ignore

@@ -12,8 +12,7 @@ const Section = styled.div`
 `
 
 const Title = styled.h4`
-  margin: 0;
-  margin-bottom: 1rem;
+  margin: 0 0 1rem;
   font-weight: 500;
 `
 
@@ -52,7 +51,7 @@ export default function Instruction() {
   const { t } = useTranslation()
 
   return (
-    <Accordion title={t('instructions')} padding={0.2} contentPadding>
+    <Accordion title={t('instructions')} padding={0.2} borderRadius={1} contentPadding>
       <Section>
         <Paragraph>1) {t('swapContractsDeploymentDescription')}.</Paragraph>
         <Paragraph>2) {t('storageDeploymentDescription')}.</Paragraph>

@@ -248,5 +248,13 @@
   "tradeAtYourOwnRisk": "לסחור על אחריותך בלבד!",
   "fakeTokenCreationWarning": "כל אחד יכול ליצור אסימון, כולל יצירת גרסאות מזויפות של אסימונים קיימים הטוענים לייצג פרויקטים",
   "fakeTokenPurchaseWarning": "אם אתה רוכש אסימון זה, ייתכן שלא תוכל למכור אותו בחזרה",
-  "iUnderstand": "אני מבין"
+  "iUnderstand": "אני מבין",
+  "address": "כתובת",
+  "your": "שלך",
+  "deploy":  "לפרוס",
+  "youHaveToConfirmTheseTxs": "אתה צריך לאשר עסקאות אלה",
+  "deployFactoryContract": "לפרוס חוזה במפעל",
+  "deployRouterContract": "פרוס חוזה נתב",
+  "saveInfoToDomainRegistry": "שמירת מידע לחוזה הרישום של הדומיין",
+  "storageContract": "חוזה אחסון"
 }

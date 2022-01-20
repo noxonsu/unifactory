@@ -206,8 +206,8 @@
   "logoUrl": "Logo url",
   "socialLinks": "Social links",
   "resetDomainDescription": "All data for this domain will be erased (admin, contract addresses and settings)",
-  "youAreDeployingSwapContracts": "You are deploying swap contracts",
-  "youAreDeployingStorage": "You are deploying storage contract",
+  "youAreDeployingSwapContracts": "You are going to deploy swap contracts",
+  "youAreDeployingStorage": "You are going to deploy a storage contract",
   "confirmDeployment": "Confirm deployment",
   "confirmTransactionInWallet": "Confirm this transaction in your wallet",
   "waitingForConfirmation": "Waiting for confirmation",
@@ -259,5 +259,13 @@
   "tradeAtYourOwnRisk": "Trade at your own risk!",
   "fakeTokenCreationWarning": "Anyone can create a token, including creating fake versions of existing tokens that claim to represent projects",
   "fakeTokenPurchaseWarning": "If you purchase this token, you may not be able to sell it back",
-  "iUnderstand": "I understand"
+  "iUnderstand": "I understand",
+  "address": "Address",
+  "your": "your",
+  "deploy":  "Deploy",
+  "youHaveToConfirmTheseTxs": "You have to confirm these transactions",
+  "deployFactoryContract": "Deploy Factory contract",
+  "deployRouterContract": "Deploy Router contract",
+  "saveInfoToDomainRegistry": "Save information to the domain registry contract",
+  "storageContract": "Storage contract"
 }

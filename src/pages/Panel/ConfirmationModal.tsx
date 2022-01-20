@@ -10,17 +10,31 @@ export default function ConfirmationModal(props: {
   onDeployment: () => void
   txHash: string
   attemptingTxn: boolean
-  messageId: string
+  titleId: string
+  content: JSX.Element
+  confirmBtnMessageId: string
   pendingMessageId?: string
 }) {
-  const { open, onDismiss, onDeployment, txHash, attemptingTxn, messageId, pendingMessageId } = props
+  const {
+    open,
+    onDismiss,
+    onDeployment,
+    txHash,
+    attemptingTxn,
+    titleId,
+    content,
+    confirmBtnMessageId,
+    pendingMessageId,
+  } = props
   const { t } = useTranslation()
 
   const ModalBottom = () => (
     <div>
+      {content}
+
       <ButtonPrimary onClick={onDeployment}>
         <Text fontWeight={500} fontSize={20}>
-          {t(messageId)}
+          {t(confirmBtnMessageId)}
         </Text>
       </ButtonPrimary>
     </div>
@@ -35,7 +49,7 @@ export default function ConfirmationModal(props: {
       pendingText={pendingMessageId ? t(pendingMessageId) : ''}
       content={() => (
         <ConfirmationModalContent
-          title={t(messageId)}
+          title={t(titleId)}
           onDismiss={onDismiss}
           topContent={() => null}
           bottomContent={ModalBottom}

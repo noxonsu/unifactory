@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import isNumber from 'is-number'
-import styled, { withTheme } from 'styled-components'
+import styled, { withTheme, css } from 'styled-components'
 import { BigNumber } from 'bignumber.js'
 import { Box } from 'rebass'
 import { Label, Checkbox } from '@rebass/forms'
@@ -29,6 +29,10 @@ import { ZERO_ADDRESS } from 'sdk'
 import { factoryMethods } from '../../constants'
 import networks from 'networks.json'
 
+const Title = styled.h3`
+  font-weight: 400;
+`
+
 const OptionWrapper = styled.div<{ margin?: number }>`
   margin: ${({ margin }) => margin || 0.2}rem 0;
   padding: 0.3rem 0;
@@ -43,12 +47,20 @@ const Info = styled.div<{ flex?: boolean }>`
   ${({ flex }) => (flex ? 'display: flex; align-items: center;' : '')}
 `
 
-const List = styled.ul`
+const listStyles = css`
   padding: 0 0 0 1rem;
 
   li:not(:last-child) {
     margin-bottom: 0.4rem;
   }
+`
+
+const List = styled.ul`
+  ${listStyles}
+`
+
+const NumList = styled.ol`
+  ${listStyles}
 `
 
 const LabelExtended = styled(Label)`
@@ -161,7 +173,7 @@ function SwapContracts(props: any) {
   } = useProjectInfo()
 
   const [canDeploySwapContracts, setCanDeploySwapContracts] = useState(false)
-  const [adminAddress, setAdminAddress] = useState(stateAdmin || '')
+  const [adminAddress, setAdminAddress] = useState(stateAdmin || account || '')
 
   useEffect(() => {
     setCanDeploySwapContracts(
@@ -368,13 +380,26 @@ function SwapContracts(props: any) {
         onDismiss={handleDismissConfirmation}
         onDeployment={onContractsDeployment}
         txHash={txHash}
-        // todo: message about three trx (1. deploy Factory 2. Router. 3. Save info to the Registry)
-        // pendingText={''}
         attemptingTxn={attemptingTxn}
-        messageId={'youAreDeployingSwapContracts'}
+        titleId={'swapContracts'}
+        confirmBtnMessageId={'deploy'}
+        content={
+          <div>
+            {t('youAreDeployingSwapContracts')}. {t('youHaveToConfirmTheseTxs')}:
+            <NumList>
+              <li>{t('deployFactoryContract')}</li>
+              <li>{t('deployRouterContract')}</li>
+              <li>{t('saveInfoToDomainRegistry')}</li>
+            </NumList>
+          </div>
+        }
       />
       <InputWrapper>
-        <AddressInputPanel label={`${t('admin')} *`} value={adminAddress} onChange={setAdminAddress} />
+        <AddressInputPanel
+          label={`${t('admin')} (${t('your')}) ${t('address').toLowerCase()} *`}
+          value={adminAddress}
+          onChange={setAdminAddress}
+        />
       </InputWrapper>
       <InputWrapper>
         <InputPanel label={`${t('domain')} *`} value={domain} onChange={() => null} disabled />
@@ -384,15 +409,13 @@ function SwapContracts(props: any) {
         {t('deploySwapContracts')}
       </Button>
 
+      <Title>{t('settings')}</Title>
+
       <OptionWrapper>
         <InputWrapper>
           <AddressInputPanel label={`${t('factoryAddress')} *`} value={factory} onChange={setFactory} disabled />
         </InputWrapper>
-        <Button
-          onClick={fetchContractOptions}
-          // pending={pending}
-          disabled={!factoryIsCorrect || pending}
-        >
+        <Button onClick={fetchContractOptions} disabled={!factoryIsCorrect || pending}>
           {t('fetchOptions')}
         </Button>
       </OptionWrapper>

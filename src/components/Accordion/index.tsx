@@ -3,9 +3,9 @@ import styled from 'styled-components'
 import { CleanButton } from 'components/Button'
 import { MdOutlineKeyboardArrowDown, MdOutlineKeyboardArrowUp } from 'react-icons/md'
 
-const Wrapper = styled.div<{ padding: number }>`
+const Wrapper = styled.div<{ padding: number; borderRadius: number }>`
   padding: ${({ padding }) => padding}rem ${({ padding }) => padding * 1.6}rem;
-  border-radius: 1.25rem;
+  border-radius: ${({ borderRadius }) => borderRadius}rem;
   border: 1px solid ${({ theme }) => theme.bg3};
   background-color: ${({ theme }) => theme.bg2};
 `
@@ -34,17 +34,19 @@ export default function Accordion({
   title,
   children,
   padding = 0.4,
+  borderRadius = 1.25,
   contentPadding = false,
 }: {
   title: string
   children: JSX.Element | JSX.Element[]
   padding?: number
+  borderRadius?: number
   contentPadding?: boolean
 }) {
   const [open, setOpen] = useState<boolean>(false)
 
   return (
-    <Wrapper padding={padding}>
+    <Wrapper padding={padding} borderRadius={borderRadius}>
       <Header onClick={() => setOpen(!open)}>
         <Title>{title}</Title>
         <ArrowWrapper>{open ? <MdOutlineKeyboardArrowUp /> : <MdOutlineKeyboardArrowDown />}</ArrowWrapper>
