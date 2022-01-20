@@ -200,26 +200,22 @@ export function useTrackedTokenPairs(): [Token, Token][] {
   const wrappedToken = useWrappedToken()
   const tokens = useAllTokens()
 
+  const tokenKeys = Object.keys(tokens)
   // pairs for every token against every base
   const generatedPairs: [Token, Token][] = useMemo(
     () =>
       chainId
-        ? flatMap(Object.keys(tokens), (tokenAddress) => {
-            const token = tokens[tokenAddress]
-            // for each token on the current chain,
-            return (
-              // loop though all bases on the current chain
-              (wrappedToken ? [wrappedToken] : [])
-                // to construct pairs of the given token with each base
-                .map((base) => {
-                  if (base.address === token.address) {
-                    return null
-                  } else {
-                    return [base, token]
-                  }
-                })
-                .filter((p): p is [Token, Token] => p !== null)
-            )
+        ? flatMap(tokenKeys, (baseTokenKey, baseIndex) => {
+            const baseToken = tokens[baseTokenKey]
+            const basePairs: [Token, Token][] = []
+
+            for (let i = baseIndex + 1; i < tokenKeys.length; i += 1) {
+              const token = tokens[tokenKeys[i]]
+
+              if (baseToken.address !== token.address) basePairs.push([baseToken, token])
+            }
+
+            return basePairs
           })
         : [],
     [tokens, chainId, wrappedToken]
