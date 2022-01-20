@@ -15,8 +15,9 @@ import InputPanel from 'components/InputPanel'
 import AddressInputPanel from 'components/AddressInputPanel'
 import ListFactory from 'components/ListFactory'
 import MenuLinksFactory, { LinkItem } from 'components/MenuLinksFactory'
+import TransactionConfirmationModal, { ConfirmationModalContent } from 'components/TransactionConfirmationModal'
 import { saveProjectOption, fetchOptionsFromContract } from 'utils/storage'
-import { isValidAddress } from 'utils/contract'
+import { isValidAddress, deployStorage } from 'utils/contract'
 import { parseENSAddress } from 'utils/parseENSAddress'
 import uriToHttp from 'utils/uriToHttp'
 import { storageMethods } from '../../constants'
@@ -57,10 +58,19 @@ export default function Interface(props: any) {
   //@ts-ignore
   const registry = useRegistryContract(networks[chainId]?.registry)
 
-  const { storage: stateStorage } = useProjectInfo()
+  const { admin: stateAdmin, factory: stateFactory, router: stateRouter, storage: stateStorage } = useProjectInfo()
 
   const [notification, setNotification] = useState<false | string>('')
+  const [txHash, setTxHash] = useState<string>('')
+  const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false)
+  const [canDeployStorage, setCanDeployStorage] = useState(false)
   const [storage, setStorage] = useState(stateStorage || '')
+
+  useEffect(() => {
+    //@ts-ignore
+    setCanDeployStorage(stateFactory && stateRouter)
+  }, [library, stateFactory, stateRouter])
+
   const [storageIsCorrect, setStorageIsCorrect] = useState(false)
 
   useEffect(() => {
@@ -71,6 +81,38 @@ export default function Interface(props: any) {
       setError(storage && !isStorageCorrect ? new Error('Incorrect address') : false)
     }
   }, [setError, library, storage])
+
+  const onStorageDeploy = async () => {
+    setAttemptingTxn(true)
+
+    try {
+      await deployStorage({
+        domain: window.location.hostname || document.location.host,
+        //@ts-ignore
+        registryAddress: networks[chainId]?.registry,
+        onHash: (hash: string) => {
+          setTxHash(hash)
+          addTransaction(
+            { hash },
+            {
+              summary: `Chain ${chainId}. Deploy storage`,
+            }
+          )
+          setAttemptingTxn(false)
+        },
+        library,
+        admin: stateAdmin,
+      })
+    } catch (error) {
+      setError(error)
+      setAttemptingTxn(false)
+    }
+  }
+
+  const handleDismissConfirmation = useCallback(() => {
+    setShowConfirm(false)
+    setTxHash('')
+  }, [])
 
   const [timer, setTimer] = useState(0)
   const SECOND = 1_000
@@ -202,7 +244,34 @@ export default function Interface(props: any) {
 
   return (
     <section>
+      <TransactionConfirmationModal
+        isOpen={showConfirm}
+        onDismiss={handleDismissConfirmation}
+        attemptingTxn={attemptingTxn}
+        hash={txHash}
+        pendingText={''}
+        content={() => (
+          <ConfirmationModalContent
+            title={t('youAreDeployingStorage')}
+            onDismiss={handleDismissConfirmation}
+            topContent={() => null}
+            bottomContent={modalBottom}
+          />
+        )}
+      />
+
       {notification && <p>{notification}</p>}
+
+      {/* @todo condition: if user didn't deploy swap contracts, block this form */}
+      <Button
+        onClick={() => {
+          setDeployableOption(DeployOption.Storage)
+          setShowConfirm(true)
+        }}
+        disabled={pending || !canDeployStorage}
+      >
+        {t('deployStorage')}
+      </Button>
 
       <OptionWrapper>
         <AddressInputPanel label="Storage contract *" value={storage} onChange={setStorage} disabled />

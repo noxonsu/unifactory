@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import isNumber from 'is-number'
 import styled, { withTheme } from 'styled-components'
 import { BigNumber } from 'bignumber.js'
@@ -7,18 +7,28 @@ import { Label, Checkbox } from '@rebass/forms'
 import Slider, { SliderTooltip } from 'rc-slider'
 import 'rc-slider/assets/index.css'
 import { RiErrorWarningLine } from 'react-icons/ri'
+import { Text } from 'rebass'
 import { useActiveWeb3React } from 'hooks'
 import { useProjectInfo } from 'state/application/hooks'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useTranslation } from 'react-i18next'
+import { DEV_FEE_ADMIN } from '../../constants'
 import { ButtonPrimary } from 'components/Button'
 import Accordion from 'components/Accordion'
+import QuestionHelper from 'components/QuestionHelper'
 import InputPanel from 'components/InputPanel'
 import AddressInputPanel from 'components/AddressInputPanel'
-import QuestionHelper from 'components/QuestionHelper'
-import { isValidAddress, setFactoryOption, getFactoryOptions } from 'utils/contract'
+import TransactionConfirmationModal, { ConfirmationModalContent } from 'components/TransactionConfirmationModal'
+import {
+  isValidAddress,
+  setFactoryOption,
+  getFactoryOptions,
+  returnTokenInfo,
+  deploySwapContracts,
+} from 'utils/contract'
 import { ZERO_ADDRESS } from 'sdk'
 import { factoryMethods } from '../../constants'
+import networks from 'networks.json'
 
 const OptionWrapper = styled.div<{ margin?: number }>`
   margin: ${({ margin }) => margin || 0.2}rem 0;
@@ -110,17 +120,61 @@ const handleSliderChange = (props: any) => {
   )
 }
 
+const setValidValue = ({
+  v,
+  set,
+  min,
+  max,
+  maxDecimals,
+}: {
+  v: string
+  set: (v: any) => void
+  min: number
+  max: number
+  maxDecimals: number
+}) => {
+  let validValue = v.replace(/-/g, '')
+  const bigNum = new BigNumber(validValue)
+
+  if (bigNum.isLessThan(min) || bigNum.isGreaterThan(max)) return
+
+  const floatCoincidence = validValue.match(/\..+/)
+
+  if (floatCoincidence) {
+    const floatNums = floatCoincidence[0].slice(1)
+
+    if (floatNums.length <= maxDecimals) set(validValue)
+  } else {
+    set(validValue)
+  }
+}
+
 function SwapContracts(props: any) {
-  const { pending, setPending, setError, theme } = props
+  const { pending, setPending, setError, theme, setDomainDataTrigger } = props
   const { t } = useTranslation()
   const { library, account, chainId } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
   const {
+    admin: stateAdmin,
     factory: stateFactory,
     totalFee: currentTotalFee,
     protocolFee: currentProtocolFee,
     possibleProtocolPercent,
   } = useProjectInfo()
+
+  const [canDeploySwapContracts, setCanDeploySwapContracts] = useState(false)
+  const [adminAddress, setAdminAddress] = useState(stateAdmin || '')
+
+  useEffect(() => {
+    setCanDeploySwapContracts(
+      //@ts-ignore
+      isValidAddress(library, adminAddress) &&
+        wrappedToken &&
+        //@ts-ignore
+        isValidAddress(library, wrappedToken)
+    )
+  }, [library, adminAddress, wrappedToken])
+
   const [factory, setFactory] = useState(stateFactory || '')
   const [factoryIsCorrect, setFactoryIsCorrect] = useState(false)
 
@@ -149,6 +203,73 @@ function SwapContracts(props: any) {
       setProtocolFee(convertFee(currentProtocolFee, PROTOCOL_FEE_RATIO, Representations.interface))
     }
   }, [currentProtocolFee, currentTotalFee])
+
+  const [showConfirm, setShowConfirm] = useState<boolean>(false)
+  const [txHash, setTxHash] = useState<string>('')
+  const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false)
+
+  const handleDismissConfirmation = useCallback(() => {
+    setShowConfirm(false)
+    setTxHash('')
+  }, [])
+
+  const onContractsDeployment = async () => {
+    setAttemptingTxn(true)
+
+    try {
+      //@ts-ignore
+      const tokenInfo = await returnTokenInfo(library, wrappedToken)
+
+      if (!tokenInfo) {
+        return setError(new Error('It is not a wrapped token address'))
+      }
+
+      await deploySwapContracts({
+        domain,
+        //@ts-ignore
+        registryAddress: networks[chainId]?.registry,
+        library,
+        admin: adminAddress,
+        devFeeAdmin: DEV_FEE_ADMIN,
+        wrappedToken,
+        onFactoryHash: (hash: string) => {
+          setTxHash(hash)
+          addTransaction(
+            { hash },
+            {
+              summary: `Chain ${chainId}. Deploy factory`,
+            }
+          )
+        },
+        onRouterHash: (hash: string) => {
+          setTxHash(hash)
+          addTransaction(
+            { hash },
+            {
+              summary: `Chain ${chainId}. Deploy router`,
+            }
+          )
+        },
+        onSuccessfulDeploy: () => {
+          setAttemptingTxn(false)
+          setDomainDataTrigger((state: boolean) => !state)
+        },
+      })
+    } catch (error) {
+      setError(error)
+      setAttemptingTxn(false)
+    }
+  }
+
+  const modalBottom = () => (
+    <div>
+      <ButtonPrimary onClick={onContractsDeployment}>
+        <Text fontWeight={500} fontSize={20}>
+          {t('confirmDeployment')}
+        </Text>
+      </ButtonPrimary>
+    </div>
+  )
 
   const updateFeesToAdmin = (event: any) => setAllFeesToAdmin(event.target.checked)
 
@@ -226,34 +347,6 @@ function SwapContracts(props: any) {
     setPending(false)
   }
 
-  const setValidValue = ({
-    v,
-    set,
-    min,
-    max,
-    maxDecimals,
-  }: {
-    v: string
-    set: (v: any) => void
-    min: number
-    max: number
-    maxDecimals: number
-  }) => {
-    let validValue = v.replace(/-/g, '')
-    const bigNum = new BigNumber(validValue)
-
-    if (bigNum.isLessThan(min) || bigNum.isGreaterThan(max)) return
-
-    const floatCoincidence = validValue.match(/\..+/)
-
-    if (floatCoincidence) {
-      const floatNums = floatCoincidence[0].slice(1)
-
-      if (floatNums.length <= maxDecimals) set(validValue)
-    } else {
-      set(validValue)
-    }
-  }
   //@ts-ignore
   const isEqualCurrentFee = (currentFee, fee, ratio) =>
     isNumber(currentFee) &&
@@ -282,6 +375,32 @@ function SwapContracts(props: any) {
 
   return (
     <section>
+      <TransactionConfirmationModal
+        isOpen={showConfirm}
+        onDismiss={handleDismissConfirmation}
+        attemptingTxn={attemptingTxn}
+        hash={txHash}
+        pendingText={''}
+        content={() => (
+          <ConfirmationModalContent
+            title={t('youAreDeployingSwapContracts')}
+            onDismiss={handleDismissConfirmation}
+            topContent={() => null}
+            bottomContent={modalBottom}
+          />
+        )}
+      />
+      <InputWrapper>
+        <AddressInputPanel label={`${t('admin')} *`} value={adminAddress} onChange={setAdminAddress} />
+      </InputWrapper>
+      <InputWrapper>
+        <InputPanel label={`${t('domain')} *`} value={domain} disabled />
+      </InputWrapper>
+
+      <Button onClick={() => setShowConfirm(true)} disabled={pending || !canDeploySwapContracts}>
+        {t('deploySwapContracts')}
+      </Button>
+
       <OptionWrapper>
         <InputWrapper>
           <AddressInputPanel label={`${t('factoryAddress')} *`} value={factory} onChange={setFactory} disabled />

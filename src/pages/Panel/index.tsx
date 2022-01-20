@@ -16,7 +16,6 @@ import { CleanButton, ButtonError, ButtonSecondary } from 'components/Button'
 import ConfirmationModal from 'components/ConfirmationModal'
 import Instruction from './Instruction'
 import Wallet from './Wallet'
-import Deployment from './Deployment'
 import SwapContracts from './SwapContracts'
 import Interface from './Interface'
 
@@ -137,7 +136,6 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
 
   const returnTabs = () => {
     return [
-      { tabKey: 'deployment', tabName: 'deployment' },
       { tabKey: 'contracts', tabName: 'swapContracts' },
       { tabKey: 'interface', tabName: 'interface' },
     ].map((info, index) => {
@@ -197,17 +195,15 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
       <Tabs>{returnTabs()}</Tabs>
 
       <Content>
-        {tab === 'deployment' && (
-          <Deployment
+        {tab === 'contracts' && (
+          <SwapContracts
             pending={pending}
-            error={error}
             setPending={setPending}
             setError={setError}
             wrappedToken={wrappedToken}
             setDomainDataTrigger={setDomainDataTrigger}
           />
         )}
-        {tab === 'contracts' && <SwapContracts pending={pending} setPending={setPending} setError={setError} />}
         {tab === 'interface' && <Interface pending={pending} setPending={setPending} setError={setError} />}
       </Content>
 
