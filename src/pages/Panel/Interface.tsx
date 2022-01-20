@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import validUrl from 'valid-url'
 import styled from 'styled-components'
@@ -15,13 +15,13 @@ import InputPanel from 'components/InputPanel'
 import AddressInputPanel from 'components/AddressInputPanel'
 import ListFactory from 'components/ListFactory'
 import MenuLinksFactory, { LinkItem } from 'components/MenuLinksFactory'
-import TransactionConfirmationModal, { ConfirmationModalContent } from 'components/TransactionConfirmationModal'
 import { saveProjectOption, fetchOptionsFromContract } from 'utils/storage'
 import { isValidAddress, deployStorage } from 'utils/contract'
 import { parseENSAddress } from 'utils/parseENSAddress'
 import uriToHttp from 'utils/uriToHttp'
 import { storageMethods } from '../../constants'
 import networks from 'networks.json'
+import ConfirmationModal from './ConfirmationModal'
 
 const OptionWrapper = styled.div<{ margin?: number }>`
   margin: ${({ margin }) => margin || 0.2}rem 0;
@@ -51,7 +51,7 @@ const colorPickerStyles = {
 }
 
 export default function Interface(props: any) {
-  const { pending, setPending, setError } = props
+  const { domain, pending, setPending, setError } = props
   const { t } = useTranslation()
   const { library, chainId } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
@@ -61,6 +61,7 @@ export default function Interface(props: any) {
   const { admin: stateAdmin, factory: stateFactory, router: stateRouter, storage: stateStorage } = useProjectInfo()
 
   const [notification, setNotification] = useState<false | string>('')
+  const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [txHash, setTxHash] = useState<string>('')
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false)
   const [canDeployStorage, setCanDeployStorage] = useState(false)
@@ -82,12 +83,12 @@ export default function Interface(props: any) {
     }
   }, [setError, library, storage])
 
-  const onStorageDeploy = async () => {
+  const onStorageDeployment = async () => {
     setAttemptingTxn(true)
 
     try {
       await deployStorage({
-        domain: window.location.hostname || document.location.host,
+        domain,
         //@ts-ignore
         registryAddress: networks[chainId]?.registry,
         onHash: (hash: string) => {
@@ -173,7 +174,7 @@ export default function Interface(props: any) {
         if (tokenLists.length) {
           setTokenLists([])
 
-          tokenLists.forEach(async (tokenLists: any) =>
+          tokenLists.forEach( (tokenLists: any) =>
             setTokenLists((oldData: any) => [...oldData, JSON.parse(tokenLists)])
           )
         }
@@ -228,7 +229,7 @@ export default function Interface(props: any) {
       storage && (logoUrl || brandColor || projectName || socialLinks.length || addressesOfTokenLists.length)
     )
 
-    setFullUpdateIsAvailable(!!fullUpdateIsAvailable)
+    setFullUpdateIsAvailable(fullUpdateIsAvailable)
   }, [storage, projectName, logoUrl, brandColor, socialLinks, addressesOfTokenLists])
 
   const createNewTokenList = () => {
@@ -244,30 +245,22 @@ export default function Interface(props: any) {
 
   return (
     <section>
-      <TransactionConfirmationModal
-        isOpen={showConfirm}
+      <ConfirmationModal
+        open={showConfirm}
         onDismiss={handleDismissConfirmation}
+        onDeployment={onStorageDeployment}
+        txHash={txHash}
+        // todo: message about three trx (1. deploy Storage 2. Save info to the Registry)
+        // pendingText={''}
         attemptingTxn={attemptingTxn}
-        hash={txHash}
-        pendingText={''}
-        content={() => (
-          <ConfirmationModalContent
-            title={t('youAreDeployingStorage')}
-            onDismiss={handleDismissConfirmation}
-            topContent={() => null}
-            bottomContent={modalBottom}
-          />
-        )}
+        messageId={'youAreDeployingStorage'}
       />
 
       {notification && <p>{notification}</p>}
 
       {/* @todo condition: if user didn't deploy swap contracts, block this form */}
       <Button
-        onClick={() => {
-          setDeployableOption(DeployOption.Storage)
-          setShowConfirm(true)
-        }}
+        onClick={() => setShowConfirm(true)}
         disabled={pending || !canDeployStorage}
       >
         {t('deployStorage')}

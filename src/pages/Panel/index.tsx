@@ -54,7 +54,6 @@ const Tab = styled.button<{ active?: boolean }>`
   padding: 0.3rem 0.6rem;
   margin: 0.2rem 0 0.4rem;
   border-radius: 0.5rem;
-  border: none;
   font-size: 1.1em;
   font-weight: 500;
   border: 1px solid ${({ theme }) => theme.bg3};
@@ -95,7 +94,9 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
   const [pending, setPending] = useState<boolean>(false)
   const { chainId, account, library } = useActiveWeb3React()
   const { admin, factory, router } = useProjectInfo()
+
   const [error, setError] = useState<any | false>(false)
+  const [domain] = useState(window.location.hostname || document.location.host)
 
   const appManagement = useSelector<AppState, AppState['application']['appManagement']>(
     (state) => state.application.appManagement
@@ -115,10 +116,10 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
   }
 
   const [tab, setTab] = useState('deployment')
+  const [showConfirm, setShowConfirm] = useState<boolean>(false)
 
   //@ts-ignore
   const accountPrefix = networks[chainId]?.name || t('account')
-  const domain = window.location.hostname || document.location.host
 
   const resetDomain = async () => {
     setShowConfirm(false)
@@ -128,11 +129,8 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
     await registry.methods.removeDomain(domain).send({
       from: account,
     })
-
     setDomainDataTrigger((state: boolean) => !state)
   }
-
-  const [showConfirm, setShowConfirm] = useState<boolean>(false)
 
   const returnTabs = () => {
     return [
@@ -197,6 +195,7 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
       <Content>
         {tab === 'contracts' && (
           <SwapContracts
+            domain={domain}
             pending={pending}
             setPending={setPending}
             setError={setError}
@@ -204,7 +203,9 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
             setDomainDataTrigger={setDomainDataTrigger}
           />
         )}
-        {tab === 'interface' && <Interface pending={pending} setPending={setPending} setError={setError} />}
+        {tab === 'interface' && (
+          <Interface domain={domain} pending={pending} setPending={setPending} setError={setError} />
+        )}
       </Content>
 
       {Boolean(admin && factory && router) && (

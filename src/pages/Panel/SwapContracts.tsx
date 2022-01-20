@@ -7,7 +7,6 @@ import { Label, Checkbox } from '@rebass/forms'
 import Slider, { SliderTooltip } from 'rc-slider'
 import 'rc-slider/assets/index.css'
 import { RiErrorWarningLine } from 'react-icons/ri'
-import { Text } from 'rebass'
 import { useActiveWeb3React } from 'hooks'
 import { useProjectInfo } from 'state/application/hooks'
 import { useTransactionAdder } from 'state/transactions/hooks'
@@ -18,7 +17,7 @@ import Accordion from 'components/Accordion'
 import QuestionHelper from 'components/QuestionHelper'
 import InputPanel from 'components/InputPanel'
 import AddressInputPanel from 'components/AddressInputPanel'
-import TransactionConfirmationModal, { ConfirmationModalContent } from 'components/TransactionConfirmationModal'
+import ConfirmationModal from './ConfirmationModal'
 import {
   isValidAddress,
   setFactoryOption,
@@ -45,8 +44,7 @@ const Info = styled.div<{ flex?: boolean }>`
 `
 
 const List = styled.ul`
-  padding: 0;
-  padding-left: 1rem;
+  padding: 0 0 0 1rem;
 
   li:not(:last-child) {
     margin-bottom: 0.4rem;
@@ -133,7 +131,7 @@ const setValidValue = ({
   max: number
   maxDecimals: number
 }) => {
-  let validValue = v.replace(/-/g, '')
+  const validValue = v.replace(/-/g, '')
   const bigNum = new BigNumber(validValue)
 
   if (bigNum.isLessThan(min) || bigNum.isGreaterThan(max)) return
@@ -150,7 +148,7 @@ const setValidValue = ({
 }
 
 function SwapContracts(props: any) {
-  const { pending, setPending, setError, theme, setDomainDataTrigger } = props
+  const { domain, pending, setPending, setError, theme, setDomainDataTrigger, wrappedToken } = props
   const { t } = useTranslation()
   const { library, account, chainId } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
@@ -261,16 +259,6 @@ function SwapContracts(props: any) {
     }
   }
 
-  const modalBottom = () => (
-    <div>
-      <ButtonPrimary onClick={onContractsDeployment}>
-        <Text fontWeight={500} fontSize={20}>
-          {t('confirmDeployment')}
-        </Text>
-      </ButtonPrimary>
-    </div>
-  )
-
   const updateFeesToAdmin = (event: any) => setAllFeesToAdmin(event.target.checked)
 
   // TODO: we have options in the state, on first loading. Use them
@@ -339,9 +327,9 @@ function SwapContracts(props: any) {
         },
       })
     } catch (error) {
-      const rejectionCode = 4001
+      const REJECT = 4001
 
-      if (error.code !== rejectionCode) setError(error)
+      if (error?.code !== REJECT) setError(error)
     }
 
     setPending(false)
@@ -357,7 +345,7 @@ function SwapContracts(props: any) {
     ? possibleProtocolPercent.reduce(
         (acc, percent, i) => {
           const humanPercent = new BigNumber(percent).div(PROTOCOL_FEE_RATIO).toNumber()
-          // reduce available protocol percent for now
+          // reduce available protocol percent (too many of them in UI)
           const allowed = [0.05, 0.1, 0.5, 1, 3, 5, 8, 10, 14]
 
           if (humanPercent < 16 && !allowed.includes(humanPercent)) {
@@ -375,26 +363,21 @@ function SwapContracts(props: any) {
 
   return (
     <section>
-      <TransactionConfirmationModal
-        isOpen={showConfirm}
+      <ConfirmationModal
+        open={showConfirm}
         onDismiss={handleDismissConfirmation}
+        onDeployment={onContractsDeployment}
+        txHash={txHash}
+        // todo: message about three trx (1. deploy Factory 2. Router. 3. Save info to the Registry)
+        // pendingText={''}
         attemptingTxn={attemptingTxn}
-        hash={txHash}
-        pendingText={''}
-        content={() => (
-          <ConfirmationModalContent
-            title={t('youAreDeployingSwapContracts')}
-            onDismiss={handleDismissConfirmation}
-            topContent={() => null}
-            bottomContent={modalBottom}
-          />
-        )}
+        messageId={'youAreDeployingSwapContracts'}
       />
       <InputWrapper>
         <AddressInputPanel label={`${t('admin')} *`} value={adminAddress} onChange={setAdminAddress} />
       </InputWrapper>
       <InputWrapper>
-        <InputPanel label={`${t('domain')} *`} value={domain} disabled />
+        <InputPanel label={`${t('domain')} *`} value={domain} onChange={() => null} disabled />
       </InputWrapper>
 
       <Button onClick={() => setShowConfirm(true)} disabled={pending || !canDeploySwapContracts}>
