@@ -247,7 +247,7 @@
     }
   },
   "100": {
-    "name": "xDAI Chain",
+    "name": "Gnosis Chain",
     "rpc": "https://rpc.xdaichain.com",
     "chainId": 100,
     "explorer": "https://blockscout.com/poa/xdai",

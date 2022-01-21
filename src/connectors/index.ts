@@ -5,13 +5,22 @@ import { InjectedConnector } from '@web3-react/injected-connector'
 import { NetworkConnector } from './NetworkConnector'
 import networks from 'networks.json'
 
-export const supportedChainIds = Object.values(networks)
-  .filter((network) => Boolean(network.registry))
-  .map((network) => network.chainId)
+export const SUPPORTED_CHAINS = Object.values(networks).reduce(
+  (acc, { registry, multicall, wrappedToken, chainId, rpc }) => {
+    const supported = registry && multicall && wrappedToken?.address
+
+    if (supported) return { ...acc, [chainId]: rpc }
+
+    return acc
+  },
+  {}
+)
+
+export const supportedChainIds = Object.keys(SUPPORTED_CHAINS).map((id) => Number(id))
 
 export const network = new NetworkConnector({
-  //@ts-ignore
-  urls: { [networks[1].chainId]: networks[networks[1].chainId].rpc },
+  urls: SUPPORTED_CHAINS,
+  defaultChainId: 4,
 })
 
 let networkLibrary: Web3Provider | undefined
