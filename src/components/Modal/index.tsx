@@ -57,15 +57,14 @@ const StyledDialogContent = styled(({ maxWidth, minHeight, maxHeight, mobile, is
     display: flex;
     border-radius: 20px;
     ${({ theme }) => theme.mediaWidth.upToMedium`
-      width: 65vw;
+      width: 80vw;
       margin: 0;
     `}
     ${({ theme, mobile, isCentered }) => theme.mediaWidth.upToSmall`
-      width:  85vw;
+      width:  95vw;
       ${
         mobile &&
         css`
-          width: 94vw;
           border-radius: 20px;
         `
       }

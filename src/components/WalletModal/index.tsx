@@ -66,7 +66,8 @@ const Title = styled.h3`
   font-weight: 500;
   display: flex;
   align-items: center;
-  padding: 0.6rem 0;
+  margin-top: 0;
+  padding: 0 0 0.6rem;
 `
 
 const UpperSection = styled.div`
@@ -89,13 +90,22 @@ const UpperSection = styled.div`
 `
 
 const OptionsWrapped = styled.div`
+  display: flex;
   overflow-y: auto;
   max-height: 35rem;
+
+  .column {
+    :not(:last-child) {
+      margin-right: 0.7rem;
+    }
+  }
 `
 
 const Options = styled.div<{ disabled?: boolean }>`
   display: flex;
   flex-wrap: wrap;
+  overflow-y: auto;
+  max-height: 24rem;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-direction: column;
@@ -337,6 +347,7 @@ export default function WalletModal({
     const availableWallets = getAvailableWallets()
     const hasWallet = availableWallets.some((option) => option !== null)
 
+
     return (
       <UpperSection>
         <CloseIcon onClick={toggleWalletModal}>
@@ -372,11 +383,15 @@ export default function WalletModal({
                 t('noConnectionMethodsAvailable')
               ) : (
                 <OptionsWrapped>
-                  <Title>1. {t('chooseNetwork')}</Title>
-                  <Options>{availableNetworks}</Options>
+                  <div className="column">
+                    <Title>1. {t('chooseNetwork')}</Title>
+                    <Options>{availableNetworks}</Options>
+                  </div>
 
-                  <Title>2. {t('chooseWallet')}</Title>
-                  <Options disabled={!currentChainId}>{availableWallets}</Options>
+                  <div className="column">
+                    <Title>2. {t('chooseWallet')}</Title>
+                    <Options disabled={!currentChainId}>{availableWallets}</Options>
+                  </div>
                 </OptionsWrapped>
               )}
             </>
@@ -391,7 +406,9 @@ export default function WalletModal({
       isOpen={walletModalOpen}
       onDismiss={toggleWalletModal}
       minHeight={false}
-      maxWidth={walletView === WALLET_VIEWS.ACCOUNT && !active ? 750 : undefined}
+      maxWidth={
+        (walletView === WALLET_VIEWS.ACCOUNT && !active) || walletView === WALLET_VIEWS.OPTIONS ? 750 : undefined
+      }
     >
       <Wrapper>{getModalContent()}</Wrapper>
     </Modal>

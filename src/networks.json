@@ -1,7 +1,7 @@
 {
   "1": {
     "name": "Ethereum",
-    "rpc": "https://mainnet.infura.io/v3/212957e8adf14bf8aecf82358083e63e",
+    "rpc": "https://mainnet.infura.io/v3/fc55ddb25b694fef8e2363f6b6c9341f",
     "chainId": 1,
     "explorer": "https://etherscan.io",
     "color": "#627EEA",
@@ -21,7 +21,7 @@
   },
   "3": {
     "name": "Ropsten",
-    "rpc": "https://ropsten.infura.io/v3/212957e8adf14bf8aecf82358083e63e",
+    "rpc": "https://ropsten.infura.io/v3/fc55ddb25b694fef8e2363f6b6c9341f",
     "chainId": 3,
     "explorer": "https://ropsten.etherscan.io",
     "color": "#ff4a8d",
@@ -41,7 +41,7 @@
   },
   "4": {
     "name": "Rinkeby",
-    "rpc": "https://rinkeby.infura.io/v3/212957e8adf14bf8aecf82358083e63e",
+    "rpc": "https://rinkeby.infura.io/v3/fc55ddb25b694fef8e2363f6b6c9341f",
     "chainId": 4,
     "explorer": "https://rinkeby.etherscan.io",
     "color": "#f6c343",
@@ -61,7 +61,7 @@
   },
   "5": {
     "name": "Goerli",
-    "rpc": "https://goerli.infura.io/v3/212957e8adf14bf8aecf82358083e63e",
+    "rpc": "https://goerli.infura.io/v3/fc55ddb25b694fef8e2363f6b6c9341f",
     "chainId": 5,
     "explorer": "https://goerli.etherscan.io",
     "color": "#3099f2",
@@ -81,7 +81,7 @@
   },
   "42": {
     "name": "Kovan",
-    "rpc": "https://kovan.infura.io/v3/212957e8adf14bf8aecf82358083e63e",
+    "rpc": "https://kovan.infura.io/v3/fc55ddb25b694fef8e2363f6b6c9341f",
     "chainId": 42,
     "explorer": "https://kovan.etherscan.io",
     "color": "#9064ff",
@@ -161,7 +161,7 @@
   },
   "80001": {
     "name": "Polygon testnet",
-    "rpc": "https://rpc-mumbai.maticvigil.com",
+    "rpc": "https://polygon-mumbai.g.alchemy.com/v2/2xKOm_QzNtsjZox1QstYz_iYZLIPGgHL",
     "chainId": 80001,
     "explorer": "https://mumbai.polygonscan.com/",
     "color": "#8247E5",

@@ -7,7 +7,7 @@ const InfoCard = styled.button<{ active?: boolean }>`
   padding: 1rem;
   outline: none;
   border-radius: 12px;
-  width: 40%;
+  width: 100%;
   min-width: 17rem;
 
   &:focus {
@@ -28,7 +28,8 @@ const OptionCard = styled(InfoCard as any)`
   white-space: nowrap;
 `
 
-const OptionCardClickable = styled(OptionCard as any)<{ clickable?: boolean; color?: string }>`
+const OptionCardClickable = styled(OptionCard as any)<{ clickable?: boolean; color?: string; widthPercent?: number }>`
+  width: ${({ widthPercent }) => widthPercent}%;
   margin: 0 0.6rem 0.6rem 0;
   border: 1px solid ${({ color, theme }) => (color ? color : theme.primary3)};
 
@@ -99,6 +100,7 @@ export default function Option({
   size,
   onClick = null,
   color,
+  widthPercent = 40,
   header,
   subheader = null,
   icon,
@@ -110,6 +112,7 @@ export default function Option({
   size?: number | null
   onClick?: null | (() => void)
   color: string
+  widthPercent?: number
   header: React.ReactNode
   subheader: React.ReactNode | null
   icon: string
@@ -117,7 +120,14 @@ export default function Option({
   id: string
 }) {
   const content = (
-    <OptionCardClickable id={id} onClick={onClick} clickable={clickable && !active} active={active} color={color}>
+    <OptionCardClickable
+      id={id}
+      onClick={onClick}
+      clickable={clickable && !active}
+      active={active}
+      color={color}
+      widthPercent={widthPercent}
+    >
       <OptionCardLeft>
         <HeaderText>
           {active ? (
