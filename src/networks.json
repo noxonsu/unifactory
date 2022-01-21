@@ -498,5 +498,45 @@
       "name": "Wrapped HT",
       "symbol": "WHT"
     }
+  },
+  "1284": {
+    "name": "Moonbeam",
+    "rpc": "https://rpc.api.moonbeam.network",
+    "chainId": 1284,
+    "explorer": "https://moonbeam.moonscan.io",
+    "color": "#C0126E",
+    "registry": "",
+    "multicall": "",
+    "ENSRegistry": "",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "GLMR",
+      "symbol": "GLMR"
+    },
+    "wrappedToken": {
+      "address": "0xacc15dc74880c9944775448304b263d191c6077f",
+      "name": "Wrapped GLMR",
+      "symbol": "WGLMR"
+    }
+  },
+  "1287": {
+    "name": "Moonbase Alpha",
+    "rpc": "https://rpc.api.moonbase.moonbeam.network",
+    "chainId": 1287,
+    "explorer": "https://moonbase.moonscan.io",
+    "color": "#C0126E",
+    "registry": "0x04ad4Ce6015141F6f582A7451Cb7CD6866609298",
+    "multicall": "0x79D5C019F2515Cbc0596170Da44FCd26412c4f83",
+    "ENSRegistry": "",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "DEV",
+      "symbol": "DEV"
+    },
+    "wrappedToken": {
+      "address": "0x9664EC984D1c0d44dD22C161da1D06f7f72Ae092",
+      "name": "Wrapped DEV",
+      "symbol": "WDEV"
+    }
   }
 }
