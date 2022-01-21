@@ -57,7 +57,6 @@ class MiniRpcProvider implements AsyncSendable {
     this.batchTimeoutId = null
     let response: Response
 
-
     try {
       response = await fetch(this.url, {
         method: 'POST',

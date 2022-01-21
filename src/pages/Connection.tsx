@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { FaWallet } from 'react-icons/fa'
 import { useWeb3React } from '@web3-react/core'
 import networks from 'networks.json'
+import { SUPPORTED_NETWORKS } from 'connectors'
 import { useDarkModeManager } from 'state/user/hooks'
 import AppBody from './AppBody'
 import Panel from './Panel'
@@ -65,11 +66,12 @@ const SupportedNetworksList = styled.ul`
   }
 `
 
-const supportedNetworks = () => {
-  return Object.values(networks).filter(
-    (network) => network.registry && network.multicall && Boolean(network.wrappedToken?.address)
-  )
-}
+const supportedNetworks = (): { chainId: string; name: string }[] =>
+  Object.keys(SUPPORTED_NETWORKS).map((chainId) => ({
+    chainId,
+    //@ts-ignore
+    name: networks[chainId].name,
+  }))
 
 const unavailableOrZeroAddr = (value: string | undefined) => !value || value === ZERO_ADDRESS
 
@@ -91,7 +93,7 @@ export default function Connection({ domainData, isAvailableNetwork, setDomainDa
       unavailableOrZeroAddr(domainData.factory) ||
       unavailableOrZeroAddr(domainData.router))
 
-  const networks = supportedNetworks()
+  const supported = supportedNetworks()
 
   return (
     <Wrapper>
@@ -99,20 +101,15 @@ export default function Connection({ domainData, isAvailableNetwork, setDomainDa
         <AppBody>
           <SupportedNetworksWrapper>
             <h3>{t('youCanNotUseThisNetwork')}</h3>
-
-            {networks.length && (
+            {supported.length && (
               <>
                 <p>{t('availableNetworks')}</p>
                 <SupportedNetworksList>
-                  {networks.map((network: { name: string; chainId: number }, index) => {
-                    const { name, chainId } = network
-
-                    return (
-                      <li key={chainId}>
-                        {chainId} - {name}
-                      </li>
-                    )
-                  })}
+                  {supported.map(({ name, chainId }) => (
+                    <li key={chainId}>
+                      {chainId} - {name}
+                    </li>
+                  ))}
                 </SupportedNetworksList>
               </>
             )}

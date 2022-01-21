@@ -1,11 +1,11 @@
 import { Web3Provider } from '@ethersproject/providers'
 import { InjectedConnector } from '@web3-react/injected-connector'
-// import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
-// import { WalletLinkConnector } from '@web3-react/walletlink-connector'
+import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
+import { WalletLinkConnector } from '@web3-react/walletlink-connector'
 import { NetworkConnector } from './NetworkConnector'
 import networks from 'networks.json'
 
-export const SUPPORTED_CHAINS = Object.values(networks).reduce(
+export const SUPPORTED_NETWORKS = Object.values(networks).reduce(
   (acc, { registry, multicall, wrappedToken, chainId, rpc }) => {
     const supported = registry && multicall && wrappedToken?.address
 
@@ -16,10 +16,10 @@ export const SUPPORTED_CHAINS = Object.values(networks).reduce(
   {}
 )
 
-export const supportedChainIds = Object.keys(SUPPORTED_CHAINS).map((id) => Number(id))
+export const supportedChainIds = Object.keys(SUPPORTED_NETWORKS).map((id) => Number(id))
 
 export const network = new NetworkConnector({
-  urls: SUPPORTED_CHAINS,
+  urls: SUPPORTED_NETWORKS,
   defaultChainId: 4,
 })
 
@@ -32,23 +32,19 @@ export const injected = new InjectedConnector({
   supportedChainIds,
 })
 
-/* 
-TODO: make interface with all available network options
-=> display networks in interface
-=> user choose the network 
-=> we create a new instance for one of wallets below with that network
-=> display connector
-*/
-// export const walletconnect = new WalletConnectConnector({
-//   //@ts-ignore
-//   rpc: { [networks[1].chainId]: networks[networks[1].chainId].rpc },
-//   bridge: 'https://bridge.walletconnect.org',
-//   qrcode: true,
-//   pollingInterval: 15000,
-// })
+export const newWalletConnect = (chainId: number) =>
+  new WalletConnectConnector({
+    //@ts-ignore
+    rpc: { [networks[chainId].chainId]: networks[networks[chainId].chainId].rpc },
+    bridge: 'https://bridge.walletconnect.org',
+    qrcode: true,
+    pollingInterval: 15000,
+  })
 
-// export const walletlink = new WalletLinkConnector({
-//   url: networks[1].rpc,
-//   appName: 'Swap',
-//   appLogoUrl: '',
-// })
+export const newWalletlink = (chainId: number, appName = '', appLogoUrl = '') =>
+  new WalletLinkConnector({
+    //@ts-ignore
+    url: networks[chainId].rpc,
+    appName,
+    appLogoUrl,
+  })

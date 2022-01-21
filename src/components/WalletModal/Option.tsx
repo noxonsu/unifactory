@@ -3,16 +3,18 @@ import styled from 'styled-components'
 import { ExternalLink } from '../../theme'
 
 const InfoCard = styled.button<{ active?: boolean }>`
-  background-color: ${({ theme, active }) => (active ? theme.bg4 : theme.bg3)};
+  background-color: ${({ theme, active }) => (active ? theme.bg3 : theme.bg2)};
   padding: 1rem;
   outline: none;
-  border: 1px solid;
   border-radius: 12px;
-  width: 100% !important;
+  width: 40%;
+  min-width: 17rem;
+
   &:focus {
     box-shadow: 0 0 0 1px ${({ theme }) => theme.primary1};
   }
-  border-color: ${({ theme, active }) => (active ? theme.bg4 : theme.bg3)};
+
+  border: 1px solid ${({ theme, active }) => (active ? theme.bg4 : theme.bg3)};
 `
 
 const OptionCard = styled(InfoCard as any)`
@@ -22,21 +24,25 @@ const OptionCard = styled(InfoCard as any)`
   justify-content: space-between;
   margin-top: 2rem;
   padding: 1rem;
+  word-break: keep-all;
+  white-space: nowrap;
+`
+
+const OptionCardClickable = styled(OptionCard as any)<{ clickable?: boolean; color?: string }>`
+  margin: 0 0.6rem 0.6rem 0;
+  border: 2px solid ${({ color, theme }) => (color ? color : theme.primary3)};
+
+  &:hover {
+    ${({ clickable, theme }) => (clickable ? `background-color: ${theme.bg1}; cursor: pointer` : '')};
+  }
+  opacity: ${({ disabled }) => (disabled ? '0.5' : '1')};
+  transition: 0.1s;
 `
 
 const OptionCardLeft = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap};
   justify-content: center;
   height: 100%;
-`
-
-const OptionCardClickable = styled(OptionCard as any)<{ clickable?: boolean }>`
-  margin-top: 0;
-  &:hover {
-    cursor: ${({ clickable }) => (clickable ? 'pointer' : '')};
-    border: ${({ clickable, theme }) => (clickable ? `1px solid ${theme.primary1}` : ``)};
-  }
-  opacity: ${({ disabled }) => (disabled ? '0.5' : '1')};
 `
 
 const GreenCircle = styled.div`
@@ -111,9 +117,9 @@ export default function Option({
   id: string
 }) {
   const content = (
-    <OptionCardClickable id={id} onClick={onClick} clickable={clickable && !active} active={active}>
+    <OptionCardClickable id={id} onClick={onClick} clickable={clickable && !active} active={active} color={color}>
       <OptionCardLeft>
-        <HeaderText color={color}>
+        <HeaderText>
           {active ? (
             <CircleWrapper>
               <GreenCircle>

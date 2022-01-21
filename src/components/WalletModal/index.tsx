@@ -5,15 +5,16 @@ import React, { useEffect, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
-import MetamaskIcon from '../../assets/images/metamask.png'
-import { ReactComponent as Close } from '../../assets/images/x.svg'
-import { injected } from '../../connectors'
+import { CURRENCY } from 'assets/images'
+import MetamaskIcon from 'assets/images/metamask.png'
+import { ReactComponent as Close } from 'assets/images/x.svg'
+import { injected, SUPPORTED_NETWORKS } from 'connectors'
 import { SUPPORTED_WALLETS } from '../../constants'
-import usePrevious from '../../hooks/usePrevious'
-import { ApplicationModal } from '../../state/application/actions'
-import { useModalOpen, useWalletModalToggle } from '../../state/application/hooks'
+import usePrevious from 'hooks/usePrevious'
+import { ApplicationModal } from 'state/application/actions'
+import { useModalOpen, useWalletModalToggle } from 'state/application/hooks'
 import AccountDetails from '../AccountDetails'
-
+import networks from 'networks.json'
 import Modal from '../Modal'
 import Option from './Option'
 import PendingView from './PendingView'
@@ -65,14 +66,13 @@ const UpperSection = styled.div`
   position: relative;
 
   h5 {
-    margin: 0;
-    margin-bottom: 0.5rem;
+    margin: 0 0 0.5rem;
     font-size: 1rem;
     font-weight: 400;
   }
 
   h5:last-child {
-    margin-bottom: 0px;
+    margin-bottom: 0;
   }
 
   h4 {
@@ -81,12 +81,17 @@ const UpperSection = styled.div`
   }
 `
 
-const OptionGrid = styled.div`
-  display: grid;
-  grid-gap: 10px;
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    grid-template-columns: 1fr;
-    grid-gap: 10px;
+const OptionsWrapped = styled.div`
+  overflow-y: auto;
+  max-height: 35rem;
+`
+
+const Options = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    flex-direction: column;
   `};
 `
 
@@ -115,10 +120,9 @@ export default function WalletModal({
   // important that these are destructed from the account-specific web3-react context
   const { active, account, connector, activate, error } = useWeb3React()
 
+  const [currentNetwork, setCurrentNetwork] = useState<number>(0)
   const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT)
-
   const [pendingWallet, setPendingWallet] = useState<AbstractConnector | undefined>()
-
   const [pendingError, setPendingError] = useState<boolean>()
 
   const walletModalOpen = useModalOpen(ApplicationModal.WALLET)
@@ -171,8 +175,26 @@ export default function WalletModal({
       })
   }
 
+  function getAvalableNetworks() {
+    return Object.keys(SUPPORTED_NETWORKS).map((chainId) => (
+      <Option
+        onClick={() => setCurrentNetwork(Number(chainId))}
+        id={`connect-network-${chainId}`}
+        key={chainId}
+        active={currentNetwork === Number(chainId)}
+        //@ts-ignore
+        color={networks[chainId]?.color || ''}
+        //@ts-ignore
+        header={networks[chainId].name}
+        subheader={null}
+        //@ts-ignore
+        icon={CURRENCY[chainId] ?? ''}
+      />
+    ))
+  }
+
   // get wallets user can switch too, depending on device/browser
-  function getOptions() {
+  function getAvailableWallets() {
     const isMetamask = window.ethereum && window.ethereum.isMetaMask
     const availableOptions = Object.keys(SUPPORTED_WALLETS).map((key) => {
       const option = SUPPORTED_WALLETS[key]
@@ -214,9 +236,9 @@ export default function WalletModal({
                 icon={MetamaskIcon}
               />
             )
-          } else {
-            return null //dont want to return install twice
           }
+
+          return null //dont want to return install twice
         }
         // don't return metamask if injected provider isn't metamask
         else if (option.name === 'MetaMask' && !isMetamask) {
@@ -285,8 +307,9 @@ export default function WalletModal({
       )
     }
 
-    const availableOptions = getOptions()
-    const hasOption = availableOptions.some((option) => option !== null)
+    const availableNetworks = getAvalableNetworks()
+    const availableWallets = getAvailableWallets()
+    const hasWallet = availableWallets.some((option) => option !== null)
 
     return (
       <UpperSection>
@@ -318,7 +341,19 @@ export default function WalletModal({
               tryActivation={tryActivation}
             />
           ) : (
-            <OptionGrid>{Boolean(hasOption) ? availableOptions : t('noConnectionMethodsAvailable')}</OptionGrid>
+            <>
+              {!Boolean(hasWallet) ? (
+                t('noConnectionMethodsAvailable')
+              ) : (
+                <OptionsWrapped>
+                  <h3>1) {t('chooseNetwork')}</h3>
+                  <Options>{availableNetworks}</Options>
+
+                  <h3>2) {t('chooseWallet')}</h3>
+                  <Options>{availableWallets}</Options>
+                </OptionsWrapped>
+              )}
+            </>
           )}
         </ContentWrapper>
       </UpperSection>
