@@ -13,13 +13,9 @@ import { useETHBalances } from 'state/wallet/hooks'
 import { SUPPORTED_WALLETS } from '../../constants'
 import { ReactComponent as Close } from 'assets/images/x.svg'
 import { getExplorerLink } from 'utils'
-import {
-  injected,
-  // walletconnect,
-  // walletlink
-} from 'connectors'
-// import CoinbaseWalletIcon from 'assets/images/coinbaseWalletIcon.svg';
-// import WalletConnectIcon from 'assets/images/walletConnectIcon.svg';
+import { injected, newWalletlink, newWalletConnect } from 'connectors'
+import CoinbaseWalletIcon from 'assets/images/coinbaseWalletIcon.svg';
+import WalletConnectIcon from 'assets/images/walletConnectIcon.svg';
 import Identicon from '../Identicon'
 import { ButtonSecondary } from '../Button'
 import { ExternalLink as LinkIcon } from 'react-feather'
@@ -39,8 +35,7 @@ const UpperSection = styled.div`
   position: relative;
 
   h5 {
-    margin: 0;
-    margin-bottom: 0.5rem;
+    margin: 0 0 0.5rem;
     font-size: 1rem;
     font-weight: 400;
   }
@@ -114,7 +109,7 @@ const LowerSection = styled.div`
 
 const AccountControl = styled.div`
   display: flex;
-  aligh-items: center;
+  align-items: center;
   justify-content: space-between;
   min-width: 0;
   width: 100%;
@@ -135,7 +130,6 @@ const AccountControl = styled.div`
 `
 
 const AddressLink = styled(ExternalLink)<{ hasENS: boolean; isENS: boolean }>`
-  font-size: 0.825rem;
   color: ${({ theme }) => theme.text3};
   margin-left: 1rem;
   font-size: 0.825rem;
@@ -260,20 +254,19 @@ export default function AccountDetails({
           <Identicon />
         </IconWrapper>
       )
+    } else if (chainId && connector === newWalletConnect(chainId)) {
+      return (
+        <IconWrapper size={16}>
+          <img src={WalletConnectIcon} alt={'wallet connect logo'} />
+        </IconWrapper>
+      )
+    } else if (chainId && connector === newWalletlink(chainId)) {
+      return (
+        <IconWrapper size={16}>
+          <img src={CoinbaseWalletIcon} alt={'coinbase wallet logo'} />
+        </IconWrapper>
+      )
     }
-    // else if (connector === walletconnect) {
-    //   return (
-    //     <IconWrapper size={16}>
-    //       <img src={WalletConnectIcon} alt={'wallet connect logo'} />
-    //     </IconWrapper>
-    //   );
-    // } else if (connector === walletlink) {
-    //   return (
-    //     <IconWrapper size={16}>
-    //       <img src={CoinbaseWalletIcon} alt={'coinbase wallet logo'} />
-    //     </IconWrapper>
-    //   );
-    // }
     return null
   }
 

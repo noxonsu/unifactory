@@ -8,8 +8,8 @@ import styled from 'styled-components'
 import { CURRENCY } from 'assets/images'
 import MetamaskIcon from 'assets/images/metamask.png'
 import { ReactComponent as Close } from 'assets/images/x.svg'
-import { injected, SUPPORTED_NETWORKS } from 'connectors'
-import { SUPPORTED_WALLETS } from '../../constants'
+import { injected, SUPPORTED_NETWORKS, newWalletlink, newWalletConnect } from 'connectors'
+import { SUPPORTED_WALLETS, WALLET_NAMES } from '../../constants'
 import usePrevious from 'hooks/usePrevious'
 import { ApplicationModal } from 'state/application/actions'
 import { useModalOpen, useWalletModalToggle } from 'state/application/hooks'
@@ -62,6 +62,13 @@ const ContentWrapper = styled.div`
   ${({ theme }) => theme.mediaWidth.upToMedium`padding: 1rem`};
 `
 
+const Title = styled.h3`
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  padding: 0.6rem 0;
+`
+
 const UpperSection = styled.div`
   position: relative;
 
@@ -86,13 +93,15 @@ const OptionsWrapped = styled.div`
   max-height: 35rem;
 `
 
-const Options = styled.div`
+const Options = styled.div<{ disabled?: boolean }>`
   display: flex;
   flex-wrap: wrap;
-  
+
   ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-direction: column;
   `};
+
+  ${({ disabled }) => (disabled ? 'pointer-events: none; opacity: 0.6' : '')};
 `
 
 const HoverText = styled.div`
@@ -120,7 +129,7 @@ export default function WalletModal({
   // important that these are destructed from the account-specific web3-react context
   const { active, account, connector, activate, error } = useWeb3React()
 
-  const [currentNetwork, setCurrentNetwork] = useState<number>(0)
+  const [currentChainId, setCurrentChainId] = useState<number>(0)
   const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT)
   const [pendingWallet, setPendingWallet] = useState<AbstractConnector | undefined>()
   const [pendingError, setPendingError] = useState<boolean>()
@@ -178,10 +187,10 @@ export default function WalletModal({
   function getAvalableNetworks() {
     return Object.keys(SUPPORTED_NETWORKS).map((chainId) => (
       <Option
-        onClick={() => setCurrentNetwork(Number(chainId))}
+        onClick={() => setCurrentChainId(Number(chainId))}
         id={`connect-network-${chainId}`}
         key={chainId}
-        active={currentNetwork === Number(chainId)}
+        active={currentChainId === Number(chainId)}
         //@ts-ignore
         color={networks[chainId]?.color || ''}
         //@ts-ignore
@@ -193,11 +202,28 @@ export default function WalletModal({
     ))
   }
 
-  // get wallets user can switch too, depending on device/browser
+  function returnUpdatedConnector(option: { name: string }) {
+    switch (option.name) {
+      case WALLET_NAMES.WALLET_CONNECT:
+        return newWalletConnect(currentChainId)
+      case WALLET_NAMES.WALLET_LINK:
+        return newWalletlink(currentChainId)
+      default:
+        return
+    }
+  }
+
   function getAvailableWallets() {
     const isMetamask = window.ethereum && window.ethereum.isMetaMask
     const availableOptions = Object.keys(SUPPORTED_WALLETS).map((key) => {
       const option = SUPPORTED_WALLETS[key]
+
+      if (option.name !== WALLET_NAMES.METAMASK && currentChainId) {
+        const newConnector = returnUpdatedConnector(option)
+
+        if (newConnector) option.connector = newConnector
+      }
+
       // check for mobile options
       if (isMobile) {
         if (!window.web3 && !window.ethereum && option.mobile) {
@@ -224,7 +250,7 @@ export default function WalletModal({
       if (option.connector === injected) {
         // don't show injected if there's no injected provider
         if (!(window.web3 || window.ethereum)) {
-          if (option.name === 'MetaMask') {
+          if (option.name === WALLET_NAMES.METAMASK) {
             return (
               <Option
                 id={`connect-${key}`}
@@ -241,11 +267,11 @@ export default function WalletModal({
           return null //dont want to return install twice
         }
         // don't return metamask if injected provider isn't metamask
-        else if (option.name === 'MetaMask' && !isMetamask) {
+        else if (option.name === WALLET_NAMES.METAMASK && !isMetamask) {
           return null
         }
         // likewise for generic
-        else if (option.name === 'Injected' && isMetamask) {
+        else if (option.name === WALLET_NAMES.INJECTED && isMetamask) {
           return null
         }
       }
@@ -346,11 +372,11 @@ export default function WalletModal({
                 t('noConnectionMethodsAvailable')
               ) : (
                 <OptionsWrapped>
-                  <h3>1) {t('chooseNetwork')}</h3>
+                  <Title>1. {t('chooseNetwork')}</Title>
                   <Options>{availableNetworks}</Options>
 
-                  <h3>2) {t('chooseWallet')}</h3>
-                  <Options>{availableWallets}</Options>
+                  <Title>2. {t('chooseWallet')}</Title>
+                  <Options disabled={!currentChainId}>{availableWallets}</Options>
                 </OptionsWrapped>
               )}
             </>
@@ -361,7 +387,12 @@ export default function WalletModal({
   }
 
   return (
-    <Modal isOpen={walletModalOpen} onDismiss={toggleWalletModal} minHeight={false}>
+    <Modal
+      isOpen={walletModalOpen}
+      onDismiss={toggleWalletModal}
+      minHeight={false}
+      maxWidth={walletView === WALLET_VIEWS.ACCOUNT && !active ? 750 : undefined}
+    >
       <Wrapper>{getModalContent()}</Wrapper>
     </Modal>
   )

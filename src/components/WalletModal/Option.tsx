@@ -23,14 +23,14 @@ const OptionCard = styled(InfoCard as any)`
   align-items: center;
   justify-content: space-between;
   margin-top: 2rem;
-  padding: 1rem;
+  padding: 0.6rem;
   word-break: keep-all;
   white-space: nowrap;
 `
 
 const OptionCardClickable = styled(OptionCard as any)<{ clickable?: boolean; color?: string }>`
   margin: 0 0.6rem 0.6rem 0;
-  border: 2px solid ${({ color, theme }) => (color ? color : theme.primary3)};
+  border: 1px solid ${({ color, theme }) => (color ? color : theme.primary3)};
 
   &:hover {
     ${({ clickable, theme }) => (clickable ? `background-color: ${theme.bg1}; cursor: pointer` : '')};

@@ -38,10 +38,17 @@ export interface WalletInfo {
   mobileOnly?: true
 }
 
+export const WALLET_NAMES = {
+  INJECTED: 'Injected',
+  METAMASK: 'MetaMask',
+  WALLET_CONNECT: 'WalletConnect',
+  WALLET_LINK: 'Coinbase Wallet',
+}
+
 export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
   INJECTED: {
     connector: injected,
-    name: 'Injected',
+    name: WALLET_NAMES.INJECTED,
     iconName: 'arrow-right.svg',
     description: 'Injected web3 provider.',
     href: null,
@@ -50,7 +57,7 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
   },
   METAMASK: {
     connector: injected,
-    name: 'MetaMask',
+    name: WALLET_NAMES.METAMASK,
     iconName: 'metamask.png',
     description: 'Easy-to-use browser extension.',
     href: null,
@@ -58,7 +65,7 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
   },
   WALLET_CONNECT: {
     connector: newWalletConnect(4),
-    name: 'WalletConnect',
+    name: WALLET_NAMES.WALLET_CONNECT,
     iconName: 'walletConnectIcon.svg',
     description: 'Connect to Trust Wallet, Rainbow Wallet and more...',
     href: null,
@@ -67,7 +74,7 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
   },
   WALLET_LINK: {
     connector: newWalletlink(4),
-    name: 'Coinbase Wallet',
+    name: WALLET_NAMES.WALLET_LINK,
     iconName: 'coinbaseWalletIcon.svg',
     description: 'Use Coinbase Wallet app on mobile device',
     href: null,

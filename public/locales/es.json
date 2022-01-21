@@ -256,5 +256,7 @@
   "deployFactoryContract": "Contrato de implementación de fábrica",
   "deployRouterContract": "Implementar Router contrato",
   "saveInfoToDomainRegistry": "Guardar información en el contrato de registro de dominio",
-  "storageContract": "Contrato de almacenamiento"
+  "storageContract": "Contrato de almacenamiento",
+  "chooseNetwork": "Elija la red",
+  "chooseWallet": "Elegir cartera"
 }

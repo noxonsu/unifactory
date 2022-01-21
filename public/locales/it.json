@@ -267,5 +267,7 @@
   "deployFactoryContract": "Distribuzione del contratto di fabbrica",
   "deployRouterContract": "Distribuire contratto Router",
   "saveInfoToDomainRegistry": "Salvare le informazioni nel contratto del registro di dominio",
-  "storageContract": "Contratto di ammasso"
+  "storageContract": "Contratto di ammasso",
+  "chooseNetwork": "Scegli rete",
+  "chooseWallet": "Scegli portafoglio"
 }
