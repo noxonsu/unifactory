@@ -1,5 +1,6 @@
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
+import { InjectedConnector } from '@web3-react/injected-connector'
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 import React, { useEffect, useState } from 'react'
 import { isMobile } from 'react-device-detect'
@@ -10,6 +11,7 @@ import MetamaskIcon from 'assets/images/metamask.png'
 import { ReactComponent as Close } from 'assets/images/x.svg'
 import { injected, SUPPORTED_NETWORKS, newWalletlink, newWalletConnect } from 'connectors'
 import { SUPPORTED_WALLETS, WALLET_NAMES } from '../../constants'
+import { switchInjectedNetwork } from 'utils/wallet'
 import usePrevious from 'hooks/usePrevious'
 import { ApplicationModal } from 'state/application/actions'
 import { useModalOpen, useWalletModalToggle } from 'state/application/hooks'
@@ -179,8 +181,12 @@ export default function WalletModal({
     setPendingWallet(connector) // set wallet for pending view
     setWalletView(WALLET_VIEWS.PENDING)
 
-    // if the connector is walletconnect and the user has already tried to connect, manually reset the connector
-    if (connector instanceof WalletConnectConnector && connector.walletConnectProvider?.wc?.uri) {
+    if (connector instanceof InjectedConnector) {
+      const result = await switchInjectedNetwork(currentChainId)
+
+      if (!result) return
+    } // if the connector is walletconnect and the user has already tried to connect, manually reset the connector
+    else if (connector instanceof WalletConnectConnector && connector.walletConnectProvider?.wc?.uri) {
       connector.walletConnectProvider = undefined
     }
 
