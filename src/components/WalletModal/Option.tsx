@@ -1,33 +1,26 @@
 import React from 'react'
 import styled from 'styled-components'
 import { darken, lighten } from 'polished'
-import { ExternalLink } from '../../theme'
+import { IoIosCheckmarkCircleOutline } from 'react-icons/io'
+import { ExternalLink } from 'theme'
 import { useIsDarkMode } from 'state/user/hooks'
 
 const InfoCard = styled.button<{ active?: boolean }>`
   background-color: ${({ theme, active }) => (active ? theme.bg3 : theme.bg2)};
   padding: 1rem;
   outline: none;
-  border-radius: 12px;
+  border-radius: 1rem;
   width: 100%;
-  min-width: 17rem;
-
-  &:focus {
-    box-shadow: 0 0 0 1px ${({ theme }) => theme.primary1};
-  }
-
-  border: 1px solid ${({ theme, active }) => (active ? theme.bg4 : theme.bg3)};
+  min-width: 8rem;
 `
 
 const OptionCard = styled(InfoCard as any)`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  margin-top: 2rem;
-  padding: 0.6rem;
-  word-break: keep-all;
-  white-space: nowrap;
+  justify-content: center;
+  margin: 0.6rem;
+  padding: 0.7rem;
 `
 
 const OptionCardClickable = styled(OptionCard as any)<{
@@ -36,50 +29,41 @@ const OptionCardClickable = styled(OptionCard as any)<{
   widthPercent?: number
   isDark: boolean
 }>`
+  position: relative;
   width: ${({ widthPercent }) => widthPercent}%;
   margin: 0 0.6rem 0.6rem 0;
   border: 1px solid ${({ color, theme }) => (color ? color : theme.primary3)};
 
-  ${({ color, isDark }) => (color ? `background-color: ${isDark ? darken(0.3, color) : lighten(0.3, color)};` : '')}
+  ${({ color, isDark }) => (color ? `background-color: ${isDark ? darken(0.35, color) : lighten(0.35, color)};` : '')}
 
   &:hover {
-    ${({ clickable, theme }) => (clickable ? `background-color: ${theme.bg1}; cursor: pointer` : '')};
+    ${({ color, isDark, clickable }) =>
+      clickable
+        ? color
+          ? `background-color: ${isDark ? darken(0.2, color) : lighten(0.2, color)}; cursor: pointer;`
+          : ''
+        : ''};
   }
   opacity: ${({ disabled }) => (disabled ? '0.5' : '1')};
   transition: 0.1s;
 `
 
-const OptionCardLeft = styled.div`
-  ${({ theme }) => theme.flexColumnNoWrap};
-  justify-content: center;
-  height: 100%;
+const CheckMarkWrapper = styled.div`
+  position: absolute;
+  top: 7%;
+  left: 7%;
+  border-radius: 50%;
+  width: 1.6rem;
+  height: 1.6rem;
+  background-color: ${({ theme }) => theme.green1};
+  color: ${({ theme }) => theme.white1};
 `
 
-const GreenCircle = styled.div`
-  ${({ theme }) => theme.flexRowNoWrap}
-  justify-content: center;
-  align-items: center;
-
-  &:first-child {
-    height: 10px;
-    width: 10px;
-    margin-right: 10px;
-    background-color: ${({ theme }) => theme.green1};
-    border-radius: 50%;
-  }
-`
-
-const CircleWrapper = styled.div`
-  color: ${({ theme }) => theme.green1};
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`
-
-const HeaderText = styled.div`
+const Text = styled.div`
   ${({ theme }) => theme.flexRowNoWrap};
   color: ${(props) => (props.color === 'blue' ? ({ theme }) => theme.primary1 : ({ theme }) => theme.text1)};
-  font-size: 1rem;
+  font-size: 0.7rem;
+  line-height: 1.2rem;
   font-weight: 500;
 `
 
@@ -91,8 +75,10 @@ const SubHeader = styled.div`
 
 const IconWrapper = styled.div<{ size?: number | null }>`
   ${({ theme }) => theme.flexColumnNoWrap};
+  margin-bottom: 0.4rem;
   align-items: center;
   justify-content: center;
+
   & > img,
   span {
     height: ${({ size }) => (size ? size + 'px' : '24px')};
@@ -110,7 +96,7 @@ export default function Option({
   size,
   onClick = null,
   color,
-  widthPercent = 40,
+  widthPercent = 30,
   header,
   subheader = null,
   icon,
@@ -141,24 +127,17 @@ export default function Option({
       color={color}
       widthPercent={widthPercent}
     >
-      <OptionCardLeft>
-        <HeaderText>
-          {active ? (
-            <CircleWrapper>
-              <GreenCircle>
-                <div />
-              </GreenCircle>
-            </CircleWrapper>
-          ) : (
-            ''
-          )}
-          {header}
-        </HeaderText>
-        {subheader && <SubHeader>{subheader}</SubHeader>}
-      </OptionCardLeft>
+      {active && (
+        <CheckMarkWrapper>
+          <IoIosCheckmarkCircleOutline size="100%" />
+        </CheckMarkWrapper>
+      )}
+
       <IconWrapper size={size}>
         <img src={icon} alt={'Icon'} />
       </IconWrapper>
+      <Text>{header}</Text>
+      {subheader && <SubHeader>{subheader}</SubHeader>}
     </OptionCardClickable>
   )
   if (link) {

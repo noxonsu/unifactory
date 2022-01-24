@@ -20,6 +20,7 @@ import networks from 'networks.json'
 import Modal from '../Modal'
 import Option from './Option'
 import PendingView from './PendingView'
+import { useIsDarkMode } from 'state/user/hooks'
 
 const CloseIcon = styled.div`
   position: absolute;
@@ -93,25 +94,30 @@ const UpperSection = styled.div`
 
 const OptionsWrapped = styled.div`
   display: flex;
+  flex-direction: column;
   overflow-y: auto;
-  max-height: 35rem;
+  max-height: 40rem;
 
   .column {
     :not(:last-child) {
-      margin-right: 0.7rem;
+      margin-bottom: 0.7rem;
     }
   }
-`
-
-const Options = styled.div<{ disabled?: boolean }>`
-  display: flex;
-  flex-wrap: wrap;
-  overflow-y: auto;
-  max-height: 24rem;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-direction: column;
   `};
+`
+
+const Options = styled.div<{ disabled?: boolean; isDark: boolean }>`
+  display: flex;
+  flex-wrap: wrap;
+  overflow-y: auto;
+  max-height: 24rem;
+  padding: 1rem;
+  border-radius: 0.8rem;
+  border: 1px solid ${({ theme, isDark }) => (isDark ? theme.bg1 : theme.bg3)};
+  box-shadow: inset 0 0 0.5rem ${({ theme, isDark }) => (isDark ? theme.bg1 : theme.bg3)};
 
   ${({ disabled }) => (disabled ? 'pointer-events: none; opacity: 0.6' : '')};
 `
@@ -140,7 +146,7 @@ export default function WalletModal({
 }) {
   // important that these are destructed from the account-specific web3-react context
   const { active, account, connector, activate, error } = useWeb3React()
-
+  const isDark = useIsDarkMode()
   const [currentChainId, setCurrentChainId] = useState<number>(0)
   const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT)
   const [pendingWallet, setPendingWallet] = useState<AbstractConnector | undefined>()
@@ -214,6 +220,7 @@ export default function WalletModal({
         subheader={null}
         //@ts-ignore
         icon={CURRENCY[chainId] ?? ''}
+        size={45}
       />
     ))
   }
@@ -255,6 +262,7 @@ export default function WalletModal({
               link={option.href}
               header={option.name}
               subheader={null}
+              size={45}
               icon={require('../../assets/images/' + option.iconName)}
             />
           )
@@ -276,6 +284,7 @@ export default function WalletModal({
                 subheader={null}
                 link={'https://metamask.io/'}
                 icon={MetamaskIcon}
+                size={45}
               />
             )
           }
@@ -310,6 +319,7 @@ export default function WalletModal({
             header={option.name}
             subheader={null} //use option.descriptio to bring back multi-line
             icon={require('../../assets/images/' + option.iconName)}
+            size={45}
           />
         )
       )
@@ -390,12 +400,14 @@ export default function WalletModal({
                 <OptionsWrapped>
                   <div className="column">
                     <Title>1. {t('chooseNetwork')}</Title>
-                    <Options>{availableNetworks}</Options>
+                    <Options isDark={isDark}>{availableNetworks}</Options>
                   </div>
 
                   <div className="column">
                     <Title>2. {t('chooseWallet')}</Title>
-                    <Options disabled={!currentChainId}>{availableWallets}</Options>
+                    <Options isDark={isDark} disabled={!currentChainId}>
+                      {availableWallets}
+                    </Options>
                   </div>
                 </OptionsWrapped>
               )}
@@ -412,7 +424,7 @@ export default function WalletModal({
       onDismiss={toggleWalletModal}
       minHeight={false}
       maxWidth={
-        (walletView === WALLET_VIEWS.ACCOUNT && !active) || walletView === WALLET_VIEWS.OPTIONS ? 750 : undefined
+        (walletView === WALLET_VIEWS.ACCOUNT && !active) || walletView === WALLET_VIEWS.OPTIONS ? 700 : undefined
       }
     >
       <Wrapper>{getModalContent()}</Wrapper>
