@@ -13,7 +13,7 @@ import Card from 'components/Card'
 import { RowBetween, RowFixed } from 'components/Row'
 import { ButtonPrimary } from 'components/Button'
 import { AutoColumn } from 'components/Column'
-import { useProjectInfo } from 'state/application/hooks'
+import { useAppState } from 'state/application/hooks'
 import { useActiveWeb3React } from 'hooks'
 import { useBaseCurrency } from 'hooks/useCurrency'
 import { usePairs } from 'data/Reserves'
@@ -65,7 +65,7 @@ export default function Pool() {
   const { t } = useTranslation()
   const theme = useContext(ThemeContext)
   const { account } = useActiveWeb3React()
-  const { factory, pairHash } = useProjectInfo()
+  const { factory, pairHash } = useAppState()
   const baseCurrency = useBaseCurrency()
 
   // fetch the user's balances of all tracked V2 LP tokens

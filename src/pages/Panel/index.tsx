@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getContractInstance } from 'utils/contract'
 import { AppState } from 'state'
 import { useTranslation } from 'react-i18next'
-import { useProjectInfo } from 'state/application/hooks'
+import { useAppState } from 'state/application/hooks'
 import { setAppManagement } from 'state/application/actions'
 import { CleanButton, ButtonError, ButtonSecondary } from 'components/Button'
 import ConfirmationModal from 'components/ConfirmationModal'
@@ -93,7 +93,7 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
   const dispatch = useDispatch()
   const [pending, setPending] = useState<boolean>(false)
   const { chainId, account, library } = useActiveWeb3React()
-  const { admin, factory, router } = useProjectInfo()
+  const { admin, factory, router } = useAppState()
 
   const [error, setError] = useState<any | false>(false)
   const [domain] = useState(window.location.hostname || document.location.host)

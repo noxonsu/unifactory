@@ -9,6 +9,8 @@ import AVAX from './avax.png'
 import TOMO from './tomo.svg'
 import CRO from './cro.svg'
 import HT from './ht.svg'
+import GLMR from './glmr.png'
+import AURORA from './aurora.svg'
 
 export const CURRENCY = {
   ETH,
@@ -41,4 +43,8 @@ export const CURRENCY = {
   338: CRO,
   128: HT,
   256: HT,
+  1284: GLMR,
+  1287: GLMR,
+  1313161554: AURORA,
+  1313161555: AURORA,
 }

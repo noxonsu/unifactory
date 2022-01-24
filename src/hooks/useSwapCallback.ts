@@ -4,7 +4,7 @@ import { JSBI, Percent, Router, SwapParameters, Trade, TradeType } from 'sdk'
 import { useMemo } from 'react'
 import { BIPS_BASE, INITIAL_ALLOWED_SLIPPAGE } from '../constants'
 import { useTransactionAdder } from 'state/transactions/hooks'
-import { useProjectInfo } from 'state/application/hooks'
+import { useAppState } from 'state/application/hooks'
 import { useBaseCurrency } from 'hooks/useCurrency'
 import { calculateGasMargin, getRouterContract, isAddress, shortenAddress } from 'utils'
 import isZero from 'utils/isZero'
@@ -47,7 +47,7 @@ function useSwapCallArguments(
   recipientAddressOrName: string | null // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
 ): SwapCall[] {
   const { account, chainId, library } = useActiveWeb3React()
-  const { router } = useProjectInfo()
+  const { router } = useAppState()
   const baseCurrency = useBaseCurrency()
 
   const { address: recipientAddress } = useENS(recipientAddressOrName)

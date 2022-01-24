@@ -7,7 +7,7 @@ import { useActiveWeb3React } from 'hooks'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import useInterval from 'hooks/useInterval'
 import { useRegistryContract } from 'hooks/useContract'
-import { useProjectInfo } from 'state/application/hooks'
+import { useAppState } from 'state/application/hooks'
 import { HuePicker } from 'react-color'
 import { ButtonPrimary } from 'components/Button'
 import { TokenLists } from './TokenLists'
@@ -66,7 +66,7 @@ export default function Interface(props: any) {
   //@ts-ignore
   const registry = useRegistryContract(networks[chainId]?.registry)
 
-  const { admin: stateAdmin, factory: stateFactory, router: stateRouter, storage: stateStorage } = useProjectInfo()
+  const { admin: stateAdmin, factory: stateFactory, router: stateRouter, storage: stateStorage } = useAppState()
 
   const [notification, setNotification] = useState<false | string>('')
   const [showConfirm, setShowConfirm] = useState<boolean>(false)

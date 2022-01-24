@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import validUrl from 'valid-url'
-import { useProjectInfo } from 'state/application/hooks'
+import { useAppState } from 'state/application/hooks'
 import Polling from '../Header/Polling'
 import { TiSocialInstagram } from 'react-icons/ti'
 import { FaTelegramPlane } from 'react-icons/fa'
@@ -75,7 +75,7 @@ const returnIconByUri = (uri: string) => {
 }
 
 export default function Footer() {
-  const { projectName, socialLinks } = useProjectInfo()
+  const { projectName, socialLinks } = useAppState()
 
   const year = new Date().getFullYear()
   const copyright = `© ${projectName} ${year}`

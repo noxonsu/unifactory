@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { addList } from 'state/lists/actions'
 import { useStorageContract } from './useContract'
-import { useProjectInfo } from 'state/application/hooks'
+import { useAppState } from 'state/application/hooks'
 import { StorageState } from 'state/application/reducer'
 import { returnValidList } from 'utils/getTokenList'
 import { useActiveWeb3React } from 'hooks'
@@ -67,7 +67,7 @@ export const parseSettings = (settings: string): { application: Settings; lists:
 
 export default function useStorageInfo(): { data: StorageState | null; isLoading: boolean; error: Error | null } {
   const dispatch = useDispatch()
-  const { storage: storageAddress } = useProjectInfo()
+  const { storage: storageAddress } = useAppState()
   const [data, setData] = useState<StorageState | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)

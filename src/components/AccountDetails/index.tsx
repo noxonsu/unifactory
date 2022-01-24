@@ -14,8 +14,8 @@ import { SUPPORTED_WALLETS } from '../../constants'
 import { ReactComponent as Close } from 'assets/images/x.svg'
 import { getExplorerLink } from 'utils'
 import { injected, newWalletlink, newWalletConnect } from 'connectors'
-import CoinbaseWalletIcon from 'assets/images/coinbaseWalletIcon.svg';
-import WalletConnectIcon from 'assets/images/walletConnectIcon.svg';
+import CoinbaseWalletIcon from 'assets/images/coinbaseWalletIcon.svg'
+import WalletConnectIcon from 'assets/images/walletConnectIcon.svg'
 import Identicon from '../Identicon'
 import { ButtonSecondary } from '../Button'
 import { ExternalLink as LinkIcon } from 'react-feather'

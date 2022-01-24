@@ -5,7 +5,7 @@ import { Text } from 'rebass'
 import { useTranslation } from 'react-i18next'
 import { ThemeContext } from 'styled-components'
 import { Field } from 'state/swap/actions'
-import { useProjectInfo } from 'state/application/hooks'
+import { useAppState } from 'state/application/hooks'
 import { useBaseCurrency } from 'hooks/useCurrency'
 import { TYPE } from 'theme'
 import {
@@ -35,7 +35,7 @@ export default function SwapModalFooter({
   disabledConfirm: boolean
 }) {
   const { t } = useTranslation()
-  const { totalFee } = useProjectInfo()
+  const { totalFee } = useAppState()
   const baseCurrency = useBaseCurrency()
   const [showInverted, setShowInverted] = useState<boolean>(false)
   const theme = useContext(ThemeContext)

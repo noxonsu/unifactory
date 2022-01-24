@@ -8,7 +8,7 @@ import { useTransactionAdder, useHasPendingApproval } from 'state/transactions/h
 import { computeSlippageAdjustedAmounts } from 'utils/prices'
 import { calculateGasMargin, isAssetEqual } from 'utils'
 import { useTokenContract } from './useContract'
-import { useProjectInfo } from 'state/application/hooks'
+import { useAppState } from 'state/application/hooks'
 import { useBaseCurrency } from 'hooks/useCurrency'
 import { useActiveWeb3React } from './index'
 
@@ -101,7 +101,7 @@ export function useApproveCallback(
 
 // wraps useApproveCallback in the context of a swap
 export function useApproveCallbackFromTrade(trade?: Trade, allowedSlippage = 0) {
-  const { router } = useProjectInfo()
+  const { router } = useAppState()
   const baseCurrency = useBaseCurrency()
 
   const amountToApprove = useMemo(

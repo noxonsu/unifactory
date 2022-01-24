@@ -11,7 +11,7 @@ import useToggle from 'hooks/useToggle'
 import { AppDispatch, AppState } from 'state'
 import { acceptListUpdate, removeList, disableList, enableList } from 'state/lists/actions'
 import { useIsListActive, useAllLists, useActiveListUrls } from 'state/lists/hooks'
-import { useProjectInfo } from 'state/application/hooks'
+import { useAppState } from 'state/application/hooks'
 import { ExternalLink, LinkStyledButton, TYPE, IconWrapper } from 'theme'
 import listVersionLabel from 'utils/listVersionLabel'
 import { parseENSAddress } from 'utils/parseENSAddress'
@@ -312,7 +312,7 @@ export function ManageLists({
     setListUrl(listUrlInput)
   }, [listUrlInput, setImportList, setListUrl, setModalView, tempList])
 
-  const { tokenLists } = useProjectInfo()
+  const { tokenLists } = useAppState()
 
   return (
     <Wrapper>

@@ -7,7 +7,7 @@ import { useWrappedToken } from 'hooks/useToken'
 import { useMultipleContractSingleData } from 'state/multicall/hooks'
 import { useBaseCurrency } from 'hooks/useCurrency'
 import { wrappedCurrency } from 'utils/wrappedCurrency'
-import { useProjectInfo } from 'state/application/hooks'
+import { useAppState } from 'state/application/hooks'
 
 const PAIR_INTERFACE = new Interface(IUniswapV2PairABI)
 
@@ -20,7 +20,7 @@ export enum PairState {
 
 export function usePairs(currencies: [Currency | undefined, Currency | undefined][]): [PairState, Pair | null][] {
   const { chainId } = useActiveWeb3React()
-  const { factory, pairHash } = useProjectInfo()
+  const { factory, pairHash } = useAppState()
   const baseCurrency = useBaseCurrency()
   const wrappedToken = useWrappedToken()
 

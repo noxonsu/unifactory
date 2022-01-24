@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { useActivePopups, useProjectInfo } from 'state/application/hooks'
+import { useActivePopups, useAppState } from 'state/application/hooks'
 import { AppState } from 'state'
 import { useSelector } from 'react-redux'
 import { AutoColumn } from '../Column'
@@ -45,7 +45,7 @@ const FixedPopupColumn = styled(AutoColumn)<{ noPadding: boolean; extraPadding: 
 `
 
 export default function Popups() {
-  const { admin } = useProjectInfo()
+  const { admin } = useAppState()
   const activePopups = useActivePopups()
 
   const appManagement = useSelector<AppState, AppState['application']['appManagement']>(

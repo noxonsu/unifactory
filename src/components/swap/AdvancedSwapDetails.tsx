@@ -3,7 +3,7 @@ import React, { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ThemeContext } from 'styled-components'
 import { Field } from 'state/swap/actions'
-import { useProjectInfo } from 'state/application/hooks'
+import { useAppState } from 'state/application/hooks'
 import { useUserSlippageTolerance } from 'state/user/hooks'
 import { useBaseCurrency } from 'hooks/useCurrency'
 import { TYPE } from 'theme'
@@ -17,7 +17,7 @@ import SwapRoute from './SwapRoute'
 function TradeSummary({ trade, allowedSlippage }: { trade: Trade; allowedSlippage: number }) {
   const theme = useContext(ThemeContext)
   const { t } = useTranslation()
-  const { totalFee } = useProjectInfo()
+  const { totalFee } = useAppState()
   const baseCurrency = useBaseCurrency()
   const { priceImpactWithoutFee, realizedLPFee } = computeTradePriceBreakdown(baseCurrency, trade, totalFee)
   const isExactIn = trade.tradeType === TradeType.EXACT_INPUT

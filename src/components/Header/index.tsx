@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import TempLogo from 'assets/images/templogo.png'
 import { RiArrowRightUpLine } from 'react-icons/ri'
 import { useActiveWeb3React } from 'hooks'
-import { useProjectInfo } from 'state/application/hooks'
+import { useAppState } from 'state/application/hooks'
 import Menu from '../Menu'
 import { LightCard } from '../Card'
 import Row, { RowFixed } from '../Row'
@@ -249,7 +249,7 @@ const StyledExternalLink = styled.a`
 export default function Header() {
   const { account, chainId } = useActiveWeb3React()
   const { t } = useTranslation()
-  const { logo: logoUrl, navigationLinks } = useProjectInfo()
+  const { logo: logoUrl, navigationLinks } = useAppState()
 
   return (
     <HeaderFrame>

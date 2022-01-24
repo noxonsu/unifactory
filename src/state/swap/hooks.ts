@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useActiveWeb3React } from 'hooks'
 import { useCurrency } from 'hooks/Tokens'
 import { useBaseCurrency } from 'hooks/useCurrency'
-import { useProjectInfo } from 'state/application/hooks'
+import { useAppState } from 'state/application/hooks'
 import { useTradeExactIn, useTradeExactOut } from 'hooks/Trades'
 import useParsedQueryString from 'hooks/useParsedQueryString'
 import { isAddress, isAssetEqual } from 'utils'
@@ -121,7 +121,7 @@ export function useDerivedSwapInfo(): {
   inputError?: string
 } {
   const { account } = useActiveWeb3React()
-  const { factory, router } = useProjectInfo()
+  const { factory, router } = useAppState()
   const baseCurrency = useBaseCurrency()
 
   const {

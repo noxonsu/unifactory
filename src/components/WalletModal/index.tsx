@@ -347,7 +347,6 @@ export default function WalletModal({
     const availableWallets = getAvailableWallets()
     const hasWallet = availableWallets.some((option) => option !== null)
 
-
     return (
       <UpperSection>
         <CloseIcon onClick={toggleWalletModal}>

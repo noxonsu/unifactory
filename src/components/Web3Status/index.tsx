@@ -5,15 +5,15 @@ import React, { useMemo } from 'react'
 import { Activity } from 'react-feather'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import CoinbaseWalletIcon from '../../assets/images/coinbaseWalletIcon.svg'
-import WalletConnectIcon from '../../assets/images/walletConnectIcon.svg'
-import { injected, newWalletlink, newWalletConnect } from '../../connectors'
+import CoinbaseWalletIcon from 'assets/images/coinbaseWalletIcon.svg'
+import WalletConnectIcon from 'assets/images/walletConnectIcon.svg'
+import { injected, newWalletlink, newWalletConnect } from 'connectors'
 import { NetworkContextName } from '../../constants'
-import useENSName from '../../hooks/useENSName'
-import { useWalletModalToggle } from '../../state/application/hooks'
-import { isTransactionRecent, useAllTransactions } from '../../state/transactions/hooks'
-import { TransactionDetails } from '../../state/transactions/reducer'
-import { shortenAddress } from '../../utils'
+import useENSName from 'hooks/useENSName'
+import { useWalletModalToggle } from 'state/application/hooks'
+import { isTransactionRecent, useAllTransactions } from 'state/transactions/hooks'
+import { TransactionDetails } from 'state/transactions/reducer'
+import { shortenAddress } from 'utils'
 import { ButtonSecondary } from '../Button'
 
 import Identicon from '../Identicon'
@@ -158,7 +158,6 @@ function Web3StatusInner() {
   const { t } = useTranslation()
   const { chainId, account, connector, error, deactivate } = useWeb3React()
   const { ENSName } = useENSName(account ?? undefined)
-
   const allTransactions = useAllTransactions()
 
   const sortedRecentTransactions = useMemo(() => {
@@ -206,6 +205,8 @@ function Web3StatusInner() {
       </>
     )
   } else {
+    // if (openModal === null) toggleWalletModal()
+
     return (
       <Web3StatusConnect id="connect-wallet" onClick={toggleWalletModal} faded={!account}>
         <Text>{t('connectWallet')}</Text>

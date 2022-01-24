@@ -4,7 +4,7 @@ import flatMap from 'lodash.flatmap'
 import { useMemo } from 'react'
 import { useBaseCurrency } from 'hooks/useCurrency'
 import { useWrappedToken } from 'hooks/useToken'
-import { useProjectInfo } from 'state/application/hooks'
+import { useAppState } from 'state/application/hooks'
 
 import { BETTER_TRADE_LESS_HOPS_THRESHOLD } from '../constants'
 import { PairState, usePairs } from '../data/Reserves'
@@ -82,7 +82,7 @@ export function useTradeExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?:
   const allowedPairs = useAllCommonPairs(currencyAmountIn?.currency, currencyOut)
   const baseCurrency = useBaseCurrency()
   const wrappedToken = useWrappedToken()
-  const { factory, pairHash, totalFee } = useProjectInfo()
+  const { factory, pairHash, totalFee } = useAppState()
   const [singleHopOnly] = useUserSingleHopOnly()
 
   return useMemo(() => {
@@ -155,7 +155,7 @@ export function useTradeExactOut(currencyIn?: Currency, currencyAmountOut?: Curr
   const allowedPairs = useAllCommonPairs(currencyIn, currencyAmountOut?.currency)
   const baseCurrency = useBaseCurrency()
   const wrappedToken = useWrappedToken()
-  const { factory, pairHash, totalFee } = useProjectInfo()
+  const { factory, pairHash, totalFee } = useAppState()
   const [singleHopOnly] = useUserSingleHopOnly()
 
   return useMemo(() => {

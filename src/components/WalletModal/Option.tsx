@@ -1,6 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
+import { darken, lighten } from 'polished'
 import { ExternalLink } from '../../theme'
+import { useIsDarkMode } from 'state/user/hooks'
 
 const InfoCard = styled.button<{ active?: boolean }>`
   background-color: ${({ theme, active }) => (active ? theme.bg3 : theme.bg2)};
@@ -28,10 +30,17 @@ const OptionCard = styled(InfoCard as any)`
   white-space: nowrap;
 `
 
-const OptionCardClickable = styled(OptionCard as any)<{ clickable?: boolean; color?: string; widthPercent?: number }>`
+const OptionCardClickable = styled(OptionCard as any)<{
+  clickable?: boolean
+  color?: string
+  widthPercent?: number
+  isDark: boolean
+}>`
   width: ${({ widthPercent }) => widthPercent}%;
   margin: 0 0.6rem 0.6rem 0;
   border: 1px solid ${({ color, theme }) => (color ? color : theme.primary3)};
+
+  ${({ color, isDark }) => (color ? `background-color: ${isDark ? darken(0.3, color) : lighten(0.3, color)};` : '')}
 
   &:hover {
     ${({ clickable, theme }) => (clickable ? `background-color: ${theme.bg1}; cursor: pointer` : '')};
@@ -89,6 +98,7 @@ const IconWrapper = styled.div<{ size?: number | null }>`
     height: ${({ size }) => (size ? size + 'px' : '24px')};
     width: ${({ size }) => (size ? size + 'px' : '24px')};
   }
+
   ${({ theme }) => theme.mediaWidth.upToMedium`
     align-items: flex-end;
   `};
@@ -119,8 +129,11 @@ export default function Option({
   active?: boolean
   id: string
 }) {
+  const isDark = useIsDarkMode()
+
   const content = (
     <OptionCardClickable
+      isDark={isDark}
       id={id}
       onClick={onClick}
       clickable={clickable && !active}

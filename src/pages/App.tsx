@@ -7,7 +7,7 @@ import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
 import useDomainInfo from 'hooks/useDomainInfo'
 import useStorageInfo from 'hooks/useStorageInfo'
-import { useProjectInfo } from 'state/application/hooks'
+import { useAppState } from 'state/application/hooks'
 import { retrieveDomainData, updateAppData } from 'state/application/actions'
 import Loader from 'components/Loader'
 import AppBody from './AppBody'
@@ -79,7 +79,7 @@ const FooterWrapper = styled.footer`
 export default function App() {
   const dispatch = useDispatch()
   const { active, chainId } = useWeb3React()
-  const { admin, factory, router, projectName } = useProjectInfo()
+  const { admin, factory, router, projectName } = useAppState()
   const appIsReady = Boolean(active && admin && factory && router)
 
   const [isAvailableNetwork, setIsAvailableNetwork] = useState(true)

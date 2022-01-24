@@ -24,7 +24,7 @@ import useTransactionDeadline from 'hooks/useTransactionDeadline'
 import { useWalletModalToggle } from 'state/application/hooks'
 import { Field } from 'state/mint/actions'
 import { useDerivedMintInfo, useMintActionHandlers, useMintState } from 'state/mint/hooks'
-import { useProjectInfo } from 'state/application/hooks'
+import { useAppState } from 'state/application/hooks'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useIsExpertMode, useUserSlippageTolerance } from 'state/user/hooks'
 import { TYPE } from 'theme'
@@ -45,7 +45,7 @@ export default function AddLiquidity({
   history,
 }: RouteComponentProps<{ currencyIdA?: string; currencyIdB?: string }>) {
   const { account, chainId, library } = useActiveWeb3React()
-  const { router: routerAddress } = useProjectInfo()
+  const { router: routerAddress } = useAppState()
   const baseCurrency = useBaseCurrency()
   const wrappedToken = useWrappedToken()
   const theme = useContext(ThemeContext)
