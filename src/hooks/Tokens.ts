@@ -5,7 +5,7 @@ import { Currency, BaseCurrency, Token, currencyEquals } from 'sdk'
 import { useMemo } from 'react'
 import { TokenAddressMap } from 'state/lists/hooks'
 import { useCombinedActiveList, useCombinedInactiveList } from 'state/lists/hooks'
-import { useProjectInfo } from 'state/application/hooks'
+import { useAppState } from 'state/application/hooks'
 import { NEVER_RELOAD, useSingleCallResult } from 'state/multicall/hooks'
 import { useUserAddedTokens } from 'state/user/hooks'
 import { useBaseCurrency } from 'hooks/useCurrency'
@@ -15,7 +15,7 @@ import { useBytes32TokenContract, useTokenContract } from './useContract'
 import { filterTokens } from 'components/SearchModal/filtering'
 
 function useAppTokens() {
-  const { tokenLists } = useProjectInfo()
+  const { tokenLists } = useAppState()
   const allProjectTokens = tokenLists.map((list) => list.tokens).reduce((acc, tokensArr) => [...acc, ...tokensArr], [])
 
   return allProjectTokens.map(

@@ -26,7 +26,7 @@ const StyledDialogOverlay = styled(AnimatedDialogOverlay)`
 const AnimatedDialogContent = animated(DialogContent)
 // destructure to not pass custom props to Dialog DOM element
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpen, isCentered, ...rest }) => (
+const StyledDialogContent = styled(({ maxWidth, minHeight, maxHeight, mobile, isOpen, isCentered, ...rest }) => (
   <AnimatedDialogContent {...rest} />
 )).attrs({
   'aria-label': 'dialog',
@@ -38,12 +38,12 @@ const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpen, isCe
     background-color: ${({ theme }) => theme.bg1};
     box-shadow: 0 4px 8px 0 ${({ theme }) => transparentize(0.95, theme.shadow1)};
     padding: 0px;
-    width: 50vw;
+    width: 60vw;
     overflow-y: ${({ mobile }) => (mobile ? 'scroll' : 'hidden')};
     overflow-x: hidden;
     align-self: center;
 
-    max-width: 450px;
+    max-width: ${({ maxWidth }) => maxWidth}px;
     ${({ maxHeight }) =>
       maxHeight &&
       css`
@@ -57,15 +57,14 @@ const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpen, isCe
     display: flex;
     border-radius: 20px;
     ${({ theme }) => theme.mediaWidth.upToMedium`
-      width: 65vw;
+      width: 80vw;
       margin: 0;
     `}
     ${({ theme, mobile, isCentered }) => theme.mediaWidth.upToSmall`
-      width:  85vw;
+      width:  95vw;
       ${
         mobile &&
         css`
-          width: 94vw;
           border-radius: 20px;
         `
       }
@@ -84,6 +83,7 @@ interface ModalProps {
   onDismiss: () => void
   minHeight?: number | false
   maxHeight?: number
+  maxWidth?: number
   isCentered?: boolean
   initialFocusRef?: React.RefObject<any>
   children?: React.ReactNode
@@ -94,6 +94,7 @@ export default function Modal({
   onDismiss,
   minHeight = false,
   maxHeight = 90,
+  maxWidth = 500,
   isCentered,
   initialFocusRef,
   children,
@@ -126,6 +127,7 @@ export default function Modal({
               <StyledDialogContent
                 {...(isMobile ? { ...bind() } : {})}
                 aria-label="dialog content"
+                maxWidth={maxWidth}
                 minHeight={minHeight}
                 maxHeight={maxHeight}
                 isCentered={isCentered}

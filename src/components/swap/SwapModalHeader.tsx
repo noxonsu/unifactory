@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
 import { Field } from 'state/swap/actions'
-import { useProjectInfo } from 'state/application/hooks'
+import { useAppState } from 'state/application/hooks'
 import { useBaseCurrency } from 'hooks/useCurrency'
 import { TYPE } from 'theme'
 import { ButtonPrimary } from '../Button'
@@ -30,7 +30,7 @@ export default function SwapModalHeader({
   onAcceptChanges: () => void
 }) {
   const { t } = useTranslation()
-  const { totalFee } = useProjectInfo()
+  const { totalFee } = useAppState()
   const baseCurrency = useBaseCurrency()
   const slippageAdjustedAmounts = useMemo(
     () => computeSlippageAdjustedAmounts(trade, allowedSlippage, baseCurrency),

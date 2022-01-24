@@ -1,18 +1,22 @@
 import React from 'react'
 import styled from 'styled-components'
+import { darken, lighten } from 'polished'
 import { ExternalLink } from '../../theme'
+import { useIsDarkMode } from 'state/user/hooks'
 
 const InfoCard = styled.button<{ active?: boolean }>`
-  background-color: ${({ theme, active }) => (active ? theme.bg4 : theme.bg3)};
+  background-color: ${({ theme, active }) => (active ? theme.bg3 : theme.bg2)};
   padding: 1rem;
   outline: none;
-  border: 1px solid;
   border-radius: 12px;
-  width: 100% !important;
+  width: 100%;
+  min-width: 17rem;
+
   &:focus {
     box-shadow: 0 0 0 1px ${({ theme }) => theme.primary1};
   }
-  border-color: ${({ theme, active }) => (active ? theme.bg4 : theme.bg3)};
+
+  border: 1px solid ${({ theme, active }) => (active ? theme.bg4 : theme.bg3)};
 `
 
 const OptionCard = styled(InfoCard as any)`
@@ -21,22 +25,34 @@ const OptionCard = styled(InfoCard as any)`
   align-items: center;
   justify-content: space-between;
   margin-top: 2rem;
-  padding: 1rem;
+  padding: 0.6rem;
+  word-break: keep-all;
+  white-space: nowrap;
+`
+
+const OptionCardClickable = styled(OptionCard as any)<{
+  clickable?: boolean
+  color?: string
+  widthPercent?: number
+  isDark: boolean
+}>`
+  width: ${({ widthPercent }) => widthPercent}%;
+  margin: 0 0.6rem 0.6rem 0;
+  border: 1px solid ${({ color, theme }) => (color ? color : theme.primary3)};
+
+  ${({ color, isDark }) => (color ? `background-color: ${isDark ? darken(0.3, color) : lighten(0.3, color)};` : '')}
+
+  &:hover {
+    ${({ clickable, theme }) => (clickable ? `background-color: ${theme.bg1}; cursor: pointer` : '')};
+  }
+  opacity: ${({ disabled }) => (disabled ? '0.5' : '1')};
+  transition: 0.1s;
 `
 
 const OptionCardLeft = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap};
   justify-content: center;
   height: 100%;
-`
-
-const OptionCardClickable = styled(OptionCard as any)<{ clickable?: boolean }>`
-  margin-top: 0;
-  &:hover {
-    cursor: ${({ clickable }) => (clickable ? 'pointer' : '')};
-    border: ${({ clickable, theme }) => (clickable ? `1px solid ${theme.primary1}` : ``)};
-  }
-  opacity: ${({ disabled }) => (disabled ? '0.5' : '1')};
 `
 
 const GreenCircle = styled.div`
@@ -82,6 +98,7 @@ const IconWrapper = styled.div<{ size?: number | null }>`
     height: ${({ size }) => (size ? size + 'px' : '24px')};
     width: ${({ size }) => (size ? size + 'px' : '24px')};
   }
+
   ${({ theme }) => theme.mediaWidth.upToMedium`
     align-items: flex-end;
   `};
@@ -93,6 +110,7 @@ export default function Option({
   size,
   onClick = null,
   color,
+  widthPercent = 40,
   header,
   subheader = null,
   icon,
@@ -104,16 +122,27 @@ export default function Option({
   size?: number | null
   onClick?: null | (() => void)
   color: string
+  widthPercent?: number
   header: React.ReactNode
   subheader: React.ReactNode | null
   icon: string
   active?: boolean
   id: string
 }) {
+  const isDark = useIsDarkMode()
+
   const content = (
-    <OptionCardClickable id={id} onClick={onClick} clickable={clickable && !active} active={active}>
+    <OptionCardClickable
+      isDark={isDark}
+      id={id}
+      onClick={onClick}
+      clickable={clickable && !active}
+      active={active}
+      color={color}
+      widthPercent={widthPercent}
+    >
       <OptionCardLeft>
-        <HeaderText color={color}>
+        <HeaderText>
           {active ? (
             <CircleWrapper>
               <GreenCircle>

@@ -256,5 +256,7 @@
   "deployFactoryContract": "לפרוס חוזה במפעל",
   "deployRouterContract": "פרוס חוזה נתב",
   "saveInfoToDomainRegistry": "שמירת מידע לחוזה הרישום של הדומיין",
-  "storageContract": "חוזה אחסון"
+  "storageContract": "חוזה אחסון",
+  "chooseNetwork": "בחר רשת",
+  "chooseWallet": "בחר ארנק"
 }

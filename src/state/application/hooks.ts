@@ -2,24 +2,10 @@ import { useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useActiveWeb3React } from '../../hooks'
 import { AppDispatch, AppState } from '../index'
-import { StorageState } from './reducer'
+import { ApplicationState } from './reducer'
 import { addPopup, ApplicationModal, PopupContent, removePopup, setOpenModal } from './actions'
 
-type ProjectInfo = {
-  admin: string
-  factory: string
-  router: string
-  storage: string
-  pairHash: string
-  protocolFee?: number | undefined
-  totalFee?: number | undefined
-  allFeeToProtocol?: boolean | undefined
-  possibleProtocolPercent?: number[]
-} & StorageState
-
-// ? seams it does not make sense. We can use state data directly ?
-// TODO: remove this hook?
-export function useProjectInfo(): ProjectInfo {
+export function useAppState(): ApplicationState {
   return useSelector((state: AppState) => state.application)
 }
 

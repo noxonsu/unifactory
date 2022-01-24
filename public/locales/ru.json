@@ -254,5 +254,7 @@
   "deployFactoryContract": "Развернуть контракт Фабрики",
   "deployRouterContract": "Развернуть контракт Роутера",
   "saveInfoToDomainRegistry": "Сохранение информации в контракте регистрации доменов",
-  "storageContract": "Контракт хранилища"
+  "storageContract": "Контракт хранилища",
+  "chooseNetwork": "Выберите сеть",
+  "chooseWallet": "Выберите кошелек"
 }

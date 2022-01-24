@@ -49,13 +49,17 @@ export function useEagerConnect() {
  * and out after checking what network theyre on
  */
 export function useInactiveListener(suppress = false) {
-  const { active, error, activate } = useWeb3ReactCore() // specifically using useWeb3React because of what this hook does
+  const { active, error, activate, deactivate } = useWeb3ReactCore() // specifically using useWeb3React because of what this hook does
 
   useEffect(() => {
     const { ethereum } = window
 
     if (ethereum && ethereum.on && !active && !error && !suppress) {
-      const handleChainChanged = () => {
+      const handleChainChanged = (chainId: string) => {
+        const supported = injected.supportedChainIds?.includes(Number(chainId))
+
+        if (!supported) return deactivate()
+
         // eat errors
         activate(injected, undefined, true).catch((error) => {
           console.error('Failed to activate after chain changed', error)
@@ -82,5 +86,5 @@ export function useInactiveListener(suppress = false) {
       }
     }
     return undefined
-  }, [active, error, suppress, activate])
+  }, [active, error, suppress, activate, deactivate])
 }

@@ -5,19 +5,15 @@ import React, { useMemo } from 'react'
 import { Activity } from 'react-feather'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-// import CoinbaseWalletIcon from '../../assets/images/coinbaseWalletIcon.svg';
-// import WalletConnectIcon from '../../assets/images/walletConnectIcon.svg';
-import {
-  injected,
-  // walletconnect,
-  // walletlink
-} from '../../connectors'
+import CoinbaseWalletIcon from 'assets/images/coinbaseWalletIcon.svg'
+import WalletConnectIcon from 'assets/images/walletConnectIcon.svg'
+import { injected, newWalletlink, newWalletConnect } from 'connectors'
 import { NetworkContextName } from '../../constants'
-import useENSName from '../../hooks/useENSName'
-import { useWalletModalToggle } from '../../state/application/hooks'
-import { isTransactionRecent, useAllTransactions } from '../../state/transactions/hooks'
-import { TransactionDetails } from '../../state/transactions/reducer'
-import { shortenAddress } from '../../utils'
+import useENSName from 'hooks/useENSName'
+import { useWalletModalToggle } from 'state/application/hooks'
+import { isTransactionRecent, useAllTransactions } from 'state/transactions/hooks'
+import { TransactionDetails } from 'state/transactions/reducer'
+import { shortenAddress } from 'utils'
 import { ButtonSecondary } from '../Button'
 
 import Identicon from '../Identicon'
@@ -26,15 +22,15 @@ import Loader from '../Loader'
 import { RowBetween } from '../Row'
 import WalletModal from '../WalletModal'
 
-// const IconWrapper = styled.div<{ size?: number }>`
-//   ${({ theme }) => theme.flexColumnNoWrap};
-//   align-items: center;
-//   justify-content: center;
-//   & > * {
-//     height: ${({ size }) => (size ? size + 'px' : '32px')};
-//     width: ${({ size }) => (size ? size + 'px' : '32px')};
-//   }
-// `;
+const IconWrapper = styled.div<{ size?: number }>`
+  ${({ theme }) => theme.flexColumnNoWrap};
+  align-items: center;
+  justify-content: center;
+  & > * {
+    height: ${({ size }) => (size ? size + 'px' : '32px')};
+    width: ${({ size }) => (size ? size + 'px' : '32px')};
+  }
+`
 
 const Web3StatusGeneric = styled(ButtonSecondary)`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -63,8 +59,7 @@ const Web3StatusError = styled.div`
 `
 
 const ErrorStatusTitle = styled.h3`
-  margin: 0;
-  margin-bottom: 0.7rem;
+  margin: 0 0 0.7rem;
   align-items: center;
   display: flex;
   font-weight: 500;
@@ -140,33 +135,29 @@ function newTransactionsFirst(a: TransactionDetails, b: TransactionDetails) {
 }
 
 // eslint-disable-next-line react/prop-types
-function StatusIcon({ connector }: { connector: AbstractConnector }) {
+function StatusIcon({ connector, chainId }: { connector: AbstractConnector; chainId: number | undefined }) {
   if (connector === injected) {
     return <Identicon />
+  } else if (chainId && connector === newWalletConnect(chainId)) {
+    return (
+      <IconWrapper size={16}>
+        <img src={WalletConnectIcon} alt={''} />
+      </IconWrapper>
+    )
+  } else if (chainId && connector === newWalletlink(chainId)) {
+    return (
+      <IconWrapper size={16}>
+        <img src={CoinbaseWalletIcon} alt={''} />
+      </IconWrapper>
+    )
   }
-  // * see connectors directory
-  // else if (connector === walletconnect) {
-  //   return (
-  //     <IconWrapper size={16}>
-  //       <img src={WalletConnectIcon} alt={''} />
-  //     </IconWrapper>
-  //   );
-  // } else if (connector === walletlink) {
-  //   return (
-  //     <IconWrapper size={16}>
-  //       <img src={CoinbaseWalletIcon} alt={''} />
-  //     </IconWrapper>
-  //   );
-  // }
   return null
 }
 
 function Web3StatusInner() {
   const { t } = useTranslation()
-  const { account, connector, error, deactivate } = useWeb3React()
-
+  const { chainId, account, connector, error, deactivate } = useWeb3React()
   const { ENSName } = useENSName(account ?? undefined)
-
   const allTransactions = useAllTransactions()
 
   const sortedRecentTransactions = useMemo(() => {
@@ -195,7 +186,7 @@ function Web3StatusInner() {
             <Text>{ENSName || shortenAddress(account)}</Text>
           </>
         )}
-        {!hasPendingTransactions && connector && <StatusIcon connector={connector} />}
+        {!hasPendingTransactions && connector && <StatusIcon connector={connector} chainId={chainId} />}
       </Web3StatusConnected>
     )
   } else if (error) {
@@ -214,6 +205,8 @@ function Web3StatusInner() {
       </>
     )
   } else {
+    // if (openModal === null) toggleWalletModal()
+
     return (
       <Web3StatusConnect id="connect-wallet" onClick={toggleWalletModal} faded={!account}>
         <Text>{t('connectWallet')}</Text>

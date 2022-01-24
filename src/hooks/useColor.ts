@@ -6,7 +6,7 @@ import { hex } from 'wcag-contrast'
 import { Token } from 'sdk'
 import uriToHttp from 'utils/uriToHttp'
 import { useDarkModeManager } from '../state/user/hooks'
-import { useProjectInfo } from '../state/application/hooks'
+import { useAppState } from '../state/application/hooks'
 
 export function useThemeColors(): {
   primary1: string
@@ -16,7 +16,7 @@ export function useThemeColors(): {
   primary5: string
 } {
   const [darkMode] = useDarkModeManager()
-  const { brandColor } = useProjectInfo()
+  const { brandColor } = useAppState()
 
   let primary1 = darkMode ? '#999999' : '#262626'
   let primary2 = darkMode ? '#858585' : '#363636'

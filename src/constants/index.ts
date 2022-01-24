@@ -1,9 +1,6 @@
 import { JSBI, Percent } from 'sdk'
 import { AbstractConnector } from '@web3-react/abstract-connector'
-import {
-  injected,
-  // walletconnect, walletlink
-} from '../connectors'
+import { injected, newWalletConnect, newWalletlink } from '../connectors'
 
 export const DEV_FEE_ADMIN = '0x6D1EB33c063CBe69d064EE22537dBF107e8816f6'
 
@@ -38,10 +35,17 @@ export interface WalletInfo {
   mobileOnly?: true
 }
 
+export const WALLET_NAMES = {
+  INJECTED: 'Injected',
+  METAMASK: 'MetaMask',
+  WALLET_CONNECT: 'WalletConnect',
+  WALLET_LINK: 'Coinbase Wallet',
+}
+
 export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
   INJECTED: {
     connector: injected,
-    name: 'Injected',
+    name: WALLET_NAMES.INJECTED,
     iconName: 'arrow-right.svg',
     description: 'Injected web3 provider.',
     href: null,
@@ -50,29 +54,29 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
   },
   METAMASK: {
     connector: injected,
-    name: 'MetaMask',
+    name: WALLET_NAMES.METAMASK,
     iconName: 'metamask.png',
     description: 'Easy-to-use browser extension.',
     href: null,
     color: '#E8831D',
   },
-  // WALLET_CONNECT: {
-  //   connector: walletconnect,
-  //   name: 'WalletConnect',
-  //   iconName: 'walletConnectIcon.svg',
-  //   description: 'Connect to Trust Wallet, Rainbow Wallet and more...',
-  //   href: null,
-  //   color: '#4196FC',
-  //   mobile: true,
-  // },
-  // WALLET_LINK: {
-  //   connector: walletlink,
-  //   name: 'Coinbase Wallet',
-  //   iconName: 'coinbaseWalletIcon.svg',
-  //   description: 'Use Coinbase Wallet app on mobile device',
-  //   href: null,
-  //   color: '#315CF5',
-  // },
+  WALLET_CONNECT: {
+    connector: newWalletConnect(4),
+    name: WALLET_NAMES.WALLET_CONNECT,
+    iconName: 'walletConnectIcon.svg',
+    description: 'Connect to Trust Wallet, Rainbow Wallet and more...',
+    href: null,
+    color: '#4196FC',
+    mobile: true,
+  },
+  WALLET_LINK: {
+    connector: newWalletlink(4),
+    name: WALLET_NAMES.WALLET_LINK,
+    iconName: 'coinbaseWalletIcon.svg',
+    description: 'Use Coinbase Wallet app on mobile device',
+    href: null,
+    color: '#315CF5',
+  },
 }
 
 export const NetworkContextName = 'NETWORK'

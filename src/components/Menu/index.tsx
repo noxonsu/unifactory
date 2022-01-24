@@ -11,7 +11,7 @@ import { ReactComponent as MenuIcon } from 'assets/images/menu.svg'
 import { useDarkModeManager } from 'state/user/hooks'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { ApplicationModal, setAppManagement } from 'state/application/actions'
-import { useModalOpen, useToggleModal, useProjectInfo } from 'state/application/hooks'
+import { useModalOpen, useToggleModal, useAppState } from 'state/application/hooks'
 import { ExternalLink } from 'theme'
 import { useActiveWeb3React } from 'hooks'
 
@@ -191,7 +191,7 @@ function LanguageMenu({ close }: { close: () => void }) {
 export default function Menu() {
   const { t } = useTranslation()
   const { account } = useActiveWeb3React()
-  const { admin, menuLinks } = useProjectInfo()
+  const { admin, menuLinks } = useAppState()
   const dispatch = useDispatch()
 
   const [isAdmin, setIsAdmin] = useState<boolean>(account?.toLowerCase() === admin?.toLowerCase())

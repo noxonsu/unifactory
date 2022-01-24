@@ -267,5 +267,7 @@
   "deployFactoryContract": "Deploy Factory contract",
   "deployRouterContract": "Deploy Router contract",
   "saveInfoToDomainRegistry": "Save information to the domain registry contract",
-  "storageContract": "Storage contract"
+  "storageContract": "Storage contract",
+  "chooseNetwork": "Choose network",
+  "chooseWallet": "Choose wallet"
 }

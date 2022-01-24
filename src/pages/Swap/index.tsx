@@ -25,7 +25,7 @@ import { ApprovalState, useApproveCallbackFromTrade } from 'hooks/useApproveCall
 import { useSwapCallback } from 'hooks/useSwapCallback'
 import { useBaseCurrency } from 'hooks/useCurrency'
 import useWrapCallback, { WrapType } from 'hooks/useWrapCallback'
-import { useToggleSettingsMenu, useWalletModalToggle, useProjectInfo } from 'state/application/hooks'
+import { useToggleSettingsMenu, useWalletModalToggle, useAppState } from 'state/application/hooks'
 import { Field } from 'state/swap/actions'
 import { useDefaultsFromURLSearch, useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from 'state/swap/hooks'
 import { useExpertModeManager, useUserSlippageTolerance, useUserSingleHopOnly } from 'state/user/hooks'
@@ -39,7 +39,7 @@ import Loader from 'components/Loader'
 export default function Swap() {
   const loadedUrlParams = useDefaultsFromURLSearch()
   const { t } = useTranslation()
-  const { totalFee } = useProjectInfo()
+  const { totalFee } = useAppState()
   const baseCurrency = useBaseCurrency()
 
   // token warning stuff

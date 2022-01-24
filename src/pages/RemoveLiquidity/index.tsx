@@ -39,7 +39,7 @@ import { Dots } from 'components/swap/styleds'
 import { useBurnActionHandlers } from 'state/burn/hooks'
 import { useDerivedBurnInfo, useBurnState } from 'state/burn/hooks'
 import { Field } from 'state/burn/actions'
-import { useWalletModalToggle, useProjectInfo } from 'state/application/hooks'
+import { useWalletModalToggle, useAppState } from 'state/application/hooks'
 import { useUserSlippageTolerance } from 'state/user/hooks'
 import { BigNumber } from '@ethersproject/bignumber'
 
@@ -52,7 +52,7 @@ export default function RemoveLiquidity({
   const [currencyA, currencyB] = [useCurrency(currencyIdA) ?? undefined, useCurrency(currencyIdB) ?? undefined]
 
   const { account, chainId, library } = useActiveWeb3React()
-  const { router: routerAddress } = useProjectInfo()
+  const { router: routerAddress } = useAppState()
   const baseCurrency = useBaseCurrency()
   const wrappedToken = useWrappedToken()
 

@@ -1,15 +1,19 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { ZERO_ADDRESS } from 'sdk'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import { FaWallet } from 'react-icons/fa'
 import { useWeb3React } from '@web3-react/core'
 import networks from 'networks.json'
+import { SUPPORTED_NETWORKS } from 'connectors'
 import { useDarkModeManager } from 'state/user/hooks'
 import AppBody from './AppBody'
 import Panel from './Panel'
-import Web3Status from 'components/Web3Status'
 import { colors } from 'theme'
+import Web3Status from 'components/Web3Status'
+import { ApplicationModal, setOpenModal } from '../state/application/actions'
+import { useDispatch } from 'react-redux'
+import { AppDispatch } from 'state'
 
 const Wrapper = styled.section`
   width: 100%;
@@ -65,11 +69,12 @@ const SupportedNetworksList = styled.ul`
   }
 `
 
-const supportedNetworks = () => {
-  return Object.values(networks).filter(
-    (network) => network.registry && network.multicall && Boolean(network.wrappedToken?.address)
-  )
-}
+const supportedNetworks = (): { chainId: string; name: string }[] =>
+  Object.keys(SUPPORTED_NETWORKS).map((chainId) => ({
+    chainId,
+    //@ts-ignore
+    name: networks[chainId].name,
+  }))
 
 const unavailableOrZeroAddr = (value: string | undefined) => !value || value === ZERO_ADDRESS
 
@@ -83,15 +88,28 @@ export default function Connection({ domainData, isAvailableNetwork, setDomainDa
   const { active } = useWeb3React()
   const { t } = useTranslation()
   const [darkMode] = useDarkModeManager()
+  const dispatch = useDispatch<AppDispatch>()
+  const [needToConfigure, setNeedToConfigure] = useState(false)
 
-  const needToConfigure =
-    active &&
-    (!domainData ||
-      unavailableOrZeroAddr(domainData.admin) ||
-      unavailableOrZeroAddr(domainData.factory) ||
-      unavailableOrZeroAddr(domainData.router))
+  useEffect(() => {
+    if (
+      active &&
+      (!domainData ||
+        unavailableOrZeroAddr(domainData.admin) ||
+        unavailableOrZeroAddr(domainData.factory) ||
+        unavailableOrZeroAddr(domainData.router))
+    ) {
+      setNeedToConfigure(true)
+    }
+  }, [active, domainData])
 
-  const networks = supportedNetworks()
+  useEffect(() => {
+    if (isAvailableNetwork && !needToConfigure) {
+      dispatch(setOpenModal(ApplicationModal.WALLET))
+    }
+  }, [dispatch, isAvailableNetwork, needToConfigure])
+
+  const supported = supportedNetworks()
 
   return (
     <Wrapper>
@@ -99,20 +117,15 @@ export default function Connection({ domainData, isAvailableNetwork, setDomainDa
         <AppBody>
           <SupportedNetworksWrapper>
             <h3>{t('youCanNotUseThisNetwork')}</h3>
-
-            {networks.length && (
+            {supported.length && (
               <>
                 <p>{t('availableNetworks')}</p>
                 <SupportedNetworksList>
-                  {networks.map((network: { name: string; chainId: number }, index) => {
-                    const { name, chainId } = network
-
-                    return (
-                      <li key={chainId}>
-                        {chainId} - {name}
-                      </li>
-                    )
-                  })}
+                  {supported.map(({ name, chainId }) => (
+                    <li key={chainId}>
+                      {chainId} - {name}
+                    </li>
+                  ))}
                 </SupportedNetworksList>
               </>
             )}
@@ -128,9 +141,7 @@ export default function Connection({ domainData, isAvailableNetwork, setDomainDa
             <WalletIconWrapper>
               <FaWallet size="2.4rem" color={colors(darkMode).bg1} />
             </WalletIconWrapper>
-
             <Title>{t('toGetStartedConnectWallet')}</Title>
-
             <NetworkStatus>
               <Web3Status />
             </NetworkStatus>

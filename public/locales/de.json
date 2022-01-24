@@ -268,5 +268,7 @@
   "deployFactoryContract": "Fabrikvertrag bereitstellen",
   "deployRouterContract": "Router-Vertrag bereitstellen",
   "saveInfoToDomainRegistry": "Speichern Sie Informationen im Domainregistrierungsvertrag",
-  "storageContract": "Lagervertrag"
+  "storageContract": "Lagervertrag",
+  "chooseNetwork": "Netzwerk auswählen",
+  "chooseWallet": "Wallet auswählen"
 }

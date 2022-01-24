@@ -8,7 +8,7 @@ import Slider, { SliderTooltip } from 'rc-slider'
 import 'rc-slider/assets/index.css'
 import { RiErrorWarningLine } from 'react-icons/ri'
 import { useActiveWeb3React } from 'hooks'
-import { useProjectInfo } from 'state/application/hooks'
+import { useAppState } from 'state/application/hooks'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useTranslation } from 'react-i18next'
 import { DEV_FEE_ADMIN } from '../../constants'
@@ -170,7 +170,7 @@ function SwapContracts(props: any) {
     totalFee: currentTotalFee,
     protocolFee: currentProtocolFee,
     possibleProtocolPercent,
-  } = useProjectInfo()
+  } = useAppState()
 
   const [canDeploySwapContracts, setCanDeploySwapContracts] = useState(false)
   const [adminAddress, setAdminAddress] = useState(stateAdmin || account || '')
