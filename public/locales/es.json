@@ -258,5 +258,6 @@
   "saveInfoToDomainRegistry": "Guardar información en el contrato de registro de dominio",
   "storageContract": "Contrato de almacenamiento",
   "chooseNetwork": "Elija la red",
-  "chooseWallet": "Elegir cartera"
+  "chooseWallet": "Elegir cartera",
+  "noPointToChangeAdminFeeWithoutFeeRecipient": "No tiene sentido cambiar esta comisión hasta que establezca la dirección del destinatario de la tarifa"
 }

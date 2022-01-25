@@ -270,5 +270,6 @@
   "saveInfoToDomainRegistry": "Speichern Sie Informationen im Domainregistrierungsvertrag",
   "storageContract": "Lagervertrag",
   "chooseNetwork": "Netzwerk auswählen",
-  "chooseWallet": "Wallet auswählen"
+  "chooseWallet": "Wallet auswählen",
+  "noPointToChangeAdminFeeWithoutFeeRecipient": "Es hat keinen Sinn, diese Provision zu ändern, bis Sie die Adresse des Gebührenempfängers festgelegt haben"
 }

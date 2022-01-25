@@ -258,5 +258,6 @@
   "saveInfoToDomainRegistry": "שמירת מידע לחוזה הרישום של הדומיין",
   "storageContract": "חוזה אחסון",
   "chooseNetwork": "בחר רשת",
-  "chooseWallet": "בחר ארנק"
+  "chooseWallet": "בחר ארנק",
+  "noPointToChangeAdminFeeWithoutFeeRecipient": "זה לא הגיוני לשנות עמלה זו עד שתגדיר את הכתובת של הנמען של הוועדה"
 }
