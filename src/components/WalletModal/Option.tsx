@@ -1,6 +1,5 @@
 import React from 'react'
 import styled from 'styled-components'
-import { darken, lighten } from 'polished'
 import { IoIosCheckmarkCircleOutline } from 'react-icons/io'
 import { ExternalLink } from 'theme'
 import { useIsDarkMode } from 'state/user/hooks'
@@ -12,6 +11,14 @@ const InfoCard = styled.button<{ active?: boolean }>`
   border-radius: 1rem;
   width: 100%;
   min-width: 7rem;
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    min-width: 6rem;
+  `};
+
+  ${({ theme }) => theme.mediaWidth.mobileS`
+    min-width: 5rem;
+  `};
 `
 
 const OptionCard = styled(InfoCard as any)`
@@ -31,20 +38,24 @@ const OptionCardClickable = styled(OptionCard as any)<{
 }>`
   position: relative;
   width: ${({ widthPercent }) => widthPercent}%;
-  border: 1px solid ${({ color, theme }) => (color ? color : theme.primary3)};
+  border: 1px solid transparent;
 
-  ${({ color, isDark }) => (color ? `background-color: ${isDark ? darken(0.35, color) : lighten(0.35, color)};` : '')}
+  ${({ isDark, theme }) => `background-color: ${isDark ? theme.bg3 : theme.bg1};`}
 
   &:hover {
-    ${({ color, isDark, clickable }) =>
-      clickable
-        ? color
-          ? `background-color: ${isDark ? darken(0.2, color) : lighten(0.2, color)}; cursor: pointer;`
-          : ''
-        : ''};
+    ${({ color, clickable }) =>
+      clickable ? (color ? `border-color: ${color}; cursor: pointer;` : 'cursor: pointer;') : ''};
   }
   opacity: ${({ disabled }) => (disabled ? '0.5' : '1')};
   transition: 0.1s;
+
+  ${({ theme, widthPercent }) => theme.mediaWidth.upToExtraSmall`
+    width: ${widthPercent - widthPercent / 4}%;
+  `};
+
+  ${({ theme }) => theme.mediaWidth.mobileS`
+    width: 40%;
+  `};
 `
 
 const CheckMarkWrapper = styled.div`
@@ -52,8 +63,8 @@ const CheckMarkWrapper = styled.div`
   top: 7%;
   left: 7%;
   border-radius: 50%;
-  width: 1.6rem;
-  height: 1.6rem;
+  width: 1.4rem;
+  height: 1.4rem;
   background-color: ${({ theme }) => theme.green1};
   color: ${({ theme }) => theme.white1};
 `
@@ -64,6 +75,14 @@ const Text = styled.div`
   font-size: 0.7rem;
   line-height: 1.2rem;
   font-weight: 500;
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    font-size: 0.6rem;
+  `};
+
+  ${({ theme }) => theme.mediaWidth.mobileS`
+    font-size: 0.54rem;
+  `};
 `
 
 const SubHeader = styled.div`
@@ -86,6 +105,22 @@ const IconWrapper = styled.div<{ size?: number | null }>`
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     align-items: flex-end;
+  `};
+
+  ${({ theme, size }) => theme.mediaWidth.upToExtraSmall`
+    & > img,
+    span {
+      height: ${size ? size - size / 4 + 'px' : '18px'};
+      width: ${size ? size - size / 4 + 'px' : '18px'};
+    }
+  `};
+
+  ${({ theme, size }) => theme.mediaWidth.mobileS`
+    & > img,
+    span {
+      height: ${size ? size - size / 3 + 'px' : '16px'};
+      width: ${size ? size - size / 3 + 'px' : '16px'};
+    }
   `};
 `
 

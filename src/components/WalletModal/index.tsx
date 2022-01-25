@@ -107,13 +107,17 @@ const OptionsWrapped = styled.div`
   ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-direction: column;
   `};
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    max-height: 45rem;
+  `};
 `
 
 const Options = styled.div<{ disabled?: boolean; isDark: boolean }>`
   display: flex;
   flex-wrap: wrap;
   overflow-y: auto;
-  max-height: 24rem;
+  max-height: 23rem;
   padding: 0.6rem;
   border-radius: 0.8rem;
   border: 1px solid ${({ theme, isDark }) => (isDark ? theme.bg1 : theme.bg3)};

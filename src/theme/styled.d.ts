@@ -68,6 +68,7 @@ declare module 'styled-components' {
       tabletM: ThemedCssFunction<DefaultTheme>
       mobileL: ThemedCssFunction<DefaultTheme>
       mobileM: ThemedCssFunction<DefaultTheme>
+      mobileS: ThemedCssFunction<DefaultTheme>
     }
 
     // css snippets

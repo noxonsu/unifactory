@@ -19,6 +19,7 @@ const MEDIA_WIDTHS = {
   tabletM: 768,
   mobileL: 425,
   mobileM: 375,
+  mobileS: 340,
 }
 
 const mediaWidthTemplates: { [width in keyof typeof MEDIA_WIDTHS]: typeof css } = Object.keys(MEDIA_WIDTHS).reduce(

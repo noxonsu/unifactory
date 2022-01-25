@@ -5,7 +5,6 @@ import { useSelector, useDispatch } from 'react-redux'
 import { AppState } from 'state'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
-import { ZERO_ADDRESS } from 'sdk'
 import useDomainInfo from 'hooks/useDomainInfo'
 import useStorageInfo from 'hooks/useStorageInfo'
 import { useAppState } from 'state/application/hooks'
@@ -35,7 +34,7 @@ import networks from 'networks.json'
 
 const LoaderWrapper = styled.div`
   position: absolute;
-  z-index: 1;
+  z-index: 4;
   top: 0;
   left: 0;
   width: 100vw;
@@ -43,6 +42,7 @@ const LoaderWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: ${({ theme }) => theme.bg1};
 `
 
 const AppWrapper = styled.div`
@@ -87,6 +87,18 @@ export default function App() {
     setDomainDataTrigger((state) => !state)
   }, [chainId])
 
+  const [isAvailableNetwork, setIsAvailableNetwork] = useState(true)
+
+  useEffect(() => {
+    //@ts-ignore
+    if (chainId && networks[chainId]) {
+      //@ts-ignore
+      const { registry, multicall, wrappedToken } = networks[chainId]
+
+      setIsAvailableNetwork(Boolean(chainId && registry && multicall && wrappedToken?.address))
+    }
+  }, [chainId, domainDataTrigger])
+
   const { data: domainData, isLoading: domainLoading } = useDomainInfo(domainDataTrigger)
   const { data: storageData, isLoading: storageLoading } = useStorageInfo()
 
@@ -100,23 +112,11 @@ export default function App() {
 
   const { admin, factory, router, projectName } = useAppState()
 
-  const [appIsReady, setAppIsReady] = useState(active && admin && factory && router)
+  const [appIsReady, setAppIsReady] = useState(false)
 
   useEffect(() => {
-    setAppIsReady(active && admin && factory && router)
+    setAppIsReady(Boolean(active && admin && factory && router))
   }, [chainId, active, admin, factory, router])
-
-  const [isAvailableNetwork, setIsAvailableNetwork] = useState(true)
-
-  useEffect(() => {
-    //@ts-ignore
-    if (chainId && networks[chainId]) {
-      //@ts-ignore
-      const { registry, multicall, wrappedToken } = networks[chainId]
-
-      setIsAvailableNetwork(Boolean(chainId && registry && multicall && wrappedToken?.address))
-    }
-  }, [chainId, domainDataTrigger])
 
   const appManagement = useSelector<AppState, AppState['application']['appManagement']>(
     (state) => state.application.appManagement
@@ -125,19 +125,8 @@ export default function App() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    console.log(ZERO_ADDRESS)
     setLoading(domainLoading || storageLoading)
-    // if (!domainLoading && domainData) {
-    //   // if there is also a storage address we have to wait storage data loading too
-    //   if (domainData?.storageAddr && domainData?.storageAddr !== ZERO_ADDRESS) {
-    //     if (!storageLoading && storageData) {
-    //       setLoading(false)
-    //     }
-    //   } else {
-    //     setLoading(false)
-    //   }
-    // }
-  }, [domainLoading, domainData, storageLoading, storageData])
+  }, [domainLoading, storageLoading])
 
   return (
     <Suspense fallback={null}>

@@ -29,7 +29,7 @@ export default function useDomainInfo(trigger: boolean): {
   // @ts-ignore
   const registry = useRegistryContract(networks[chainId]?.registry)
   const [data, setData] = useState(null)
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
 
   useEffect(() => {
