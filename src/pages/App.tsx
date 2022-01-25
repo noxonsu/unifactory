@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { AppState } from 'state'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
+import { ZERO_ADDRESS } from 'sdk'
 import useDomainInfo from 'hooks/useDomainInfo'
 import useStorageInfo from 'hooks/useStorageInfo'
 import { useAppState } from 'state/application/hooks'
@@ -110,7 +111,19 @@ export default function App() {
     if (storageData) dispatch(updateAppData({ ...storageData }))
   }, [storageData, dispatch])
 
-  const loading = domainLoading || storageLoading
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (!domainLoading) {
+      if (domainData && domainData?.storageAddr !== ZERO_ADDRESS) {
+        if (!storageLoading) {
+          setLoading(false)
+        }
+      } else {
+        setLoading(false)
+      }
+    }
+  }, [domainLoading, domainData, storageLoading])
 
   return (
     <Suspense fallback={null}>

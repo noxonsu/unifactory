@@ -100,7 +100,7 @@
     }
   },
   "56": {
-    "name": "Binance Smart Chain",
+    "name": "BSC",
     "rpc": "https://bsc-dataseed.binance.org",
     "chainId": 56,
     "explorer": "https://bscscan.com",
@@ -160,7 +160,7 @@
     }
   },
   "80001": {
-    "name": "Polygon testnet",
+    "name": "Polygon Testnet",
     "rpc": "https://polygon-mumbai.g.alchemy.com/v2/2xKOm_QzNtsjZox1QstYz_iYZLIPGgHL",
     "chainId": 80001,
     "explorer": "https://mumbai.polygonscan.com/",
@@ -200,7 +200,7 @@
     }
   },
   "421611": {
-    "name": "Arbitrum testnet",
+    "name": "Arbitrum Testnet",
     "rpc": "https://rinkeby.arbitrum.io/rpc",
     "chainId": 421611,
     "explorer": "https://rinkeby-explorer.arbitrum.io",
@@ -280,7 +280,7 @@
     }
   },
   "77": {
-    "name": "POA Network Sokol",
+    "name": "Gnosis Testnet",
     "rpc": "https://sokol.poa.network",
     "chainId": 77,
     "explorer": "https://blockscout.com/poa/sokol",
@@ -320,7 +320,7 @@
     }
   },
   "31": {
-    "name": "RSK testnet",
+    "name": "RSK Testnet",
     "rpc": "https://public-node.testnet.rsk.co",
     "chainId": 31,
     "explorer": "https://explorer.testnet.rsk.co",
@@ -340,7 +340,7 @@
     }
   },
   "43114": {
-    "name": "Avalanche Mainnet C-Chain",
+    "name": "Avalanche",
     "rpc": "https://api.avax.network/ext/bc/C/rpc",
     "chainId": 43114,
     "explorer": "https://snowtrace.io",
@@ -360,7 +360,7 @@
     }
   },
   "43113": {
-    "name": "Avalanche FUJI C-Chain",
+    "name": "Avalanche Testnet",
     "rpc": "https://api.avax-test.network/ext/bc/C/rpc",
     "chainId": 43113,
     "explorer": "https://testnet.snowtrace.io",
@@ -460,7 +460,7 @@
     }
   },
   "128": {
-    "name": "Huobi ECO Chain",
+    "name": "ECO Chain",
     "rpc": "https://http-mainnet.hecochain.com",
     "chainId": 128,
     "explorer": "https://hecoinfo.com",
@@ -480,7 +480,7 @@
     }
   },
   "256": {
-    "name": "Huobi ECO Chain Testnet",
+    "name": "ECO Chain Testnet",
     "rpc": "https://http-testnet.hecochain.com",
     "chainId": 256,
     "explorer": "https://testnet.hecoinfo.com",
@@ -560,7 +560,7 @@
     }
   },
   "1313161555": {
-    "name": "Aurora testnet",
+    "name": "Aurora Testnet",
     "rpc": "https://testnet.aurora.dev",
     "chainId": 1313161555,
     "explorer": "https://explorer.testnet.aurora.dev",
@@ -577,6 +577,46 @@
       "address": "0x9D29f395524B3C817ed86e2987A14c1897aFF849",
       "name": "Wrapped ETH",
       "symbol": "WETH"
+    }
+  },
+  "250": {
+    "name": "Fantom Opera",
+    "rpc": "https://rpc.ftm.tools/",
+    "chainId": 250,
+    "explorer": "https://ftmscan.com",
+    "color": "#0C30FF",
+    "registry": "",
+    "multicall": "",
+    "ENSRegistry": "",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "FTM",
+      "symbol": "FTM"
+    },
+    "wrappedToken": {
+      "address": "0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83",
+      "name": "Wrapped FTM",
+      "symbol": "WFTM"
+    }
+  },
+  "4002": {
+    "name": "Fantom Testnet",
+    "rpc": "https://rpc.testnet.fantom.network/",
+    "chainId": 4002,
+    "explorer": "https://testnet.ftmscan.com",
+    "color": "#0C30FF",
+    "registry": "0x79D5C019F2515Cbc0596170Da44FCd26412c4f83",
+    "multicall": "0x9664EC984D1c0d44dD22C161da1D06f7f72Ae092",
+    "ENSRegistry": "",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "FTM",
+      "symbol": "FTM"
+    },
+    "wrappedToken": {
+      "address": "0x15c34d8b356f21112c07ca1811d84101f480a3f1",
+      "name": "Wrapped FTM",
+      "symbol": "WFTM"
     }
   }
 }

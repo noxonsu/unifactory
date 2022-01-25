@@ -69,8 +69,8 @@ const Title = styled.h3`
   font-weight: 500;
   display: flex;
   align-items: center;
-  margin-top: 0;
-  padding: 0 0 0.6rem;
+  margin: 0 0 0.6rem;
+  padding: 0;
 `
 
 const UpperSection = styled.div`
@@ -96,11 +96,11 @@ const OptionsWrapped = styled.div`
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  max-height: 40rem;
+  max-height: 38rem;
 
   .column {
     :not(:last-child) {
-      margin-bottom: 0.7rem;
+      margin-bottom: 1rem;
     }
   }
 
@@ -114,10 +114,10 @@ const Options = styled.div<{ disabled?: boolean; isDark: boolean }>`
   flex-wrap: wrap;
   overflow-y: auto;
   max-height: 24rem;
-  padding: 1rem;
+  padding: 0.6rem;
   border-radius: 0.8rem;
   border: 1px solid ${({ theme, isDark }) => (isDark ? theme.bg1 : theme.bg3)};
-  box-shadow: inset 0 0 0.5rem ${({ theme, isDark }) => (isDark ? theme.bg1 : theme.bg3)};
+  box-shadow: inset 0 0 0.2rem ${({ theme, isDark }) => (isDark ? theme.bg1 : theme.bg3)};
 
   ${({ disabled }) => (disabled ? 'pointer-events: none; opacity: 0.6' : '')};
 `

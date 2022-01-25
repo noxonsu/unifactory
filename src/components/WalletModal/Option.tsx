@@ -11,7 +11,7 @@ const InfoCard = styled.button<{ active?: boolean }>`
   outline: none;
   border-radius: 1rem;
   width: 100%;
-  min-width: 8rem;
+  min-width: 7rem;
 `
 
 const OptionCard = styled(InfoCard as any)`
@@ -19,8 +19,8 @@ const OptionCard = styled(InfoCard as any)`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 0.6rem;
-  padding: 0.7rem;
+  margin: 0.4rem;
+  padding: 0.6rem;
 `
 
 const OptionCardClickable = styled(OptionCard as any)<{
@@ -31,7 +31,6 @@ const OptionCardClickable = styled(OptionCard as any)<{
 }>`
   position: relative;
   width: ${({ widthPercent }) => widthPercent}%;
-  margin: 0 0.6rem 0.6rem 0;
   border: 1px solid ${({ color, theme }) => (color ? color : theme.primary3)};
 
   ${({ color, isDark }) => (color ? `background-color: ${isDark ? darken(0.35, color) : lighten(0.35, color)};` : '')}
@@ -96,7 +95,7 @@ export default function Option({
   size,
   onClick = null,
   color,
-  widthPercent = 30,
+  widthPercent = 17,
   header,
   subheader = null,
   icon,
