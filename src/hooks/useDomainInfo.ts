@@ -12,6 +12,7 @@ type Data = {
   router: string
   storageAddr: string
   pairHash: string
+  feeRecipient: string
   protocolFee?: number
   totalFee?: number
   allFeeToProtocol?: boolean
@@ -56,15 +57,21 @@ export default function useDomainInfo(trigger: boolean): {
         fullData = { ...fullData, pairHash: INIT_CODE_PAIR_HASH }
 
         try {
-          // in the updated contract version we can extract all data at the same time
-          // if there is no such method, then this is not a critical problem
           const factoryInfo = await factoryContract.methods.allInfo().call()
-          const { protocolFee, totalFee, allFeeToProtocol, POSSIBLE_PROTOCOL_PERCENT, devFeeSetter, totalSwaps } =
-            factoryInfo
+          const {
+            protocolFee,
+            feeTo,
+            totalFee,
+            allFeeToProtocol,
+            POSSIBLE_PROTOCOL_PERCENT,
+            devFeeSetter,
+            totalSwaps,
+          } = factoryInfo
 
           fullData = {
             ...fullData,
             protocolFee,
+            feeRecipient: feeTo,
             totalFee,
             allFeeToProtocol,
             possibleProtocolPercent: POSSIBLE_PROTOCOL_PERCENT,

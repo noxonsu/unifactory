@@ -153,20 +153,6 @@ export const deploySwapContracts = async (params: any) => {
   }
 }
 
-export const getFactoryOptions = async (library: Web3Provider, factoryAddress: string) => {
-  const factory = getContractInstance(library, factoryAddress, Factory.abi)
-
-  return new Promise(async (resolve, reject) => {
-    try {
-      const options = await factory.methods.allInfo().call()
-
-      resolve(options)
-    } catch (error) {
-      reject(error)
-    }
-  })
-}
-
 export const setFactoryOption = async (params: {
   library: Web3Provider
   from: string

@@ -3,6 +3,10 @@ import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import Accordion from 'components/Accordion'
 
+const Wrapper = styled.div`
+  margin: 0.5rem 0 0.6rem;
+`
+
 const Section = styled.div`
   margin: 1.6rem 0;
 
@@ -51,31 +55,33 @@ export default function Instruction() {
   const { t } = useTranslation()
 
   return (
-    <Accordion title={t('instructions')} padding={0.2} borderRadius={1} contentPadding>
-      <Section>
-        <Paragraph>1) {t('swapContractsDeploymentDescription')}.</Paragraph>
-        <Paragraph>2) {t('storageDeploymentDescription')}.</Paragraph>
-      </Section>
+    <Wrapper>
+      <Accordion title={t('instructions')} padding={0.2} borderRadius={0.6} contentPadding>
+        <Section>
+          <Paragraph>1) {t('swapContractsDeploymentDescription')}.</Paragraph>
+          <Paragraph>2) {t('storageDeploymentDescription')}.</Paragraph>
+        </Section>
 
-      <Section>
-        <Title>{t('meaningOfSections')}:</Title>
-        <List>
-          <li>
-            <Highlight>{t('swapContracts')}:</Highlight> {t('swapContractsSectionDescription')}.
-          </li>
-          <li>
-            <Highlight>{t('interface')}:</Highlight> {t('interfaceSectionDescription')}.
-          </li>
-        </List>
-      </Section>
+        <Section>
+          <Title>{t('meaningOfSections')}:</Title>
+          <List>
+            <li>
+              <Highlight>{t('swapContracts')}:</Highlight> {t('swapContractsSectionDescription')}.
+            </li>
+            <li>
+              <Highlight>{t('interface')}:</Highlight> {t('interfaceSectionDescription')}.
+            </li>
+          </List>
+        </Section>
 
-      <Section>
-        <Warring>
-          <Title>{t('beCareful')}:</Title>
-          <Paragraph>{t('deploymentFlowDescription')}.</Paragraph>
-          <Paragraph>{t('consequencesOfDeploymentOfNewContracts')}.</Paragraph>
-        </Warring>
-      </Section>
-    </Accordion>
+        <Section>
+          <Warring>
+            <Title>{t('beCareful')}:</Title>
+            <Paragraph>{t('deploymentFlowDescription')}.</Paragraph>
+            <Paragraph>{t('consequencesOfDeploymentOfNewContracts')}.</Paragraph>
+          </Warring>
+        </Section>
+      </Accordion>
+    </Wrapper>
   )
 }

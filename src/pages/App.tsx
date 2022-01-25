@@ -10,7 +10,6 @@ import useStorageInfo from 'hooks/useStorageInfo'
 import { useAppState } from 'state/application/hooks'
 import { retrieveDomainData, updateAppData } from 'state/application/actions'
 import Loader from 'components/Loader'
-import AppBody from './AppBody'
 import Panel from './Panel'
 import Connection from './Connection'
 import Header from 'components/Header'
@@ -149,9 +148,7 @@ export default function App() {
             <>
               {appManagement ? (
                 <BodyWrapper>
-                  <AppBody>
-                    <Panel setDomainDataTrigger={setDomainDataTrigger} />
-                  </AppBody>
+                  <Panel setDomainDataTrigger={setDomainDataTrigger} />
                 </BodyWrapper>
               ) : (
                 <AppWrapper>

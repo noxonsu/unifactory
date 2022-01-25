@@ -39,6 +39,7 @@ export const retrieveDomainData = createAction<null | {
   router: string
   storageAddr: string
   pairHash: string
+  feeRecipient: string
   protocolFee?: number
   totalFee?: number
   allFeeToProtocol?: boolean
