@@ -34,17 +34,19 @@ const Title = styled.h3`
 `
 
 const OptionWrapper = styled.div<{ margin?: number }>`
-  margin: ${({ margin }) => margin || 0.2}rem 0;
+  margin: ${({ margin }) => margin || 0.3}rem 0;
   padding: 0.3rem 0;
 `
 
-const Info = styled.div<{ flex?: boolean }>`
+const Info = styled.div<{ flex?: boolean; warning?: boolean }>`
   margin: 0.2rem 0;
   padding: 0.4rem;
+  border-radius: 0.6rem;
   font-size: 0.9rem;
   opacity: 0.6;
 
   ${({ flex }) => (flex ? 'display: flex; align-items: center;' : '')}
+  ${({ warning, theme }) => (warning ? `background-color: ${theme.yellow1}; opacity: 1;` : '')}
 `
 
 const listStyles = css`
@@ -497,7 +499,8 @@ function SwapContracts(props: any) {
             </Button>
           </OptionWrapper>
 
-          <SliderWrapper>
+          {!feeRecipient ? <Info warning>{t('noPointToChangeAdminFeeWithoutFeeRecipient')}</Info> : <span />}
+          <SliderWrapper className={!feeRecipient ? 'disabled' : ''}>
             {currentTotalFee === 0 && (
               <Info flex>
                 <RiErrorWarningLine style={{ marginRight: '.5rem' }} /> {t('totalFee')} = 0%.{' '}

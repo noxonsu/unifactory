@@ -61,9 +61,6 @@ export default function Instruction() {
         <Title>{t('meaningOfSections')}:</Title>
         <List>
           <li>
-            <Highlight>{t('deployment')}:</Highlight> {t('deploymentSectionDescription')}.
-          </li>
-          <li>
             <Highlight>{t('swapContracts')}:</Highlight> {t('swapContractsSectionDescription')}.
           </li>
           <li>
