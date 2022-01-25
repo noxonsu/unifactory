@@ -80,8 +80,31 @@ const FooterWrapper = styled.footer`
 export default function App() {
   const dispatch = useDispatch()
   const { active, chainId } = useWeb3React()
+
+  const [domainDataTrigger, setDomainDataTrigger] = useState<boolean>(false)
+
+  useEffect(() => {
+    setDomainDataTrigger((state) => !state)
+  }, [chainId])
+
+  const { data: domainData, isLoading: domainLoading } = useDomainInfo(domainDataTrigger)
+  const { data: storageData, isLoading: storageLoading } = useStorageInfo()
+
+  useEffect(() => {
+    dispatch(retrieveDomainData(domainData ? { ...domainData } : domainData))
+  }, [domainData, domainLoading, dispatch])
+
+  useEffect(() => {
+    dispatch(updateAppData(storageData ? { ...storageData } : storageData))
+  }, [storageData, storageLoading, dispatch])
+
   const { admin, factory, router, projectName } = useAppState()
-  const appIsReady = Boolean(active && admin && factory && router)
+
+  const [appIsReady, setAppIsReady] = useState(active && admin && factory && router)
+
+  useEffect(() => {
+    setAppIsReady(active && admin && factory && router)
+  }, [chainId, active, admin, factory, router])
 
   const [isAvailableNetwork, setIsAvailableNetwork] = useState(true)
 
@@ -93,37 +116,28 @@ export default function App() {
 
       setIsAvailableNetwork(Boolean(chainId && registry && multicall && wrappedToken?.address))
     }
-  }, [chainId])
+  }, [chainId, domainDataTrigger])
 
   const appManagement = useSelector<AppState, AppState['application']['appManagement']>(
     (state) => state.application.appManagement
   )
 
-  const [domainDataTrigger, setDomainDataTrigger] = useState<boolean>(false)
-  const { data: domainData, isLoading: domainLoading } = useDomainInfo(domainDataTrigger)
-  const { data: storageData, isLoading: storageLoading } = useStorageInfo()
-
-  useEffect(() => {
-    if (domainData) dispatch(retrieveDomainData({ ...domainData }))
-  }, [domainData, dispatch])
-
-  useEffect(() => {
-    if (storageData) dispatch(updateAppData({ ...storageData }))
-  }, [storageData, dispatch])
-
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!domainLoading) {
-      if (domainData && domainData?.storageAddr !== ZERO_ADDRESS) {
-        if (!storageLoading) {
-          setLoading(false)
-        }
-      } else {
-        setLoading(false)
-      }
-    }
-  }, [domainLoading, domainData, storageLoading])
+    console.log(ZERO_ADDRESS)
+    setLoading(domainLoading || storageLoading)
+    // if (!domainLoading && domainData) {
+    //   // if there is also a storage address we have to wait storage data loading too
+    //   if (domainData?.storageAddr && domainData?.storageAddr !== ZERO_ADDRESS) {
+    //     if (!storageLoading && storageData) {
+    //       setLoading(false)
+    //     }
+    //   } else {
+    //     setLoading(false)
+    //   }
+    // }
+  }, [domainLoading, domainData, storageLoading, storageData])
 
   return (
     <Suspense fallback={null}>

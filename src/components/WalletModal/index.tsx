@@ -145,7 +145,7 @@ export default function WalletModal({
   ENSName?: string
 }) {
   // important that these are destructed from the account-specific web3-react context
-  const { active, account, connector, activate, error } = useWeb3React()
+  const { active, chainId, account, connector, activate, error } = useWeb3React()
   const isDark = useIsDarkMode()
   const [currentChainId, setCurrentChainId] = useState<number>(0)
   const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT)
@@ -253,7 +253,7 @@ export default function WalletModal({
           return (
             <Option
               onClick={() => {
-                option.connector !== connector && !option.href && tryActivation(option.connector)
+                currentChainId !== chainId && !option.href && tryActivation(option.connector)
               }}
               id={`connect-${key}`}
               key={key}
@@ -308,9 +308,7 @@ export default function WalletModal({
           <Option
             id={`connect-${key}`}
             onClick={() => {
-              option.connector === connector
-                ? setWalletView(WALLET_VIEWS.ACCOUNT)
-                : !option.href && tryActivation(option.connector)
+              currentChainId !== chainId && !option.href && tryActivation(option.connector)
             }}
             key={key}
             active={option.connector === connector}
