@@ -11,6 +11,7 @@ import CRO from './cro.svg'
 import HT from './ht.svg'
 import GLMR from './glmr.png'
 import AURORA from './aurora.svg'
+import FTM from './ftm.svg'
 
 export const CURRENCY = {
   ETH,
@@ -47,4 +48,6 @@ export const CURRENCY = {
   1287: GLMR,
   1313161554: AURORA,
   1313161555: AURORA,
+  250: FTM,
+  4002: FTM,
 }

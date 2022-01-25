@@ -33,7 +33,7 @@ export enum ApplicationModal {
 
 export const setAppManagement = createAction<{ status: boolean }>('application/setAppManagement')
 
-export const retrieveDomainData = createAction<{
+export const retrieveDomainData = createAction<null | {
   admin: string
   factory: string
   router: string
@@ -47,7 +47,7 @@ export const retrieveDomainData = createAction<{
   totalSwaps: string
 }>('application/retrieveDomainData')
 
-export const updateAppData = createAction<StorageState>('application/updateAppData')
+export const updateAppData = createAction<null | StorageState>('application/updateAppData')
 
 export const updateBlockNumber = createAction<{ chainId: number; blockNumber: number }>('application/updateBlockNumber')
 

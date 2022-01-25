@@ -34,7 +34,7 @@ import networks from 'networks.json'
 
 const LoaderWrapper = styled.div`
   position: absolute;
-  z-index: 1;
+  z-index: 4;
   top: 0;
   left: 0;
   width: 100vw;
@@ -42,6 +42,7 @@ const LoaderWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: ${({ theme }) => theme.bg1};
 `
 
 const AppWrapper = styled.div`
@@ -79,8 +80,12 @@ const FooterWrapper = styled.footer`
 export default function App() {
   const dispatch = useDispatch()
   const { active, chainId } = useWeb3React()
-  const { admin, factory, router, projectName } = useAppState()
-  const appIsReady = Boolean(active && admin && factory && router)
+
+  const [domainDataTrigger, setDomainDataTrigger] = useState<boolean>(false)
+
+  useEffect(() => {
+    setDomainDataTrigger((state) => !state)
+  }, [chainId])
 
   const [isAvailableNetwork, setIsAvailableNetwork] = useState(true)
 
@@ -92,25 +97,36 @@ export default function App() {
 
       setIsAvailableNetwork(Boolean(chainId && registry && multicall && wrappedToken?.address))
     }
-  }, [chainId])
+  }, [chainId, domainDataTrigger])
+
+  const { data: domainData, isLoading: domainLoading } = useDomainInfo(domainDataTrigger)
+  const { data: storageData, isLoading: storageLoading } = useStorageInfo()
+
+  useEffect(() => {
+    dispatch(retrieveDomainData(domainData ? { ...domainData } : domainData))
+  }, [domainData, domainLoading, dispatch])
+
+  useEffect(() => {
+    dispatch(updateAppData(storageData ? { ...storageData } : storageData))
+  }, [storageData, storageLoading, dispatch])
+
+  const { admin, factory, router, projectName } = useAppState()
+
+  const [appIsReady, setAppIsReady] = useState(false)
+
+  useEffect(() => {
+    setAppIsReady(Boolean(active && admin && factory && router))
+  }, [chainId, active, admin, factory, router])
 
   const appManagement = useSelector<AppState, AppState['application']['appManagement']>(
     (state) => state.application.appManagement
   )
 
-  const [domainDataTrigger, setDomainDataTrigger] = useState<boolean>(false)
-  const { data: domainData, isLoading: domainLoading } = useDomainInfo(domainDataTrigger)
-  const { data: storageData, isLoading: storageLoading } = useStorageInfo()
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (domainData) dispatch(retrieveDomainData({ ...domainData }))
-  }, [domainData, dispatch])
-
-  useEffect(() => {
-    if (storageData) dispatch(updateAppData({ ...storageData }))
-  }, [storageData, dispatch])
-
-  const loading = domainLoading || storageLoading
+    setLoading(domainLoading || storageLoading)
+  }, [domainLoading, storageLoading])
 
   return (
     <Suspense fallback={null}>

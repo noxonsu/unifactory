@@ -79,53 +79,71 @@ export default createReducer(initialState, (builder) =>
       state.appManagement = status
     })
     .addCase(retrieveDomainData, (state, action) => {
-      let {
-        admin = '',
-        factory = '',
-        router = '',
-        storageAddr = '',
-        pairHash = '',
-        protocolFee,
-        totalFee,
-        allFeeToProtocol,
-        possibleProtocolPercent,
-        devFeeSetter,
-        totalSwaps,
-      } = action.payload
+      const domainData = action.payload
 
-      if (admin === ZERO_ADDRESS) admin = ''
-      if (factory === ZERO_ADDRESS) factory = ''
-      if (router === ZERO_ADDRESS) router = ''
-      if (storageAddr === ZERO_ADDRESS) storageAddr = ''
-      if (devFeeSetter === ZERO_ADDRESS) devFeeSetter = ''
-      if (possibleProtocolPercent?.length)
-        state.possibleProtocolPercent = possibleProtocolPercent.map((strN) => Number(strN))
+      if (domainData) {
+        let {
+          admin = '',
+          factory = '',
+          router = '',
+          storageAddr = '',
+          pairHash = '',
+          protocolFee,
+          totalFee,
+          allFeeToProtocol,
+          possibleProtocolPercent,
+          devFeeSetter,
+          totalSwaps,
+        } = domainData
 
-      state.admin = admin
-      state.factory = factory
-      state.router = router
-      state.storage = storageAddr
-      state.pairHash = pairHash
-      state.devFeeSetter = devFeeSetter
+        if (admin === ZERO_ADDRESS) admin = ''
+        if (factory === ZERO_ADDRESS) factory = ''
+        if (router === ZERO_ADDRESS) router = ''
+        if (storageAddr === ZERO_ADDRESS) storageAddr = ''
+        if (devFeeSetter === ZERO_ADDRESS) devFeeSetter = ''
+        if (possibleProtocolPercent?.length)
+          state.possibleProtocolPercent = possibleProtocolPercent.map((percent) => Number(percent))
+        if (isNumber(protocolFee)) state.protocolFee = Number(protocolFee)
+        if (isNumber(totalFee)) state.totalFee = Number(totalFee)
+        if (isNumber(totalSwaps)) state.totalSwaps = Number(totalSwaps)
+        if (typeof allFeeToProtocol === 'boolean') state.allFeeToProtocol = allFeeToProtocol
 
-      if (isNumber(protocolFee)) state.protocolFee = Number(protocolFee)
-      if (isNumber(totalFee)) state.totalFee = Number(totalFee)
-      if (isNumber(totalSwaps)) state.totalSwaps = Number(totalSwaps)
-      if (typeof allFeeToProtocol === 'boolean') state.allFeeToProtocol = allFeeToProtocol
+        state.admin = admin
+        state.factory = factory
+        state.router = router
+        state.storage = storageAddr
+        state.pairHash = pairHash
+        state.devFeeSetter = devFeeSetter
+      } else {
+        state.admin = ''
+        state.factory = ''
+        state.router = ''
+        state.storage = ''
+        state.pairHash = ''
+        state.devFeeSetter = ''
+      }
     })
     .addCase(updateAppData, (state, action) => {
-      const { domain, projectName, brandColor, logo, tokenLists, navigationLinks, menuLinks, socialLinks } =
-        action.payload
+      const appData = action.payload
 
-      state.domain = domain
-      state.projectName = projectName
-      state.brandColor = brandColor
-      state.logo = logo
+      if (appData) {
+        const { domain, projectName, brandColor, logo, tokenLists, navigationLinks, menuLinks, socialLinks } = appData
 
-      if (tokenLists.length) state.tokenLists = tokenLists
-      if (navigationLinks.length) state.navigationLinks = navigationLinks
-      if (menuLinks.length) state.menuLinks = menuLinks
-      if (socialLinks.length) state.socialLinks = socialLinks
+        state.domain = domain
+        state.projectName = projectName
+        state.brandColor = brandColor
+        state.logo = logo
+
+        if (tokenLists.length) state.tokenLists = tokenLists
+        if (navigationLinks.length) state.navigationLinks = navigationLinks
+        if (menuLinks.length) state.menuLinks = menuLinks
+        if (socialLinks.length) state.socialLinks = socialLinks
+      } else {
+        state.domain = ''
+        state.projectName = ''
+        state.brandColor = ''
+        state.logo = ''
+      }
     })
     .addCase(updateBlockNumber, (state, action) => {
       const { chainId, blockNumber } = action.payload
