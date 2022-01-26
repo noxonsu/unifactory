@@ -4,6 +4,7 @@ import { useCallback, useMemo } from 'react'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { useActiveWeb3React } from 'hooks'
 import { useAllTokens } from 'hooks/Tokens'
+import { useWrappedToken } from 'hooks/useToken'
 import { AppDispatch, AppState } from '../index'
 import {
   addSerializedPair,
@@ -196,7 +197,12 @@ export function toV2LiquidityToken([tokenA, tokenB]: [Token, Token], factory: st
  */
 export function useTrackedTokenPairs(): [Token, Token][] {
   const { chainId } = useActiveWeb3React()
+  const wrappedToken = useWrappedToken()
   const tokens = useAllTokens()
+
+  if (wrappedToken?.address) {
+    tokens[wrappedToken.address] = wrappedToken
+  }
 
   const tokenKeys = Object.keys(tokens)
   // all unique pairs

@@ -183,7 +183,8 @@
   "saveAllSettings": "שמור את כל ההגדרות",
   "tokenLists": "רשימות אסימון",
   "createNewTokenList": "יצירת רשימת אסימונים חדשה",
-  "youCanNotUseThisNetwork": "מצטער שאתה לא יכול להשתמש ברשת הזאת לעת עתה",
+  "youCanNotUseThisNetwork": "מצטער שאתה לא יכול להשתמש ברשת זו",
+  "pleaseSelectTheFollowingNetwork": "אנא בחר את הרשת הבאה",
   "availableNetworks": "רשתות זמינות",
   "toGetStartedConnectWallet": "כדי להתחיל, חבר את הארנק שלך",
   "pleaseChangeWrongNetwork": "נא לעבור לרשת או להתחבר לרשת המתאימה",
@@ -259,5 +260,6 @@
   "storageContract": "חוזה אחסון",
   "chooseNetwork": "בחר רשת",
   "chooseWallet": "בחר ארנק",
+  "appIsNotReadyYet": "האפליקציה אינה מוכנה",
   "noPointToChangeAdminFeeWithoutFeeRecipient": "זה לא הגיוני לשנות עמלה זו עד שתגדיר את הכתובת של הנמען של הוועדה"
 }

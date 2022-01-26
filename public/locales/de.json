@@ -195,7 +195,8 @@
   "saveAllSettings": "Alle Einstellungen speichern",
   "tokenLists": "Token-Listen",
   "createNewTokenList": "Erstellen einer neuen Token-Liste",
-  "youCanNotUseThisNetwork": "Entschuldigung, Sie können dieses Netzwerk vorerst nicht verwenden",
+  "youCanNotUseThisNetwork": "Leider können Sie dieses Netzwerk nicht verwenden",
+  "pleaseSelectTheFollowingNetwork": "Bitte wählen Sie das folgende Netzwerk",
   "availableNetworks": "Verfügbare Netzwerke",
   "toGetStartedConnectWallet": "Verbinden Sie zunächst Ihre Brieftasche",
   "pleaseChangeWrongNetwork": "Bitte schalten Sie Ihr Netzwerk um oder stellen Sie eine Verbindung zum entsprechenden Netzwerk her",
@@ -271,5 +272,6 @@
   "storageContract": "Lagervertrag",
   "chooseNetwork": "Netzwerk auswählen",
   "chooseWallet": "Wallet auswählen",
+  "appIsNotReadyYet": "App ist nicht fertig",
   "noPointToChangeAdminFeeWithoutFeeRecipient": "Es hat keinen Sinn, diese Provision zu ändern, bis Sie die Adresse des Gebührenempfängers festgelegt haben"
 }

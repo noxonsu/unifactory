@@ -194,7 +194,8 @@
   "saveAllSettings": "Save all settings",
   "tokenLists": "Token lists",
   "createNewTokenList": "Create a new token list",
-  "youCanNotUseThisNetwork": "Sorry you can't use this network for now",
+  "youCanNotUseThisNetwork": "Sorry you cannot use this network",
+  "pleaseSelectTheFollowingNetwork": "Please select the following network",
   "availableNetworks": "Available networks",
   "toGetStartedConnectWallet": "To get started, connect your wallet",
   "pleaseChangeWrongNetwork": "Please switch your network or connect to the appropriate network",
@@ -270,5 +271,6 @@
   "storageContract": "Storage contract",
   "chooseNetwork": "Choose network",
   "chooseWallet": "Choose wallet",
+  "appIsNotReadyYet": "The app is not ready yet",
   "noPointToChangeAdminFeeWithoutFeeRecipient": "There is no point to change this commission until you set the fee recipient address"
 }

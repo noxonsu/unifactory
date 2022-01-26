@@ -14,6 +14,7 @@ import { ApplicationModal, setAppManagement } from 'state/application/actions'
 import { useModalOpen, useToggleModal, useAppState } from 'state/application/hooks'
 import { ExternalLink } from 'theme'
 import { useActiveWeb3React } from 'hooks'
+import useWordpressInfo from 'hooks/useWordpressInfo'
 
 const StyledMenuIcon = styled(MenuIcon)`
   path {
@@ -23,11 +24,9 @@ const StyledMenuIcon = styled(MenuIcon)`
 
 export const StyledMenuButton = styled.button`
   width: 100%;
-  height: 100%;
   border: none;
   background-color: transparent;
   margin: 0;
-  padding: 0;
   height: 35px;
   background-color: ${({ theme }) => theme.bg1};
   transition: 0.2s;
@@ -158,8 +157,7 @@ export const ClickableMenuItem = styled.a<{ active: boolean }>`
 `
 
 const ReturnButton = styled.button`
-  padding: 0;
-  padding-left: 0.4rem;
+  padding: 0 0 0 0.4rem;
   border: none;
   text-align: left;
   font-size: 1.4rem;
@@ -191,14 +189,17 @@ function LanguageMenu({ close }: { close: () => void }) {
 export default function Menu() {
   const { t } = useTranslation()
   const { account } = useActiveWeb3React()
+  const wordpressInfo = useWordpressInfo()
   const { admin, menuLinks } = useAppState()
   const dispatch = useDispatch()
 
   const [isAdmin, setIsAdmin] = useState<boolean>(account?.toLowerCase() === admin?.toLowerCase())
 
   useEffect(() => {
-    setIsAdmin(account?.toLowerCase() === admin?.toLowerCase())
-  }, [account, admin])
+    setIsAdmin(
+      account?.toLowerCase() === (wordpressInfo?.wpAdmin ? wordpressInfo.wpAdmin.toLowerCase() : admin?.toLowerCase())
+    )
+  }, [wordpressInfo, account, admin])
 
   const openSettings = () => {
     dispatch(setAppManagement({ status: true }))

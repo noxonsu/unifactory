@@ -194,7 +194,8 @@
   "saveAllSettings": "Salva tutte le impostazioni",
   "tokenLists": "Elenchi di token",
   "createNewTokenList": "Crea un nuovo elenco di token",
-  "youCanNotUseThisNetwork": "Mi dispiace non è possibile utilizzare questa rete per ora",
+  "youCanNotUseThisNetwork": "Spiacenti non è possibile utilizzare questa rete",
+  "pleaseSelectTheFollowingNetwork": "Selezionare la seguente rete",
   "availableNetworks": "Reti disponibili",
   "toGetStartedConnectWallet": "Per iniziare, collega il tuo portafoglio",
   "pleaseChangeWrongNetwork": "Si prega di cambiare la rete o connettersi alla rete appropriata",
@@ -270,5 +271,6 @@
   "storageContract": "Contratto di ammasso",
   "chooseNetwork": "Scegli rete",
   "chooseWallet": "Scegli portafoglio",
+  "appIsNotReadyYet": "App non è pronto",
   "noPointToChangeAdminFeeWithoutFeeRecipient": "Non ha senso modificare questa commissione finché non si imposta l'indirizzo del destinatario della commissione"
 }

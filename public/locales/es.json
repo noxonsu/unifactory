@@ -183,7 +183,8 @@
   "saveAllSettings": "Guardar todos los ajustes",
   "tokenLists": "Token de listas",
   "createNewTokenList": "Crear una nueva lista de tokens",
-  "youCanNotUseThisNetwork": "Lamento que no pueda usar esta red por ahora",
+  "youCanNotUseThisNetwork": "Lo sentimos, no puede usar esta red",
+  "pleaseSelectTheFollowingNetwork": "Por favor, seleccione la siguiente red",
   "availableNetworks": "Redes disponibles",
   "toGetStartedConnectWallet": "Para comenzar, conecta tu billetera",
   "pleaseChangeWrongNetwork": "Cambie de red o conéctese a la red adecuada",
@@ -259,5 +260,6 @@
   "storageContract": "Contrato de almacenamiento",
   "chooseNetwork": "Elija la red",
   "chooseWallet": "Elegir cartera",
+  "appIsNotReadyYet": "La aplicación no está lista",
   "noPointToChangeAdminFeeWithoutFeeRecipient": "No tiene sentido cambiar esta comisión hasta que establezca la dirección del destinatario de la tarifa"
 }

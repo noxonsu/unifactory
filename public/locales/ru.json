@@ -181,7 +181,8 @@
   "saveAllSettings": "Сохранить все настройки",
   "tokenLists": "Списки токенов",
   "createNewTokenList": "Создайте новый список токенов",
-  "youCanNotUseThisNetwork": "Извините, вы пока не можете пользоваться этой сетью",
+  "youCanNotUseThisNetwork": "Извините, вы не можете использовать эту сеть",
+  "pleaseSelectTheFollowingNetwork": "Пожалуйста, выберите следующую сеть",
   "availableNetworks": "Доступные сети",
   "toGetStartedConnectWallet": "Чтобы начать, подключите свой кошелек",
   "pleaseChangeWrongNetwork": "Пожалуйста, переключите свою сеть или подключитесь к соответствующей сети",
@@ -257,5 +258,6 @@
   "storageContract": "Контракт хранилища",
   "chooseNetwork": "Выберите сеть",
   "chooseWallet": "Выберите кошелек",
+  "appIsNotReadyYet": "Приложение еще не готово",
   "noPointToChangeAdminFeeWithoutFeeRecipient": "Нет смысла менять эту комиссию до тех пор, пока вы не установите адрес получателя комиссии"
 }
