@@ -81,10 +81,6 @@ const Tab = styled.button<{ active?: boolean }>`
     border-top-right-radius: inherit;
     border-bottom-right-radius: inherit;
   }
-
-  &:not(:last-child) {
-    margin-right: 1%;
-  }
 `
 
 const Content = styled.div`

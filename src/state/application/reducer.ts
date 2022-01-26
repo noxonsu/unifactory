@@ -25,6 +25,7 @@ export type StorageState = {
   readonly navigationLinks: { name: string; source: string }[]
   readonly menuLinks: { name: string; source: string }[]
   readonly socialLinks: string[]
+  readonly addressesOfTokenLists: string[]
 }
 
 export type ApplicationState = {
@@ -68,6 +69,7 @@ const initialState: ApplicationState = {
   navigationLinks: [],
   menuLinks: [],
   socialLinks: [],
+  addressesOfTokenLists: [],
   blockNumber: {},
   popupList: [],
   openModal: null,
@@ -133,7 +135,17 @@ export default createReducer(initialState, (builder) =>
       const appData = action.payload
 
       if (appData) {
-        const { domain, projectName, brandColor, logo, tokenLists, navigationLinks, menuLinks, socialLinks } = appData
+        const {
+          domain,
+          projectName,
+          brandColor,
+          logo,
+          tokenLists,
+          navigationLinks,
+          menuLinks,
+          socialLinks,
+          addressesOfTokenLists,
+        } = appData
 
         state.domain = domain
         state.projectName = projectName
@@ -144,6 +156,7 @@ export default createReducer(initialState, (builder) =>
         if (navigationLinks.length) state.navigationLinks = navigationLinks
         if (menuLinks.length) state.menuLinks = menuLinks
         if (socialLinks.length) state.socialLinks = socialLinks
+        if (addressesOfTokenLists.length) state.addressesOfTokenLists = addressesOfTokenLists
       } else {
         state.domain = ''
         state.projectName = ''

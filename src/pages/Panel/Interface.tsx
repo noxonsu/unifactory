@@ -2,21 +2,18 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import validUrl from 'valid-url'
 import styled from 'styled-components'
-import { ZERO_ADDRESS } from 'sdk'
 import { useActiveWeb3React } from 'hooks'
 import { useTransactionAdder } from 'state/transactions/hooks'
-import useInterval from 'hooks/useInterval'
-import { useRegistryContract } from 'hooks/useContract'
 import { useAppState } from 'state/application/hooks'
 import { HuePicker } from 'react-color'
 import { ButtonPrimary } from 'components/Button'
 import { TokenLists } from './TokenLists'
 import InputPanel from 'components/InputPanel'
-import AddressInputPanel from 'components/AddressInputPanel'
 import ListFactory from 'components/ListFactory'
 import MenuLinksFactory, { LinkItem } from 'components/MenuLinksFactory'
-import { saveProjectOption, fetchOptionsFromContract } from 'utils/storage'
-import { isValidAddress, deployStorage } from 'utils/contract'
+import TextBlock from 'components/TextBlock'
+import { saveProjectOption } from 'utils/storage'
+import { deployStorage } from 'utils/contract'
 import { parseENSAddress } from 'utils/parseENSAddress'
 import uriToHttp from 'utils/uriToHttp'
 import { storageMethods } from '../../constants'
@@ -63,33 +60,31 @@ export default function Interface(props: any) {
   const { t } = useTranslation()
   const { library, chainId } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
-  //@ts-ignore
-  const registry = useRegistryContract(networks[chainId]?.registry)
 
-  const { admin: stateAdmin, factory: stateFactory, router: stateRouter, storage: stateStorage } = useAppState()
+  const {
+    admin: stateAdmin,
+    factory: stateFactory,
+    router: stateRouter,
+    storage: stateStorage,
+    projectName: stateProjectName,
+    logo: stateLogo,
+    brandColor: stateBrandColor,
+    navigationLinks: stateNavigationLinks,
+    menuLinks: stateMenuLinks,
+    socialLinks: stateSocialLinks,
+    addressesOfTokenLists: stateAddressesOfTokenLists,
+    tokenLists: stateTokenLists,
+  } = useAppState()
 
   const [notification, setNotification] = useState<false | string>('')
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [txHash, setTxHash] = useState<string>('')
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false)
   const [canDeployStorage, setCanDeployStorage] = useState(false)
-  const [storage, setStorage] = useState(stateStorage || '')
 
   useEffect(() => {
-    //@ts-ignore
-    setCanDeployStorage(stateFactory && stateRouter)
+    setCanDeployStorage(Boolean(stateFactory && stateRouter))
   }, [library, stateFactory, stateRouter])
-
-  const [storageIsCorrect, setStorageIsCorrect] = useState(false)
-
-  useEffect(() => {
-    if (library) {
-      const isStorageCorrect = isValidAddress(library, storage)
-
-      setStorageIsCorrect(isStorageCorrect)
-      setError(storage && !isStorageCorrect ? new Error('Incorrect address') : false)
-    }
-  }, [setError, library, storage])
 
   const onStorageDeployment = async () => {
     setAttemptingTxn(true)
@@ -123,74 +118,16 @@ export default function Interface(props: any) {
     setTxHash('')
   }, [])
 
-  const [timer, setTimer] = useState(0)
-  const SECOND = 1_000
-  const MAX_TRACKING_TIME = SECOND * 6
-
-  useInterval(
-    async () => {
-      setTimer(timer + SECOND)
-
-      if (!registry) return
-
-      const currentDomain = window.location.hostname || document.location.host
-      const storage = await registry.domainStorage(currentDomain)
-
-      if (storage && storage !== ZERO_ADDRESS) setStorage(storage)
-    },
-    timer >= MAX_TRACKING_TIME || Boolean(storage) ? null : SECOND
-  )
-
-  useEffect(() => {
-    if (timer >= MAX_TRACKING_TIME && !Boolean(storage)) {
-      setNotification(
-        'We have not found a storage contract. You have to deploy it in the Deployment tab. After a while you can see storage contract on this page. If you have already deployed it, wait for a while and try to reload this page.'
-      )
-    }
-  }, [timer, storage, MAX_TRACKING_TIME])
-
-  const [projectName, setProjectName] = useState('')
-  const [logoUrl, setLogoUrl] = useState('')
-  const [brandColor, setBrandColor] = useState('')
-  const [navigationLinks, setNavigationLinks] = useState<LinkItem[]>([])
-  const [menuLinks, setMenuLinks] = useState<LinkItem[]>([])
-  const [socialLinks, setSocialLinks] = useState<string[]>([])
-  const [addressesOfTokenLists, setAddressesOfTokenLists] = useState<string[]>([])
-  const [tokenLists, setTokenLists] = useState<any>([])
+  const [projectName, setProjectName] = useState(stateProjectName)
+  const [logoUrl, setLogoUrl] = useState(stateLogo)
+  const [brandColor, setBrandColor] = useState(stateBrandColor)
+  const [navigationLinks, setNavigationLinks] = useState<LinkItem[]>(stateNavigationLinks)
+  const [menuLinks, setMenuLinks] = useState<LinkItem[]>(stateMenuLinks)
+  const [socialLinks, setSocialLinks] = useState<string[]>(stateSocialLinks)
+  const [addressesOfTokenLists, setAddressesOfTokenLists] = useState<string[]>(stateAddressesOfTokenLists)
+  const [tokenLists, setTokenLists] = useState<any>(stateTokenLists)
 
   const updateBrandColor = (color: { hex: string }) => setBrandColor(color.hex)
-
-  const fetchProjectOptions = async () => {
-    setPending(true)
-
-    try {
-      //@ts-ignore
-      const data: any = await fetchOptionsFromContract(library, storage)
-
-      if (data) {
-        const { strSettings, tokenLists } = data
-        const { projectName, logoUrl, brandColor, navigationLinks, menuLinks, socialLinks, addressesOfTokenLists } =
-          JSON.parse(strSettings)
-
-        if (projectName) setProjectName(projectName)
-        if (logoUrl) setLogoUrl(logoUrl)
-        if (brandColor) setBrandColor(brandColor)
-        if (navigationLinks?.length) setNavigationLinks(navigationLinks)
-        if (menuLinks?.length) setMenuLinks(menuLinks)
-        if (socialLinks?.length) setSocialLinks(socialLinks)
-        if (addressesOfTokenLists?.length) setAddressesOfTokenLists(addressesOfTokenLists)
-        if (tokenLists.length) {
-          setTokenLists([])
-
-          tokenLists.forEach((tokenLists: any) => setTokenLists((oldData: any) => [...oldData, JSON.parse(tokenLists)]))
-        }
-      }
-    } catch (error) {
-      setError(error)
-    }
-
-    setPending(false)
-  }
 
   const saveSettings = async () => {
     setError(false)
@@ -201,7 +138,7 @@ export default function Interface(props: any) {
       await saveProjectOption({
         //@ts-ignore
         library,
-        storageAddress: storage,
+        storageAddress: stateStorage,
         method: storageMethods.setSettings,
         value: JSON.stringify({
           projectName,
@@ -231,12 +168,12 @@ export default function Interface(props: any) {
   const [fullUpdateIsAvailable, setFullUpdateIsAvailable] = useState(false)
 
   useEffect(() => {
-    const fullUpdateIsAvailable = Boolean(
-      storage && (logoUrl || brandColor || projectName || socialLinks.length || addressesOfTokenLists.length)
+    setFullUpdateIsAvailable(
+      Boolean(
+        stateStorage && (logoUrl || brandColor || projectName || socialLinks.length || addressesOfTokenLists.length)
+      )
     )
-
-    setFullUpdateIsAvailable(fullUpdateIsAvailable)
-  }, [storage, projectName, logoUrl, brandColor, socialLinks, addressesOfTokenLists])
+  }, [stateStorage, projectName, logoUrl, brandColor, socialLinks, addressesOfTokenLists])
 
   const createNewTokenList = () => {
     setTokenLists((oldData: any) => [
@@ -270,20 +207,16 @@ export default function Interface(props: any) {
         }
       />
       {notification && <p>{notification}</p>}
+
+      {!stateFactory || !stateRouter ? <TextBlock warning>{t('youHaveToDeploySwapContractsFirst')}</TextBlock> : null}
+
       <Button onClick={() => setShowConfirm(true)} disabled={pending || !canDeployStorage}>
         {t('deployStorage')}
       </Button>
 
       <Title>{t('settings')}</Title>
 
-      <OptionWrapper>
-        <AddressInputPanel label="Storage contract *" value={storage} onChange={setStorage} disabled />
-      </OptionWrapper>
-      <Button onClick={fetchProjectOptions} disabled={!storageIsCorrect || pending}>
-        {t('fetchOptions')}
-      </Button>
-
-      <div className={`${pending || !storageIsCorrect ? 'disabled' : ''}`}>
+      <div className={`${!stateStorage || pending ? 'disabled' : ''}`}>
         <OptionWrapper>
           <InputPanel label={`${t('projectName')}`} value={projectName} onChange={setProjectName} />
         </OptionWrapper>
@@ -342,7 +275,6 @@ export default function Interface(props: any) {
         <Title>{t('tokenLists')}</Title>
 
         <TokenLists
-          storage={storage}
           pending={pending}
           setPending={setPending}
           setError={setError}

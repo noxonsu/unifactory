@@ -146,7 +146,7 @@ export default function App() {
             </LoaderWrapper>
           ) : appIsReady && isAvailableNetwork ? (
             <>
-              {appManagement ? (
+              {appManagement || true ? (
                 <BodyWrapper>
                   <Panel setDomainDataTrigger={setDomainDataTrigger} />
                 </BodyWrapper>
