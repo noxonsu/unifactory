@@ -20,7 +20,18 @@ import SwapContracts from './SwapContracts'
 import Interface from './Interface'
 
 const Wrapper = styled.section`
+  position: relative;
+  max-width: 33.75rem;
+  width: 100%;
+  border-radius: 1.2rem;
   padding: 1rem;
+  box-shadow: rgba(0, 0, 0, 0.01) 0px 0px 1px, rgba(0, 0, 0, 0.04) 0px 4px 8px, rgba(0, 0, 0, 0.04) 0px 16px 24px,
+    rgba(0, 0, 0, 0.01) 0px 24px 32px;
+  background-color: ${({ theme }) => theme.bg1};
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    width: 90%;
+  `}
 `
 
 const HeaderButtons = styled.div`
@@ -47,21 +58,28 @@ const NetworkInfo = styled.div`
 const Tabs = styled.div`
   display: flex;
   flex-wrap: wrap;
+  border-radius: 0.5rem;
+  border: 1px solid ${({ theme }) => theme.bg3};
 `
 
 const Tab = styled.button<{ active?: boolean }>`
   flex: 1;
   cursor: pointer;
   padding: 0.4rem 0.7rem;
-  margin: 0.1rem 0 0.4rem;
-  border-radius: 0.5rem;
+  //margin: 0.1rem 0 0.4rem;
   font-size: 1em;
-  border: 1px solid ${({ theme }) => theme.bg3};
+  border: none;
   background-color: ${({ theme, active }) => (active ? theme.bg2 : 'transparent')};
   color: ${({ theme }) => theme.text1};
 
-  &:not(:last-child) {
-    margin-right: 1%;
+  :first-child {
+    border-top-left-radius: inherit;
+    border-bottom-left-radius: inherit;
+  }
+
+  :last-child {
+    border-top-right-radius: inherit;
+    border-bottom-right-radius: inherit;
   }
 `
 
@@ -187,8 +205,6 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
           {error?.message}
         </Error>
       )}
-
-      <p>* {t('requiredField')}</p>
 
       <Tabs>{returnTabs()}</Tabs>
 

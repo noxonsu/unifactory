@@ -8,7 +8,7 @@ import Slider, { SliderTooltip } from 'rc-slider'
 import 'rc-slider/assets/index.css'
 import { RiErrorWarningLine } from 'react-icons/ri'
 import { useActiveWeb3React } from 'hooks'
-import { useAppState } from 'state/application/hooks'
+import { useAddPopup, useAppState } from 'state/application/hooks'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useTranslation } from 'react-i18next'
 import { DEV_FEE_ADMIN } from '../../constants'
@@ -17,34 +17,24 @@ import Accordion from 'components/Accordion'
 import QuestionHelper from 'components/QuestionHelper'
 import InputPanel from 'components/InputPanel'
 import AddressInputPanel from 'components/AddressInputPanel'
+import TextBlock from 'components/TextBlock'
 import ConfirmationModal from './ConfirmationModal'
-import {
-  isValidAddress,
-  setFactoryOption,
-  getFactoryOptions,
-  returnTokenInfo,
-  deploySwapContracts,
-} from 'utils/contract'
-import { ZERO_ADDRESS } from 'sdk'
+import { isValidAddress, setFactoryOption, returnTokenInfo, deploySwapContracts } from 'utils/contract'
 import { factoryMethods } from '../../constants'
 import networks from 'networks.json'
 
+const PartitionWrapper = styled.div`
+  margin-top: 1rem;
+`
+
 const Title = styled.h3`
   font-weight: 400;
+  margin: 0 0 0.5rem;
 `
 
 const OptionWrapper = styled.div<{ margin?: number }>`
-  margin: ${({ margin }) => margin || 0.2}rem 0;
+  margin: ${({ margin }) => margin || 0.3}rem 0;
   padding: 0.3rem 0;
-`
-
-const Info = styled.div<{ flex?: boolean }>`
-  margin: 0.2rem 0;
-  padding: 0.4rem;
-  font-size: 0.9rem;
-  opacity: 0.6;
-
-  ${({ flex }) => (flex ? 'display: flex; align-items: center;' : '')}
 `
 
 const listStyles = css`
@@ -160,16 +150,19 @@ const setValidValue = ({
 }
 
 function SwapContracts(props: any) {
-  const { domain, pending, setPending, setError, theme, setDomainDataTrigger, wrappedToken } = props
+  const { domain, pending, setPending, theme, setDomainDataTrigger, wrappedToken } = props
   const { t } = useTranslation()
   const { library, account, chainId } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
+  const addPopup = useAddPopup()
   const {
     admin: stateAdmin,
     factory: stateFactory,
     totalFee: currentTotalFee,
     protocolFee: currentProtocolFee,
+    feeRecipient: currentFeeRecipient,
     possibleProtocolPercent,
+    allFeeToProtocol,
   } = useAppState()
 
   const [canDeploySwapContracts, setCanDeploySwapContracts] = useState(false)
@@ -185,35 +178,15 @@ function SwapContracts(props: any) {
     )
   }, [library, adminAddress, wrappedToken])
 
-  const [factory, setFactory] = useState(stateFactory || '')
-  const [factoryIsCorrect, setFactoryIsCorrect] = useState(false)
-
-  useEffect(() => {
-    if (library) {
-      setFactoryIsCorrect(isValidAddress(library, factory))
-    }
-  }, [library, factory])
-
-  const [admin, setAdmin] = useState('')
-  const [feeRecipient, setFeeRecipient] = useState('')
-  const [allFeesToAdmin, setAllFeesToAdmin] = useState(false)
+  const [admin, setAdmin] = useState(stateAdmin)
+  const [feeRecipient, setFeeRecipient] = useState(currentFeeRecipient)
+  const [allFeesToAdmin, setAllFeesToAdmin] = useState(allFeeToProtocol)
   const [totalFee, setTotalFee] = useState<number | string>(
-    //@ts-ignore
-    isNumber(currentTotalFee) ? new BigNumber(currentTotalFee).div(TOTAL_FEE_RATIO).toNumber() : ''
+    convertFee(Number(currentTotalFee), TOTAL_FEE_RATIO, Representations.interface) || ''
   )
-  const [protocolFee, setProtocolFee] = useState<number | string>('')
-
-  useEffect(() => {
-    if (isNumber(currentTotalFee)) {
-      //@ts-ignore
-      setTotalFee(convertFee(currentTotalFee, TOTAL_FEE_RATIO, Representations.interface))
-    }
-    if (isNumber(currentProtocolFee)) {
-      //@ts-ignore
-      setProtocolFee(convertFee(currentProtocolFee, PROTOCOL_FEE_RATIO, Representations.interface))
-    }
-  }, [currentProtocolFee, currentTotalFee])
-
+  const [protocolFee, setProtocolFee] = useState<number | string>(
+    convertFee(Number(currentProtocolFee), PROTOCOL_FEE_RATIO, Representations.interface) || ''
+  )
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [txHash, setTxHash] = useState<string>('')
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false)
@@ -231,7 +204,11 @@ function SwapContracts(props: any) {
       const tokenInfo = await returnTokenInfo(library, wrappedToken)
 
       if (!tokenInfo) {
-        return setError(new Error('It is not a wrapped token address'))
+        return addPopup({
+          error: {
+            message: 'Wrong wrapped token address',
+          },
+        })
       }
 
       await deploySwapContracts({
@@ -266,37 +243,17 @@ function SwapContracts(props: any) {
         },
       })
     } catch (error) {
-      setError(error)
+      addPopup({
+        error: {
+          message: error.message,
+          code: error.code,
+        },
+      })
       setAttemptingTxn(false)
     }
   }
 
   const updateFeesToAdmin = (event: any) => setAllFeesToAdmin(event.target.checked)
-
-  // TODO: we have options in the state, on first loading. Use them
-  const fetchContractOptions = async () => {
-    if (!library) return
-
-    setPending(true)
-
-    try {
-      const options: any = await getFactoryOptions(library, factory)
-
-      if (options) {
-        const { protocolFee, totalFee, feeTo, feeToSetter, allFeeToProtocol } = options
-
-        setAdmin(feeToSetter)
-        setFeeRecipient(feeTo === ZERO_ADDRESS ? '' : feeTo)
-        setAllFeesToAdmin(allFeeToProtocol)
-        setTotalFee(convertFee(totalFee, TOTAL_FEE_RATIO, Representations.interface) || '')
-        setProtocolFee(convertFee(protocolFee, PROTOCOL_FEE_RATIO, Representations.interface) || '')
-      }
-    } catch (error) {
-      setError(error)
-    } finally {
-      setPending(false)
-    }
-  }
 
   const saveOption = async (method: string) => {
     const values: any[] = []
@@ -326,7 +283,7 @@ function SwapContracts(props: any) {
         //@ts-ignore
         library,
         from: account ?? '',
-        factoryAddress: factory,
+        factoryAddress: stateFactory,
         method,
         values,
         onHash: (hash: string) => {
@@ -341,7 +298,14 @@ function SwapContracts(props: any) {
     } catch (error) {
       const REJECT = 4001
 
-      if (error?.code !== REJECT) setError(error)
+      if (error?.code !== REJECT) {
+        addPopup({
+          error: {
+            message: error.message,
+            code: error.code,
+          },
+        })
+      }
     }
 
     setPending(false)
@@ -394,157 +358,151 @@ function SwapContracts(props: any) {
           </div>
         }
       />
-      <InputWrapper>
-        <AddressInputPanel
-          label={`${t('admin')} (${t('your')}) ${t('address').toLowerCase()} *`}
-          value={adminAddress}
-          onChange={setAdminAddress}
-        />
-      </InputWrapper>
-      <InputWrapper>
-        <InputPanel label={`${t('domain')} *`} value={domain} onChange={() => null} disabled />
-      </InputWrapper>
-
-      <Button onClick={() => setShowConfirm(true)} disabled={pending || !canDeploySwapContracts}>
-        {t('deploySwapContracts')}
-      </Button>
-
-      <Title>{t('settings')}</Title>
-
-      <OptionWrapper>
+      <PartitionWrapper>
+        <Title>{t('deployment')}</Title>
         <InputWrapper>
-          <AddressInputPanel label={`${t('factoryAddress')} *`} value={factory} onChange={setFactory} disabled />
-        </InputWrapper>
-        <Button onClick={fetchContractOptions} disabled={!factoryIsCorrect || pending}>
-          {t('fetchOptions')}
-        </Button>
-      </OptionWrapper>
-
-      <Info>{t('youCanUseTheSameAddressForBoothInputs')}</Info>
-
-      <div className={`${!factoryIsCorrect || pending ? 'disabled' : ''}`}>
-        <OptionWrapper>
-          <AddressInputPanel label={`${t('newAdmin')}`} value={admin} onChange={setAdmin} />
-          <Button onClick={() => saveOption(factoryMethods.setFeeToSetter)} disabled={!admin}>
-            {t('save')}
-          </Button>
-        </OptionWrapper>
-        <OptionWrapper>
           <AddressInputPanel
-            label={
-              <InputLabel>
-                {t('feeRecipient')} <QuestionHelper text={t('feeIsChargedWhen')} />
-              </InputLabel>
-            }
-            value={feeRecipient}
-            onChange={setFeeRecipient}
+            label={`${t('admin')} (${t('your')}) ${t('address').toLowerCase()} *`}
+            value={adminAddress}
+            onChange={setAdminAddress}
           />
-          <Button onClick={() => saveOption(factoryMethods.setFeeTo)} disabled={!feeRecipient}>
-            {t('save')}
-          </Button>
-        </OptionWrapper>
+        </InputWrapper>
+        <InputWrapper>
+          <InputPanel label={`${t('domain')} *`} value={domain} onChange={() => null} disabled />
+        </InputWrapper>
+        <Button onClick={() => setShowConfirm(true)} disabled={pending || !canDeploySwapContracts}>
+          {t('deploySwapContracts')}
+        </Button>
+      </PartitionWrapper>
 
-        <Accordion title={t('feeSettings')}>
-          <OptionWrapper margin={1}>
-            <Box>
-              <LabelExtended>
-                <Checkbox name="all fees to the admin" onChange={updateFeesToAdmin} />
-                {t('allFeesToAdmin')}
-              </LabelExtended>
-            </Box>
-            <Button onClick={() => saveOption(factoryMethods.setAllFeeToProtocol)} disabled={!factoryIsCorrect}>
+      <PartitionWrapper>
+        <Title>{t('settings')}</Title>
+        <TextBlock>{t('youCanUseTheSameAddressForBoothInputs')}</TextBlock>
+
+        <div className={`${!stateFactory || pending ? 'disabled' : ''}`}>
+          <OptionWrapper>
+            <AddressInputPanel label={`${t('newAdmin')}`} value={admin} onChange={setAdmin} />
+            <Button onClick={() => saveOption(factoryMethods.setFeeToSetter)} disabled={!admin}>
+              {t('save')}
+            </Button>
+          </OptionWrapper>
+          <OptionWrapper>
+            <AddressInputPanel
+              label={
+                <InputLabel>
+                  {t('feeRecipient')} <QuestionHelper text={t('feeIsChargedWhen')} />
+                </InputLabel>
+              }
+              value={feeRecipient}
+              onChange={setFeeRecipient}
+            />
+            <Button onClick={() => saveOption(factoryMethods.setFeeTo)} disabled={!feeRecipient}>
               {t('save')}
             </Button>
           </OptionWrapper>
 
-          <Info>
-            {t('feesDescription')}.
-            <List>
-              <li>{t('caseWhenNoFeesCharged')}</li>
-              <li>
-                <strong>{t('adminFeeIsPercentOfTotalFee')}</strong>
-              </li>
-            </List>
-          </Info>
+          <Accordion title={t('feeSettings')}>
+            <OptionWrapper margin={1}>
+              <Box>
+                <LabelExtended>
+                  <Checkbox name="all fees to the admin" onChange={updateFeesToAdmin} />
+                  {t('allFeesToAdmin')}
+                </LabelExtended>
+              </Box>
+              <Button onClick={() => saveOption(factoryMethods.setAllFeeToProtocol)}>{t('save')}</Button>
+            </OptionWrapper>
 
-          <OptionWrapper>
-            <InputPanel
-              type="number"
-              min={0}
-              max={99}
-              step={0.1}
-              label={`${t('totalFee')} (0% - 99%)`}
-              value={totalFee}
-              onChange={(v) =>
-                setValidValue({
-                  v,
-                  set: setTotalFee,
-                  min: 0,
-                  max: 99,
-                  maxDecimals: 1,
-                })
-              }
-            />
+            <TextBlock>
+              {t('feesDescription')}.
+              <List>
+                <li>{t('caseWhenNoFeesCharged')}</li>
+                <li>
+                  <strong>{t('adminFeeIsPercentOfTotalFee')}</strong>
+                </li>
+              </List>
+            </TextBlock>
+
+            <OptionWrapper>
+              <InputPanel
+                type="number"
+                min={0}
+                max={99}
+                step={0.1}
+                label={`${t('totalFee')} (0% - 99%)`}
+                value={totalFee}
+                onChange={(v) =>
+                  setValidValue({
+                    v,
+                    set: setTotalFee,
+                    min: 0,
+                    max: 99,
+                    maxDecimals: 1,
+                  })
+                }
+              />
+              <Button
+                onClick={() => saveOption(factoryMethods.setTotalFee)}
+                disabled={
+                  (!totalFee && totalFee !== 0) || isEqualCurrentFee(currentTotalFee, totalFee, TOTAL_FEE_RATIO)
+                }
+              >
+                {t('save')}
+              </Button>
+            </OptionWrapper>
+
+            {!feeRecipient ? (
+              <TextBlock warning>{t('noPointToChangeAdminFeeWithoutFeeRecipient')}</TextBlock>
+            ) : (
+              <span />
+            )}
+            <SliderWrapper className={!feeRecipient ? 'disabled' : ''}>
+              {currentTotalFee === 0 && (
+                <TextBlock flex>
+                  <RiErrorWarningLine style={{ marginRight: '.5rem' }} /> {t('totalFee')} = 0%.{' '}
+                  {t('adminAndProvidersFeesDoNotWork')}
+                </TextBlock>
+              )}
+
+              <div className="top">
+                <span>
+                  {t('admin')}
+                  {isNumber(protocolFee) && ` (${protocolFee})%`}
+                </span>
+                <span>
+                  {t('liquidityProviders')}
+                  {isNumber(protocolFee) && ` (${new BigNumber(MAX_PERCENT).minus(protocolFee).toString()}%)`}
+                </span>
+              </div>
+
+              <div className="bottom">
+                <Slider
+                  min={0}
+                  max={100}
+                  defaultValue={
+                    currentProtocolFee ? new BigNumber(currentProtocolFee).div(PROTOCOL_FEE_RATIO).toNumber() : 0
+                  }
+                  marks={sliderMarks}
+                  step={null}
+                  handle={handleSliderChange}
+                  onChange={setProtocolFee}
+                  trackStyle={{ backgroundColor: theme.primary2 }}
+                  railStyle={{ backgroundColor: theme.bg3 }}
+                />
+              </div>
+            </SliderWrapper>
+
             <Button
-              onClick={() => saveOption(factoryMethods.setTotalFee)}
+              onClick={() => saveOption(factoryMethods.setProtocolFee)}
               disabled={
-                !factoryIsCorrect ||
-                (!totalFee && totalFee !== 0) ||
-                isEqualCurrentFee(currentTotalFee, totalFee, TOTAL_FEE_RATIO)
+                (!protocolFee && protocolFee !== 0) ||
+                isEqualCurrentFee(currentProtocolFee, protocolFee, PROTOCOL_FEE_RATIO)
               }
             >
               {t('save')}
             </Button>
-          </OptionWrapper>
-
-          <SliderWrapper>
-            {currentTotalFee === 0 && (
-              <Info flex>
-                <RiErrorWarningLine style={{ marginRight: '.5rem' }} /> {t('totalFee')} = 0%.{' '}
-                {t('adminAndProvidersFeesDoNotWork')}
-              </Info>
-            )}
-
-            <div className="top">
-              <span>
-                {t('admin')}
-                {isNumber(protocolFee) && ` (${protocolFee})%`}
-              </span>
-              <span>
-                {t('liquidityProviders')}
-                {isNumber(protocolFee) && ` (${new BigNumber(MAX_PERCENT).minus(protocolFee).toString()}%)`}
-              </span>
-            </div>
-
-            <div className="bottom">
-              <Slider
-                min={0}
-                max={100}
-                defaultValue={
-                  currentProtocolFee ? new BigNumber(currentProtocolFee).div(PROTOCOL_FEE_RATIO).toNumber() : 0
-                }
-                marks={sliderMarks}
-                step={null}
-                handle={handleSliderChange}
-                onChange={setProtocolFee}
-                trackStyle={{ backgroundColor: theme.primary2 }}
-                railStyle={{ backgroundColor: theme.bg3 }}
-              />
-            </div>
-          </SliderWrapper>
-
-          <Button
-            onClick={() => saveOption(factoryMethods.setProtocolFee)}
-            disabled={
-              !factoryIsCorrect ||
-              (!protocolFee && protocolFee !== 0) ||
-              isEqualCurrentFee(currentProtocolFee, protocolFee, PROTOCOL_FEE_RATIO)
-            }
-          >
-            {t('save')}
-          </Button>
-        </Accordion>
-      </div>
+          </Accordion>
+        </div>
+      </PartitionWrapper>
     </section>
   )
 }

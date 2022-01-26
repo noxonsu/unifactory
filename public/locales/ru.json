@@ -256,5 +256,6 @@
   "saveInfoToDomainRegistry": "Сохранение информации в контракте регистрации доменов",
   "storageContract": "Контракт хранилища",
   "chooseNetwork": "Выберите сеть",
-  "chooseWallet": "Выберите кошелек"
+  "chooseWallet": "Выберите кошелек",
+  "noPointToChangeAdminFeeWithoutFeeRecipient": "Нет смысла менять эту комиссию до тех пор, пока вы не установите адрес получателя комиссии"
 }

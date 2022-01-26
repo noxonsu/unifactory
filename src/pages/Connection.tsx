@@ -132,9 +132,7 @@ export default function Connection({ domainData, isAvailableNetwork, setDomainDa
           </SupportedNetworksWrapper>
         </AppBody>
       ) : needToConfigure ? (
-        <AppBody>
-          <Panel setDomainDataTrigger={setDomainDataTrigger} />
-        </AppBody>
+        <Panel setDomainDataTrigger={setDomainDataTrigger} />
       ) : (
         <AppBody>
           <ContentWrapper>

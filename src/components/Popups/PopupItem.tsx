@@ -3,10 +3,11 @@ import { X } from 'react-feather'
 import { useSpring } from 'react-spring/web'
 import styled, { ThemeContext } from 'styled-components'
 import { animated } from 'react-spring'
-import { PopupContent } from '../../state/application/actions'
-import { useRemovePopup } from '../../state/application/hooks'
+import { PopupContent } from 'state/application/actions'
+import { useRemovePopup } from 'state/application/hooks'
 import ListUpdatePopup from './ListUpdatePopup'
 import TransactionPopup from './TransactionPopup'
+import ErrorPopup from './ErrorPopup'
 
 export const StyledClose = styled(X)`
   position: absolute;
@@ -17,16 +18,15 @@ export const StyledClose = styled(X)`
     cursor: pointer;
   }
 `
-export const Popup = styled.div`
+export const Popup = styled.div<{ error?: boolean }>`
   display: inline-block;
   width: 100%;
-  padding: 1em;
   background-color: ${({ theme }) => theme.bg1};
   position: relative;
   border-radius: 10px;
-  padding: 20px;
-  padding-right: 35px;
+  padding: 20px 35px 20px 20px;
   overflow: hidden;
+  border: 1px solid ${({ error, theme }) => (error ? theme.red1 : 'transparent')};
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     min-width: 290px;
@@ -76,12 +76,21 @@ export default function PopupItem({
     const {
       txn: { hash, success, summary },
     } = content
+
     popupContent = <TransactionPopup hash={hash} success={success} summary={summary} />
   } else if ('listUpdate' in content) {
     const {
       listUpdate: { listUrl, oldList, newList, auto },
     } = content
+
     popupContent = <ListUpdatePopup popKey={popKey} listUrl={listUrl} oldList={oldList} newList={newList} auto={auto} />
+  } else if ('error' in content) {
+    const {
+      error: { message, code },
+    } = content
+
+    popupContent = <ErrorPopup message={message} code={code} />
+    console.error(`Error message: ${message}${code ? `; code: ${code}` : ''}`)
   }
 
   const faderStyle = useSpring({
@@ -91,7 +100,8 @@ export default function PopupItem({
   })
 
   return (
-    <Popup>
+    //@ts-ignore
+    <Popup error={Boolean(content?.error)}>
       <StyledClose color={theme.text2} onClick={removeThisPopup} />
       {popupContent}
       {removeAfterMs !== null ? <AnimatedFader style={faderStyle} /> : null}

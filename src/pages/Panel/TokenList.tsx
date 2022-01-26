@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { AiOutlinePlus } from 'react-icons/ai'
 import { RiCloseFill } from 'react-icons/ri'
 import { useTransactionAdder } from 'state/transactions/hooks'
+import { useAddPopup } from 'state/application/hooks'
 import styled from 'styled-components'
 import { ButtonPrimary, CleanButton } from 'components/Button'
 import Input from 'components/Input'
@@ -37,10 +38,29 @@ const Button = styled(ButtonPrimary)`
   margin-top: 0.3rem;
 `
 
-export function TokenList(props: any) {
-  const { list, web3React, setPending, setError, storage, isNewList } = props
+export function TokenList(props: {
+  activeWeb3React: any
+  isNewList: boolean
+  pending: boolean
+  setPending: (x: any) => void
+  storage: string
+  list: {
+    name: string
+    logoURI: string
+    tokens: any[]
+    timestamp?: string
+    version?: {
+      major: number
+      minor: number
+      patch: number
+    }
+  }
+}) {
+  const { list, activeWeb3React, setPending, storage, isNewList } = props
+  const { library, chainId } = activeWeb3React
   const { t } = useTranslation()
   const addTransaction = useTransactionAdder()
+  const addPopup = useAddPopup()
 
   const [tokenListName, setTokenListName] = useState(list.name || '')
   const [tokenListLogo, setTokenListLogo] = useState(list.logoURI || '')
@@ -49,20 +69,17 @@ export function TokenList(props: any) {
   const [tokenAddressIsCorrect, setTokenAddressIsCorrect] = useState(true)
 
   useEffect(() => {
-    if (web3React.library) {
-      setTokenAddressIsCorrect(isValidAddress(web3React.library, newTokenAddress))
-    }
-  }, [web3React.library, newTokenAddress])
+    setTokenAddressIsCorrect(isValidAddress(library, newTokenAddress))
+  }, [library, newTokenAddress])
 
   const addNewToken = async () => {
     const tokenInList = tokens.find((item: any) => item.address.toLowerCase() === newTokenAddress.toLowerCase())
 
     if (tokenInList) return
 
-    setError(false)
     setPending(true)
 
-    const tokenInfo = await returnTokenInfo(web3React.library, newTokenAddress)
+    const tokenInfo = await returnTokenInfo(library, newTokenAddress)
 
     if (tokenInfo) {
       const { name, symbol, decimals } = tokenInfo
@@ -74,13 +91,20 @@ export function TokenList(props: any) {
           symbol,
           decimals: Number(decimals),
           address: newTokenAddress,
-          chainId: web3React.chainId,
+          chainId,
         },
       ])
 
       setNewTokenAddress('')
     } else {
-      setError(new Error('Seems it is not a token or an address from a different network. Double check it'))
+      addPopup(
+        {
+          error: {
+            message: 'Seems it is not a token or an address from a different network. Double check it',
+          },
+        },
+        'wrongTokenAddressInAdminTokenList'
+      )
     }
 
     setPending(false)
@@ -93,13 +117,11 @@ export function TokenList(props: any) {
   }
 
   const saveTokenList = async () => {
-    setError(false)
     setPending(true)
 
     try {
       await saveProjectOption({
-        //@ts-ignore
-        library: web3React?.library,
+        library,
         storageAddress: storage,
         method: isNewList ? storageMethods.addTokenList : storageMethods.updateTokenList,
         value: {
@@ -112,16 +134,21 @@ export function TokenList(props: any) {
           addTransaction(
             { hash },
             {
-              summary: `Chain ${web3React.chainId}. Token list is saved`,
+              summary: `Chain ${chainId}. Token list is saved`,
             }
           )
         },
       })
     } catch (error) {
-      setError(error)
-    } finally {
-      setPending(false)
+      addPopup({
+        error: {
+          message: error.message,
+          code: error.code,
+        },
+      })
     }
+
+    setPending(false)
   }
 
   return (

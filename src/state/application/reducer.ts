@@ -25,6 +25,7 @@ export type StorageState = {
   readonly navigationLinks: { name: string; source: string }[]
   readonly menuLinks: { name: string; source: string }[]
   readonly socialLinks: string[]
+  readonly addressesOfTokenLists: string[]
 }
 
 export type ApplicationState = {
@@ -34,6 +35,7 @@ export type ApplicationState = {
   readonly router: string
   readonly storage: string
   readonly pairHash: string
+  readonly feeRecipient: string
   readonly protocolFee: number | undefined
   readonly totalFee: number | undefined
   readonly allFeeToProtocol: boolean | undefined
@@ -52,6 +54,7 @@ const initialState: ApplicationState = {
   router: '',
   storage: '',
   pairHash: '',
+  feeRecipient: '',
   protocolFee: undefined,
   totalFee: undefined,
   allFeeToProtocol: undefined,
@@ -66,6 +69,7 @@ const initialState: ApplicationState = {
   navigationLinks: [],
   menuLinks: [],
   socialLinks: [],
+  addressesOfTokenLists: [],
   blockNumber: {},
   popupList: [],
   openModal: null,
@@ -88,6 +92,7 @@ export default createReducer(initialState, (builder) =>
           router = '',
           storageAddr = '',
           pairHash = '',
+          feeRecipient = '',
           protocolFee,
           totalFee,
           allFeeToProtocol,
@@ -101,6 +106,7 @@ export default createReducer(initialState, (builder) =>
         if (router === ZERO_ADDRESS) router = ''
         if (storageAddr === ZERO_ADDRESS) storageAddr = ''
         if (devFeeSetter === ZERO_ADDRESS) devFeeSetter = ''
+        if (feeRecipient === ZERO_ADDRESS) feeRecipient = ''
         if (possibleProtocolPercent?.length)
           state.possibleProtocolPercent = possibleProtocolPercent.map((percent) => Number(percent))
         if (isNumber(protocolFee)) state.protocolFee = Number(protocolFee)
@@ -114,6 +120,7 @@ export default createReducer(initialState, (builder) =>
         state.storage = storageAddr
         state.pairHash = pairHash
         state.devFeeSetter = devFeeSetter
+        state.feeRecipient = feeRecipient
       } else {
         state.admin = ''
         state.factory = ''
@@ -121,13 +128,24 @@ export default createReducer(initialState, (builder) =>
         state.storage = ''
         state.pairHash = ''
         state.devFeeSetter = ''
+        state.feeRecipient = ''
       }
     })
     .addCase(updateAppData, (state, action) => {
       const appData = action.payload
 
       if (appData) {
-        const { domain, projectName, brandColor, logo, tokenLists, navigationLinks, menuLinks, socialLinks } = appData
+        const {
+          domain,
+          projectName,
+          brandColor,
+          logo,
+          tokenLists,
+          navigationLinks,
+          menuLinks,
+          socialLinks,
+          addressesOfTokenLists,
+        } = appData
 
         state.domain = domain
         state.projectName = projectName
@@ -138,6 +156,7 @@ export default createReducer(initialState, (builder) =>
         if (navigationLinks.length) state.navigationLinks = navigationLinks
         if (menuLinks.length) state.menuLinks = menuLinks
         if (socialLinks.length) state.socialLinks = socialLinks
+        if (addressesOfTokenLists.length) state.addressesOfTokenLists = addressesOfTokenLists
       } else {
         state.domain = ''
         state.projectName = ''

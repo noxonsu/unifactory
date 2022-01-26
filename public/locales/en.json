@@ -269,5 +269,6 @@
   "saveInfoToDomainRegistry": "Save information to the domain registry contract",
   "storageContract": "Storage contract",
   "chooseNetwork": "Choose network",
-  "chooseWallet": "Choose wallet"
+  "chooseWallet": "Choose wallet",
+  "noPointToChangeAdminFeeWithoutFeeRecipient": "There is no point to change this commission until you set the fee recipient address"
 }

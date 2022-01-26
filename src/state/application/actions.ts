@@ -4,6 +4,12 @@ import { StorageState } from './reducer'
 
 export type PopupContent =
   | {
+      error: {
+        message: string
+        code?: number | string
+      }
+    }
+  | {
       txn: {
         hash: string
         success: boolean
@@ -39,6 +45,7 @@ export const retrieveDomainData = createAction<null | {
   router: string
   storageAddr: string
   pairHash: string
+  feeRecipient: string
   protocolFee?: number
   totalFee?: number
   allFeeToProtocol?: boolean

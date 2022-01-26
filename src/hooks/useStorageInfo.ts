@@ -15,19 +15,21 @@ type Settings = {
   navigationLinks: StorageState['navigationLinks']
   menuLinks: StorageState['menuLinks']
   socialLinks: StorageState['socialLinks']
+  addressesOfTokenLists: StorageState['addressesOfTokenLists']
 }
 
 const validArray = (arr: any[]) => Array.isArray(arr) && !!arr.length
 
-export const parseSettings = (settings: string): { application: Settings; lists: any } => {
-  let domain: string = ''
-  let projectName: string = ''
-  let brandColor: string = ''
-  let logo: string = ''
+export const parseSettings = (settings: string): Settings => {
+  let domain = ''
+  let projectName = ''
+
+  let brandColor = ''
+  let logo = ''
   let navigationLinks: StorageState['navigationLinks'] = []
   let menuLinks: Settings['menuLinks'] = []
   let socialLinks: StorageState['socialLinks'] = []
-  let addressesOfTokenLists: string[] = []
+  let addressesOfTokenLists: StorageState['addressesOfTokenLists'] = []
 
   try {
     if (settings.length) {
@@ -59,10 +61,7 @@ export const parseSettings = (settings: string): { application: Settings; lists:
     console.groupEnd()
   }
 
-  return {
-    application: { domain, projectName, brandColor, logo, navigationLinks, menuLinks, socialLinks },
-    lists: { addressesOfTokenLists },
-  }
+  return { domain, projectName, brandColor, logo, navigationLinks, menuLinks, socialLinks, addressesOfTokenLists }
 }
 
 export default function useStorageInfo(): { data: StorageState | null; isLoading: boolean; error: Error | null } {
@@ -95,18 +94,19 @@ export default function useStorageInfo(): { data: StorageState | null; isLoading
         navigationLinks: [],
         menuLinks: [],
         socialLinks: [],
+        addressesOfTokenLists: [],
       }
       const tokenLists: StorageState['tokenLists'] = []
 
       try {
         const settings = await storage.settings()
-        const { application, lists } = parseSettings(settings)
+        const data = parseSettings(settings)
 
-        if (lists?.addressesOfTokenLists.length) {
-          lists.addressesOfTokenLists.forEach((url: string) => dispatch(addList(url)))
+        if (data.addressesOfTokenLists?.length) {
+          data.addressesOfTokenLists.forEach((url: string) => dispatch(addList(url)))
         }
 
-        parsedSettings = application
+        parsedSettings = data
       } catch (error) {
         console.group('%c Storage settings', 'color: red')
         console.error(error)

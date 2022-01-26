@@ -258,5 +258,6 @@
   "saveInfoToDomainRegistry": "将信息保存到域名注册机构合同",
   "storageContract": "储存合约",
   "chooseNetwork": "选择网络",
-  "chooseWallet": "选择钱包"
+  "chooseWallet": "选择钱包",
+  "noPointToChangeAdminFeeWithoutFeeRecipient": "在您设置佣金收件人的地址之前，更改此佣金是没有意义的"
 }
