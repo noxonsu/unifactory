@@ -260,5 +260,6 @@
   "storageContract": "חוזה אחסון",
   "chooseNetwork": "בחר רשת",
   "chooseWallet": "בחר ארנק",
+  "appIsNotReadyYet": "האפליקציה אינה מוכנה",
   "noPointToChangeAdminFeeWithoutFeeRecipient": "זה לא הגיוני לשנות עמלה זו עד שתגדיר את הכתובת של הנמען של הוועדה"
 }

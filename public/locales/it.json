@@ -271,5 +271,6 @@
   "storageContract": "Contratto di ammasso",
   "chooseNetwork": "Scegli rete",
   "chooseWallet": "Scegli portafoglio",
+  "appIsNotReadyYet": "App non è pronto",
   "noPointToChangeAdminFeeWithoutFeeRecipient": "Non ha senso modificare questa commissione finché non si imposta l'indirizzo del destinatario della commissione"
 }

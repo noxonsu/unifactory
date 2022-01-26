@@ -272,5 +272,6 @@
   "storageContract": "Lagervertrag",
   "chooseNetwork": "Netzwerk auswählen",
   "chooseWallet": "Wallet auswählen",
+  "appIsNotReadyYet": "App ist nicht fertig",
   "noPointToChangeAdminFeeWithoutFeeRecipient": "Es hat keinen Sinn, diese Provision zu ändern, bis Sie die Adresse des Gebührenempfängers festgelegt haben"
 }

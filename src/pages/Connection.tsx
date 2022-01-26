@@ -86,7 +86,7 @@ interface ComponentProps {
 }
 
 export default function Connection({ domainData, isAvailableNetwork, setDomainDataTrigger }: ComponentProps) {
-  const { active, chainId } = useWeb3React()
+  const { active, chainId, account } = useWeb3React()
   const wordpressData = useWordpressInfo()
   const { t } = useTranslation()
   const [darkMode] = useDarkModeManager()
@@ -110,6 +110,14 @@ export default function Connection({ domainData, isAvailableNetwork, setDomainDa
       dispatch(setOpenModal(ApplicationModal.WALLET))
     }
   }, [dispatch, isAvailableNetwork, needToConfigure])
+
+  const [changeAllowed, setChangeAllowed] = useState(false)
+
+  useEffect(() => {
+    if (needToConfigure) {
+      setChangeAllowed(wordpressData?.wpAdmin ? wordpressData.wpAdmin.toLowerCase() === account?.toLowerCase() : true)
+    }
+  }, [needToConfigure, wordpressData, account])
 
   const supported = supportedNetworks()
 
@@ -146,7 +154,17 @@ export default function Connection({ domainData, isAvailableNetwork, setDomainDa
           </SupportedNetworksWrapper>
         </AppBody>
       ) : needToConfigure ? (
-        <Panel setDomainDataTrigger={setDomainDataTrigger} />
+        <>
+          {changeAllowed ? (
+            <Panel setDomainDataTrigger={setDomainDataTrigger} />
+          ) : (
+            <AppBody>
+              <SupportedNetworksWrapper>
+                <h3>{t('appIsNotReadyYet')}</h3>
+              </SupportedNetworksWrapper>
+            </AppBody>
+          )}
+        </>
       ) : (
         <AppBody>
           <ContentWrapper>

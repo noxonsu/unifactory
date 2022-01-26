@@ -271,5 +271,6 @@
   "storageContract": "Storage contract",
   "chooseNetwork": "Choose network",
   "chooseWallet": "Choose wallet",
+  "appIsNotReadyYet": "The app is not ready yet",
   "noPointToChangeAdminFeeWithoutFeeRecipient": "There is no point to change this commission until you set the fee recipient address"
 }
