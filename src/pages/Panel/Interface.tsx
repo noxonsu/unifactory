@@ -4,7 +4,7 @@ import validUrl from 'valid-url'
 import styled from 'styled-components'
 import { useActiveWeb3React } from 'hooks'
 import { useTransactionAdder } from 'state/transactions/hooks'
-import { useAppState } from 'state/application/hooks'
+import { useAddPopup, useAppState } from 'state/application/hooks'
 import { HuePicker } from 'react-color'
 import { ButtonPrimary } from 'components/Button'
 import { TokenLists } from './TokenLists'
@@ -37,6 +37,7 @@ const Button = styled(ButtonPrimary)`
 
 const Title = styled.h3`
   font-weight: 400;
+  margin: 1.4rem 0 0.6rem;
 `
 
 const NumList = styled.ol`
@@ -56,10 +57,11 @@ const colorPickerStyles = {
 }
 
 export default function Interface(props: any) {
-  const { domain, pending, setPending, setError } = props
+  const { domain, pending, setPending } = props
   const { t } = useTranslation()
   const { library, chainId } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
+  const addPopup = useAddPopup()
 
   const {
     admin: stateAdmin,
@@ -76,7 +78,6 @@ export default function Interface(props: any) {
     tokenLists: stateTokenLists,
   } = useAppState()
 
-  const [notification, setNotification] = useState<false | string>('')
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [txHash, setTxHash] = useState<string>('')
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false)
@@ -108,7 +109,12 @@ export default function Interface(props: any) {
         admin: stateAdmin,
       })
     } catch (error) {
-      setError(error)
+      addPopup({
+        error: {
+          message: error.message,
+          code: error.code,
+        },
+      })
       setAttemptingTxn(false)
     }
   }
@@ -130,8 +136,6 @@ export default function Interface(props: any) {
   const updateBrandColor = (color: { hex: string }) => setBrandColor(color.hex)
 
   const saveSettings = async () => {
-    setError(false)
-    setNotification(false)
     setPending(true)
 
     try {
@@ -159,7 +163,12 @@ export default function Interface(props: any) {
         },
       })
     } catch (error) {
-      setError(error)
+      addPopup({
+        error: {
+          message: error.message,
+          code: error.code,
+        },
+      })
     }
 
     setPending(false)
@@ -206,10 +215,10 @@ export default function Interface(props: any) {
           </div>
         }
       />
-      {notification && <p>{notification}</p>}
+
+      <Title>{t('deployment')}</Title>
 
       {!stateFactory || !stateRouter ? <TextBlock warning>{t('youHaveToDeploySwapContractsFirst')}</TextBlock> : null}
-
       <Button onClick={() => setShowConfirm(true)} disabled={pending || !canDeployStorage}>
         {t('deployStorage')}
       </Button>
@@ -273,14 +282,7 @@ export default function Interface(props: any) {
         </Button>
 
         <Title>{t('tokenLists')}</Title>
-
-        <TokenLists
-          pending={pending}
-          setPending={setPending}
-          setError={setError}
-          tokenLists={tokenLists}
-          setTokenLists={setTokenLists}
-        />
+        <TokenLists pending={pending} setPending={setPending} tokenLists={tokenLists} setTokenLists={setTokenLists} />
         <Button onClick={createNewTokenList}>{t('createNewTokenList')}</Button>
       </div>
     </section>

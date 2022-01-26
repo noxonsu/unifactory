@@ -22,7 +22,7 @@ const deployContract = async (params: any) => {
     //@ts-ignore
     accounts = await window.ethereum.request({ method: 'eth_accounts' })
   } catch (error) {
-    throw new Error(error)
+    throw error
   }
 
   const transaction = contract.deploy({
@@ -42,7 +42,7 @@ const deployContract = async (params: any) => {
       .on('error', (error: any) => console.error(error))
       .on('receipt', (receipt: any) => onDeploy(receipt))
   } catch (error) {
-    throw new Error(error)
+    throw error
   }
 }
 
@@ -72,6 +72,12 @@ export const deployRouter = async (params: any) => {
   })
 }
 
+export const getContractInstance = (library: Web3Provider, address: string, abi: any) => {
+  const web3 = getWeb3Library(library.provider)
+
+  return new web3.eth.Contract(abi, address)
+}
+
 export const deployStorage = async (params: any) => {
   const { library, admin, onHash, registryAddress, domain } = params
   const { abi, bytecode } = Storage
@@ -92,14 +98,8 @@ export const deployStorage = async (params: any) => {
       from: accounts[0],
     })
   } catch (error) {
-    throw new Error(error)
+    throw error
   }
-}
-
-export const getContractInstance = (library: Web3Provider, address: string, abi: any) => {
-  const web3 = getWeb3Library(library.provider)
-
-  return new web3.eth.Contract(abi, address)
 }
 
 export const deploySwapContracts = async (params: any) => {
@@ -149,7 +149,7 @@ export const deploySwapContracts = async (params: any) => {
       throw new Error('No factory contract')
     }
   } catch (error) {
-    throw new Error(error)
+    throw error
   }
 }
 

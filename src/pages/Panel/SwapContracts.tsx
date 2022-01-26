@@ -8,7 +8,7 @@ import Slider, { SliderTooltip } from 'rc-slider'
 import 'rc-slider/assets/index.css'
 import { RiErrorWarningLine } from 'react-icons/ri'
 import { useActiveWeb3React } from 'hooks'
-import { useAppState } from 'state/application/hooks'
+import { useAddPopup, useAppState } from 'state/application/hooks'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useTranslation } from 'react-i18next'
 import { DEV_FEE_ADMIN } from '../../constants'
@@ -150,10 +150,11 @@ const setValidValue = ({
 }
 
 function SwapContracts(props: any) {
-  const { domain, pending, setPending, setError, theme, setDomainDataTrigger, wrappedToken } = props
+  const { domain, pending, setPending, theme, setDomainDataTrigger, wrappedToken } = props
   const { t } = useTranslation()
   const { library, account, chainId } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
+  const addPopup = useAddPopup()
   const {
     admin: stateAdmin,
     factory: stateFactory,
@@ -203,7 +204,11 @@ function SwapContracts(props: any) {
       const tokenInfo = await returnTokenInfo(library, wrappedToken)
 
       if (!tokenInfo) {
-        return setError(new Error('It is not a wrapped token address'))
+        return addPopup({
+          error: {
+            message: 'Wrong wrapped token address',
+          },
+        })
       }
 
       await deploySwapContracts({
@@ -238,7 +243,12 @@ function SwapContracts(props: any) {
         },
       })
     } catch (error) {
-      setError(error)
+      addPopup({
+        error: {
+          message: error.message,
+          code: error.code,
+        },
+      })
       setAttemptingTxn(false)
     }
   }
@@ -288,7 +298,14 @@ function SwapContracts(props: any) {
     } catch (error) {
       const REJECT = 4001
 
-      if (error?.code !== REJECT) setError(error)
+      if (error?.code !== REJECT) {
+        addPopup({
+          error: {
+            message: error.message,
+            code: error.code,
+          },
+        })
+      }
     }
 
     setPending(false)

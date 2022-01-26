@@ -4,6 +4,12 @@ import { StorageState } from './reducer'
 
 export type PopupContent =
   | {
+      error: {
+        message: string
+        code?: number | string
+      }
+    }
+  | {
       txn: {
         hash: string
         success: boolean

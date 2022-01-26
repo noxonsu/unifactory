@@ -12,9 +12,9 @@ const ListWrapper = styled.div`
 `
 
 export function TokenLists(props: any) {
-  const { tokenLists, pending, setPending, setError } = props
+  const { tokenLists, pending, setPending } = props
   const { t } = useTranslation()
-  const web3React = useActiveWeb3React()
+  const activeWeb3React = useActiveWeb3React()
   const { storage } = useAppState()
 
   return (
@@ -24,11 +24,10 @@ export function TokenLists(props: any) {
           {tokenLists.map((list: any, index: number) => (
             <ListWrapper key={index}>
               <TokenList
-                web3React={web3React}
+                activeWeb3React={activeWeb3React}
                 list={list}
                 pending={pending}
                 setPending={setPending}
-                setError={setError}
                 storage={storage}
                 isNewList={!list.timestamp}
               />
