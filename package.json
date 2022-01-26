@@ -98,7 +98,9 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "build_clean": "node ./scripts/build-non-split.js",
+    "build_clean_do": "node ./scripts/build-non-split.js",
+    "copy_networks_to_build": "node ./scripts/copy-networks-json.js",
+    "build_clean": "npm run build_clean_do && npm run copy_networks_to_build",
     "test": "react-scripts test --env=jsdom",
     "test-add-liquidity": "jest test/e2e/addLiquidity.test.ts --detectOpenHandles",
     "eject": "react-scripts eject",

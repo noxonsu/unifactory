@@ -19,3 +19,4 @@ config.plugins.forEach((plugin) => {
 })
 config.output.filename = 'static/js/[name].js';
 config.output.chunkFilename = 'static/js/[name].chunk.js';
+console.log('>>> build')
