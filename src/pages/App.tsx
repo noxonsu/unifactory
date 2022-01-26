@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { AppState } from 'state'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
+import useWordpressInfo from 'hooks/useWordpressInfo'
 import useDomainInfo from 'hooks/useDomainInfo'
 import useStorageInfo from 'hooks/useStorageInfo'
 import { useAppState } from 'state/application/hooks'
@@ -79,6 +80,7 @@ const FooterWrapper = styled.footer`
 export default function App() {
   const dispatch = useDispatch()
   const { active, chainId } = useWeb3React()
+  const wordpressData = useWordpressInfo()
 
   const [domainDataTrigger, setDomainDataTrigger] = useState<boolean>(false)
 
@@ -94,9 +96,12 @@ export default function App() {
       //@ts-ignore
       const { registry, multicall, wrappedToken } = networks[chainId]
 
-      setIsAvailableNetwork(Boolean(chainId && registry && multicall && wrappedToken?.address))
+      const contractsAreFine = registry && multicall && wrappedToken?.address
+      const networkIsFine = chainId && wordpressData?.wpNetworkId ? wordpressData.wpNetworkId === chainId : true
+
+      setIsAvailableNetwork(Boolean(contractsAreFine && networkIsFine))
     }
-  }, [chainId, domainDataTrigger])
+  }, [chainId, domainDataTrigger, wordpressData])
 
   const { data: domainData, isLoading: domainLoading } = useDomainInfo(domainDataTrigger)
   const { data: storageData, isLoading: storageLoading } = useStorageInfo()

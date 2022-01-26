@@ -14,6 +14,7 @@ import Web3Status from 'components/Web3Status'
 import { ApplicationModal, setOpenModal } from '../state/application/actions'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from 'state'
+import useWordpressInfo from 'hooks/useWordpressInfo'
 
 const Wrapper = styled.section`
   width: 100%;
@@ -53,7 +54,7 @@ const NetworkStatus = styled.div`
 `
 
 const SupportedNetworksWrapper = styled.div`
-  padding: 1.4rem;
+  padding: 0.7rem 1.4rem;
 `
 
 const SupportedNetworksList = styled.ul`
@@ -85,7 +86,8 @@ interface ComponentProps {
 }
 
 export default function Connection({ domainData, isAvailableNetwork, setDomainDataTrigger }: ComponentProps) {
-  const { active } = useWeb3React()
+  const { active, chainId } = useWeb3React()
+  const wordpressData = useWordpressInfo()
   const { t } = useTranslation()
   const [darkMode] = useDarkModeManager()
   const dispatch = useDispatch<AppDispatch>()
@@ -116,17 +118,29 @@ export default function Connection({ domainData, isAvailableNetwork, setDomainDa
       {!isAvailableNetwork ? (
         <AppBody>
           <SupportedNetworksWrapper>
-            <h3>{t('youCanNotUseThisNetwork')}</h3>
-            {supported.length && (
+            {wordpressData?.wpNetworkId && wordpressData.wpNetworkId !== chainId ? (
               <>
-                <p>{t('availableNetworks')}</p>
-                <SupportedNetworksList>
-                  {supported.map(({ name, chainId }) => (
-                    <li key={chainId}>
-                      {chainId} - {name}
-                    </li>
-                  ))}
-                </SupportedNetworksList>
+                <h3>{t('youCanNotUseThisNetwork')}</h3>
+                <p>
+                  {t('pleaseSelectTheFollowingNetwork')}: {/* @ts-ignore */}
+                  {networks[wordpressData?.wpNetworkId]?.name} (id: {networks[wordpressData?.wpNetworkId]?.chainId})
+                </p>
+              </>
+            ) : (
+              <>
+                <h3>{t('youCanNotUseThisNetwork')}</h3>
+                {supported.length && (
+                  <>
+                    <p>{t('availableNetworks')}</p>
+                    <SupportedNetworksList>
+                      {supported.map(({ name, chainId }) => (
+                        <li key={chainId}>
+                          {chainId} - {name}
+                        </li>
+                      ))}
+                    </SupportedNetworksList>
+                  </>
+                )}
               </>
             )}
           </SupportedNetworksWrapper>
