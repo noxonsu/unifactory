@@ -261,5 +261,6 @@
   "chooseNetwork": "选择网络",
   "chooseWallet": "选择钱包",
   "appIsNotReadyYet": "应用程序还没有准备好",
+  "youHaveToDeploySwapContractsFirst": "首先，您必须部署掉期合约",
   "noPointToChangeAdminFeeWithoutFeeRecipient": "在您设置佣金收件人的地址之前，更改此佣金是没有意义的"
 }

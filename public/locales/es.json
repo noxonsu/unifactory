@@ -261,5 +261,6 @@
   "chooseNetwork": "Elija la red",
   "chooseWallet": "Elegir cartera",
   "appIsNotReadyYet": "La aplicación no está lista",
+  "youHaveToDeploySwapContractsFirst": "Primero tienes que implementar los contratos de intercambio",
   "noPointToChangeAdminFeeWithoutFeeRecipient": "No tiene sentido cambiar esta comisión hasta que establezca la dirección del destinatario de la tarifa"
 }
