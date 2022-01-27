@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import isNumber from 'is-number'
 
 type Data = null | {
   wpAdmin?: string
@@ -12,12 +13,18 @@ export default function useWordpressInfo(): Data {
     setData((prevState) => (prevState ? { ...prevState, [key]: value } : { [key]: value }))
 
   useEffect(() => {
-    if (window.wp_unifactory_admin) {
-      updateWithNewValue('wpAdmin', window.wp_unifactory_admin)
-    }
+    if (window.SO_Definance) {
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      const { SO_Definance } = window
 
-    if (window.wp_unifactory_chainId) {
-      updateWithNewValue('wpNetworkId', window.wp_unifactory_chainId)
+      if (SO_Definance?.masterAddress) {
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        updateWithNewValue('wpAdmin', SO_Definance.masterAddress)
+      }
+      if (isNumber(SO_Definance?.chainId)) {
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        updateWithNewValue('wpNetworkId', Number(SO_Definance.chainId))
+      }
     }
   }, [])
 

@@ -43,9 +43,15 @@ const WalletIconWrapper = styled.div`
   background-color: ${({ theme }) => theme.text2};
 `
 
-const Title = styled.h4`
+const Title = styled.h3`
   margin: 1.6rem 0;
   text-align: center;
+  font-weight: 500;
+`
+
+const SubTitle = styled.h4`
+  margin: 0.2rem 0;
+  padding: 0.5rem 0;
   font-weight: 500;
 `
 
@@ -129,10 +135,14 @@ export default function Connection({ domainData, isAvailableNetwork, setDomainDa
             {wordpressData?.wpNetworkId && wordpressData.wpNetworkId !== chainId ? (
               <>
                 <h3>{t('youCanNotUseThisNetwork')}</h3>
-                <p>
-                  {t('pleaseSelectTheFollowingNetwork')}: {/* @ts-ignore */}
-                  {networks[wordpressData?.wpNetworkId]?.name} (id: {networks[wordpressData?.wpNetworkId]?.chainId})
-                </p>
+                <div>
+                  {t('pleaseSelectTheFollowingNetwork')}:
+                  <br />
+                  <SubTitle>
+                    {/* @ts-ignore */}
+                    {networks[wordpressData?.wpNetworkId]?.name} (id: {networks[wordpressData?.wpNetworkId]?.chainId})
+                  </SubTitle>
+                </div>
               </>
             ) : (
               <>
