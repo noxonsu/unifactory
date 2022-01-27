@@ -9,9 +9,11 @@ import { HuePicker } from 'react-color'
 import { ButtonPrimary } from 'components/Button'
 import { TokenLists } from './TokenLists'
 import InputPanel from 'components/InputPanel'
+import Accordion from 'components/Accordion'
 import ListFactory from 'components/ListFactory'
 import MenuLinksFactory, { LinkItem } from 'components/MenuLinksFactory'
 import TextBlock from 'components/TextBlock'
+import { PartitionWrapper } from './index'
 import { saveProjectOption } from 'utils/storage'
 import { deployStorage } from 'utils/contract'
 import { parseENSAddress } from 'utils/parseENSAddress'
@@ -216,12 +218,15 @@ export default function Interface(props: any) {
         }
       />
 
-      <Title>{t('deployment')}</Title>
+      <PartitionWrapper highlighted>
+        {!stateFactory || !stateRouter ? <TextBlock warning>{t('youHaveToDeploySwapContractsFirst')}</TextBlock> : null}
 
-      {!stateFactory || !stateRouter ? <TextBlock warning>{t('youHaveToDeploySwapContractsFirst')}</TextBlock> : null}
-      <Button onClick={() => setShowConfirm(true)} disabled={pending || !canDeployStorage}>
-        {t('deployStorage')}
-      </Button>
+        <Accordion title={t('deployment')} openByDefault={!stateStorage} minimalStyles contentPadding>
+          <Button onClick={() => setShowConfirm(true)} disabled={pending || !canDeployStorage}>
+            {t('deployStorage')}
+          </Button>
+        </Accordion>
+      </PartitionWrapper>
 
       <Title>{t('settings')}</Title>
 
