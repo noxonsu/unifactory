@@ -38,11 +38,7 @@ export class CurrencyAmount extends Fraction {
     return new CurrencyAmount(this.currency, JSBI.subtract(this.raw, other.raw))
   }
 
-  public toSignificant(
-    significantDigits: number = 6,
-    format?: object,
-    rounding: Rounding = Rounding.ROUND_DOWN
-  ): string {
+  public toSignificant(significantDigits = 6, format?: object, rounding: Rounding = Rounding.ROUND_DOWN): string {
     return super.toSignificant(significantDigits, format, rounding)
   }
 
@@ -63,6 +59,6 @@ export class CurrencyAmount extends Fraction {
 
 export class BaseCurrencyAmount extends CurrencyAmount {
   constructor(baseCurrency: BaseCurrency | null | undefined, amount: BigintIsh) {
-    super(baseCurrency || networks[1]?.baseCurrency, amount)
+    super(baseCurrency || Object.values(networks)[0].baseCurrency, amount)
   }
 }

@@ -272,5 +272,6 @@
   "chooseNetwork": "Scegli rete",
   "chooseWallet": "Scegli portafoglio",
   "appIsNotReadyYet": "App non è pronto",
+  "youHaveToDeploySwapContractsFirst": "Per prima cosa devi distribuire i contratti di swap",
   "noPointToChangeAdminFeeWithoutFeeRecipient": "Non ha senso modificare questa commissione finché non si imposta l'indirizzo del destinatario della commissione"
 }

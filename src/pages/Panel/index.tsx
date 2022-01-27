@@ -19,6 +19,13 @@ import Wallet from './Wallet'
 import SwapContracts from './SwapContracts'
 import Interface from './Interface'
 
+export const PartitionWrapper = styled.div<{ highlighted?: boolean }>`
+  margin-top: 1rem;
+
+  ${({ highlighted, theme }) =>
+    highlighted ? `border-radius: .6rem; padding: 0.2rem; border: 1px solid ${theme.bg3};` : ''}
+`
+
 const Wrapper = styled.section`
   position: relative;
   max-width: 33.75rem;

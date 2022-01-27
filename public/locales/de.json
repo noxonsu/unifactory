@@ -273,5 +273,6 @@
   "chooseNetwork": "Netzwerk auswählen",
   "chooseWallet": "Wallet auswählen",
   "appIsNotReadyYet": "App ist nicht fertig",
+  "youHaveToDeploySwapContractsFirst": "Zuerst müssen Sie die Swap-Verträge bereitstellen",
   "noPointToChangeAdminFeeWithoutFeeRecipient": "Es hat keinen Sinn, diese Provision zu ändern, bis Sie die Adresse des Gebührenempfängers festgelegt haben"
 }

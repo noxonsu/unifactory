@@ -259,5 +259,6 @@
   "chooseNetwork": "Выберите сеть",
   "chooseWallet": "Выберите кошелек",
   "appIsNotReadyYet": "Приложение еще не готово",
+  "youHaveToDeploySwapContractsFirst": "Сначала вы должны развернуть контракты для обмена",
   "noPointToChangeAdminFeeWithoutFeeRecipient": "Нет смысла менять эту комиссию до тех пор, пока вы не установите адрес получателя комиссии"
 }

@@ -261,5 +261,6 @@
   "chooseNetwork": "בחר רשת",
   "chooseWallet": "בחר ארנק",
   "appIsNotReadyYet": "האפליקציה אינה מוכנה",
+  "youHaveToDeploySwapContractsFirst": "ראשית אתה צריך לפרוס את חוזי ההחלפה",
   "noPointToChangeAdminFeeWithoutFeeRecipient": "זה לא הגיוני לשנות עמלה זו עד שתגדיר את הכתובת של הנמען של הוועדה"
 }

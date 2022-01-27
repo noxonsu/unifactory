@@ -11,7 +11,7 @@ import { useActiveWeb3React } from 'hooks'
 import { useAddPopup, useAppState } from 'state/application/hooks'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useTranslation } from 'react-i18next'
-import { DEV_FEE_ADMIN } from '../../constants'
+import { DEV_FEE_ADMIN, factoryMethods } from '../../constants'
 import { ButtonPrimary } from 'components/Button'
 import Accordion from 'components/Accordion'
 import QuestionHelper from 'components/QuestionHelper'
@@ -19,13 +19,9 @@ import InputPanel from 'components/InputPanel'
 import AddressInputPanel from 'components/AddressInputPanel'
 import TextBlock from 'components/TextBlock'
 import ConfirmationModal from './ConfirmationModal'
+import { PartitionWrapper } from './index'
 import { isValidAddress, setFactoryOption, returnTokenInfo, deploySwapContracts } from 'utils/contract'
-import { factoryMethods } from '../../constants'
 import networks from 'networks.json'
-
-const PartitionWrapper = styled.div`
-  margin-top: 1rem;
-`
 
 const Title = styled.h3`
   font-weight: 400;
@@ -158,6 +154,7 @@ function SwapContracts(props: any) {
   const {
     admin: stateAdmin,
     factory: stateFactory,
+    router: stateRouter,
     totalFee: currentTotalFee,
     protocolFee: currentProtocolFee,
     feeRecipient: currentFeeRecipient,
@@ -358,21 +355,22 @@ function SwapContracts(props: any) {
           </div>
         }
       />
-      <PartitionWrapper>
-        <Title>{t('deployment')}</Title>
-        <InputWrapper>
-          <AddressInputPanel
-            label={`${t('admin')} (${t('your')}) ${t('address').toLowerCase()} *`}
-            value={adminAddress}
-            onChange={setAdminAddress}
-          />
-        </InputWrapper>
-        <InputWrapper>
-          <InputPanel label={`${t('domain')} *`} value={domain} onChange={() => null} disabled />
-        </InputWrapper>
-        <Button onClick={() => setShowConfirm(true)} disabled={pending || !canDeploySwapContracts}>
-          {t('deploySwapContracts')}
-        </Button>
+      <PartitionWrapper highlighted>
+        <Accordion title={t('deployment')} openByDefault={!stateFactory || !stateRouter} minimalStyles contentPadding>
+          <InputWrapper>
+            <AddressInputPanel
+              label={`${t('admin')} (${t('your')}) ${t('address').toLowerCase()} *`}
+              value={adminAddress}
+              onChange={setAdminAddress}
+            />
+          </InputWrapper>
+          <InputWrapper>
+            <InputPanel label={`${t('domain')} *`} value={domain} onChange={() => null} disabled />
+          </InputWrapper>
+          <Button onClick={() => setShowConfirm(true)} disabled={pending || !canDeploySwapContracts}>
+            {t('deploySwapContracts')}
+          </Button>
+        </Accordion>
       </PartitionWrapper>
 
       <PartitionWrapper>
