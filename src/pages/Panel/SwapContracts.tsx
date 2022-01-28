@@ -22,6 +22,7 @@ import ConfirmationModal from './ConfirmationModal'
 import { PartitionWrapper } from './index'
 import { isValidAddress, setFactoryOption, returnTokenInfo, deploySwapContracts } from 'utils/contract'
 import networks from 'networks.json'
+import useWordpressInfo from 'hooks/useWordpressInfo'
 
 const Title = styled.h3`
   font-weight: 400;
@@ -149,6 +150,7 @@ function SwapContracts(props: any) {
   const { domain, pending, setPending, theme, setDomainDataTrigger, wrappedToken } = props
   const { t } = useTranslation()
   const { library, account, chainId } = useActiveWeb3React()
+  const wordpressData = useWordpressInfo()
   const addTransaction = useTransactionAdder()
   const addPopup = useAddPopup()
   const {
@@ -166,14 +168,22 @@ function SwapContracts(props: any) {
   const [adminAddress, setAdminAddress] = useState(stateAdmin || account || '')
 
   useEffect(() => {
+    const lowerAccount = account?.toLowerCase()
+    const adminIsFine = stateAdmin
+      ? lowerAccount === stateAdmin.toLowerCase()
+      : wordpressData?.wpAdmin
+      ? lowerAccount === wordpressData.wpAdmin.toLowerCase()
+      : true
+
     setCanDeploySwapContracts(
       //@ts-ignore
       isValidAddress(library, adminAddress) &&
         wrappedToken &&
         //@ts-ignore
-        isValidAddress(library, wrappedToken)
+        isValidAddress(library, wrappedToken) &&
+        adminIsFine
     )
-  }, [library, adminAddress, wrappedToken])
+  }, [library, adminAddress, wrappedToken, account, wordpressData, stateAdmin])
 
   const [admin, setAdmin] = useState(stateAdmin)
   const [feeRecipient, setFeeRecipient] = useState(currentFeeRecipient)
@@ -357,6 +367,11 @@ function SwapContracts(props: any) {
       />
       <PartitionWrapper highlighted>
         <Accordion title={t('deployment')} openByDefault={!stateFactory || !stateRouter} minimalStyles contentPadding>
+          {stateFactory && stateRouter ? (
+            <TextBlock warning>{t('youAlreadyHaveSwapContractsWarning')}</TextBlock>
+          ) : (
+            <></>
+          )}
           <InputWrapper>
             <AddressInputPanel
               label={`${t('admin')} (${t('your')}) ${t('address').toLowerCase()} *`}

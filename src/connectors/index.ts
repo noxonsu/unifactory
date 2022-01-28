@@ -5,7 +5,7 @@ import { WalletLinkConnector } from '@web3-react/walletlink-connector'
 import { NetworkConnector } from './NetworkConnector'
 import networks from 'networks.json'
 
-type Network = {
+export type Network = {
   name: string
   rpc: string
   chainId: number

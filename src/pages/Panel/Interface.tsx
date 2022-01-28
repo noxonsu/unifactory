@@ -21,6 +21,7 @@ import uriToHttp from 'utils/uriToHttp'
 import { storageMethods } from '../../constants'
 import networks from 'networks.json'
 import ConfirmationModal from './ConfirmationModal'
+import useWordpressInfo from 'hooks/useWordpressInfo'
 
 const OptionWrapper = styled.div<{ margin?: number }>`
   margin: ${({ margin }) => margin || 0.2}rem 0;
@@ -59,9 +60,10 @@ const colorPickerStyles = {
 }
 
 export default function Interface(props: any) {
-  const { domain, pending, setPending } = props
+  const { domain, pending, setPending, setDomainDataTrigger } = props
   const { t } = useTranslation()
-  const { library, chainId } = useActiveWeb3React()
+  const { library, chainId, account } = useActiveWeb3React()
+  const wordpressData = useWordpressInfo()
   const addTransaction = useTransactionAdder()
   const addPopup = useAddPopup()
 
@@ -86,8 +88,15 @@ export default function Interface(props: any) {
   const [canDeployStorage, setCanDeployStorage] = useState(false)
 
   useEffect(() => {
-    setCanDeployStorage(Boolean(stateFactory && stateRouter))
-  }, [library, stateFactory, stateRouter])
+    const lowerAccount = account?.toLowerCase()
+    const adminIsFine = stateAdmin
+      ? lowerAccount === stateAdmin.toLowerCase()
+      : wordpressData?.wpAdmin
+      ? lowerAccount === wordpressData.wpAdmin.toLowerCase()
+      : true
+
+    setCanDeployStorage(Boolean(adminIsFine && stateFactory && stateRouter))
+  }, [library, stateFactory, stateRouter, account, wordpressData, stateAdmin])
 
   const onStorageDeployment = async () => {
     setAttemptingTxn(true)
@@ -105,10 +114,13 @@ export default function Interface(props: any) {
               summary: `Chain ${chainId}. Deploy storage`,
             }
           )
-          setAttemptingTxn(false)
         },
         library,
         admin: stateAdmin,
+        onSuccessfulDeploy: () => {
+          setAttemptingTxn(false)
+          setDomainDataTrigger((state: boolean) => !state)
+        },
       })
     } catch (error) {
       addPopup({
@@ -222,6 +234,7 @@ export default function Interface(props: any) {
         {!stateFactory || !stateRouter ? <TextBlock warning>{t('youHaveToDeploySwapContractsFirst')}</TextBlock> : null}
 
         <Accordion title={t('deployment')} openByDefault={!stateStorage} minimalStyles contentPadding>
+          {stateStorage ? <TextBlock warning>{t('youAlreadyHaveStorageContractWarning')}</TextBlock> : <></>}
           <Button onClick={() => setShowConfirm(true)} disabled={pending || !canDeployStorage}>
             {t('deployStorage')}
           </Button>

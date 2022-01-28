@@ -79,7 +79,7 @@ export const getContractInstance = (library: Web3Provider, address: string, abi:
 }
 
 export const deployStorage = async (params: any) => {
-  const { library, admin, onHash, registryAddress, domain } = params
+  const { library, admin, onHash, registryAddress, domain, onSuccessfulDeploy } = params
   const { abi, bytecode } = Storage
 
   try {
@@ -97,6 +97,7 @@ export const deployStorage = async (params: any) => {
     await registry.methods.addDomainStorage(domain, storage.options.address).send({
       from: accounts[0],
     })
+    onSuccessfulDeploy()
   } catch (error) {
     throw error
   }
