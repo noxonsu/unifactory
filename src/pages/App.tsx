@@ -97,7 +97,8 @@ export default function App() {
       const { registry, multicall, wrappedToken } = networks[chainId]
 
       const contractsAreFine = registry && multicall && wrappedToken?.address
-      const networkIsFine = chainId && wordpressData?.wpNetworkId ? wordpressData.wpNetworkId === chainId : true
+      const networkIsFine =
+        chainId && wordpressData?.wpNetworkIds?.length ? wordpressData.wpNetworkIds.includes(chainId) : true
 
       setIsAvailableNetwork(Boolean(contractsAreFine && networkIsFine))
     }

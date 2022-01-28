@@ -13,6 +13,7 @@ import { injected, SUPPORTED_NETWORKS, newWalletlink, newWalletConnect } from 'c
 import { SUPPORTED_WALLETS, WALLET_NAMES } from '../../constants'
 import { switchInjectedNetwork } from 'utils/wallet'
 import usePrevious from 'hooks/usePrevious'
+import useWordpressInfo from 'hooks/useWordpressInfo'
 import { ApplicationModal } from 'state/application/actions'
 import { useModalOpen, useWalletModalToggle } from 'state/application/hooks'
 import AccountDetails from '../AccountDetails'
@@ -151,6 +152,7 @@ export default function WalletModal({
   // important that these are destructed from the account-specific web3-react context
   const { active, chainId, account, connector, activate, error } = useWeb3React()
   const isDark = useIsDarkMode()
+  const wordpressData = useWordpressInfo()
   const [currentChainId, setCurrentChainId] = useState<number>(0)
   const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT)
   const [pendingWallet, setPendingWallet] = useState<AbstractConnector | undefined>()
@@ -194,7 +196,9 @@ export default function WalletModal({
     if (connector instanceof InjectedConnector) {
       const result = await switchInjectedNetwork(currentChainId)
 
-      if (!result) return
+      if (!result) {
+        return setWalletView(WALLET_VIEWS.ACCOUNT)
+      }
     } // if the connector is walletconnect and the user has already tried to connect, manually reset the connector
     else if (connector instanceof WalletConnectConnector && connector.walletConnectProvider?.wc?.uri) {
       connector.walletConnectProvider = undefined
@@ -211,22 +215,30 @@ export default function WalletModal({
   }
 
   function getAvalableNetworks() {
-    return Object.keys(SUPPORTED_NETWORKS).map((chainId) => (
-      <Option
-        onClick={() => setCurrentChainId(Number(chainId))}
-        id={`connect-network-${chainId}`}
-        key={chainId}
-        active={currentChainId === Number(chainId)}
-        //@ts-ignore
-        color={networks[chainId]?.color || ''}
-        //@ts-ignore
-        header={networks[chainId].name}
-        subheader={null}
-        //@ts-ignore
-        icon={CURRENCY[chainId] ?? ''}
-        size={45}
-      />
-    ))
+    return Object.values(SUPPORTED_NETWORKS)
+      .filter(({ chainId }) => {
+        if (wordpressData?.wpNetworkIds?.length) {
+          return wordpressData.wpNetworkIds.includes(chainId)
+        }
+
+        return true
+      })
+      .map(({ chainId }) => (
+        <Option
+          onClick={() => setCurrentChainId(Number(chainId))}
+          id={`connect-network-${chainId}`}
+          key={chainId}
+          active={currentChainId === Number(chainId)}
+          //@ts-ignore
+          color={networks[chainId]?.color || ''}
+          //@ts-ignore
+          header={networks[chainId].name}
+          subheader={null}
+          //@ts-ignore
+          icon={CURRENCY[chainId] ?? ''}
+          size={45}
+        />
+      ))
   }
 
   function returnUpdatedConnector(option: { name: string }) {
@@ -419,7 +431,6 @@ export default function WalletModal({
       </UpperSection>
     )
   }
-
   return (
     <Modal
       isOpen={walletModalOpen}
