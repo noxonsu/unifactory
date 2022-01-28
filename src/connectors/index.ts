@@ -5,21 +5,45 @@ import { WalletLinkConnector } from '@web3-react/walletlink-connector'
 import { NetworkConnector } from './NetworkConnector'
 import networks from 'networks.json'
 
-export const SUPPORTED_NETWORKS = Object.values(networks).reduce(
-  (acc, { registry, multicall, wrappedToken, chainId, rpc }) => {
-    const supported = registry && multicall && wrappedToken?.address
+export type Network = {
+  name: string
+  rpc: string
+  chainId: number
+  explorer?: string
+  color?: string
+  registry: string
+  multicall: string
+  ENSRegistry?: string
+  baseCurrency: {
+    decimals: number
+    name: string
+    symbol: string
+  }
+  wrappedToken: {
+    address: string
+    name: string
+    symbol: string
+  }
+}
 
-    if (supported) return { ...acc, [chainId]: rpc }
+export const SUPPORTED_NETWORKS: { [chainId: string]: Network } = Object.values(networks).reduce((acc, network) => {
+  const { registry, multicall, wrappedToken, chainId } = network
 
-    return acc
-  },
+  if (Boolean(registry && multicall && wrappedToken?.address)) {
+    return { ...acc, [chainId]: network }
+  }
+
+  return acc
+}, {})
+
+export const supportedChainIds = Object.keys(SUPPORTED_NETWORKS).map((id) => Number(id))
+export const NETWORKS_RPC_BY_ID = Object.values(SUPPORTED_NETWORKS).reduce(
+  (acc, { chainId, rpc }) => ({ ...acc, [chainId]: rpc }),
   {}
 )
 
-export const supportedChainIds = Object.keys(SUPPORTED_NETWORKS).map((id) => Number(id))
-
 export const network = new NetworkConnector({
-  urls: SUPPORTED_NETWORKS,
+  urls: NETWORKS_RPC_BY_ID,
   defaultChainId: 4,
 })
 

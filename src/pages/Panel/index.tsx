@@ -227,7 +227,13 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
           />
         )}
         {tab === 'interface' && (
-          <Interface domain={domain} pending={pending} setPending={setPending} setError={setError} />
+          <Interface
+            domain={domain}
+            pending={pending}
+            setPending={setPending}
+            setError={setError}
+            setDomainDataTrigger={setDomainDataTrigger}
+          />
         )}
       </Content>
 

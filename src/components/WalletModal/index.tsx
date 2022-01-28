@@ -9,10 +9,12 @@ import styled from 'styled-components'
 import { CURRENCY } from 'assets/images'
 import MetamaskIcon from 'assets/images/metamask.png'
 import { ReactComponent as Close } from 'assets/images/x.svg'
-import { injected, SUPPORTED_NETWORKS, newWalletlink, newWalletConnect } from 'connectors'
+import { Network, injected, SUPPORTED_NETWORKS, newWalletlink, newWalletConnect } from 'connectors'
 import { SUPPORTED_WALLETS, WALLET_NAMES } from '../../constants'
 import { switchInjectedNetwork } from 'utils/wallet'
 import usePrevious from 'hooks/usePrevious'
+import { useWindowSize } from 'hooks/useWindowSize'
+import useWordpressInfo from 'hooks/useWordpressInfo'
 import { ApplicationModal } from 'state/application/actions'
 import { useModalOpen, useWalletModalToggle } from 'state/application/hooks'
 import AccountDetails from '../AccountDetails'
@@ -148,10 +150,33 @@ export default function WalletModal({
   confirmedTransactions: string[] // hashes of confirmed
   ENSName?: string
 }) {
+  const { height } = useWindowSize()
+
   // important that these are destructed from the account-specific web3-react context
   const { active, chainId, account, connector, activate, error } = useWeb3React()
   const isDark = useIsDarkMode()
+  const wordpressData = useWordpressInfo()
+  const [availableNetworks, setAvailableNetworks] = useState<Network[]>([])
   const [currentChainId, setCurrentChainId] = useState<number>(0)
+
+  useEffect(() => {
+    const networks = Object.values(SUPPORTED_NETWORKS).filter(({ chainId }) => {
+      if (wordpressData?.wpNetworkIds?.length) {
+        return wordpressData.wpNetworkIds.includes(chainId)
+      }
+
+      return true
+    })
+
+    setAvailableNetworks(networks)
+  }, [wordpressData])
+
+  useEffect(() => {
+    if (availableNetworks.length === 1) {
+      setCurrentChainId(availableNetworks[0].chainId)
+    }
+  }, [availableNetworks])
+
   const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT)
   const [pendingWallet, setPendingWallet] = useState<AbstractConnector | undefined>()
   const [pendingError, setPendingError] = useState<boolean>()
@@ -194,7 +219,9 @@ export default function WalletModal({
     if (connector instanceof InjectedConnector) {
       const result = await switchInjectedNetwork(currentChainId)
 
-      if (!result) return
+      if (!result) {
+        return setWalletView(WALLET_VIEWS.ACCOUNT)
+      }
     } // if the connector is walletconnect and the user has already tried to connect, manually reset the connector
     else if (connector instanceof WalletConnectConnector && connector.walletConnectProvider?.wc?.uri) {
       connector.walletConnectProvider = undefined
@@ -210,8 +237,8 @@ export default function WalletModal({
       })
   }
 
-  function getAvalableNetworks() {
-    return Object.keys(SUPPORTED_NETWORKS).map((chainId) => (
+  function getNetworkOptions() {
+    return availableNetworks.map(({ chainId }) => (
       <Option
         onClick={() => setCurrentChainId(Number(chainId))}
         id={`connect-network-${chainId}`}
@@ -257,7 +284,9 @@ export default function WalletModal({
           return (
             <Option
               onClick={() => {
-                currentChainId !== chainId && !option.href && tryActivation(option.connector)
+                ;(currentChainId !== chainId || option.connector !== connector) &&
+                  !option.href &&
+                  tryActivation(option.connector)
               }}
               id={`connect-${key}`}
               key={key}
@@ -312,7 +341,9 @@ export default function WalletModal({
           <Option
             id={`connect-${key}`}
             onClick={() => {
-              currentChainId !== chainId && !option.href && tryActivation(option.connector)
+              ;(currentChainId !== chainId || option.connector !== connector) &&
+                !option.href &&
+                tryActivation(option.connector)
             }}
             key={key}
             active={option.connector === connector}
@@ -361,7 +392,7 @@ export default function WalletModal({
       )
     }
 
-    const availableNetworks = getAvalableNetworks()
+    const networkOptions = getNetworkOptions()
     const availableWallets = getAvailableWallets()
     const hasWallet = availableWallets.some((option) => option !== null)
 
@@ -400,17 +431,27 @@ export default function WalletModal({
                 t('noConnectionMethodsAvailable')
               ) : (
                 <OptionsWrapped>
-                  <div className="column">
-                    <Title>1. {t('chooseNetwork')}</Title>
-                    <Options isDark={isDark}>{availableNetworks}</Options>
-                  </div>
-
-                  <div className="column">
-                    <Title>2. {t('chooseWallet')}</Title>
-                    <Options isDark={isDark} disabled={!currentChainId}>
-                      {availableWallets}
-                    </Options>
-                  </div>
+                  {availableNetworks.length > 1 ? (
+                    <>
+                      <div className="column">
+                        <Title>1. {t('chooseNetwork')}</Title>
+                        <Options isDark={isDark}>{networkOptions}</Options>
+                      </div>
+                      <div className="column">
+                        <Title>2. {t('chooseWallet')}</Title>
+                        <Options isDark={isDark} disabled={!currentChainId}>
+                          {availableWallets}
+                        </Options>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="column">
+                      <Title>{t('chooseWallet')}</Title>
+                      <Options isDark={isDark} disabled={!currentChainId}>
+                        {availableWallets}
+                      </Options>
+                    </div>
+                  )}
                 </OptionsWrapped>
               )}
             </>
@@ -420,8 +461,11 @@ export default function WalletModal({
     )
   }
 
+  const CUSTOM_WINDOW_OVERFLOW_HEIGHT = 750
+
   return (
     <Modal
+      overflow={height && height < CUSTOM_WINDOW_OVERFLOW_HEIGHT ? 'auto' : undefined}
       isOpen={walletModalOpen}
       onDismiss={toggleWalletModal}
       minHeight={false}

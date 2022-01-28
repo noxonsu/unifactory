@@ -13,8 +13,6 @@ const StyledDialogOverlay = styled(AnimatedDialogOverlay)`
   &[data-reach-dialog-overlay] {
     z-index: 2;
     background-color: transparent;
-    overflow: hidden;
-
     display: flex;
     align-items: center;
     justify-content: center;
@@ -26,12 +24,14 @@ const StyledDialogOverlay = styled(AnimatedDialogOverlay)`
 const AnimatedDialogContent = animated(DialogContent)
 // destructure to not pass custom props to Dialog DOM element
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const StyledDialogContent = styled(({ maxWidth, minHeight, maxHeight, mobile, isOpen, isCentered, ...rest }) => (
-  <AnimatedDialogContent {...rest} />
-)).attrs({
+const StyledDialogContent = styled(
+  ({ maxWidth, minHeight, maxHeight, mobile, isOpen, isCentered, overflow, ...rest }) => (
+    <AnimatedDialogContent {...rest} />
+  )
+).attrs({
   'aria-label': 'dialog',
 })`
-  overflow-y: ${({ mobile }) => (mobile ? 'scroll' : 'hidden')};
+  overflow-y: ${({ overflow, mobile }) => (overflow ? overflow : mobile ? 'scroll' : 'hidden')};
 
   &[data-reach-dialog-content] {
     margin: 0 0 2rem 0;
@@ -39,8 +39,7 @@ const StyledDialogContent = styled(({ maxWidth, minHeight, maxHeight, mobile, is
     box-shadow: 0 4px 8px 0 ${({ theme }) => transparentize(0.95, theme.shadow1)};
     padding: 0px;
     width: 60vw;
-    overflow-y: ${({ mobile }) => (mobile ? 'scroll' : 'hidden')};
-    overflow-x: hidden;
+    overflow-y: ${({ overflow, mobile }) => (overflow ? overflow : mobile ? 'scroll' : 'hidden')};
     align-self: center;
 
     max-width: ${({ maxWidth }) => maxWidth}px;
@@ -87,6 +86,7 @@ interface ModalProps {
   isCentered?: boolean
   initialFocusRef?: React.RefObject<any>
   children?: React.ReactNode
+  overflow?: string
 }
 
 export default function Modal({
@@ -98,6 +98,7 @@ export default function Modal({
   isCentered,
   initialFocusRef,
   children,
+  overflow,
 }: ModalProps) {
   const fadeTransition = useTransition(isOpen, null, {
     config: { duration: 200 },
@@ -132,6 +133,7 @@ export default function Modal({
                 maxHeight={maxHeight}
                 isCentered={isCentered}
                 mobile={isMobile}
+                overflow={overflow}
               >
                 {/* prevents the automatic focusing of inputs on mobile by the reach dialog */}
                 {!initialFocusRef && isMobile ? <div tabIndex={1} /> : null}

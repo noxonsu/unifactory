@@ -262,5 +262,8 @@
   "chooseWallet": "选择钱包",
   "appIsNotReadyYet": "应用程序还没有准备好",
   "youHaveToDeploySwapContractsFirst": "首先，您必须部署掉期合约",
+  "pleaseSelectOneOfTheFollowingNetworks": "请选择下列其中一个网络",
+  "youAlreadyHaveSwapContractsWarning": "您已经部署了掉期合约。 如果你再这样做，旧的合同地址将被复盖。 新合约将没有流动性和费用设置",
+  "youAlreadyHaveStorageContractWarning": "您已经部署了存储合同。 如果再这样做，旧的存储地址将被复盖。 您将丢失界面设置",
   "noPointToChangeAdminFeeWithoutFeeRecipient": "在您设置佣金收件人的地址之前，更改此佣金是没有意义的"
 }

@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import isNumber from 'is-number'
+import { isArray } from 'util'
 
 type Data = null | {
   wpAdmin?: string
-  wpNetworkId?: number
+  wpNetworkIds?: number[]
 }
 
 export default function useWordpressInfo(): Data {
@@ -21,9 +22,17 @@ export default function useWordpressInfo(): Data {
         // eslint-disable-next-line @typescript-eslint/camelcase
         updateWithNewValue('wpAdmin', SO_Definance.masterAddress)
       }
-      if (isNumber(SO_Definance?.chainId)) {
+      if (isArray(SO_Definance?.chainIds) && SO_Definance?.chainIds.length) {
+        type ExternalId = string | number
         // eslint-disable-next-line @typescript-eslint/camelcase
-        updateWithNewValue('wpNetworkId', Number(SO_Definance.chainId))
+        const validatedIds = SO_Definance.chainIds.filter((id: ExternalId) => isNumber(id))
+
+        if (validatedIds.length) {
+          updateWithNewValue(
+            'wpNetworkIds',
+            validatedIds.map((id: ExternalId) => Number(id))
+          )
+        }
       }
     }
   }, [])

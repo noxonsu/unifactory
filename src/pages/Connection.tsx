@@ -51,8 +51,13 @@ const Title = styled.h3`
 
 const SubTitle = styled.h4`
   margin: 0.2rem 0;
-  padding: 0.5rem 0;
-  font-weight: 500;
+  padding: 0.2rem 0;
+  font-weight: 400;
+`
+
+const NetworkRow = styled.p`
+  margin: 0;
+  padding: 0.2rem 0;
 `
 
 const NetworkStatus = styled.div`
@@ -75,13 +80,6 @@ const SupportedNetworksList = styled.ul`
     background-color: ${({ theme }) => theme.bg2};
   }
 `
-
-const supportedNetworks = (): { chainId: string; name: string }[] =>
-  Object.keys(SUPPORTED_NETWORKS).map((chainId) => ({
-    chainId,
-    //@ts-ignore
-    name: networks[chainId].name,
-  }))
 
 const unavailableOrZeroAddr = (value: string | undefined) => !value || value === ZERO_ADDRESS
 
@@ -125,33 +123,37 @@ export default function Connection({ domainData, isAvailableNetwork, setDomainDa
     }
   }, [needToConfigure, wordpressData, account])
 
-  const supported = supportedNetworks()
-
   return (
     <Wrapper>
       {!isAvailableNetwork ? (
         <AppBody>
           <SupportedNetworksWrapper>
-            {wordpressData?.wpNetworkId && wordpressData.wpNetworkId !== chainId ? (
+            {chainId && wordpressData?.wpNetworkIds?.length && !wordpressData.wpNetworkIds.includes(chainId) ? (
               <>
                 <h3>{t('youCanNotUseThisNetwork')}</h3>
                 <div>
-                  {t('pleaseSelectTheFollowingNetwork')}:
-                  <br />
                   <SubTitle>
-                    {/* @ts-ignore */}
-                    {networks[wordpressData?.wpNetworkId]?.name} (id: {networks[wordpressData?.wpNetworkId]?.chainId})
+                    {wordpressData.wpNetworkIds.length > 1
+                      ? t('pleaseSelectOneOfTheFollowingNetworks')
+                      : t('pleaseSelectTheFollowingNetwork')}
+                    :
                   </SubTitle>
+                  {wordpressData.wpNetworkIds.map((id) => (
+                    <NetworkRow key={id}>
+                      {/* @ts-ignore */}
+                      {networks[id]?.name} (id: {networks[id]?.chainId})
+                    </NetworkRow>
+                  ))}
                 </div>
               </>
             ) : (
               <>
                 <h3>{t('youCanNotUseThisNetwork')}</h3>
-                {supported.length && (
+                {SUPPORTED_NETWORKS.length && (
                   <>
                     <p>{t('availableNetworks')}</p>
                     <SupportedNetworksList>
-                      {supported.map(({ name, chainId }) => (
+                      {Object.values(SUPPORTED_NETWORKS).map(({ name, chainId }) => (
                         <li key={chainId}>
                           {chainId} - {name}
                         </li>
