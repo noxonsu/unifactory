@@ -259,6 +259,26 @@
       "symbol": "WDEV"
     }
   },
+  "250": {
+    "name": "Fantom Opera",
+    "rpc": "https://rpc.ftm.tools/",
+    "chainId": 250,
+    "explorer": "https://ftmscan.com",
+    "color": "#0C30FF",
+    "registry": "0x79D5C019F2515Cbc0596170Da44FCd26412c4f83",
+    "multicall": "0x9664EC984D1c0d44dD22C161da1D06f7f72Ae092",
+    "ENSRegistry": "",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "FTM",
+      "symbol": "FTM"
+    },
+    "wrappedToken": {
+      "address": "0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83",
+      "name": "Wrapped FTM",
+      "symbol": "WFTM"
+    }
+  },
   "4002": {
     "name": "Fantom Testnet",
     "rpc": "https://rpc.testnet.fantom.network/",
