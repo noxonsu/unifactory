@@ -13,12 +13,13 @@ const InputPanel = styled.div`
   width: 100%;
 `
 
-const ContainerRow = styled.div`
+const ContainerRow = styled.div<{ error?: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 1.25rem;
   border: 1px solid ${({ theme }) => theme.bg3};
+  ${({ error, theme }) => (error ? `border-color: ${theme.red1}` : '')};
   transition: border-color 300ms step-start, color 500ms step-start;
   background-color: ${({ theme }) => theme.bg1};
 `
@@ -73,6 +74,7 @@ export default function AddressInputPanel({
   step,
   value,
   onChange,
+  error,
 }: {
   id?: string
   label?: string
@@ -81,6 +83,7 @@ export default function AddressInputPanel({
   min?: number
   max?: number
   step?: number
+  error?: boolean
   value: string | number
   onChange: (value: string) => void
 }) {
@@ -97,7 +100,7 @@ export default function AddressInputPanel({
 
   return (
     <InputPanel id={id}>
-      <ContainerRow>
+      <ContainerRow error={error}>
         <InputContainer>
           <AutoColumn gap="md">
             {label && (
