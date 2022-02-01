@@ -4,7 +4,6 @@ import { darken, lighten } from 'polished'
 import { useTranslation } from 'react-i18next'
 import { RowBetween } from '../Row'
 import { ChevronDown } from 'react-feather'
-import { AiOutlinePlus } from 'react-icons/ai'
 import { Button as RebassButton, ButtonProps } from 'rebass/styled-components'
 
 const Base = styled(RebassButton)<{
@@ -191,7 +190,7 @@ export function ButtonAdd({ onClick, disabled }: { onClick: () => void; disabled
 
   return (
     <ButtonAddStyle onClick={onClick} disabled={disabled} title={t('add')}>
-      <AiOutlinePlus size="1.6rem" />
+      {t('add')}
     </ButtonAddStyle>
   )
 }

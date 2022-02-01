@@ -179,6 +179,26 @@
       "symbol": "WRBTC"
     }
   },
+  "43114": {
+    "name": "Avalanche",
+    "rpc": "https://api.avax.network/ext/bc/C/rpc",
+    "chainId": 43114,
+    "explorer": "https://snowtrace.io",
+    "color": "#D64F4A",
+    "registry": "0x79D5C019F2515Cbc0596170Da44FCd26412c4f83",
+    "multicall": "0x04ad4Ce6015141F6f582A7451Cb7CD6866609298",
+    "ENSRegistry": "",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "AVAX",
+      "symbol": "AVAX"
+    },
+    "wrappedToken": {
+      "address": "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7",
+      "name": "Wrapped AVAX",
+      "symbol": "WAVAX"
+    }
+  },
   "43113": {
     "name": "Avalanche Testnet",
     "rpc": "https://api.avax-test.network/ext/bc/C/rpc",

@@ -140,14 +140,60 @@ export default function Interface(props: any) {
 
   const [projectName, setProjectName] = useState(stateProjectName)
   const [logoUrl, setLogoUrl] = useState(stateLogo)
+  const [isValidLogo, setIsValidLogo] = useState(Boolean(validUrl.isUri(stateLogo)))
+
+  useEffect(() => {
+    if (logoUrl) {
+      setIsValidLogo(Boolean(validUrl.isUri(logoUrl)))
+    } else {
+      setIsValidLogo(false)
+    }
+  }, [logoUrl])
+
   const [brandColor, setBrandColor] = useState(stateBrandColor)
+
+  const updateBrandColor = (color: { hex: string }) => setBrandColor(color.hex)
+
   const [navigationLinks, setNavigationLinks] = useState<LinkItem[]>(stateNavigationLinks)
   const [menuLinks, setMenuLinks] = useState<LinkItem[]>(stateMenuLinks)
   const [socialLinks, setSocialLinks] = useState<string[]>(stateSocialLinks)
   const [addressesOfTokenLists, setAddressesOfTokenLists] = useState<string[]>(stateAddressesOfTokenLists)
   const [tokenLists, setTokenLists] = useState<any>(stateTokenLists)
 
-  const updateBrandColor = (color: { hex: string }) => setBrandColor(color.hex)
+  const currentStrSettings = JSON.stringify({
+    projectName: stateProjectName,
+    logoUrl: stateLogo,
+    brandColor: stateBrandColor,
+    navigationLinks: stateNavigationLinks,
+    menuLinks: stateMenuLinks,
+    socialLinks: stateSocialLinks,
+    addressesOfTokenLists: stateAddressesOfTokenLists,
+  })
+
+  const [settingsChanged, setSettingsChanged] = useState(false)
+
+  useEffect(() => {
+    const newStrSettings = JSON.stringify({
+      projectName,
+      logoUrl,
+      brandColor,
+      navigationLinks,
+      menuLinks,
+      socialLinks,
+      addressesOfTokenLists,
+    })
+
+    setSettingsChanged(newStrSettings !== currentStrSettings)
+  }, [
+    currentStrSettings,
+    projectName,
+    logoUrl,
+    brandColor,
+    navigationLinks,
+    menuLinks,
+    socialLinks,
+    addressesOfTokenLists,
+  ])
 
   const saveSettings = async () => {
     setPending(true)
@@ -187,16 +233,6 @@ export default function Interface(props: any) {
 
     setPending(false)
   }
-
-  const [fullUpdateIsAvailable, setFullUpdateIsAvailable] = useState(false)
-
-  useEffect(() => {
-    setFullUpdateIsAvailable(
-      Boolean(
-        stateStorage && (logoUrl || brandColor || projectName || socialLinks.length || addressesOfTokenLists.length)
-      )
-    )
-  }, [stateStorage, projectName, logoUrl, brandColor, socialLinks, addressesOfTokenLists])
 
   const createNewTokenList = () => {
     setTokenLists((oldData: any) => [
@@ -249,7 +285,12 @@ export default function Interface(props: any) {
         </OptionWrapper>
 
         <OptionWrapper>
-          <InputPanel label={`${t('logoUrl')}`} value={logoUrl} onChange={setLogoUrl} />
+          <InputPanel
+            label={`${t('logoUrl')}`}
+            value={logoUrl}
+            onChange={setLogoUrl}
+            error={Boolean(logoUrl) && !isValidLogo}
+          />
         </OptionWrapper>
 
         <OptionWrapper>
@@ -295,7 +336,7 @@ export default function Interface(props: any) {
           <HuePicker color={brandColor} onChangeComplete={updateBrandColor} styles={colorPickerStyles} />
         </OptionWrapper>
 
-        <Button onClick={saveSettings} disabled={!fullUpdateIsAvailable}>
+        <Button onClick={saveSettings} disabled={!settingsChanged && !isValidLogo}>
           {t('saveSettings')}
         </Button>
 
