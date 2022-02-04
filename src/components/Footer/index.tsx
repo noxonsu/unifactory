@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import validUrl from 'valid-url'
+import useWordpressInfo from 'hooks/useWordpressInfo'
 import { useAppState } from 'state/application/hooks'
 import Polling from '../Header/Polling'
 import { TiSocialInstagram } from 'react-icons/ti'
@@ -28,8 +29,14 @@ const Content = styled.div`
   justify-content: center;
 `
 
-const Copyright = styled.p`
-  margin: 1rem 0;
+const Copyright = styled.p<{ pale?: boolean }>`
+  margin: 0 0 0.7rem 0;
+  text-align: center;
+  ${({ pale }) => (pale ? `opacity: 0.86; font-size: 0.96em;` : '')}
+
+  a {
+    color: ${({ theme }) => theme.blue2};
+  }
 `
 
 const SocialLinksWrapper = styled.div`
@@ -37,6 +44,7 @@ const SocialLinksWrapper = styled.div`
   align-items: center;
   justify-content: center;
   width: auto;
+  margin-top: 0.2rem;
 `
 
 const SocialLink = styled.a`
@@ -76,14 +84,23 @@ const returnIconByUri = (uri: string) => {
 
 export default function Footer() {
   const { projectName, socialLinks } = useAppState()
-
+  const wpInfo = useWordpressInfo()
   const year = new Date().getFullYear()
   const copyright = `© ${projectName} ${year}`
+  const sourceCopyright = !!wpInfo ? null : (
+    <>
+      Powered by OnOut -{' '}
+      <a href="https://tools.onout.org/dex" target="_blank">
+        no-code tool for creating DEX
+      </a>
+    </>
+  )
 
   return (
     <FooterWrapper>
       <Content>
         {projectName && <Copyright>{copyright}</Copyright>}
+        {sourceCopyright && <Copyright pale>{sourceCopyright}</Copyright>}
 
         {socialLinks.length ? (
           <SocialLinksWrapper>
