@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { AiOutlinePlus } from 'react-icons/ai'
 import { RiCloseFill } from 'react-icons/ri'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useAddPopup } from 'state/application/hooks'
@@ -179,7 +178,7 @@ export function TokenList(props: {
       <div key={newTokenAddress}>
         <InputPanel label={t('tokenAddress')} value={newTokenAddress} onChange={setNewTokenAddress} />
         <Button onClick={addNewToken} disabled={!tokenAddressIsCorrect}>
-          <AiOutlinePlus /> {t('token')}
+          {t('add')} {t('token')}
         </Button>
       </div>
 

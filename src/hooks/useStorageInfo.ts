@@ -118,28 +118,32 @@ export default function useStorageInfo(): { data: StorageState | null; isLoading
         const lists = await storage.tokenLists()
 
         if (lists.length) {
-          tokenLists.push(
-            ...lists
-              .filter((strJson: string) => {
-                try {
-                  const list = JSON.parse(strJson)
+          const filtered = lists
+            .filter((strJson: string) => {
+              try {
+                const list = JSON.parse(strJson)
+                const namePattern = /^[ \w.'+\-%\/À-ÖØ-öø-ÿ\:]+$/
 
-                  list.tokens = list.tokens.map((token: any) => {
-                    return {
-                      ...token,
-                      // some value(s) has to be other types (for now it's only int decimals)
-                      // but JSON allows only strings
-                      decimals: Number(token.decimals),
-                    }
-                  })
+                list.tokens = list.tokens
+                  // filter not valid token before actuall external validation
+                  // to leave the option of showing the entire token list
+                  // (without it token list won't be displayed with an error in at least one token)
+                  .filter((token: { name: string }) => token.name.match(namePattern))
+                  .map((token: { decimals: number }) => ({
+                    ...token,
+                    // some value(s) has to be other types (for now it's only decimals)
+                    // but JSON allows only strings
+                    decimals: Number(token.decimals),
+                  }))
 
-                  return returnValidList(list)
-                } catch (error) {
-                  return console.error(error)
-                }
-              })
-              .map((str: string) => JSON.parse(str))
-          )
+                return returnValidList(list)
+              } catch (error) {
+                return console.error(error)
+              }
+            })
+            .map((str: string) => JSON.parse(str))
+
+          tokenLists.push(...filtered)
         }
       } catch (error) {
         console.group('%c Storage token lists', 'color: red')
