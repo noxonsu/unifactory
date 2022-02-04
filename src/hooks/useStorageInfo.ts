@@ -122,7 +122,7 @@ export default function useStorageInfo(): { data: StorageState | null; isLoading
             .filter((strJson: string) => {
               try {
                 const list = JSON.parse(strJson)
-                const namePattern = /^[ \w.'+\-%\/À-ÖØ-öø-ÿ\:]+$/
+                const namePattern = /^[ \w.'+\-%/À-ÖØ-öø-ÿ:]+$/
 
                 list.tokens = list.tokens
                   // filter not valid token before actuall external validation

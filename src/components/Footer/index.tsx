@@ -32,10 +32,11 @@ const Content = styled.div`
 const Copyright = styled.p<{ pale?: boolean }>`
   margin: 0 0 0.7rem 0;
   text-align: center;
-  ${({ pale }) => (pale ? `opacity: 0.86; font-size: 0.96em;` : '')}
+  ${({ pale }) => (pale ? `opacity: 0.92; font-size: 0.96em;` : '')}
 
   a {
     color: ${({ theme }) => theme.blue2};
+    text-decoration: none;
   }
 `
 
@@ -90,7 +91,7 @@ export default function Footer() {
   const sourceCopyright = !!wpInfo ? null : (
     <>
       Powered by OnOut -{' '}
-      <a href="https://tools.onout.org/dex" target="_blank">
+      <a href="https://tools.onout.org/dex" target="_blank" rel="noopener noreferrer">
         no-code tool for creating DEX
       </a>
     </>
