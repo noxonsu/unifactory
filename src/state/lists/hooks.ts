@@ -5,6 +5,7 @@ import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { AppState } from '../index'
 import sortByListPriority from 'utils/listSort'
+import { useAppState } from 'state/application/hooks'
 
 type TagDetails = Tags[keyof Tags]
 export interface TagInfo extends TagDetails {
@@ -91,31 +92,44 @@ function combineMaps(map1: TokenAddressMap, map2: TokenAddressMap, chainId: numb
 // merge tokens contained within lists from urls
 function useCombinedTokenMapFromUrls(urls: string[] | undefined, chainId: number): TokenAddressMap {
   const lists = useAllLists()
+  const { tokenLists } = useAppState()
 
   return useMemo(() => {
     if (!urls) return { [chainId]: {} }
 
-    return (
-      urls
-        .slice()
-        // sort by priority so top priority goes last
-        .sort(sortByListPriority)
-        .reduce(
-          (allTokens, currentUrl) => {
-            const current = lists[currentUrl]?.current
-            if (!current) return allTokens
-            try {
-              const newTokens = Object.assign(listToTokenMap(current))
-              return combineMaps(allTokens, newTokens, chainId)
-            } catch (error) {
-              console.error('Could not show token list due to error', error)
-              return allTokens
-            }
-          },
-          { [chainId]: {} }
-        )
-    )
-  }, [lists, urls, chainId])
+    const sourceTokens = urls
+      .slice()
+      // sort by priority so top priority goes last
+      .sort(sortByListPriority)
+      .reduce(
+        (allTokens, currentUrl) => {
+          const current = lists[currentUrl]?.current
+          if (!current) return allTokens
+
+          try {
+            const newTokens = Object.assign(listToTokenMap(current))
+            return combineMaps(allTokens, newTokens, chainId)
+          } catch (error) {
+            console.error('Could not show token list due to error', error)
+            return allTokens
+          }
+        },
+        { [chainId]: {} }
+      )
+
+    let customTokens = {}
+
+    if (tokenLists.length) {
+      customTokens = tokenLists.reduce(
+        (allTokens, list) => {
+          const newTokens = Object.assign(listToTokenMap(list))
+          return combineMaps(allTokens, newTokens, chainId)
+        },
+        { [chainId]: {} }
+      )
+    }
+    return combineMaps(sourceTokens, customTokens, chainId)
+  }, [lists, urls, chainId, tokenLists])
 }
 
 // filter out unsupported lists

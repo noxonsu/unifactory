@@ -1,10 +1,9 @@
 import { parseBytes32String } from '@ethersproject/strings'
-import { toChecksumAddress } from 'web3-utils'
 import { arrayify } from 'ethers/lib/utils'
 import { Currency, BaseCurrency, Token, currencyEquals } from 'sdk'
 import { useMemo } from 'react'
 import { TokenAddressMap } from 'state/lists/hooks'
-import { useCombinedActiveList, useCombinedInactiveList } from 'state/lists/hooks'
+import { useCombinedActiveList, useCombinedInactiveList, WrappedTokenInfo } from 'state/lists/hooks'
 import { useAppState } from 'state/application/hooks'
 import { NEVER_RELOAD, useSingleCallResult } from 'state/multicall/hooks'
 import { useUserAddedTokens } from 'state/user/hooks'
@@ -18,10 +17,7 @@ function useAppTokens() {
   const { tokenLists } = useAppState()
   const allProjectTokens = tokenLists.map((list) => list.tokens).reduce((acc, tokensArr) => [...acc, ...tokensArr], [])
 
-  return allProjectTokens.map(
-    (token) =>
-      new Token(token.chainId, toChecksumAddress(token.address), Number(token.decimals), token.symbol, token.name)
-  )
+  return allProjectTokens.map((token) => new WrappedTokenInfo(token, []))
 }
 
 // reduce token map into standard address <-> Token mapping, optionally include user added tokens
@@ -29,6 +25,7 @@ function useTokensFromMap(tokenMap: TokenAddressMap, includeUserAdded: boolean):
   const { chainId } = useActiveWeb3React()
   const appTokens = useAppTokens()
   const userAddedTokens = useUserAddedTokens()
+
   const allTokens = useMemo(() => [...userAddedTokens, ...appTokens], [userAddedTokens, appTokens])
 
   return useMemo(() => {

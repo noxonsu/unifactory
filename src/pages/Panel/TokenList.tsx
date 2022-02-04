@@ -65,6 +65,7 @@ export function TokenList(props: {
   const [tokenListLogo, setTokenListLogo] = useState(list.logoURI || '')
   const [tokens, setTokens] = useState(list.tokens || [])
   const [newTokenAddress, setNewTokenAddress] = useState('')
+  const [newTokenLogo, setNewTokenLogo] = useState('')
   const [tokenAddressIsCorrect, setTokenAddressIsCorrect] = useState(true)
 
   useEffect(() => {
@@ -82,18 +83,24 @@ export function TokenList(props: {
 
     if (tokenInfo) {
       const { name, symbol, decimals } = tokenInfo
+      const token: {
+        name: string
+        symbol: string
+        decimals: number
+        address: string
+        chainId: number
+        logoURI?: string
+      } = {
+        name,
+        symbol,
+        decimals: Number(decimals),
+        address: newTokenAddress,
+        chainId,
+      }
 
-      setTokens((oldTokens: any) => [
-        ...oldTokens,
-        {
-          name,
-          symbol,
-          decimals: Number(decimals),
-          address: newTokenAddress,
-          chainId,
-        },
-      ])
+      if (newTokenLogo) token.logoURI = newTokenLogo
 
+      setTokens((oldTokens: any) => [...oldTokens, token])
       setNewTokenAddress('')
     } else {
       addPopup(
@@ -176,7 +183,8 @@ export function TokenList(props: {
       )}
 
       <div key={newTokenAddress}>
-        <InputPanel label={t('tokenAddress')} value={newTokenAddress} onChange={setNewTokenAddress} />
+        <InputPanel label={`${t('tokenAddress')} *`} value={newTokenAddress} onChange={setNewTokenAddress} />
+        <InputPanel label={t('tokenLogo')} value={newTokenLogo} onChange={setNewTokenLogo} />
         <Button onClick={addNewToken} disabled={!tokenAddressIsCorrect}>
           {t('add')} {t('token')}
         </Button>
