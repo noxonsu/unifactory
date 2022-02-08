@@ -21,7 +21,7 @@ export default function Logo({ srcs, alt, ...rest }: LogoProps) {
     refresh((i) => i + 1)
   }
 
-  if (false) {
+  if (src) {
     return <img {...rest} alt={alt} src={src} onError={onError} />
   }
 

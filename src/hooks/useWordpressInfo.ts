@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import isNumber from 'is-number'
-import { isArray } from 'util'
 
 type Data = null | {
   wpAdmin?: string
@@ -22,7 +21,7 @@ export default function useWordpressInfo(): Data {
         // eslint-disable-next-line @typescript-eslint/camelcase
         updateWithNewValue('wpAdmin', SO_Definance.masterAddress)
       }
-      if (isArray(SO_Definance?.chainIds) && SO_Definance?.chainIds.length) {
+      if (Array.isArray(SO_Definance?.chainIds) && SO_Definance?.chainIds.length) {
         type ExternalId = string | number
         // eslint-disable-next-line @typescript-eslint/camelcase
         const validatedIds = SO_Definance.chainIds.filter((id: ExternalId) => isNumber(id))

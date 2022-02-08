@@ -73,6 +73,7 @@ export function colors(darkMode: boolean) {
     yellow2: '#FFE270',
     yellow3: '#F3841E',
     blue1: '#3B6A9C',
+    blue2: '#2568af',
     white1: '#ffffff',
   }
 }

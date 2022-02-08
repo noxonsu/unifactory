@@ -1,5 +1,6 @@
 import { Currency, JSBI, TokenAmount } from 'sdk'
 import React, { useCallback, useEffect, useState } from 'react'
+import styled from 'styled-components'
 import { Plus } from 'react-feather'
 import { Text } from 'rebass'
 import { useTranslation } from 'react-i18next'
@@ -20,13 +21,17 @@ import { StyledInternalLink } from 'theme'
 import { currencyId } from 'utils/currencyId'
 import AppBody from '../AppBody'
 import { Dots } from '../Pool/styleds'
-import { BlueCard } from 'components/Card'
+import Card from 'components/Card'
 import { TYPE } from 'theme'
 
 enum Fields {
   TOKEN0 = 0,
   TOKEN1 = 1,
 }
+
+const ExtendedCard = styled(Card)`
+  border: 1px solid ${({ theme }) => theme.primary3};
+`
 
 export default function PoolFinder() {
   const { account } = useActiveWeb3React()
@@ -41,6 +46,7 @@ export default function PoolFinder() {
 
   const [pairState, pair] = usePair(currency0 ?? undefined, currency1 ?? undefined)
   const addPair = usePairAdder()
+
   useEffect(() => {
     if (pair) {
       addPair(pair)
@@ -76,9 +82,7 @@ export default function PoolFinder() {
 
   const prerequisiteMessage = (
     <LightCard padding="45px 10px">
-      <Text textAlign="center">
-        {!account ? 'Connect to a wallet to find pools' : 'Select a token to find your liquidity.'}
-      </Text>
+      <Text textAlign="center">{t('selectTokenToFindYourLiquidity')}</Text>
     </LightCard>
   )
 
@@ -89,13 +93,11 @@ export default function PoolFinder() {
     <AppBody>
       <FindPoolTabs />
       <AutoColumn style={{ padding: '1rem' }} gap="md">
-        <BlueCard>
+        <ExtendedCard>
           <AutoColumn gap="10px">
-            <TYPE.link fontWeight={400} color={'primaryText1'}>
-              {t('useThisToolToFindPairs')}
-            </TYPE.link>
+            <TYPE.link fontWeight={400}>{t('useThisToolToFindPairs')}</TYPE.link>
           </AutoColumn>
-        </BlueCard>
+        </ExtendedCard>
         <ButtonDropdownLight
           onClick={() => {
             setShowSearch(true)
