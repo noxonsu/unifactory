@@ -58,6 +58,8 @@ export const updateAppData = createAction<null | StorageState>('application/upda
 
 export const updateBlockNumber = createAction<{ chainId: number; blockNumber: number }>('application/updateBlockNumber')
 
+export const updateActivePools = createAction<{ pools: any[] }>('aplication/updateActivePools')
+
 export const setOpenModal = createAction<ApplicationModal | null>('application/setOpenModal')
 
 export const addPopup =

@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from 'react'
-import { useActiveWeb3React } from '../../hooks'
-import useDebounce from '../../hooks/useDebounce'
-import useIsWindowVisible from '../../hooks/useIsWindowVisible'
-import { updateBlockNumber } from './actions'
+import { useActiveWeb3React } from 'hooks'
+import useDebounce from 'hooks/useDebounce'
+import { useFactoryContract } from 'hooks/useContract'
+import useIsWindowVisible from 'hooks/useIsWindowVisible'
+import { useAppState } from './hooks'
+import { updateBlockNumber, updateActivePools } from './actions'
 import { useDispatch } from 'react-redux'
 
 export default function Updater(): null {
@@ -30,6 +32,31 @@ export default function Updater(): null {
   )
 
   // attach/detach listeners
+
+  const { factory } = useAppState()
+  const factoryContract = useFactoryContract(factory)
+
+  useEffect(() => {
+    const update = async () => {
+      if (factory && factoryContract) {
+        const poolsLength = await factoryContract.allPairsLength()
+
+        if (poolsLength) {
+          const pools = []
+
+          for (let i = 0; i < poolsLength; i += 1) {
+            const poolAddress = await factoryContract.allPairs(i)
+
+            pools.push(poolAddress)
+          }
+
+          dispatch(updateActivePools({ pools }))
+        }
+      }
+    }
+
+    update()
+  }, [chainId, factory, factoryContract, dispatch])
 
   useEffect(() => {
     if (!library || !chainId || !account || !windowVisible) return undefined
