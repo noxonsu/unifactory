@@ -318,5 +318,25 @@
       "name": "Wrapped FTM",
       "symbol": "WFTM"
     }
+  },
+  "122": {
+    "name": "Fuse",
+    "rpc": "https://rpc.fuse.io/",
+    "chainId": 122,
+    "explorer": "https://explorer.fuse.io/",
+    "color": "#C6F9AC",
+    "registry": "0x04ad4Ce6015141F6f582A7451Cb7CD6866609298",
+    "multicall": "0x0755ba6D3e0B799AC7Cd6707AddE7B72208DE08e",
+    "ENSRegistry": "",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "FUSE",
+      "symbol": "FUSE"
+    },
+    "wrappedToken": {
+      "address": "0x0BE9e53fd7EDaC9F859882AfdDa116645287C629",
+      "name": "Wrapped FUSE",
+      "symbol": "WFUSE"
+    }
   }
 }
