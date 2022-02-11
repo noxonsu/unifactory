@@ -12,13 +12,27 @@ import HT from './ht.svg'
 import GLMR from './glmr.png'
 import AURORA from './aurora.svg'
 import FTM from './ftm.svg'
+import FUSE from './fuse.svg'
 
 export const CURRENCY = {
   ETH,
   BNB,
   MATIC,
+  ARBITRUM,
+  OPTIMISTIC_ETH,
   AVAX,
   XDAI,
+  RBTC,
+  TOMO,
+  CRO,
+  HT,
+  GLMR,
+  AURORA,
+  FTM,
+  FUSE,
+
+  // ------------
+
   1: ETH,
   3: ETH,
   4: ETH,
@@ -50,4 +64,6 @@ export const CURRENCY = {
   1313161555: AURORA,
   250: FTM,
   4002: FTM,
+  122: FUSE,
+  123: FUSE,
 }
