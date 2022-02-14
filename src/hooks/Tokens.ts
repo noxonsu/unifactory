@@ -13,7 +13,7 @@ import { useActiveWeb3React } from './index'
 import { useBytes32TokenContract, useTokenContract } from './useContract'
 import { filterTokens } from 'components/SearchModal/filtering'
 
-function useAppTokens() {
+export function useAppTokens() {
   const { tokenLists } = useAppState()
   const allProjectTokens = tokenLists.map((list) => list.tokens).reduce((acc, tokensArr) => [...acc, ...tokensArr], [])
 

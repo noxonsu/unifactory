@@ -90,9 +90,9 @@ export default function Footer() {
   const copyright = `© ${projectName} ${year}`
   const sourceCopyright = !!wpInfo ? null : (
     <>
-      Powered by OnOut -{' '}
+      Powered by{' '}
       <a href="https://tools.onout.org/dex" target="_blank" rel="noopener noreferrer">
-        no-code tool for creating DEX
+        OnOut - no-code tool for creating DEX
       </a>
     </>
   )

@@ -11,8 +11,9 @@ export const LANG_NAME: { [locale: string]: string } = {
   iw: 'Hebrew',
   ru: 'Russian',
   zh: 'Chinese',
+  tr: 'Turkish',
 }
-export const availableLanguages = ['de', 'en', 'es', 'it', 'iw', 'ru', 'zh']
+export const availableLanguages = ['de', 'en', 'es', 'it', 'iw', 'ru', 'zh', 'tr']
 export const defaultLocale = 'en'
 
 const determineLngFn = (code: string): string => {

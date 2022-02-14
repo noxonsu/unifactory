@@ -10,6 +10,7 @@ import {
   PopupContent,
   removePopup,
   updateBlockNumber,
+  updateActivePools,
   ApplicationModal,
   setOpenModal,
 } from './actions'
@@ -42,6 +43,7 @@ export type ApplicationState = {
   readonly possibleProtocolPercent: number[]
   readonly devFeeSetter: string | undefined
   readonly totalSwaps: number | undefined
+  readonly pools: string[]
   readonly blockNumber: { readonly [chainId: number]: number }
   readonly popupList: PopupList
   readonly openModal: ApplicationModal | null
@@ -61,6 +63,7 @@ const initialState: ApplicationState = {
   possibleProtocolPercent: [],
   devFeeSetter: '',
   totalSwaps: undefined,
+  pools: [],
   domain: '',
   projectName: '',
   brandColor: '',
@@ -163,6 +166,11 @@ export default createReducer(initialState, (builder) =>
         state.brandColor = ''
         state.logo = ''
       }
+    })
+    .addCase(updateActivePools, (state, action) => {
+      const { pools } = action.payload
+
+      state.pools = pools
     })
     .addCase(updateBlockNumber, (state, action) => {
       const { chainId, blockNumber } = action.payload
