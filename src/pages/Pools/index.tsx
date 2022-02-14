@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import styled from 'styled-components'
 import { useAppState } from 'state/application/hooks'
 import { usePairContract } from 'hooks/useContract'
@@ -11,47 +11,51 @@ import { BigNumber } from 'bignumber.js'
 const PairCard = styled(LightCard)`
   position: relative;
   overflow: hidden;
-  border: 1px solid ${({ theme }) => theme.primary1};
+  border: 1px solid ${({ theme }) => theme.text5};
   background: ${({ theme }) => theme.bg1};
 
   :not(:last-child) {
     margin-bottom: 0.6rem;
   }
+
+  .top {
+    display: flex;
+    align-items: center;
+
+    .symbol {
+      font-weight: 500;
+      padding: 0.5rem;
+    }
+  }
 `
 
 const toInterfaceFormat = (n: BigNumber) => new BigNumber(n.toString()).div(10 ** 18).toString()
 
-const Pool = ({
-  address,
-  tokens,
-  wrappedToken,
-}: {
-  address: string
-  update: boolean
-  tokens: any[]
-  wrappedToken: any
-}) => {
+const Pool = ({ address, tokens, wrappedToken }: { address: string; tokens: any[]; wrappedToken: any }) => {
   const pair = usePairContract(address)
 
   const [token0, setToken0] = useState(undefined)
   const [token1, setToken1] = useState(undefined)
   const [reservesInfo, setReservesInfo] = useState<[BigNumber, BigNumber, number] | undefined>(undefined)
 
-  const setCorrectToken = (address: string, set: (token: any) => void) => {
-    if (address === wrappedToken.address) {
-      set(wrappedToken)
-    } else {
-      const token = tokens.find((token: any) => token.address === address)
+  const setCorrectToken = useCallback(
+    (address: string, set: (token: any) => void) => {
+      if (address === wrappedToken.address) {
+        set(wrappedToken)
+      } else {
+        const token = tokens.find((token: any) => token.address === address)
 
-      set(
-        token
-          ? token
-          : {
-              name: 'Unknown',
-            }
-      )
-    }
-  }
+        set(
+          token
+            ? token
+            : {
+                name: 'Unknown',
+              }
+        )
+      }
+    },
+    [tokens, wrappedToken]
+  )
 
   useEffect(() => {
     const update = async () => {
@@ -67,37 +71,37 @@ const Pool = ({
     }
 
     update()
-  }, [])
+  }, [pair, setCorrectToken])
 
   return (
     <PairCard>
-      {/* @ts-ignore */}
-      <CurrencyLogo currency={token0} /> {token0 && token0?.name}
-      {/* @ts-ignore */}
-      {reservesInfo && <p>{token0 && token0?.symbol} reserve: {toInterfaceFormat(reservesInfo[0])}</p>}
-      <hr />
-      {/* @ts-ignore */}
-      <CurrencyLogo currency={token1} /> {token1 && token1?.name}
-      {/* @ts-ignore */}
-      {reservesInfo && <p>{token1 && token1?.symbol} reserve: {toInterfaceFormat(reservesInfo[1])}</p>}
+      <div className="top">
+        <CurrencyLogo currency={token0} />
+        <CurrencyLogo currency={token1} /> {/* @ts-ignore */}
+        {token0 && <span className="symbol">{token0?.symbol || '(?)'}</span>} / {/* @ts-ignore */}
+        {token1 && <span className="symbol">{token1?.symbol || '(?)'}</span>}
+      </div>
+
+      {reservesInfo && (
+        <>
+          {toInterfaceFormat(reservesInfo[0])} / {toInterfaceFormat(reservesInfo[1])}
+        </>
+      )}
     </PairCard>
   )
 }
 
 export default function Pools() {
   const { pools } = useAppState()
-  const [update, setUpdate] = useState(false)
   const wrappedToken = useWrappedToken()
   const tokens = useAppTokens()
 
   return (
     <div>
-      <button onClick={() => setUpdate((prevState) => !prevState)}>Update pools</button>
-
       {pools.length ? (
         <>
           {pools.map((address) => (
-            <Pool key={address} address={address} update={update} tokens={tokens} wrappedToken={wrappedToken} />
+            <Pool key={address} address={address} tokens={tokens} wrappedToken={wrappedToken} />
           ))}
         </>
       ) : (
