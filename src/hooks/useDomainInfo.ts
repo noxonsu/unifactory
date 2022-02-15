@@ -17,7 +17,6 @@ type Data = {
   totalFee?: number
   allFeeToProtocol?: boolean
   possibleProtocolPercent?: string[]
-  devFeeSetter: string
   totalSwaps: string
 }
 
@@ -58,15 +57,7 @@ export default function useDomainInfo(trigger: boolean): {
 
         try {
           const factoryInfo = await factoryContract.methods.allInfo().call()
-          const {
-            protocolFee,
-            feeTo,
-            totalFee,
-            allFeeToProtocol,
-            POSSIBLE_PROTOCOL_PERCENT,
-            devFeeSetter,
-            totalSwaps,
-          } = factoryInfo
+          const { protocolFee, feeTo, totalFee, allFeeToProtocol, POSSIBLE_PROTOCOL_PERCENT, totalSwaps } = factoryInfo
 
           fullData = {
             ...fullData,
@@ -75,7 +66,6 @@ export default function useDomainInfo(trigger: boolean): {
             totalFee,
             allFeeToProtocol,
             possibleProtocolPercent: POSSIBLE_PROTOCOL_PERCENT,
-            devFeeSetter: devFeeSetter || '',
             totalSwaps: totalSwaps || '',
           }
         } catch (error) {

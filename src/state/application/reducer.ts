@@ -27,9 +27,10 @@ export type StorageState = {
   readonly menuLinks: { name: string; source: string }[]
   readonly socialLinks: string[]
   readonly addressesOfTokenLists: string[]
+  readonly disableSourceCopyright: boolean
 }
 
-export type ApplicationState = {
+export type ApplicationState = StorageState & {
   readonly appManagement: boolean
   readonly admin: string
   readonly factory: string
@@ -41,13 +42,12 @@ export type ApplicationState = {
   readonly totalFee: number | undefined
   readonly allFeeToProtocol: boolean | undefined
   readonly possibleProtocolPercent: number[]
-  readonly devFeeSetter: string | undefined
   readonly totalSwaps: number | undefined
   readonly pools: string[]
   readonly blockNumber: { readonly [chainId: number]: number }
   readonly popupList: PopupList
   readonly openModal: ApplicationModal | null
-} & StorageState
+}
 
 const initialState: ApplicationState = {
   appManagement: false,
@@ -61,8 +61,8 @@ const initialState: ApplicationState = {
   totalFee: undefined,
   allFeeToProtocol: undefined,
   possibleProtocolPercent: [],
-  devFeeSetter: '',
   totalSwaps: undefined,
+  disableSourceCopyright: false,
   pools: [],
   domain: '',
   projectName: '',
@@ -100,7 +100,6 @@ export default createReducer(initialState, (builder) =>
           totalFee,
           allFeeToProtocol,
           possibleProtocolPercent,
-          devFeeSetter,
           totalSwaps,
         } = domainData
 
@@ -108,7 +107,6 @@ export default createReducer(initialState, (builder) =>
         if (factory === ZERO_ADDRESS) factory = ''
         if (router === ZERO_ADDRESS) router = ''
         if (storageAddr === ZERO_ADDRESS) storageAddr = ''
-        if (devFeeSetter === ZERO_ADDRESS) devFeeSetter = ''
         if (feeRecipient === ZERO_ADDRESS) feeRecipient = ''
         if (possibleProtocolPercent?.length)
           state.possibleProtocolPercent = possibleProtocolPercent.map((percent) => Number(percent))
@@ -122,7 +120,6 @@ export default createReducer(initialState, (builder) =>
         state.router = router
         state.storage = storageAddr
         state.pairHash = pairHash
-        state.devFeeSetter = devFeeSetter
         state.feeRecipient = feeRecipient
       } else {
         state.admin = ''
@@ -130,7 +127,6 @@ export default createReducer(initialState, (builder) =>
         state.router = ''
         state.storage = ''
         state.pairHash = ''
-        state.devFeeSetter = ''
         state.feeRecipient = ''
       }
     })
@@ -148,12 +144,14 @@ export default createReducer(initialState, (builder) =>
           menuLinks,
           socialLinks,
           addressesOfTokenLists,
+          disableSourceCopyright,
         } = appData
 
         state.domain = domain
         state.projectName = projectName
         state.brandColor = brandColor
         state.logo = logo
+        state.disableSourceCopyright = disableSourceCopyright
 
         if (tokenLists.length) state.tokenLists = tokenLists
         if (navigationLinks.length) state.navigationLinks = navigationLinks
@@ -165,6 +163,7 @@ export default createReducer(initialState, (builder) =>
         state.projectName = ''
         state.brandColor = ''
         state.logo = ''
+        state.disableSourceCopyright = false
       }
     })
     .addCase(updateActivePools, (state, action) => {

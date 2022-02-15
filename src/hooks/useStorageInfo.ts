@@ -16,52 +16,58 @@ type Settings = {
   menuLinks: StorageState['menuLinks']
   socialLinks: StorageState['socialLinks']
   addressesOfTokenLists: StorageState['addressesOfTokenLists']
+  disableSourceCopyright: boolean
 }
 
 const validArray = (arr: any[]) => Array.isArray(arr) && !!arr.length
 
-export const parseSettings = (settings: string): Settings => {
-  let domain = ''
-  let projectName = ''
+const defaultSettings = (): Settings => ({
+  domain: '',
+  projectName: '',
+  brandColor: '',
+  logo: '',
+  navigationLinks: [],
+  menuLinks: [],
+  socialLinks: [],
+  addressesOfTokenLists: [],
+  disableSourceCopyright: false,
+})
 
-  let brandColor = ''
-  let logo = ''
-  let navigationLinks: StorageState['navigationLinks'] = []
-  let menuLinks: Settings['menuLinks'] = []
-  let socialLinks: StorageState['socialLinks'] = []
-  let addressesOfTokenLists: StorageState['addressesOfTokenLists'] = []
+export const parseSettings = (settings: string): Settings => {
+  const appSettings = defaultSettings()
 
   try {
-    if (settings.length) {
-      const settingsJSON = JSON.parse(settings)
-      const {
-        domain: _domain,
-        projectName: _projectName,
-        brandColor: _brandColor,
-        logoUrl: _logoUrl,
-        navigationLinks: _navigationLinks,
-        menuLinks: _menuLinks,
-        socialLinks: _socialLinks,
-        addressesOfTokenLists: _addressesOfTokenLists,
-      } = settingsJSON
+    const settingsJSON = JSON.parse(settings)
+    const {
+      domain: _domain,
+      projectName: _projectName,
+      brandColor: _brandColor,
+      logoUrl: _logoUrl,
+      navigationLinks: _navigationLinks,
+      menuLinks: _menuLinks,
+      socialLinks: _socialLinks,
+      addressesOfTokenLists: _addressesOfTokenLists,
+      disableSourceCopyright: _disableSourceCopyright,
+    } = settingsJSON
 
-      if (_domain) domain = _domain
-      if (_projectName) projectName = _projectName
-      if (_brandColor) brandColor = _brandColor
-      if (_logoUrl) logo = _logoUrl
 
-      if (validArray(_navigationLinks)) navigationLinks = _navigationLinks
-      if (validArray(_menuLinks)) menuLinks = _menuLinks
-      if (validArray(_socialLinks)) socialLinks = _socialLinks
-      if (validArray(_addressesOfTokenLists)) addressesOfTokenLists = _addressesOfTokenLists
-    }
+    if (_domain) appSettings.domain = _domain
+    if (_projectName) appSettings.projectName = _projectName
+    if (_brandColor) appSettings.brandColor = _brandColor
+    if (_logoUrl) appSettings.logo = _logoUrl
+    if (Boolean(_disableSourceCopyright)) appSettings.disableSourceCopyright = _disableSourceCopyright
+
+    if (validArray(_navigationLinks)) appSettings.navigationLinks = _navigationLinks
+    if (validArray(_menuLinks)) appSettings.menuLinks = _menuLinks
+    if (validArray(_socialLinks)) appSettings.socialLinks = _socialLinks
+    if (validArray(_addressesOfTokenLists)) appSettings.addressesOfTokenLists = _addressesOfTokenLists
   } catch (error) {
     console.group('%c Storage settings', 'color: red')
     console.error(error)
     console.groupEnd()
   }
 
-  return { domain, projectName, brandColor, logo, navigationLinks, menuLinks, socialLinks, addressesOfTokenLists }
+  return appSettings
 }
 
 export default function useStorageInfo(): { data: StorageState | null; isLoading: boolean; error: Error | null } {
@@ -86,16 +92,7 @@ export default function useStorageInfo(): { data: StorageState | null; isLoading
       setError(null)
       setIsLoading(true)
 
-      let parsedSettings: Settings = {
-        domain: '',
-        projectName: '',
-        brandColor: '',
-        logo: '',
-        navigationLinks: [],
-        menuLinks: [],
-        socialLinks: [],
-        addressesOfTokenLists: [],
-      }
+      let parsedSettings = defaultSettings()
       const tokenLists: StorageState['tokenLists'] = []
 
       try {

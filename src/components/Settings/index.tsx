@@ -214,17 +214,15 @@ export default function SettingsTab() {
               <Toggle
                 id="toggle-expert-mode-button"
                 isActive={expertMode}
-                toggle={
-                  expertMode
-                    ? () => {
-                        toggleExpertMode()
-                        setShowConfirmation(false)
-                      }
-                    : () => {
-                        toggle()
-                        setShowConfirmation(true)
-                      }
-                }
+                toggle={() => {
+                  if (expertMode) {
+                    toggleExpertMode()
+                    setShowConfirmation(false)
+                  } else {
+                    toggle()
+                    setShowConfirmation(true)
+                  }
+                }}
               />
             </RowBetween>
             <RowBetween>
