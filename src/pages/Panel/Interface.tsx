@@ -150,7 +150,7 @@ export default function Interface(props: any) {
     if (logoUrl) {
       setIsValidLogo(Boolean(validUrl.isUri(logoUrl)))
     } else {
-      setIsValidLogo(false)
+      setIsValidLogo(true)
     }
   }, [logoUrl])
 

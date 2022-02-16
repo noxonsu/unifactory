@@ -50,7 +50,6 @@ export const parseSettings = (settings: string): Settings => {
       disableSourceCopyright: _disableSourceCopyright,
     } = settingsJSON
 
-
     if (_domain) appSettings.domain = _domain
     if (_projectName) appSettings.projectName = _projectName
     if (_brandColor) appSettings.brandColor = _brandColor
@@ -64,6 +63,7 @@ export const parseSettings = (settings: string): Settings => {
   } catch (error) {
     console.group('%c Storage settings', 'color: red')
     console.error(error)
+    console.log('source settings: ', settings)
     console.groupEnd()
   }
 
@@ -97,7 +97,7 @@ export default function useStorageInfo(): { data: StorageState | null; isLoading
 
       try {
         const settings = await storage.settings()
-        const data = parseSettings(settings)
+        const data = parseSettings(settings || '{}')
 
         if (data.addressesOfTokenLists?.length) {
           data.addressesOfTokenLists.forEach((url: string) => dispatch(addList(url)))
