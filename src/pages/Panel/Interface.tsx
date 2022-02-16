@@ -10,6 +10,7 @@ import { ButtonPrimary } from 'components/Button'
 import { TokenLists } from './TokenLists'
 import InputPanel from 'components/InputPanel'
 import Accordion from 'components/Accordion'
+import Toggle from 'components/Toggle'
 import ListFactory from 'components/ListFactory'
 import MenuLinksFactory, { LinkItem } from 'components/MenuLinksFactory'
 import TextBlock from 'components/TextBlock'
@@ -23,9 +24,11 @@ import networks from 'networks.json'
 import ConfirmationModal from './ConfirmationModal'
 import useWordpressInfo from 'hooks/useWordpressInfo'
 
-const OptionWrapper = styled.div<{ margin?: number }>`
+const OptionWrapper = styled.div<{ margin?: number; flex?: boolean }>`
   margin: ${({ margin }) => margin || 0.2}rem 0;
   padding: 0.3rem 0;
+
+  ${({ flex }) => (flex ? 'display: flex; align-items: center; justify-content: space-between' : '')}
 `
 
 const Label = styled.span`
@@ -80,6 +83,7 @@ export default function Interface(props: any) {
     socialLinks: stateSocialLinks,
     addressesOfTokenLists: stateAddressesOfTokenLists,
     tokenLists: stateTokenLists,
+    disableSourceCopyright: stateDisableSourceCopyright,
   } = useAppState()
 
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
@@ -146,7 +150,7 @@ export default function Interface(props: any) {
     if (logoUrl) {
       setIsValidLogo(Boolean(validUrl.isUri(logoUrl)))
     } else {
-      setIsValidLogo(false)
+      setIsValidLogo(true)
     }
   }, [logoUrl])
 
@@ -159,6 +163,7 @@ export default function Interface(props: any) {
   const [socialLinks, setSocialLinks] = useState<string[]>(stateSocialLinks)
   const [addressesOfTokenLists, setAddressesOfTokenLists] = useState<string[]>(stateAddressesOfTokenLists)
   const [tokenLists, setTokenLists] = useState<any>(stateTokenLists)
+  const [disableSourceCopyright, setDisableSourceCopyright] = useState<boolean>(stateDisableSourceCopyright)
 
   const currentStrSettings = JSON.stringify({
     projectName: stateProjectName,
@@ -168,6 +173,7 @@ export default function Interface(props: any) {
     menuLinks: stateMenuLinks,
     socialLinks: stateSocialLinks,
     addressesOfTokenLists: stateAddressesOfTokenLists,
+    disableSourceCopyright: stateDisableSourceCopyright,
   })
 
   const [settingsChanged, setSettingsChanged] = useState(false)
@@ -181,6 +187,7 @@ export default function Interface(props: any) {
       menuLinks,
       socialLinks,
       addressesOfTokenLists,
+      disableSourceCopyright,
     })
 
     setSettingsChanged(newStrSettings !== currentStrSettings)
@@ -193,26 +200,30 @@ export default function Interface(props: any) {
     menuLinks,
     socialLinks,
     addressesOfTokenLists,
+    disableSourceCopyright,
   ])
 
   const saveSettings = async () => {
     setPending(true)
 
     try {
+      const storageSettings = JSON.stringify({
+        projectName,
+        logoUrl,
+        brandColor,
+        navigationLinks,
+        menuLinks,
+        socialLinks,
+        addressesOfTokenLists,
+        disableSourceCopyright,
+      })
+
       await saveProjectOption({
         //@ts-ignore
         library,
         storageAddress: stateStorage,
         method: storageMethods.setSettings,
-        value: JSON.stringify({
-          projectName,
-          logoUrl,
-          brandColor,
-          navigationLinks,
-          menuLinks,
-          socialLinks,
-          addressesOfTokenLists,
-        }),
+        value: storageSettings,
         onHash: (hash: string) => {
           addTransaction(
             { hash },
@@ -331,12 +342,21 @@ export default function Interface(props: any) {
           />
         </OptionWrapper>
 
+        <OptionWrapper flex>
+          {t('Disable source copyright')}
+
+          <Toggle
+            isActive={disableSourceCopyright}
+            toggle={() => setDisableSourceCopyright((prevState) => !prevState)}
+          />
+        </OptionWrapper>
+
         <OptionWrapper margin={0.4}>
           <Label>{t('primaryColor')}</Label>
           <HuePicker color={brandColor} onChangeComplete={updateBrandColor} styles={colorPickerStyles} />
         </OptionWrapper>
 
-        <Button onClick={saveSettings} disabled={!settingsChanged && !isValidLogo}>
+        <Button onClick={saveSettings} disabled={!settingsChanged || !isValidLogo}>
           {t('saveSettings')}
         </Button>
 

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useActiveWeb3React } from 'hooks'
 import styled from 'styled-components'
 import { MdArrowBack } from 'react-icons/md'
+import { FiArrowUpRight } from 'react-icons/fi'
 import { shortenAddress } from 'utils'
 import { Text } from 'rebass'
 import networks from '../../networks.json'
@@ -14,10 +15,15 @@ import { useAppState } from 'state/application/hooks'
 import { setAppManagement } from 'state/application/actions'
 import { CleanButton, ButtonError, ButtonSecondary } from 'components/Button'
 import ConfirmationModal from 'components/ConfirmationModal'
-import Instruction from './Instruction'
 import Wallet from './Wallet'
 import SwapContracts from './SwapContracts'
 import Interface from './Interface'
+
+const FAQLink = styled.a`
+  display: flex;
+  align-items: center;
+  margin: 0.6rem 0 1rem;
+`
 
 export const PartitionWrapper = styled.div<{ highlighted?: boolean }>`
   margin-top: 1rem;
@@ -57,7 +63,7 @@ const BackButton = styled(CleanButton)`
 `
 
 const NetworkInfo = styled.div`
-  margin: 0.6rem;
+  margin: 0.6rem 0;
   display: flex;
   justify-content: space-between;
 `
@@ -204,7 +210,9 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
         </NetworkInfo>
       )}
 
-      <Instruction />
+      <FAQLink href="https://support.onout.org/hc/1331700057/category/2" target="_blank">
+        {t('Knowledge Base')} <FiArrowUpRight />
+      </FAQLink>
 
       {error && (
         <Error>

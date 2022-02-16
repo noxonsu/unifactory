@@ -50,8 +50,8 @@ export const retrieveDomainData = createAction<null | {
   totalFee?: number
   allFeeToProtocol?: boolean
   possibleProtocolPercent?: string[]
-  devFeeSetter: string
   totalSwaps: string
+  disableSourceCopyright?: boolean
 }>('application/retrieveDomainData')
 
 export const updateAppData = createAction<null | StorageState>('application/updateAppData')

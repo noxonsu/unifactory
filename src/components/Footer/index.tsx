@@ -1,7 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
 import validUrl from 'valid-url'
-import useWordpressInfo from 'hooks/useWordpressInfo'
 import { useAppState } from 'state/application/hooks'
 import Polling from '../Header/Polling'
 import { TiSocialInstagram } from 'react-icons/ti'
@@ -84,11 +83,10 @@ const returnIconByUri = (uri: string) => {
 }
 
 export default function Footer() {
-  const { projectName, socialLinks } = useAppState()
-  const wpInfo = useWordpressInfo()
+  const { projectName, socialLinks, disableSourceCopyright } = useAppState()
   const year = new Date().getFullYear()
   const copyright = `© ${projectName} ${year}`
-  const sourceCopyright = !!wpInfo ? null : (
+  const SourceCopyright = (
     <>
       Powered by{' '}
       <a href="https://tools.onout.org/dex" target="_blank" rel="noopener noreferrer">
@@ -101,7 +99,7 @@ export default function Footer() {
     <FooterWrapper>
       <Content>
         {projectName && <Copyright>{copyright}</Copyright>}
-        {sourceCopyright && <Copyright pale>{sourceCopyright}</Copyright>}
+        {!disableSourceCopyright && <Copyright pale>{SourceCopyright}</Copyright>}
 
         {socialLinks.length ? (
           <SocialLinksWrapper>
