@@ -1,24 +1,4 @@
 {
-  "3": {
-    "name": "Ropsten",
-    "rpc": "https://ropsten.infura.io/v3/fc55ddb25b694fef8e2363f6b6c9341f",
-    "chainId": 3,
-    "explorer": "https://ropsten.etherscan.io",
-    "color": "#ff4a8d",
-    "registry": "0x04de11AaEC47722F1e671Ac69A677cCD5b9fcFE2",
-    "multicall": "0x53C43764255c17BD724F74c4eF150724AC50a3ed",
-    "ENSRegistry": "",
-    "baseCurrency": {
-      "decimals": 18,
-      "name": "ETH",
-      "symbol": "ETH"
-    },
-    "wrappedToken": {
-      "address": "0xc778417E063141139Fce010982780140Aa0cD5Ab",
-      "name": "Wrapped Ether",
-      "symbol": "WETH"
-    }
-  },
   "4": {
     "name": "Rinkeby",
     "rpc": "https://rinkeby.infura.io/v3/fc55ddb25b694fef8e2363f6b6c9341f",
@@ -59,29 +39,9 @@
       "symbol": "WBNB"
     }
   },
-  "97": {
-    "name": "BSC Testnet",
-    "rpc": "https://data-seed-prebsc-1-s1.binance.org:8545",
-    "chainId": 97,
-    "explorer": "https://testnet.bscscan.com/",
-    "color": "#CC9B00",
-    "registry": "0x1F0760bF970DDA86F7De29E22FFBA4f841f5bfA0",
-    "multicall": "0xae11C5B5f29A6a25e955F0CB8ddCc416f522AF5C",
-    "ENSRegistry": "",
-    "baseCurrency": {
-      "decimals": 18,
-      "name": "BNB",
-      "symbol": "BNB"
-    },
-    "wrappedToken": {
-      "address": "0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd",
-      "name": "Wrapped BNB",
-      "symbol": "WBNB"
-    }
-  },
   "137": {
     "name": "Polygon",
-    "rpc": "https://rpc-mainnet.matic.network",
+    "rpc": "https://polygon-rpc.com/",
     "chainId": 137,
     "explorer": "https://polygonscan.com/",
     "color": "#8247E5",
@@ -97,86 +57,6 @@
       "address": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
       "name": "Wrapped Matic",
       "symbol": "WMATIC"
-    }
-  },
-  "80001": {
-    "name": "Polygon Testnet",
-    "rpc": "https://polygon-mumbai.g.alchemy.com/v2/2xKOm_QzNtsjZox1QstYz_iYZLIPGgHL",
-    "chainId": 80001,
-    "explorer": "https://mumbai.polygonscan.com/",
-    "color": "#8247E5",
-    "registry": "0xb7C47aA7bEE0397f03f5D3D038F3240a18102AED",
-    "multicall": "0x08411ADd0b5AA8ee47563b146743C13b3556c9Cc",
-    "ENSRegistry": "",
-    "baseCurrency": {
-      "decimals": 18,
-      "name": "Matic",
-      "symbol": "MATIC"
-    },
-    "wrappedToken": {
-      "address": "0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889",
-      "name": "Wrapped Matic",
-      "symbol": "WMATIC"
-    }
-  },
-  "421611": {
-    "name": "Arbitrum Testnet",
-    "rpc": "https://rinkeby.arbitrum.io/rpc",
-    "chainId": 421611,
-    "explorer": "https://rinkeby-explorer.arbitrum.io",
-    "color": "#2D374B",
-    "registry": "0x0755ba6D3e0B799AC7Cd6707AddE7B72208DE08e",
-    "multicall": "0x04ad4Ce6015141F6f582A7451Cb7CD6866609298",
-    "ENSRegistry": "",
-    "baseCurrency": {
-      "decimals": 18,
-      "name": "ETH",
-      "symbol": "ETH"
-    },
-    "wrappedToken": {
-      "address": "0xB47e6A5f8b33b3F17603C83a0535A9dcD7E32681",
-      "name": "Wrapped Ether",
-      "symbol": "WETH"
-    }
-  },
-  "77": {
-    "name": "Gnosis Testnet",
-    "rpc": "https://sokol.poa.network",
-    "chainId": 77,
-    "explorer": "https://blockscout.com/poa/sokol",
-    "color": "#037A5B",
-    "registry": "0x63207FF111a54D6F35Ae18f82b1a9DEff3fbE3e0",
-    "multicall": "0x7864F845a4Da54d93A106F6eb125a27507b02320",
-    "ENSRegistry": "",
-    "baseCurrency": {
-      "decimals": 18,
-      "name": "xDAI",
-      "symbol": "XDAI"
-    },
-    "wrappedToken": {
-      "address": "0x79D5C019F2515Cbc0596170Da44FCd26412c4f83",
-      "name": "Wrapped XDAI",
-      "symbol": "WXDAI"
-    }
-  },
-  "31": {
-    "name": "RSK Testnet",
-    "rpc": "https://public-node.testnet.rsk.co",
-    "chainId": 31,
-    "explorer": "https://explorer.testnet.rsk.co",
-    "color": "#00B520",
-    "registry": "0x9664EC984D1c0d44dD22C161da1D06f7f72Ae092",
-    "multicall": "0x9E469E1FC7Fb4c5d17897b68eaF1aFC9df39f103",
-    "ENSRegistry": "",
-    "baseCurrency": {
-      "decimals": 18,
-      "name": "RBTC",
-      "symbol": "RBTC"
-    },
-    "wrappedToken": {
-      "address": "0x79D5C019F2515Cbc0596170Da44FCd26412c4f83",
-      "name": "Wrapped RBTC",
-      "symbol": "WRBTC"
     }
   },
   "43114": {
@@ -199,86 +79,6 @@
       "symbol": "WAVAX"
     }
   },
-  "43113": {
-    "name": "Avalanche Testnet",
-    "rpc": "https://api.avax-test.network/ext/bc/C/rpc",
-    "chainId": 43113,
-    "explorer": "https://testnet.snowtrace.io",
-    "color": "#D64F4A",
-    "registry": "0x79D5C019F2515Cbc0596170Da44FCd26412c4f83",
-    "multicall": "0x9664EC984D1c0d44dD22C161da1D06f7f72Ae092",
-    "ENSRegistry": "",
-    "baseCurrency": {
-      "decimals": 18,
-      "name": "AVAX",
-      "symbol": "AVAX"
-    },
-    "wrappedToken": {
-      "address": "0xd00ae08403b9bbb9124bb305c09058e32c39a48c",
-      "name": "Wrapped AVAX",
-      "symbol": "WAVAX"
-    }
-  },
-  "338": {
-    "name": "Cronos Testnet",
-    "rpc": "https://cronos-testnet-3.crypto.org:8545",
-    "chainId": 338,
-    "explorer": "https://cronos.crypto.org/explorer/testnet3",
-    "color": "#072D4C",
-    "registry": "0x79D5C019F2515Cbc0596170Da44FCd26412c4f83",
-    "multicall": "0x9664EC984D1c0d44dD22C161da1D06f7f72Ae092",
-    "ENSRegistry": "",
-    "baseCurrency": {
-      "decimals": 18,
-      "name": "TCRO",
-      "symbol": "TCRO"
-    },
-    "wrappedToken": {
-      "address": "0x6a3173618859C7cd40fAF6921b5E9eB6A76f1fD4",
-      "name": "Wrapped TCRO",
-      "symbol": "WTCRO"
-    }
-  },
-  "256": {
-    "name": "ECO Chain Testnet",
-    "rpc": "https://http-testnet.hecochain.com",
-    "chainId": 256,
-    "explorer": "https://testnet.hecoinfo.com",
-    "color": "#233370",
-    "registry": "0x79D5C019F2515Cbc0596170Da44FCd26412c4f83",
-    "multicall": "0x9664EC984D1c0d44dD22C161da1D06f7f72Ae092",
-    "ENSRegistry": "",
-    "baseCurrency": {
-      "decimals": 18,
-      "name": "HT",
-      "symbol": "HT"
-    },
-    "wrappedToken": {
-      "address": "0x7aF326B6351C8A9b8fb8CD205CBe11d4Ac5FA836",
-      "name": "Wrapped HT",
-      "symbol": "WHT"
-    }
-  },
-  "1287": {
-    "name": "Moonbase Alpha",
-    "rpc": "https://rpc.api.moonbase.moonbeam.network",
-    "chainId": 1287,
-    "explorer": "https://moonbase.moonscan.io",
-    "color": "#C0126E",
-    "registry": "0x04ad4Ce6015141F6f582A7451Cb7CD6866609298",
-    "multicall": "0x79D5C019F2515Cbc0596170Da44FCd26412c4f83",
-    "ENSRegistry": "",
-    "baseCurrency": {
-      "decimals": 18,
-      "name": "DEV",
-      "symbol": "DEV"
-    },
-    "wrappedToken": {
-      "address": "0x9664EC984D1c0d44dD22C161da1D06f7f72Ae092",
-      "name": "Wrapped DEV",
-      "symbol": "WDEV"
-    }
-  },
   "250": {
     "name": "Fantom Opera",
     "rpc": "https://rpc.ftm.tools/",
@@ -295,26 +95,6 @@
     },
     "wrappedToken": {
       "address": "0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83",
-      "name": "Wrapped FTM",
-      "symbol": "WFTM"
-    }
-  },
-  "4002": {
-    "name": "Fantom Testnet",
-    "rpc": "https://rpc.testnet.fantom.network/",
-    "chainId": 4002,
-    "explorer": "https://testnet.ftmscan.com",
-    "color": "#0C30FF",
-    "registry": "0x79D5C019F2515Cbc0596170Da44FCd26412c4f83",
-    "multicall": "0x9664EC984D1c0d44dD22C161da1D06f7f72Ae092",
-    "ENSRegistry": "",
-    "baseCurrency": {
-      "decimals": 18,
-      "name": "FTM",
-      "symbol": "FTM"
-    },
-    "wrappedToken": {
-      "address": "0x15c34d8b356f21112c07ca1811d84101f480a3f1",
       "name": "Wrapped FTM",
       "symbol": "WFTM"
     }
