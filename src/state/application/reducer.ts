@@ -5,7 +5,6 @@ import { ZERO_ADDRESS } from 'sdk'
 import {
   setAppManagement,
   retrieveDomainData,
-  updateAppData,
   addPopup,
   PopupContent,
   removePopup,
@@ -17,7 +16,21 @@ import {
 
 type PopupList = Array<{ key: string; show: boolean; content: PopupContent; removeAfterMs: number | null }>
 
-export type StorageState = {
+export type DomainState = {
+  admin: string
+  factory: string
+  router: string
+  storage: string
+  pairHash: string
+  feeRecipient: string
+  protocolFee?: number
+  totalFee?: number
+  allFeeToProtocol?: boolean
+  possibleProtocolPercent?: number[]
+  totalSwaps: number | undefined
+}
+
+export type StorageState = null | {
   readonly domain: string
   readonly projectName: string
   readonly brandColor: string
@@ -30,19 +43,10 @@ export type StorageState = {
   readonly disableSourceCopyright: boolean
 }
 
-export type ApplicationState = StorageState & {
+export type DomainData = DomainState & StorageState
+
+export type ApplicationState = DomainData & {
   readonly appManagement: boolean
-  readonly admin: string
-  readonly factory: string
-  readonly router: string
-  readonly storage: string
-  readonly pairHash: string
-  readonly feeRecipient: string
-  readonly protocolFee: number | undefined
-  readonly totalFee: number | undefined
-  readonly allFeeToProtocol: boolean | undefined
-  readonly possibleProtocolPercent: number[]
-  readonly totalSwaps: number | undefined
   readonly pools: string[]
   readonly blockNumber: { readonly [chainId: number]: number }
   readonly popupList: PopupList
@@ -86,14 +90,14 @@ export default createReducer(initialState, (builder) =>
       state.appManagement = status
     })
     .addCase(retrieveDomainData, (state, action) => {
-      const domainData = action.payload
+      const data = action.payload
 
-      if (domainData) {
+      if (data) {
         let {
           admin = '',
           factory = '',
           router = '',
-          storageAddr = '',
+          storage = '',
           pairHash = '',
           feeRecipient = '',
           protocolFee,
@@ -101,40 +105,6 @@ export default createReducer(initialState, (builder) =>
           allFeeToProtocol,
           possibleProtocolPercent,
           totalSwaps,
-        } = domainData
-
-        if (admin === ZERO_ADDRESS) admin = ''
-        if (factory === ZERO_ADDRESS) factory = ''
-        if (router === ZERO_ADDRESS) router = ''
-        if (storageAddr === ZERO_ADDRESS) storageAddr = ''
-        if (feeRecipient === ZERO_ADDRESS) feeRecipient = ''
-        if (possibleProtocolPercent?.length)
-          state.possibleProtocolPercent = possibleProtocolPercent.map((percent) => Number(percent))
-        if (isNumber(protocolFee)) state.protocolFee = Number(protocolFee)
-        if (isNumber(totalFee)) state.totalFee = Number(totalFee)
-        if (isNumber(totalSwaps)) state.totalSwaps = Number(totalSwaps)
-        if (typeof allFeeToProtocol === 'boolean') state.allFeeToProtocol = allFeeToProtocol
-
-        state.admin = admin
-        state.factory = factory
-        state.router = router
-        state.storage = storageAddr
-        state.pairHash = pairHash
-        state.feeRecipient = feeRecipient
-      } else {
-        state.admin = ''
-        state.factory = ''
-        state.router = ''
-        state.storage = ''
-        state.pairHash = ''
-        state.feeRecipient = ''
-      }
-    })
-    .addCase(updateAppData, (state, action) => {
-      const appData = action.payload
-
-      if (appData) {
-        const {
           domain,
           projectName,
           brandColor,
@@ -145,25 +115,43 @@ export default createReducer(initialState, (builder) =>
           socialLinks,
           addressesOfTokenLists,
           disableSourceCopyright,
-        } = appData
+        } = data
 
-        state.domain = domain
-        state.projectName = projectName
-        state.brandColor = brandColor
-        state.logo = logo
-        state.disableSourceCopyright = disableSourceCopyright
-
+        if (admin === ZERO_ADDRESS) admin = ''
+        if (factory === ZERO_ADDRESS) factory = ''
+        if (router === ZERO_ADDRESS) router = ''
+        if (storage === ZERO_ADDRESS) storage = ''
+        if (feeRecipient === ZERO_ADDRESS) feeRecipient = ''
+        if (possibleProtocolPercent?.length)
+          state.possibleProtocolPercent = possibleProtocolPercent.map((percent) => Number(percent))
+        if (isNumber(protocolFee)) state.protocolFee = Number(protocolFee)
+        if (isNumber(totalFee)) state.totalFee = Number(totalFee)
+        if (isNumber(totalSwaps)) state.totalSwaps = Number(totalSwaps)
+        if (typeof allFeeToProtocol === 'boolean') state.allFeeToProtocol = allFeeToProtocol
         if (tokenLists.length) state.tokenLists = tokenLists
         if (navigationLinks.length) state.navigationLinks = navigationLinks
         if (menuLinks.length) state.menuLinks = menuLinks
         if (socialLinks.length) state.socialLinks = socialLinks
         if (addressesOfTokenLists.length) state.addressesOfTokenLists = addressesOfTokenLists
+
+        state.admin = admin
+        state.factory = factory
+        state.router = router
+        state.storage = storage
+        state.pairHash = pairHash
+        state.feeRecipient = feeRecipient
+        state.domain = domain
+        state.projectName = projectName
+        state.brandColor = brandColor
+        state.logo = logo
+        state.disableSourceCopyright = disableSourceCopyright || false
       } else {
-        state.domain = ''
-        state.projectName = ''
-        state.brandColor = ''
-        state.logo = ''
-        state.disableSourceCopyright = false
+        state.admin = ''
+        state.factory = ''
+        state.router = ''
+        state.storage = ''
+        state.pairHash = ''
+        state.feeRecipient = ''
       }
     })
     .addCase(updateActivePools, (state, action) => {
