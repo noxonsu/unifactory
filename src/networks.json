@@ -1,24 +1,4 @@
 {
-  "4": {
-    "name": "Rinkeby",
-    "rpc": "https://rinkeby.infura.io/v3/fc55ddb25b694fef8e2363f6b6c9341f",
-    "chainId": 4,
-    "explorer": "https://rinkeby.etherscan.io",
-    "color": "#f6c343",
-    "registry": "0xe941b2b03d0A6eAfAdC547EC20Ba0D9583CfcaD3",
-    "multicall": "0x42Ad527de7d4e9d9d011aC45B31D8551f8Fe9821",
-    "ENSRegistry": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
-    "baseCurrency": {
-      "decimals": 18,
-      "name": "ETH",
-      "symbol": "ETH"
-    },
-    "wrappedToken": {
-      "address": "0xc778417E063141139Fce010982780140Aa0cD5Ab",
-      "name": "Wrapped Ether",
-      "symbol": "WETH"
-    }
-  },
   "56": {
     "name": "BSC",
     "rpc": "https://bsc-dataseed.binance.org",
@@ -117,6 +97,26 @@
       "address": "0x0BE9e53fd7EDaC9F859882AfdDa116645287C629",
       "name": "Wrapped FUSE",
       "symbol": "WFUSE"
+    }
+  },
+  "4": {
+    "name": "Rinkeby",
+    "rpc": "https://rinkeby.infura.io/v3/fc55ddb25b694fef8e2363f6b6c9341f",
+    "chainId": 4,
+    "explorer": "https://rinkeby.etherscan.io",
+    "color": "#f6c343",
+    "registry": "0xe941b2b03d0A6eAfAdC547EC20Ba0D9583CfcaD3",
+    "multicall": "0x42Ad527de7d4e9d9d011aC45B31D8551f8Fe9821",
+    "ENSRegistry": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "ETH",
+      "symbol": "ETH"
+    },
+    "wrappedToken": {
+      "address": "0xc778417E063141139Fce010982780140Aa0cD5Ab",
+      "name": "Wrapped Ether",
+      "symbol": "WETH"
     }
   }
 }
