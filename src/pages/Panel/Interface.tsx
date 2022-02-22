@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import validUrl from 'valid-url'
 import styled from 'styled-components'
+import { Label as RebassLabel, Checkbox } from '@rebass/forms'
 import { useActiveWeb3React } from 'hooks'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useAddPopup, useAppState } from 'state/application/hooks'
@@ -31,9 +32,11 @@ const OptionWrapper = styled.div<{ margin?: number; flex?: boolean }>`
   ${({ flex }) => (flex ? 'display: flex; align-items: center; justify-content: space-between' : '')}
 `
 
-const Label = styled.span`
-  display: inline-block;
+const ColorTop = styled.div`
+  display: flex;
   margin-bottom: 0.7rem;
+  align-items: center;
+  justify-content: space-between;
 `
 
 const Button = styled(ButtonPrimary)`
@@ -52,6 +55,12 @@ const NumList = styled.ol`
   li:not(:last-child) {
     margin-bottom: 0.4rem;
   }
+`
+
+const LabelExtended = styled(RebassLabel)`
+  width: auto !important;
+  display: flex;
+  align-items: center;
 `
 
 const colorPickerStyles = {
@@ -155,8 +164,9 @@ export default function Interface(props: any) {
   }, [logoUrl])
 
   const [brandColor, setBrandColor] = useState(stateBrandColor)
+  const [customColor, setCustomColor] = useState(false)
 
-  const updateBrandColor = (color: { hex: string }) => setBrandColor(color.hex)
+  const updateBrandColor = (value: string) => setBrandColor(value)
 
   const [navigationLinks, setNavigationLinks] = useState<LinkItem[]>(stateNavigationLinks)
   const [menuLinks, setMenuLinks] = useState<LinkItem[]>(stateMenuLinks)
@@ -350,10 +360,23 @@ export default function Interface(props: any) {
             toggle={() => setDisableSourceCopyright((prevState) => !prevState)}
           />
         </OptionWrapper>
-
         <OptionWrapper margin={0.4}>
-          <Label>{t('primaryColor')}</Label>
-          <HuePicker color={brandColor} onChangeComplete={updateBrandColor} styles={colorPickerStyles} />
+          <ColorTop>
+            <span>{t('primaryColor')}</span>
+            <LabelExtended>
+              <Checkbox name="use custom color" onChange={() => setCustomColor((prevState) => !prevState)} /> {t('own')}
+            </LabelExtended>
+          </ColorTop>
+
+          {customColor ? (
+            <InputPanel label={`(rgb, hsl, hex)`} value={brandColor} onChange={updateBrandColor} />
+          ) : (
+            <HuePicker
+              color={brandColor}
+              onChangeComplete={(color) => updateBrandColor(color.hex)}
+              styles={colorPickerStyles}
+            />
+          )}
         </OptionWrapper>
 
         <Button onClick={saveSettings} disabled={!settingsChanged || !isValidLogo}>
