@@ -28,7 +28,7 @@ export function useThemeColors(): {
   const [darkMode] = useDarkModeManager()
   const { brandColor, backgroundColorDark, backgroundColorLight, textColorDark, textColorLight } = useAppState()
 
-  let bg1 = darkMode ? backgroundColorDark || '#1d1f24' : backgroundColorLight || '#fafafa'
+  let bg2 = darkMode ? backgroundColorDark || '#27292e' : backgroundColorLight || '#ededed'
 
   // const backgroundBase = new Color(bg1)
 
@@ -36,7 +36,7 @@ export function useThemeColors(): {
   // let bg3 = backgroundBase.rotate(-2).darken(0.15).toString()
   // let bg4 = backgroundBase.rotate(-3).darken(0.2).saturate(0.03).toString()
   // let bg5 = backgroundBase.rotate(-4).darken(0.3).saturate(0.04).toString()
-  let bg2 = darkMode ? '#27292e' : '#ededed'
+  let bg1 = darkMode ? '#1d1f24' : '#fafafa'
   let bg3 = darkMode ? '#3a3d47' : '#d6d6d6'
   let bg4 = darkMode ? '#4c4f5c' : '#CED0D9'
   let bg5 = darkMode ? '#6C7284' : '#888D9B'
