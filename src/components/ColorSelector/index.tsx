@@ -4,14 +4,19 @@ import { useTranslation } from 'react-i18next'
 import { HuePicker } from 'react-color'
 import InputPanel from 'components/InputPanel'
 
+const SelectorWrapper = styled.div`
+  padding: 0.3rem 0;
+`
+
 const ColorTop = styled.div`
   display: flex;
-  margin-bottom: 0.7rem;
+  margin-bottom: 0.6rem;
   align-items: center;
   justify-content: space-between;
 `
 
 const Label = styled.label`
+  cursor: pointer;
   width: auto !important;
   display: flex;
   align-items: center;
@@ -44,7 +49,7 @@ export default function ColorSelector({
   }
 
   return (
-    <div>
+    <SelectorWrapper>
       <ColorTop>
         <span>{name}</span>
         <Label>
@@ -62,6 +67,6 @@ export default function ColorSelector({
           styles={colorPickerStyles}
         />
       )}
-    </div>
+    </SelectorWrapper>
   )
 }
