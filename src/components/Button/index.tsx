@@ -178,7 +178,7 @@ const ButtonAddStyle = styled(CleanButton)<{ disabled?: boolean }>`
   height: 2rem;
   width: auto;
   display: flex;
-  alignt-items: center;
+  align-items: center;
   justify-content: center;
   background-color: ${({ theme }) => theme.primary2};
   color: ${({ theme }) => theme.white1};
