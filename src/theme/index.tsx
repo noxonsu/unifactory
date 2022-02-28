@@ -39,32 +39,14 @@ const black = '#000000'
 
 export function colors(darkMode: boolean) {
   return {
-    // base
     white,
     black,
 
-    // text
-    text1: darkMode ? '#FFFFFF' : '#000000',
-    text2: darkMode ? '#C3C5CB' : '#444854',
-    text3: darkMode ? '#6C7284' : '#727782',
-    text4: darkMode ? '#565A69' : '#95979e',
-    text5: darkMode ? '#2C2F36' : '#c1c3c9',
-
-    // backgrounds / greys
-    bg1: darkMode ? '#1d1f24' : '#fafafa',
-    bg2: darkMode ? '#27292e' : '#ededed',
-    bg3: darkMode ? '#3a3d47' : '#d6d6d6',
-    bg4: darkMode ? '#4c4f5c' : '#CED0D9',
-    bg5: darkMode ? '#6C7284' : '#888D9B',
-
-    //specialty colors
     modalBG: darkMode ? 'rgba(0,0,0,.425)' : 'rgba(0,0,0,0.3)',
     advancedBG: darkMode ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.6)',
 
-    // color text
     primaryText1: darkMode ? '#fff' : '#000',
 
-    // other
     red1: '#FD4040',
     red2: '#F82D3A',
     red3: '#D60000',

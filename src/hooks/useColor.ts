@@ -9,6 +9,16 @@ import { useDarkModeManager } from '../state/user/hooks'
 import { useAppState } from '../state/application/hooks'
 
 export function useThemeColors(): {
+  bg1: string
+  bg2: string
+  bg3: string
+  bg4: string
+  bg5: string
+  text1: string
+  text2: string
+  text3: string
+  text4: string
+  text5: string
   primary1: string
   primary2: string
   primary3: string
@@ -16,7 +26,34 @@ export function useThemeColors(): {
   primary5: string
 } {
   const [darkMode] = useDarkModeManager()
-  const { brandColor } = useAppState()
+  const { brandColor, backgroundColorDark, backgroundColorLight, textColorDark, textColorLight } = useAppState()
+
+  let bg2 = darkMode ? backgroundColorDark || '#27292e' : backgroundColorLight || '#ededed'
+
+  // const backgroundBase = new Color(bg1)
+
+  // let bg2 = backgroundBase.rotate(-1).darken(0.1).toString()
+  // let bg3 = backgroundBase.rotate(-2).darken(0.15).toString()
+  // let bg4 = backgroundBase.rotate(-3).darken(0.2).saturate(0.03).toString()
+  // let bg5 = backgroundBase.rotate(-4).darken(0.3).saturate(0.04).toString()
+  let bg1 = darkMode ? '#1d1f24' : '#fafafa'
+  let bg3 = darkMode ? '#3a3d47' : '#d6d6d6'
+  let bg4 = darkMode ? '#4c4f5c' : '#CED0D9'
+  let bg5 = darkMode ? '#6C7284' : '#888D9B'
+
+  let text1 = darkMode ? textColorDark || '#FFFFFF' : textColorLight || '#000000'
+
+  // const textBase = new Color(text1)
+
+  // let text2 = textBase.rotate(-1).darken(0.1).toString()
+  // let text3 = textBase.rotate(-2).darken(0.15).toString()
+  // let text4 = textBase.rotate(-3).darken(0.2).saturate(0.03).toString()
+  // let text5 = textBase.rotate(-4).darken(0.3).saturate(0.04).toString()
+
+  let text2 = darkMode ? '#C3C5CB' : '#444854'
+  let text3 = darkMode ? '#6C7284' : '#727782'
+  let text4 = darkMode ? '#565A69' : '#95979e'
+  let text5 = darkMode ? '#2C2F36' : '#c1c3c9'
 
   let primary1 = darkMode ? '#999999' : '#262626'
   let primary2 = darkMode ? '#858585' : '#363636'
@@ -35,6 +72,16 @@ export function useThemeColors(): {
   }
 
   return {
+    bg1,
+    bg2,
+    bg3,
+    bg4,
+    bg5,
+    text1,
+    text2,
+    text3,
+    text4,
+    text5,
     primary1,
     primary2,
     primary3,

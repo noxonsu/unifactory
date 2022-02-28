@@ -21,6 +21,10 @@ export type StorageState = {
   readonly domain: string
   readonly projectName: string
   readonly brandColor: string
+  readonly backgroundColorDark: string
+  readonly backgroundColorLight: string
+  readonly textColorDark: string
+  readonly textColorLight: string
   readonly logo: string
   readonly tokenLists: TokenList[]
   readonly navigationLinks: { name: string; source: string }[]
@@ -67,6 +71,10 @@ const initialState: ApplicationState = {
   domain: '',
   projectName: '',
   brandColor: '',
+  backgroundColorDark: '',
+  backgroundColorLight: '',
+  textColorDark: '',
+  textColorLight: '',
   logo: '',
   tokenLists: [],
   navigationLinks: [],
@@ -132,38 +140,11 @@ export default createReducer(initialState, (builder) =>
     })
     .addCase(updateAppData, (state, action) => {
       const appData = action.payload
-
       if (appData) {
-        const {
-          domain,
-          projectName,
-          brandColor,
-          logo,
-          tokenLists,
-          navigationLinks,
-          menuLinks,
-          socialLinks,
-          addressesOfTokenLists,
-          disableSourceCopyright,
-        } = appData
-
-        state.domain = domain
-        state.projectName = projectName
-        state.brandColor = brandColor
-        state.logo = logo
-        state.disableSourceCopyright = disableSourceCopyright
-
-        if (tokenLists.length) state.tokenLists = tokenLists
-        if (navigationLinks.length) state.navigationLinks = navigationLinks
-        if (menuLinks.length) state.menuLinks = menuLinks
-        if (socialLinks.length) state.socialLinks = socialLinks
-        if (addressesOfTokenLists.length) state.addressesOfTokenLists = addressesOfTokenLists
-      } else {
-        state.domain = ''
-        state.projectName = ''
-        state.brandColor = ''
-        state.logo = ''
-        state.disableSourceCopyright = false
+        Object.keys(appData).forEach((key: string) => {
+          // @ts-ignore
+          state[key] = appData[key]
+        })
       }
     })
     .addCase(updateActivePools, (state, action) => {

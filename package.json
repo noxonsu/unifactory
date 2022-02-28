@@ -2,6 +2,7 @@
   "name": "unifactory",
   "version": "0.0.0",
   "private": true,
+  "homepage": ".",
   "engines": {
     "node": "^16.11.1",
     "npm": "^8.0.0"

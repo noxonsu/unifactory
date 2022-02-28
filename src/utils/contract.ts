@@ -21,16 +21,12 @@ const deployContract = async (params: any) => {
     contract = new web3.eth.Contract(abi)
     //@ts-ignore
     accounts = await window.ethereum.request({ method: 'eth_accounts' })
-  } catch (error) {
-    throw error
-  }
 
-  const transaction = contract.deploy({
-    data: byteCode,
-    arguments: deployArguments,
-  })
+    const transaction = contract.deploy({
+      data: byteCode,
+      arguments: deployArguments,
+    })
 
-  try {
     const gas = await transaction.estimateGas({ from: accounts[0] })
 
     return await transaction
@@ -50,7 +46,7 @@ export const deployFactory = async (params: any) => {
   const { library, onHash, admin, devFeeAdmin } = params
   const { abi, bytecode } = Factory
 
-  return await deployContract({
+  return deployContract({
     abi,
     byteCode: bytecode,
     deployArguments: [admin, devFeeAdmin],
@@ -63,7 +59,7 @@ export const deployRouter = async (params: any) => {
   const { library, factory, onHash, wrappedToken } = params
   const { abi, bytecode } = RouterV2
 
-  return await deployContract({
+  return deployContract({
     abi,
     byteCode: bytecode,
     deployArguments: [factory, wrappedToken],

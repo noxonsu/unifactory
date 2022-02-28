@@ -6,10 +6,8 @@ import { FaWallet } from 'react-icons/fa'
 import { useWeb3React } from '@web3-react/core'
 import networks from 'networks.json'
 import { SUPPORTED_NETWORKS } from 'connectors'
-import { useDarkModeManager } from 'state/user/hooks'
 import AppBody from './AppBody'
 import Panel from './Panel'
-import { colors } from 'theme'
 import Web3Status from 'components/Web3Status'
 import { ApplicationModal, setOpenModal } from '../state/application/actions'
 import { useDispatch } from 'react-redux'
@@ -41,6 +39,10 @@ const WalletIconWrapper = styled.div`
   padding: 0.6rem;
   border-radius: 50%;
   background-color: ${({ theme }) => theme.text2};
+
+  .icon {
+    color: ${({ theme }) => theme.bg1};
+  }
 `
 
 const Title = styled.h3`
@@ -93,7 +95,6 @@ export default function Connection({ domainData, isAvailableNetwork, setDomainDa
   const { active, chainId, account } = useWeb3React()
   const wordpressData = useWordpressInfo()
   const { t } = useTranslation()
-  const [darkMode] = useDarkModeManager()
   const dispatch = useDispatch<AppDispatch>()
   const [needToConfigure, setNeedToConfigure] = useState(false)
 
@@ -181,7 +182,7 @@ export default function Connection({ domainData, isAvailableNetwork, setDomainDa
         <AppBody>
           <ContentWrapper>
             <WalletIconWrapper>
-              <FaWallet size="2.4rem" color={colors(darkMode).bg1} />
+              <FaWallet size="2.4rem" className="icon" />
             </WalletIconWrapper>
             <Title>{t('toGetStartedConnectWallet')}</Title>
             <NetworkStatus>

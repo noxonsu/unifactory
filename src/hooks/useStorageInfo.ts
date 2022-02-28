@@ -11,6 +11,10 @@ type Settings = {
   domain: string
   projectName: string
   brandColor: string
+  backgroundColorDark: string
+  backgroundColorLight: string
+  textColorDark: string
+  textColorLight: string
   logo: string
   navigationLinks: StorageState['navigationLinks']
   menuLinks: StorageState['menuLinks']
@@ -25,6 +29,10 @@ const defaultSettings = (): Settings => ({
   domain: '',
   projectName: '',
   brandColor: '',
+  backgroundColorDark: '',
+  backgroundColorLight: '',
+  textColorDark: '',
+  textColorLight: '',
   logo: '',
   navigationLinks: [],
   menuLinks: [],
@@ -39,27 +47,36 @@ export const parseSettings = (settings: string): Settings => {
   try {
     const settingsJSON = JSON.parse(settings)
     const {
-      domain: _domain,
-      projectName: _projectName,
-      brandColor: _brandColor,
-      logoUrl: _logoUrl,
-      navigationLinks: _navigationLinks,
-      menuLinks: _menuLinks,
-      socialLinks: _socialLinks,
-      addressesOfTokenLists: _addressesOfTokenLists,
-      disableSourceCopyright: _disableSourceCopyright,
+      domain,
+      projectName,
+      brandColor,
+      backgroundColorDark,
+      backgroundColorLight,
+      textColorDark,
+      textColorLight,
+      logoUrl,
+      navigationLinks,
+      menuLinks,
+      socialLinks,
+      addressesOfTokenLists,
+      disableSourceCopyright,
     } = settingsJSON
 
-    if (_domain) appSettings.domain = _domain
-    if (_projectName) appSettings.projectName = _projectName
-    if (_brandColor) appSettings.brandColor = _brandColor
-    if (_logoUrl) appSettings.logo = _logoUrl
-    if (Boolean(_disableSourceCopyright)) appSettings.disableSourceCopyright = _disableSourceCopyright
+    if (domain) appSettings.domain = domain
+    if (projectName) appSettings.projectName = projectName
+    if (brandColor) appSettings.brandColor = brandColor
+    if (backgroundColorDark) appSettings.backgroundColorDark = backgroundColorDark
+    if (backgroundColorLight) appSettings.backgroundColorLight = backgroundColorLight
+    if (textColorDark) appSettings.textColorDark = textColorDark
+    if (textColorLight) appSettings.textColorLight = textColorLight
 
-    if (validArray(_navigationLinks)) appSettings.navigationLinks = _navigationLinks
-    if (validArray(_menuLinks)) appSettings.menuLinks = _menuLinks
-    if (validArray(_socialLinks)) appSettings.socialLinks = _socialLinks
-    if (validArray(_addressesOfTokenLists)) appSettings.addressesOfTokenLists = _addressesOfTokenLists
+    if (logoUrl) appSettings.logo = logoUrl
+    if (Boolean(disableSourceCopyright)) appSettings.disableSourceCopyright = disableSourceCopyright
+
+    if (validArray(navigationLinks)) appSettings.navigationLinks = navigationLinks
+    if (validArray(menuLinks)) appSettings.menuLinks = menuLinks
+    if (validArray(socialLinks)) appSettings.socialLinks = socialLinks
+    if (validArray(addressesOfTokenLists)) appSettings.addressesOfTokenLists = addressesOfTokenLists
   } catch (error) {
     console.group('%c Storage settings', 'color: red')
     console.error(error)

@@ -5,7 +5,6 @@ import styled from 'styled-components'
 import { useActiveWeb3React } from 'hooks'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useAddPopup, useAppState } from 'state/application/hooks'
-import { HuePicker } from 'react-color'
 import { ButtonPrimary } from 'components/Button'
 import { TokenLists } from './TokenLists'
 import InputPanel from 'components/InputPanel'
@@ -14,6 +13,7 @@ import Toggle from 'components/Toggle'
 import ListFactory from 'components/ListFactory'
 import MenuLinksFactory, { LinkItem } from 'components/MenuLinksFactory'
 import TextBlock from 'components/TextBlock'
+import ColorSelector from 'components/ColorSelector'
 import { PartitionWrapper } from './index'
 import { saveProjectOption } from 'utils/storage'
 import { deployStorage } from 'utils/contract'
@@ -29,11 +29,6 @@ const OptionWrapper = styled.div<{ margin?: number; flex?: boolean }>`
   padding: 0.3rem 0;
 
   ${({ flex }) => (flex ? 'display: flex; align-items: center; justify-content: space-between' : '')}
-`
-
-const Label = styled.span`
-  display: inline-block;
-  margin-bottom: 0.7rem;
 `
 
 const Button = styled(ButtonPrimary)`
@@ -54,14 +49,6 @@ const NumList = styled.ol`
   }
 `
 
-const colorPickerStyles = {
-  default: {
-    picker: {
-      width: '100%',
-    },
-  },
-}
-
 export default function Interface(props: any) {
   const { domain, pending, setPending, setDomainDataTrigger } = props
   const { t } = useTranslation()
@@ -78,6 +65,10 @@ export default function Interface(props: any) {
     projectName: stateProjectName,
     logo: stateLogo,
     brandColor: stateBrandColor,
+    backgroundColorDark: stateBackgroundColorDark,
+    backgroundColorLight: stateBackgroundColorLight,
+    textColorDark: stateTextColorDark,
+    textColorLight: stateTextColorLight,
     navigationLinks: stateNavigationLinks,
     menuLinks: stateMenuLinks,
     socialLinks: stateSocialLinks,
@@ -155,8 +146,37 @@ export default function Interface(props: any) {
   }, [logoUrl])
 
   const [brandColor, setBrandColor] = useState(stateBrandColor)
+  const [backgroundColorDark, setBackgroundColorDark] = useState(stateBackgroundColorDark)
+  const [backgroundColorLight, setBackgroundColorLight] = useState(stateBackgroundColorLight)
+  const [textColorDark, setTextColorDark] = useState(stateTextColorDark)
+  const [textColorLight, setTextColorLight] = useState(stateTextColorLight)
 
-  const updateBrandColor = (color: { hex: string }) => setBrandColor(color.hex)
+  enum ColorType {
+    BRAND,
+    BACKGROUND_LIGHT,
+    BACKGROUND_DARK,
+    TEXT_COLOR_LIGHT,
+    TEXT_COLOR_DARK,
+  }
+
+  const updateColor = (value: string, type: ColorType) => {
+    switch (type) {
+      case ColorType.BRAND:
+        setBrandColor(value)
+        break
+      case ColorType.BACKGROUND_LIGHT:
+        setBackgroundColorLight(value)
+        break
+      case ColorType.BACKGROUND_DARK:
+        setBackgroundColorDark(value)
+        break
+      case ColorType.TEXT_COLOR_LIGHT:
+        setTextColorLight(value)
+        break
+      case ColorType.TEXT_COLOR_DARK:
+        setTextColorDark(value)
+    }
+  }
 
   const [navigationLinks, setNavigationLinks] = useState<LinkItem[]>(stateNavigationLinks)
   const [menuLinks, setMenuLinks] = useState<LinkItem[]>(stateMenuLinks)
@@ -174,6 +194,10 @@ export default function Interface(props: any) {
     socialLinks: stateSocialLinks,
     addressesOfTokenLists: stateAddressesOfTokenLists,
     disableSourceCopyright: stateDisableSourceCopyright,
+    backgroundColorDark: stateBackgroundColorDark,
+    backgroundColorLight: stateBackgroundColorLight,
+    textColorDark: stateTextColorDark,
+    textColorLight: stateTextColorLight,
   })
 
   const [settingsChanged, setSettingsChanged] = useState(false)
@@ -188,6 +212,10 @@ export default function Interface(props: any) {
       socialLinks,
       addressesOfTokenLists,
       disableSourceCopyright,
+      backgroundColorDark,
+      backgroundColorLight,
+      textColorDark,
+      textColorLight,
     })
 
     setSettingsChanged(newStrSettings !== currentStrSettings)
@@ -201,6 +229,10 @@ export default function Interface(props: any) {
     socialLinks,
     addressesOfTokenLists,
     disableSourceCopyright,
+    backgroundColorDark,
+    backgroundColorLight,
+    textColorDark,
+    textColorLight,
   ])
 
   const saveSettings = async () => {
@@ -216,6 +248,10 @@ export default function Interface(props: any) {
         socialLinks,
         addressesOfTokenLists,
         disableSourceCopyright,
+        backgroundColorDark,
+        backgroundColorLight,
+        textColorDark,
+        textColorLight,
       })
 
       await saveProjectOption({
@@ -352,8 +388,39 @@ export default function Interface(props: any) {
         </OptionWrapper>
 
         <OptionWrapper margin={0.4}>
-          <Label>{t('primaryColor')}</Label>
-          <HuePicker color={brandColor} onChangeComplete={updateBrandColor} styles={colorPickerStyles} />
+          <ColorSelector
+            name={t('primaryColor')}
+            defaultColor={stateBrandColor}
+            onColor={(color) => updateColor(color, ColorType.BRAND)}
+          />
+        </OptionWrapper>
+
+        <OptionWrapper margin={0.4}>
+          <h4>{t('backgroundColor')}</h4>
+          <ColorSelector
+            name={t('light')}
+            defaultColor={backgroundColorLight}
+            onColor={(color) => updateColor(color, ColorType.BACKGROUND_LIGHT)}
+          />
+          <ColorSelector
+            name={t('dark')}
+            defaultColor={backgroundColorDark}
+            onColor={(color) => updateColor(color, ColorType.BACKGROUND_DARK)}
+          />
+        </OptionWrapper>
+
+        <OptionWrapper margin={0.5}>
+          <h4>{t('textColor')}</h4>
+          <ColorSelector
+            name={t('light')}
+            defaultColor={textColorLight}
+            onColor={(color) => updateColor(color, ColorType.TEXT_COLOR_LIGHT)}
+          />
+          <ColorSelector
+            name={t('dark')}
+            defaultColor={textColorDark}
+            onColor={(color) => updateColor(color, ColorType.TEXT_COLOR_DARK)}
+          />
         </OptionWrapper>
 
         <Button onClick={saveSettings} disabled={!settingsChanged || !isValidLogo}>
