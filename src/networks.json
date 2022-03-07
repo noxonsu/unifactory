@@ -1,4 +1,24 @@
 {
+  "25": {
+    "name": "Cronos",
+    "rpc": "https://evm-cronos.crypto.org",
+    "chainId": 25,
+    "explorer": "https://cronoscan.com/",
+    "color": "#072D4C",
+    "registry": "0x9664EC984D1c0d44dD22C161da1D06f7f72Ae092",
+    "multicall": "0x79D5C019F2515Cbc0596170Da44FCd26412c4f83",
+    "ENSRegistry": "",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "CRO",
+      "symbol": "CRO"
+    },
+    "wrappedToken": {
+      "address": "0x5C7F8A570d578ED84E63fdFA7b1eE72dEae1AE23",
+      "name": "Wrapped CRO",
+      "symbol": "WCRO"
+    }
+  },
   "56": {
     "name": "BSC",
     "rpc": "https://bsc-dataseed.binance.org",
