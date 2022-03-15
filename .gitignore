@@ -7,7 +7,6 @@
 # misc
 .secret
 .env.local
-.env.production
 .env.production.local
 
 npm-debug.log*
