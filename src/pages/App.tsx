@@ -7,9 +7,8 @@ import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
 import useWordpressInfo from 'hooks/useWordpressInfo'
 import useDomainInfo from 'hooks/useDomainInfo'
-import useStorageInfo from 'hooks/useStorageInfo'
 import { useAppState } from 'state/application/hooks'
-import { retrieveDomainData, updateAppData } from 'state/application/actions'
+import { retrieveDomainData } from 'state/application/actions'
 import Loader from 'components/Loader'
 import Panel from './Panel'
 import Connection from './Connection'
@@ -106,15 +105,10 @@ export default function App() {
   }, [chainId, domainDataTrigger, wordpressData])
 
   const { data: domainData, isLoading: domainLoading } = useDomainInfo(domainDataTrigger)
-  const { data: storageData, isLoading: storageLoading } = useStorageInfo()
 
   useEffect(() => {
     dispatch(retrieveDomainData(domainData ? { ...domainData } : domainData))
   }, [domainData, domainLoading, dispatch])
-
-  useEffect(() => {
-    dispatch(updateAppData(storageData ? { ...storageData } : storageData))
-  }, [storageData, storageLoading, dispatch])
 
   const { admin, factory, router, projectName } = useAppState()
 
@@ -130,9 +124,7 @@ export default function App() {
 
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    setLoading(domainLoading || storageLoading)
-  }, [domainLoading, storageLoading])
+  useEffect(() => setLoading(domainLoading), [domainLoading])
 
   return (
     <Suspense fallback={null}>

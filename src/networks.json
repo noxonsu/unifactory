@@ -41,10 +41,11 @@
   },
   "137": {
     "name": "Polygon",
-    "rpc": "https://rpc-mainnet.matic.network",
+    "rpc": "https://polygon-rpc.com/",
     "chainId": 137,
     "explorer": "https://polygonscan.com/",
     "color": "#8247E5",
+    "storage": "0x8513A596f66900a463aBDDE4e493ea283e610c4D",
     "registry": "0x8746f10E3142987733D3f05D1FBe72E482F521A7",
     "multicall": "0x11ce4B23bD875D7F5C6a31084f55fDe1e9A87507",
     "ENSRegistry": "",

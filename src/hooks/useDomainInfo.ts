@@ -1,40 +1,72 @@
 import { useEffect, useState } from 'react'
-import { ZERO_ADDRESS } from 'sdk'
 import FACTORY from 'contracts/build/Factory.json'
-import { useRegistryContract } from './useContract'
+import { useStorageContract } from './useContract'
 import { useActiveWeb3React } from 'hooks'
 import { getContractInstance } from 'utils/contract'
+import { STORAGE_NETWORK_ID } from '../constants'
+import { StorageState } from '../state/application/reducer'
 import networks from 'networks.json'
 
-type Data = {
-  admin: string
-  factory: string
-  router: string
-  storageAddr: string
-  pairHash: string
-  feeRecipient: string
-  protocolFee?: number
-  totalFee?: number
-  allFeeToProtocol?: boolean
-  possibleProtocolPercent?: string[]
-  totalSwaps: string
+const defaultSettings = (): StorageState => ({
+  admin: '',
+  factory: '',
+  router: '',
+  pairHash: '',
+  feeRecipient: '',
+  protocolFee: undefined,
+  totalFee: undefined,
+  allFeeToProtocol: undefined,
+  possibleProtocolPercent: [],
+  totalSwaps: undefined,
+  projectName: '',
+  brandColor: '',
+  backgroundColorDark: '',
+  backgroundColorLight: '',
+  textColorDark: '',
+  textColorLight: '',
+  logo: '',
+  tokenLists: [],
+  navigationLinks: [],
+  menuLinks: [],
+  socialLinks: [],
+  addressesOfTokenLists: [],
+  disableSourceCopyright: false,
+})
+
+const parseData = (jsonData: string) => {
+  let appSettings = defaultSettings()
+
+  try {
+    appSettings = { ...appSettings, ...JSON.parse(jsonData) }
+  } catch (error) {
+    console.group('%c Storage data', 'color: red')
+    console.error(error)
+    console.log('source data: ', jsonData)
+    console.groupEnd()
+  }
+
+  return appSettings
 }
 
 export default function useDomainInfo(trigger: boolean): {
-  data: Data | null
+  data: StorageState | null
   isLoading: boolean
   error: Error | null
 } {
-  const { chainId, library } = useActiveWeb3React()
+  const { library } = useActiveWeb3React()
+
   // @ts-ignore
-  const registry = useRegistryContract(networks[chainId]?.registry)
+  const { storage: storageAddress } = networks[STORAGE_NETWORK_ID]
+
+  // @ts-ignore
+  const storage = useStorageContract(storageAddress)
   const [data, setData] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!registry) return setData(null)
+      if (!storage) return setData(null)
 
       setError(null)
       setIsLoading(true)
@@ -42,38 +74,45 @@ export default function useDomainInfo(trigger: boolean): {
       try {
         let fullData = null
         const currentDomain = window.location.hostname || document.location.host
-        const data = await registry.domain(currentDomain)
-        const { admin, factory, router } = data
-        const registredDomain = admin !== ZERO_ADDRESS && factory !== ZERO_ADDRESS && router !== ZERO_ADDRESS
+        let { info } = await storage.methods.getData(currentDomain).call()
 
-        if (!registredDomain) return setData(null)
+        let parsedInfo = parseData(info || '{}')
 
-        fullData = { ...data }
-        //@ts-ignore
-        const factoryContract = getContractInstance(library, factory, FACTORY.abi)
-        const INIT_CODE_PAIR_HASH = await factoryContract.methods.INIT_CODE_PAIR_HASH().call()
+        fullData = { ...parsedInfo }
 
-        fullData = { ...fullData, pairHash: INIT_CODE_PAIR_HASH }
+        const { factory } = parsedInfo
 
-        try {
-          const factoryInfo = await factoryContract.methods.allInfo().call()
-          const { protocolFee, feeTo, totalFee, allFeeToProtocol, POSSIBLE_PROTOCOL_PERCENT, totalSwaps } = factoryInfo
+        if (factory) {
+          //@ts-ignore
+          const factoryContract = getContractInstance(library, factory, FACTORY.abi)
+          const INIT_CODE_PAIR_HASH = await factoryContract.methods.INIT_CODE_PAIR_HASH().call()
 
-          fullData = {
-            ...fullData,
-            protocolFee,
-            feeRecipient: feeTo,
-            totalFee,
-            allFeeToProtocol,
-            possibleProtocolPercent: POSSIBLE_PROTOCOL_PERCENT,
-            totalSwaps: totalSwaps || '',
-          }
-        } catch (error) {
-          if (error.message.match(/\.allInfo is not a function/)) {
-            console.group('%c Factory', 'color: orange;')
-            console.log('not the latest version of the contract')
-            console.groupEnd()
-          } else {
+          fullData = { ...parsedInfo, pairHash: INIT_CODE_PAIR_HASH }
+
+          try {
+            const factoryInfo = await factoryContract.methods.allInfo().call()
+            const {
+              protocolFee,
+              feeTo,
+              totalFee,
+              allFeeToProtocol,
+              POSSIBLE_PROTOCOL_PERCENT,
+              totalSwaps,
+              INIT_CODE_PAIR_HASH,
+            } = factoryInfo
+
+            fullData = {
+              ...fullData,
+              //@ts-ignore
+              protocolFee,
+              feeRecipient: feeTo,
+              totalFee,
+              allFeeToProtocol,
+              pairHash: INIT_CODE_PAIR_HASH,
+              possibleProtocolPercent: POSSIBLE_PROTOCOL_PERCENT,
+              totalSwaps: totalSwaps || '',
+            }
+          } catch (error) {
             console.group('%c Factory info', 'color: red;')
             console.error(error)
             console.groupEnd()
@@ -92,7 +131,7 @@ export default function useDomainInfo(trigger: boolean): {
     }
 
     fetchData()
-  }, [registry, trigger, library, chainId])
+  }, [storage, trigger, library])
 
   return { data, isLoading, error }
 }

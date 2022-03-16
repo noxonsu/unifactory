@@ -3,7 +3,6 @@ import { useActiveWeb3React } from 'hooks'
 import styled from 'styled-components'
 import { TokenList } from './TokenList'
 import { useTranslation } from 'react-i18next'
-import { useAppState } from 'state/application/hooks'
 
 const ListWrapper = styled.div`
   &:not(:last-child) {
@@ -15,7 +14,6 @@ export function TokenLists(props: any) {
   const { tokenLists, pending, setPending } = props
   const { t } = useTranslation()
   const activeWeb3React = useActiveWeb3React()
-  const { storage } = useAppState()
 
   return (
     <section>
@@ -28,7 +26,6 @@ export function TokenLists(props: any) {
                 list={list}
                 pending={pending}
                 setPending={setPending}
-                storage={storage}
                 isNewList={!list.timestamp}
               />
             </ListWrapper>
