@@ -25,25 +25,11 @@ The only password you need is your domain registrar's password, you don't need a
 
 1. Log in to your domain provider (where you have registered domain name)
 2. Open DNS settings of your domain and add a **CNAME** record: `your.domain` with the value `https://cloudflare-ipfs.com/` (see how to do this in your registar: [GoDaddy](https://www.google.com/search?q=how+to+add+cname+in+godaddy), [Namecheap](https://www.google.com/search?q=how+to+add+cname+in+Namecheap), [Cloudflare](https://www.google.com/search?q=how+to+add+cname+in+Cloudflare))
-3. Add a **TXT** record: `_dnslink.your.domain` with the value `dnslink=/ipfs/Qmf1aoTiLijNwKhJ2cet8neLwq9YQmsooUPsepjh6qSTQY`
+3. Add a **TXT** record: `_dnslink.your.domain` with the value `dnslink=/ipfs/QmNfj1K6ZEp85814PQeyibjPYVcB8BJA78UqHvVczoPN7Y`
 
 That's it! Now open your domain and you'll see the installation master!
 
----
-
-### Settings
-
-<img src="./images/settings.png">
-
----
-
-### App
-
-<img src="./images/app.png">
-
----
-
-Once you finish this form the domain will be linked to your MetaMask address (your eth address will be recorded as "admin" of your domain in the "domain registry" smart contract. TODO: добавить линки на этот реестр в разных сетях).
+Once you finish instalation for a current network the domain will be linked to your MetaMask address (your eth address will be recorded as "admin" of your domain in the storage smart contract.
 
 ## Are you (evm) blockhcain developer?
 
