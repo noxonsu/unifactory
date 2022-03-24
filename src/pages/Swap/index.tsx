@@ -244,7 +244,8 @@ export default function Swap() {
     if (output !== input && !!defaultTokens[output]) {
       handleOutputSelect(defaultTokens[output])
     }
-  }, [defaultSwapCurrency, handleInputSelect, handleOutputSelect])
+    // eslint-disable-next-line
+  }, [])
 
   return (
     <>
