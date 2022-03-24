@@ -39,7 +39,7 @@ import Loader from 'components/Loader'
 export default function Swap() {
   const loadedUrlParams = useDefaultsFromURLSearch()
   const { t } = useTranslation()
-  const { totalFee } = useAppState()
+  const { totalFee, defaultSwapCurrency } = useAppState()
   const baseCurrency = useBaseCurrency()
 
   // token warning stuff
@@ -234,6 +234,19 @@ export default function Swap() {
     [onCurrencySelection]
   )
 
+  useEffect(() => {
+    const { input, output } = defaultSwapCurrency
+
+    if (!!defaultTokens[input]) {
+      handleInputSelect(defaultTokens[input])
+    }
+
+    if (output !== input && !!defaultTokens[output]) {
+      handleOutputSelect(defaultTokens[output])
+    }
+    // eslint-disable-next-line
+  }, [])
+
   return (
     <>
       <TokenWarningModal
@@ -272,10 +285,10 @@ export default function Swap() {
               id="swap-currency-input"
             />
             <AutoColumn justify="space-between">
-              <AutoRow justify={isExpertMode ? 'space-between' : 'center'} style={{ padding: '0 1rem' }}>
+              <AutoRow justify={isExpertMode ? 'space-between' : 'center'} style={{ padding: '0 0.8rem' }}>
                 <ArrowWrapper clickable>
                   <ArrowDown
-                    size="19"
+                    size="17"
                     onClick={() => {
                       setApprovalSubmitted(false) // reset 2 step UI for approvals
                       onSwitchTokens()

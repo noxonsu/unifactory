@@ -32,6 +32,7 @@ export type StorageState = {
   readonly socialLinks: string[]
   readonly addressesOfTokenLists: string[]
   readonly disableSourceCopyright: boolean
+  readonly defaultSwapCurrency: { input: string; output: string }
 }
 
 export type ApplicationState = StorageState & {
@@ -68,6 +69,7 @@ const initialState: ApplicationState = {
   totalSwaps: undefined,
   disableSourceCopyright: false,
   pools: [],
+  defaultSwapCurrency: { input: '', output: '' },
   domain: '',
   projectName: '',
   brandColor: '',
@@ -142,8 +144,15 @@ export default createReducer(initialState, (builder) =>
       const appData = action.payload
       if (appData) {
         Object.keys(appData).forEach((key: string) => {
-          // @ts-ignore
-          state[key] = appData[key]
+          if (key === 'defaultSwapCurrency') {
+            const { input, output } = appData[key]
+
+            if (input) state.defaultSwapCurrency.input = input
+            if (output) state.defaultSwapCurrency.output = output
+          } else {
+            // @ts-ignore
+            state[key] = appData[key]
+          }
         })
       }
     })

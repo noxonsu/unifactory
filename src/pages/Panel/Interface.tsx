@@ -14,7 +14,8 @@ import ListFactory from 'components/ListFactory'
 import MenuLinksFactory, { LinkItem } from 'components/MenuLinksFactory'
 import TextBlock from 'components/TextBlock'
 import ColorSelector from 'components/ColorSelector'
-import { PartitionWrapper } from './index'
+import NetworkRelatedSettings from './NetworkRelatedSettings'
+import { PartitionWrapper, OptionWrapper } from './index'
 import { saveProjectOption } from 'utils/storage'
 import { deployStorage } from 'utils/contract'
 import { parseENSAddress } from 'utils/parseENSAddress'
@@ -23,13 +24,6 @@ import { storageMethods } from '../../constants'
 import networks from 'networks.json'
 import ConfirmationModal from './ConfirmationModal'
 import useWordpressInfo from 'hooks/useWordpressInfo'
-
-const OptionWrapper = styled.div<{ margin?: number; flex?: boolean }>`
-  margin: ${({ margin }) => margin || 0.2}rem 0;
-  padding: 0.3rem 0;
-
-  ${({ flex }) => (flex ? 'display: flex; align-items: center; justify-content: space-between' : '')}
-`
 
 const Button = styled(ButtonPrimary)`
   font-size: 0.8em;
@@ -50,7 +44,7 @@ const NumList = styled.ol`
 `
 
 export default function Interface(props: any) {
-  const { domain, pending, setPending, setDomainDataTrigger } = props
+  const { domain, pending, setPending, setDomainDataTrigger, activeNetworks } = props
   const { t } = useTranslation()
   const { library, chainId, account } = useActiveWeb3React()
   const wordpressData = useWordpressInfo()
@@ -75,6 +69,7 @@ export default function Interface(props: any) {
     addressesOfTokenLists: stateAddressesOfTokenLists,
     tokenLists: stateTokenLists,
     disableSourceCopyright: stateDisableSourceCopyright,
+    defaultSwapCurrency,
   } = useAppState()
 
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
@@ -184,6 +179,8 @@ export default function Interface(props: any) {
   const [addressesOfTokenLists, setAddressesOfTokenLists] = useState<string[]>(stateAddressesOfTokenLists)
   const [tokenLists, setTokenLists] = useState<any>(stateTokenLists)
   const [disableSourceCopyright, setDisableSourceCopyright] = useState<boolean>(stateDisableSourceCopyright)
+  const [swapInputCurrency, setSwapInputCurrency] = useState(defaultSwapCurrency.input || '')
+  const [swapOutputCurrency, setSwapOutputCurrency] = useState(defaultSwapCurrency.output || '')
 
   const currentStrSettings = JSON.stringify({
     projectName: stateProjectName,
@@ -194,6 +191,8 @@ export default function Interface(props: any) {
     socialLinks: stateSocialLinks,
     addressesOfTokenLists: stateAddressesOfTokenLists,
     disableSourceCopyright: stateDisableSourceCopyright,
+    swapInputCurrency: defaultSwapCurrency.input,
+    swapOutputCurrency: defaultSwapCurrency.output,
     backgroundColorDark: stateBackgroundColorDark,
     backgroundColorLight: stateBackgroundColorLight,
     textColorDark: stateTextColorDark,
@@ -212,6 +211,8 @@ export default function Interface(props: any) {
       socialLinks,
       addressesOfTokenLists,
       disableSourceCopyright,
+      swapInputCurrency,
+      swapOutputCurrency,
       backgroundColorDark,
       backgroundColorLight,
       textColorDark,
@@ -229,6 +230,8 @@ export default function Interface(props: any) {
     socialLinks,
     addressesOfTokenLists,
     disableSourceCopyright,
+    swapInputCurrency,
+    swapOutputCurrency,
     backgroundColorDark,
     backgroundColorLight,
     textColorDark,
@@ -248,6 +251,10 @@ export default function Interface(props: any) {
         socialLinks,
         addressesOfTokenLists,
         disableSourceCopyright,
+        defaultSwapCurrency: {
+          input: swapInputCurrency,
+          output: swapOutputCurrency,
+        },
         backgroundColorDark,
         backgroundColorLight,
         textColorDark,
@@ -377,6 +384,12 @@ export default function Interface(props: any) {
             isValidItem={(address) => uriToHttp(address).length > 0 || Boolean(parseENSAddress(address))}
           />
         </OptionWrapper>
+
+        <NetworkRelatedSettings
+          activeNetworks={activeNetworks}
+          onInputCurrency={setSwapInputCurrency}
+          onOutputCurrency={setSwapOutputCurrency}
+        />
 
         <OptionWrapper flex>
           {t('Disable source copyright')}

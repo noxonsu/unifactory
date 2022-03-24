@@ -109,7 +109,9 @@ export default function App() {
   const { data: storageData, isLoading: storageLoading } = useStorageInfo()
 
   useEffect(() => {
-    dispatch(retrieveDomainData(domainData ? { ...domainData } : domainData))
+    if (domainData) {
+      dispatch(retrieveDomainData(domainData))
+    }
   }, [domainData, domainLoading, dispatch])
 
   useEffect(() => {
@@ -134,14 +136,17 @@ export default function App() {
     setLoading(domainLoading || storageLoading)
   }, [domainLoading, storageLoading])
 
+  const domain = window.location.hostname || document.location.host
+  const DOMAIN_TITLES: { [domain: string]: string } = {
+    'internethedgefund.com': 'IHF Swap',
+  }
+
   return (
     <Suspense fallback={null}>
       <HelmetProvider>
-        {projectName && (
-          <Helmet>
-            <title>{projectName}</title>
-          </Helmet>
-        )}
+        <Helmet>
+          <title>{!!DOMAIN_TITLES[domain] ? DOMAIN_TITLES[domain] : projectName || document.title}</title>
+        </Helmet>
 
         <Route component={DarkModeQueryParamReader} />
         <Web3ReactManager>
