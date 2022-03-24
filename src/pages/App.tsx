@@ -109,7 +109,9 @@ export default function App() {
   const { data: storageData, isLoading: storageLoading } = useStorageInfo()
 
   useEffect(() => {
-    dispatch(retrieveDomainData(domainData ? { ...domainData } : domainData))
+    if (domainData) {
+      dispatch(retrieveDomainData(domainData))
+    }
   }, [domainData, domainLoading, dispatch])
 
   useEffect(() => {

@@ -39,7 +39,7 @@ import Loader from 'components/Loader'
 export default function Swap() {
   const loadedUrlParams = useDefaultsFromURLSearch()
   const { t } = useTranslation()
-  const { totalFee } = useAppState()
+  const { totalFee, defaultSwapCurrency } = useAppState()
   const baseCurrency = useBaseCurrency()
 
   // token warning stuff
@@ -234,18 +234,17 @@ export default function Swap() {
     [onCurrencySelection]
   )
 
-  // useEffect(() => {
-  //   const defaultInput = '0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735'
-  //   const defaultOutput = '0xF9bA5210F91D0474bd1e1DcDAeC4C58E359AaD85'
+  useEffect(() => {
+    const { input, output } = defaultSwapCurrency
 
-  //   if (!!defaultTokens[defaultInput]) {
-  //     handleInputSelect(defaultTokens[defaultInput])
-  //   }
+    if (!!defaultTokens[input]) {
+      handleInputSelect(defaultTokens[input])
+    }
 
-  //   if (defaultOutput !== defaultInput && !!defaultTokens[defaultOutput]) {
-  //     handleOutputSelect(defaultTokens[defaultOutput])
-  //   }
-  // }, [])
+    if (output !== input && !!defaultTokens[output]) {
+      handleOutputSelect(defaultTokens[output])
+    }
+  }, [defaultSwapCurrency.input, defaultSwapCurrency.output])
 
   return (
     <>

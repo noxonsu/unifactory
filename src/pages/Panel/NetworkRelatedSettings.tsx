@@ -1,57 +1,73 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
+import { useActiveWeb3React } from 'hooks'
+import { useAppState } from 'state/application/hooks'
 import { OptionWrapper } from './index'
 import Accordion from 'components/Accordion'
-
-const NetworkItem = styled.div`
-  border: 1px solid red;
-`
-
-const NetworkName = styled.h4``
+import TextBlock from 'components/TextBlock'
 
 const InputRow = styled.div`
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
 `
 
 const Label = styled.label`
   display: flex;
   flex-direction: column;
+
+  :not(:last-child) {
+    margin-right: 2%;
+  }
 `
 
 const Input = styled.input``
 
 export default function NetworkRelatedSettings(props: any) {
-  const { activeNetworks } = props
+  const { onInputCurrency, onOutputCurrency } = props
+  const { chainId } = useActiveWeb3React()
   const { t } = useTranslation()
+  const { defaultSwapCurrency } = useAppState()
+
+  const [input, setInput] = useState('')
+  const [output, setOutput] = useState('')
+
+  useEffect(() => {
+    if (chainId) {
+      setInput(defaultSwapCurrency.input || '')
+      setOutput(defaultSwapCurrency.output || '')
+    }
+  }, [chainId, defaultSwapCurrency.input, defaultSwapCurrency.output])
 
   return (
     <>
-      {!!activeNetworks.length && (
-        <Accordion title={t('swapFormDefaultCurrency')}>
-          <OptionWrapper>
-            {activeNetworks.map(({ name }: { name: string }, index: number) => {
-              return (
-                <NetworkItem key={index}>
-                  <NetworkName>Network: {name}</NetworkName>
+      <Accordion title={t('swapFormDefaultCurrency')}>
+        <TextBlock warning>{t('itWillNotWorkIfYouPasteWrongAddress')}</TextBlock>
 
-                  <InputRow>
-                    <Label>
-                      {t('inputToken')}:
-                      <Input type="text" placeholder="0xb2s0..." />
-                    </Label>
-                    <Label>
-                      {t('outputToken')}:
-                      <Input type="text" placeholder="0xb2s0..." />
-                    </Label>
-                  </InputRow>
-                </NetworkItem>
-              )
-            })}
-          </OptionWrapper>
-        </Accordion>
-      )}
+        <OptionWrapper>
+          <InputRow>
+            <Label>
+              {t('inputToken')}:
+              <Input
+                type="text"
+                placeholder="0x..."
+                defaultValue={input}
+                onChange={(event) => onInputCurrency(event.target.value)}
+              />
+            </Label>
+            <Label>
+              {t('outputToken')}:
+              <Input
+                type="text"
+                placeholder="0x..."
+                defaultValue={output}
+                onChange={(event) => onOutputCurrency(event.target.value)}
+              />
+            </Label>
+          </InputRow>
+        </OptionWrapper>
+      </Accordion>
     </>
   )
 }

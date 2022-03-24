@@ -20,6 +20,7 @@ type Settings = {
   menuLinks: StorageState['menuLinks']
   socialLinks: StorageState['socialLinks']
   addressesOfTokenLists: StorageState['addressesOfTokenLists']
+  defaultSwapCurrency: StorageState['defaultSwapCurrency']
   disableSourceCopyright: boolean
 }
 
@@ -39,6 +40,7 @@ const defaultSettings = (): Settings => ({
   socialLinks: [],
   addressesOfTokenLists: [],
   disableSourceCopyright: false,
+  defaultSwapCurrency: { input: '', output: '' },
 })
 
 export const parseSettings = (settings: string): Settings => {
@@ -46,6 +48,7 @@ export const parseSettings = (settings: string): Settings => {
 
   try {
     const settingsJSON = JSON.parse(settings)
+
     const {
       domain,
       projectName,
@@ -60,6 +63,7 @@ export const parseSettings = (settings: string): Settings => {
       socialLinks,
       addressesOfTokenLists,
       disableSourceCopyright,
+      defaultSwapCurrency,
     } = settingsJSON
 
     if (domain) appSettings.domain = domain
@@ -77,6 +81,13 @@ export const parseSettings = (settings: string): Settings => {
     if (validArray(menuLinks)) appSettings.menuLinks = menuLinks
     if (validArray(socialLinks)) appSettings.socialLinks = socialLinks
     if (validArray(addressesOfTokenLists)) appSettings.addressesOfTokenLists = addressesOfTokenLists
+
+    if (defaultSwapCurrency) {
+      const { input, output } = defaultSwapCurrency
+
+      if (input) appSettings.defaultSwapCurrency.input = input
+      if (output) appSettings.defaultSwapCurrency.output = output
+    }
   } catch (error) {
     console.group('%c Storage settings', 'color: red')
     console.error(error)

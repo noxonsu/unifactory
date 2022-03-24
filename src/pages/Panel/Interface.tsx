@@ -69,6 +69,7 @@ export default function Interface(props: any) {
     addressesOfTokenLists: stateAddressesOfTokenLists,
     tokenLists: stateTokenLists,
     disableSourceCopyright: stateDisableSourceCopyright,
+    defaultSwapCurrency,
   } = useAppState()
 
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
@@ -178,6 +179,8 @@ export default function Interface(props: any) {
   const [addressesOfTokenLists, setAddressesOfTokenLists] = useState<string[]>(stateAddressesOfTokenLists)
   const [tokenLists, setTokenLists] = useState<any>(stateTokenLists)
   const [disableSourceCopyright, setDisableSourceCopyright] = useState<boolean>(stateDisableSourceCopyright)
+  const [swapInputCurrency, setSwapInputCurrency] = useState(defaultSwapCurrency.input || '')
+  const [swapOutputCurrency, setSwapOutputCurrency] = useState(defaultSwapCurrency.output || '')
 
   const currentStrSettings = JSON.stringify({
     projectName: stateProjectName,
@@ -188,6 +191,8 @@ export default function Interface(props: any) {
     socialLinks: stateSocialLinks,
     addressesOfTokenLists: stateAddressesOfTokenLists,
     disableSourceCopyright: stateDisableSourceCopyright,
+    swapInputCurrency: defaultSwapCurrency.input,
+    swapOutputCurrency: defaultSwapCurrency.output,
     backgroundColorDark: stateBackgroundColorDark,
     backgroundColorLight: stateBackgroundColorLight,
     textColorDark: stateTextColorDark,
@@ -206,6 +211,8 @@ export default function Interface(props: any) {
       socialLinks,
       addressesOfTokenLists,
       disableSourceCopyright,
+      swapInputCurrency,
+      swapOutputCurrency,
       backgroundColorDark,
       backgroundColorLight,
       textColorDark,
@@ -223,6 +230,8 @@ export default function Interface(props: any) {
     socialLinks,
     addressesOfTokenLists,
     disableSourceCopyright,
+    swapInputCurrency,
+    swapOutputCurrency,
     backgroundColorDark,
     backgroundColorLight,
     textColorDark,
@@ -242,6 +251,10 @@ export default function Interface(props: any) {
         socialLinks,
         addressesOfTokenLists,
         disableSourceCopyright,
+        defaultSwapCurrency: {
+          input: swapInputCurrency,
+          output: swapOutputCurrency,
+        },
         backgroundColorDark,
         backgroundColorLight,
         textColorDark,
@@ -372,7 +385,11 @@ export default function Interface(props: any) {
           />
         </OptionWrapper>
 
-        <NetworkRelatedSettings activeNetworks={activeNetworks} />
+        <NetworkRelatedSettings
+          activeNetworks={activeNetworks}
+          onInputCurrency={setSwapInputCurrency}
+          onOutputCurrency={setSwapOutputCurrency}
+        />
 
         <OptionWrapper flex>
           {t('Disable source copyright')}
