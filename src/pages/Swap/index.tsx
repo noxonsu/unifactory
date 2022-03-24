@@ -244,7 +244,7 @@ export default function Swap() {
     if (output !== input && !!defaultTokens[output]) {
       handleOutputSelect(defaultTokens[output])
     }
-  }, [defaultSwapCurrency.input, defaultSwapCurrency.output])
+  }, [defaultSwapCurrency, handleInputSelect, handleOutputSelect])
 
   return (
     <>
