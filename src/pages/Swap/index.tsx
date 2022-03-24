@@ -234,6 +234,19 @@ export default function Swap() {
     [onCurrencySelection]
   )
 
+  // useEffect(() => {
+  //   const defaultInput = '0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735'
+  //   const defaultOutput = '0xF9bA5210F91D0474bd1e1DcDAeC4C58E359AaD85'
+
+  //   if (!!defaultTokens[defaultInput]) {
+  //     handleInputSelect(defaultTokens[defaultInput])
+  //   }
+
+  //   if (defaultOutput !== defaultInput && !!defaultTokens[defaultOutput]) {
+  //     handleOutputSelect(defaultTokens[defaultOutput])
+  //   }
+  // }, [])
+
   return (
     <>
       <TokenWarningModal
@@ -272,10 +285,10 @@ export default function Swap() {
               id="swap-currency-input"
             />
             <AutoColumn justify="space-between">
-              <AutoRow justify={isExpertMode ? 'space-between' : 'center'} style={{ padding: '0 1rem' }}>
+              <AutoRow justify={isExpertMode ? 'space-between' : 'center'} style={{ padding: '0 0.8rem' }}>
                 <ArrowWrapper clickable>
                   <ArrowDown
-                    size="19"
+                    size="17"
                     onClick={() => {
                       setApprovalSubmitted(false) // reset 2 step UI for approvals
                       onSwitchTokens()

@@ -8,7 +8,9 @@ import { Text } from 'rebass'
 import networks from '../../networks.json'
 import Registry from 'contracts/build/Registry.json'
 import { useDispatch, useSelector } from 'react-redux'
+import { SUPPORTED_NETWORKS } from 'connectors'
 import { getContractInstance } from 'utils/contract'
+import useWordpressInfo from 'hooks/useWordpressInfo'
 import { AppState } from 'state'
 import { useTranslation } from 'react-i18next'
 import { useAppState } from 'state/application/hooks'
@@ -30,6 +32,13 @@ export const PartitionWrapper = styled.div<{ highlighted?: boolean }>`
 
   ${({ highlighted, theme }) =>
     highlighted ? `border-radius: .6rem; padding: 0.2rem; border: 1px solid ${theme.bg3};` : ''}
+`
+
+export const OptionWrapper = styled.div<{ margin?: number; flex?: boolean }>`
+  margin: ${({ margin }) => margin || 0.2}rem 0;
+  padding: 0.3rem 0;
+
+  ${({ flex }) => (flex ? 'display: flex; align-items: center; justify-content: space-between' : '')}
 `
 
 const Wrapper = styled.section`
@@ -125,9 +134,22 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
   const [pending, setPending] = useState<boolean>(false)
   const { chainId, account, library } = useActiveWeb3React()
   const { admin, factory, router } = useAppState()
-
+  const wordpressData = useWordpressInfo()
   const [error, setError] = useState<any | false>(false)
   const [domain] = useState(window.location.hostname || document.location.host)
+  const [activeNetworks, setActiveNetworks] = useState<any[]>([])
+
+  useEffect(() => {
+    if (wordpressData) {
+      const networks = Object.values(SUPPORTED_NETWORKS).filter(({ chainId }) =>
+        wordpressData?.wpNetworkIds?.length ? wordpressData.wpNetworkIds.includes(chainId) : true
+      )
+
+      setActiveNetworks(networks)
+    } else {
+      setActiveNetworks(Object.values(SUPPORTED_NETWORKS))
+    }
+  }, [wordpressData])
 
   const appManagement = useSelector<AppState, AppState['application']['appManagement']>(
     (state) => state.application.appManagement
@@ -238,6 +260,7 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
           <Interface
             domain={domain}
             pending={pending}
+            activeNetworks={activeNetworks}
             setPending={setPending}
             setError={setError}
             setDomainDataTrigger={setDomainDataTrigger}

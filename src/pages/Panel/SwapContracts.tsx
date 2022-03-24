@@ -19,6 +19,7 @@ import InputPanel from 'components/InputPanel'
 import AddressInputPanel from 'components/AddressInputPanel'
 import TextBlock from 'components/TextBlock'
 import ConfirmationModal from './ConfirmationModal'
+import { OptionWrapper } from './index'
 import { PartitionWrapper } from './index'
 import { isValidAddress, setFactoryOption, returnTokenInfo, deploySwapContracts } from 'utils/contract'
 import networks from 'networks.json'
@@ -27,11 +28,6 @@ import useWordpressInfo from 'hooks/useWordpressInfo'
 const Title = styled.h3`
   font-weight: 400;
   margin: 0 0 0.5rem;
-`
-
-const OptionWrapper = styled.div<{ margin?: number }>`
-  margin: ${({ margin }) => margin || 0.3}rem 0;
-  padding: 0.3rem 0;
 `
 
 const listStyles = css`
