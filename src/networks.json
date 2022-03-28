@@ -120,6 +120,26 @@
       "symbol": "WFUSE"
     }
   },
+  "1285": {
+    "name": "Moonriver",
+    "rpc": "https://rpc.moonriver.moonbeam.network",
+    "chainId": 1285,
+    "explorer": "https://moonriver.moonscan.io/",
+    "color": "#F2B705",
+    "registry": "0x79D5C019F2515Cbc0596170Da44FCd26412c4f83",
+    "multicall": "0x9664EC984D1c0d44dD22C161da1D06f7f72Ae092",
+    "ENSRegistry": "",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "MOVR",
+      "symbol": "MOVR"
+    },
+    "wrappedToken": {
+      "address": "0x98878B06940aE243284CA214f92Bb71a2b032B8A",
+      "name": "Wrapped MOVR",
+      "symbol": "WMOVR"
+    }
+  },
   "4": {
     "name": "Rinkeby",
     "rpc": "https://rinkeby.infura.io/v3/fc55ddb25b694fef8e2363f6b6c9341f",
