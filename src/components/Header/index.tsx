@@ -8,6 +8,7 @@ import { useActiveWeb3React } from 'hooks'
 import { useAppState } from 'state/application/hooks'
 import Menu from '../Menu'
 import { LightCard } from '../Card'
+// import { CURRENCY } from 'assets/images'
 import Row, { RowFixed } from '../Row'
 import Web3Status from '../Web3Status'
 import networks from 'networks.json'
@@ -49,7 +50,7 @@ const HeaderElement = styled.div`
   gap: 8px;
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
-   flex-direction: row-reverse;
+    flex-direction: row-reverse;
     align-items: center;
   `};
 `
@@ -114,7 +115,7 @@ const AccountElement = styled.div<{ active: boolean }>`
   }
 `
 
-const HideSmall = styled.span`
+const HideSmall = styled.div`
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     display: none;
   `};
@@ -127,6 +128,8 @@ const NetworkCard = styled(LightCard)`
     rgba(0, 0, 0, 0.01) 0px 24px 32px;
   word-break: keep-all;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     margin: 0;
@@ -136,6 +139,11 @@ const NetworkCard = styled(LightCard)`
     text-overflow: ellipsis;
     flex-shrink: 1;
   `};
+
+  img {
+    max-width: 1.2rem;
+    margin-right: 1%;
+  }
 `
 
 const Title = styled.a`
@@ -293,7 +301,13 @@ export default function Header() {
             {/* @ts-ignore */}
             {chainId && networks[chainId]?.name && (
               // @ts-ignore
-              <NetworkCard title={networks[chainId].name}>{networks[chainId].name}</NetworkCard>
+              <NetworkCard title={`${networks[chainId].name} network`}>
+                {/* TOOD: fix element styles to correctly display network image */}
+                {/* @ts-ignore */}
+                {/* {!!CURRENCY[chainId] && <img src={CURRENCY[chainId]} alt="network logo" />} */}
+                {/* @ts-ignore */}
+                {networks[chainId].name}
+              </NetworkCard>
             )}
           </HideSmall>
           <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
