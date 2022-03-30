@@ -139,8 +139,8 @@
     "chainId": 1666600000,
     "explorer": "https://explorer.harmony.one/",
     "color": "#66DEDD",
-    "registry": "",
-    "multicall": "",
+    "registry": "0x04ad4ce6015141f6f582a7451cb7cd6866609298",
+    "multicall": "0x79D5C019F2515Cbc0596170Da44FCd26412c4f83",
     "baseCurrency": {
       "decimals": 18,
       "name": "ONE",
