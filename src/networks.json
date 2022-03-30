@@ -7,7 +7,6 @@
     "color": "#072D4C",
     "registry": "0x9664EC984D1c0d44dD22C161da1D06f7f72Ae092",
     "multicall": "0x79D5C019F2515Cbc0596170Da44FCd26412c4f83",
-    "ENSRegistry": "",
     "baseCurrency": {
       "decimals": 18,
       "name": "CRO",
@@ -27,7 +26,6 @@
     "color": "#CC9B00",
     "registry": "0x39b6A4E28fF734311Da8b800025dEBD573Be3eaB",
     "multicall": "0x41263cBA59EB80dC200F3E2544eda4ed6A90E76C",
-    "ENSRegistry": "",
     "baseCurrency": {
       "decimals": 18,
       "name": "BNB",
@@ -47,7 +45,6 @@
     "color": "#8247E5",
     "registry": "0x8746f10E3142987733D3f05D1FBe72E482F521A7",
     "multicall": "0x11ce4B23bD875D7F5C6a31084f55fDe1e9A87507",
-    "ENSRegistry": "",
     "baseCurrency": {
       "decimals": 18,
       "name": "Matic",
@@ -68,7 +65,6 @@
     "color": "#D64F4A",
     "registry": "0x79D5C019F2515Cbc0596170Da44FCd26412c4f83",
     "multicall": "0x04ad4Ce6015141F6f582A7451Cb7CD6866609298",
-    "ENSRegistry": "",
     "baseCurrency": {
       "decimals": 18,
       "name": "AVAX",
@@ -88,7 +84,6 @@
     "color": "#0C30FF",
     "registry": "0x79D5C019F2515Cbc0596170Da44FCd26412c4f83",
     "multicall": "0x9664EC984D1c0d44dD22C161da1D06f7f72Ae092",
-    "ENSRegistry": "",
     "baseCurrency": {
       "decimals": 18,
       "name": "FTM",
@@ -108,7 +103,6 @@
     "color": "#C6F9AC",
     "registry": "0x04ad4Ce6015141F6f582A7451Cb7CD6866609298",
     "multicall": "0x0755ba6D3e0B799AC7Cd6707AddE7B72208DE08e",
-    "ENSRegistry": "",
     "baseCurrency": {
       "decimals": 18,
       "name": "FUSE",
@@ -128,7 +122,6 @@
     "color": "#F2B705",
     "registry": "0x79D5C019F2515Cbc0596170Da44FCd26412c4f83",
     "multicall": "0x9664EC984D1c0d44dD22C161da1D06f7f72Ae092",
-    "ENSRegistry": "",
     "baseCurrency": {
       "decimals": 18,
       "name": "MOVR",
@@ -138,6 +131,25 @@
       "address": "0x98878B06940aE243284CA214f92Bb71a2b032B8A",
       "name": "Wrapped MOVR",
       "symbol": "WMOVR"
+    }
+  },
+  "1666600000": {
+    "name": "Harmony",
+    "rpc": "https://api.harmony.one",
+    "chainId": 1666600000,
+    "explorer": "https://explorer.harmony.one/",
+    "color": "#66DEDD",
+    "registry": "0x04ad4ce6015141f6f582a7451cb7cd6866609298",
+    "multicall": "0x79D5C019F2515Cbc0596170Da44FCd26412c4f83",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "ONE",
+      "symbol": "ONE"
+    },
+    "wrappedToken": {
+      "address": "0xcF664087a5bB0237a0BAd6742852ec6c8d69A27a",
+      "name": "Wrapped ONE",
+      "symbol": "WONE"
     }
   },
   "4": {

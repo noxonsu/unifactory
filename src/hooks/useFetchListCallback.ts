@@ -13,7 +13,7 @@ import networks from 'networks.json'
 export function useFetchListCallback(): (listUrl: string, sendDispatch?: boolean) => Promise<TokenList> {
   const { chainId, library } = useActiveWeb3React()
   //@ts-ignore
-  const ensContractAddress = networks[chainId]?.ENSRegistry
+  const ensContractAddress = networks[chainId]?.ENSRegistry || ''
   const dispatch = useDispatch<AppDispatch>()
 
   const ensResolver = useCallback(

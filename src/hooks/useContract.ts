@@ -84,7 +84,7 @@ export function useENSRegistrarContract(withSignerIfPossible?: boolean): Contrac
   let address: string | undefined
 
   // @ts-ignore
-  if (chainId) address = networks[chainId]?.ENSRegistry
+  if (chainId) address = networks[chainId]?.ENSRegistry || ''
 
   return useContract(address, ENS_ABI, withSignerIfPossible)
 }
