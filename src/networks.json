@@ -152,6 +152,44 @@
       "symbol": "WONE"
     }
   },
+  "1313161554": {
+    "name": "Aurora",
+    "rpc": "https://mainnet.aurora.dev",
+    "chainId": 1313161554,
+    "explorer": "https://aurorascan.dev/",
+    "color": "#81D957",
+    "registry": "",
+    "multicall": "",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "ETH",
+      "symbol": "ETH"
+    },
+    "wrappedToken": {
+      "address": "0xC9BdeEd33CD01541e1eeD10f90519d2C06Fe3feB",
+      "name": "Wrapped ETH",
+      "symbol": "WETH"
+    }
+  },
+  "1313161555": {
+    "name": "Aurora testnet",
+    "rpc": "https://testnet.aurora.dev/",
+    "chainId": 1313161555,
+    "explorer": "https://aurorascan.dev/",
+    "color": "#81D957",
+    "registry": "0x04ad4Ce6015141F6f582A7451Cb7CD6866609298",
+    "multicall": "0x79D5C019F2515Cbc0596170Da44FCd26412c4f83",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "ETH",
+      "symbol": "ETH"
+    },
+    "wrappedToken": {
+      "address": "0x9D29f395524B3C817ed86e2987A14c1897aFF849",
+      "name": "Wrapped ETH",
+      "symbol": "WETH"
+    }
+  },
   "4": {
     "name": "Rinkeby",
     "rpc": "https://rinkeby.infura.io/v3/fc55ddb25b694fef8e2363f6b6c9341f",
