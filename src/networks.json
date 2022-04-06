@@ -1,7 +1,7 @@
 {
   "25": {
     "name": "Cronos",
-    "rpc": "https://evm-cronos.crypto.org",
+    "rpc": "https://evm.cronos.org",
     "chainId": 25,
     "explorer": "https://cronoscan.com/",
     "color": "#072D4C",
@@ -150,6 +150,25 @@
       "address": "0xcF664087a5bB0237a0BAd6742852ec6c8d69A27a",
       "name": "Wrapped ONE",
       "symbol": "WONE"
+    }
+  },
+  "1313161554": {
+    "name": "Aurora",
+    "rpc": "https://mainnet.aurora.dev",
+    "chainId": 1313161554,
+    "explorer": "https://aurorascan.dev/",
+    "color": "#81D957",
+    "registry": "0x04ad4ce6015141f6f582a7451cb7cd6866609298",
+    "multicall": "0x79d5c019f2515cbc0596170da44fcd26412c4f83",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "ETH",
+      "symbol": "ETH"
+    },
+    "wrappedToken": {
+      "address": "0xC9BdeEd33CD01541e1eeD10f90519d2C06Fe3feB",
+      "name": "Wrapped ETH",
+      "symbol": "WETH"
     }
   },
   "4": {
