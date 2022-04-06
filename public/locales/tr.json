@@ -280,5 +280,6 @@
   "pleaseSelectOneOfTheFollowingNetworks": "Lütfen aşağıdaki ağlardan birini seçin",
   "youAlreadyHaveSwapContractsWarning": "Zaten takas sözleşmeleri dağıttınız. Tekrar yaparsanız eski sözleşme adreslerinin üzerine yazılacaktır. Yeni sözleşmeler likidite ve ücret ayarları olmadan olacak",
   "youAlreadyHaveStorageContractWarning": "Depolama sözleşmesini zaten dağıttınız. Tekrar yaparsanız eski depolama adresinin üzerine yazılacaktır. Arayüz ayarlarını kaybedeceksiniz",
-  "noPointToChangeAdminFeeWithoutFeeRecipient": "Ücret alıcı adresini belirleyene kadar bu komisyonu değiştirmenin bir anlamı yok."
+  "noPointToChangeAdminFeeWithoutFeeRecipient": "Ücret alıcı adresini belirleyene kadar bu komisyonu değiştirmenin bir anlamı yok.",
+  "forSuccessfulExchangeRecommendedToIncreaseSlippageTo": "Başarılı bir değişim için Kayma Toleransının artırılması önerilir."
 }

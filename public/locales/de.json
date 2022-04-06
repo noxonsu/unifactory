@@ -281,5 +281,6 @@
   "pleaseSelectOneOfTheFollowingNetworks": "Bitte wählen Sie eines der folgenden Netzwerke",
   "youAlreadyHaveSwapContractsWarning": "Sie haben bereits Swap-Verträge bereitgestellt. Wenn Sie es erneut tun, werden die alten Vertragsadressen überschrieben. Neue Verträge werden ohne Liquiditäts- und Gebühreneinstellungen sein",
   "youAlreadyHaveStorageContractWarning": "Sie haben den Speichervertrag bereits bereitgestellt. Wenn Sie es erneut tun, wird die alte Speicheradresse überschrieben. Sie verlieren die Schnittstelleneinstellungen",
-  "noPointToChangeAdminFeeWithoutFeeRecipient": "Es hat keinen Sinn, diese Provision zu ändern, bis Sie die Adresse des Gebührenempfängers festgelegt haben"
+  "noPointToChangeAdminFeeWithoutFeeRecipient": "Es hat keinen Sinn, diese Provision zu ändern, bis Sie die Adresse des Gebührenempfängers festgelegt haben",
+  "forSuccessfulExchangeRecommendedToIncreaseSlippageTo": "Für einen erfolgreichen Austausch empfiehlt es sich, die Slippage Tolerance auf zu erhöhen"
 }

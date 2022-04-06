@@ -374,9 +374,7 @@ export default function Swap() {
                   {displaySlippageNotice && recomendedSlippagePercent !== undefined && (
                     <RowBetween align="center">
                       <TYPE.primary2 mb="4px" fontSize={2}>
-                        {t('forSuccessfulExchangeRecommendedToIncreaseSlippageTo')}
-                        {/* For a successful exchange it is recommended to increase Slippage Tolerance to */} ~
-                        {recomendedSlippagePercent}%
+                        {t('forSuccessfulExchangeRecommendedToIncreaseSlippageTo')} ~{recomendedSlippagePercent}%
                       </TYPE.primary2>
                     </RowBetween>
                   )}
