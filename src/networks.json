@@ -1,7 +1,7 @@
 {
   "25": {
     "name": "Cronos",
-    "rpc": "https://evm-cronos.crypto.org",
+    "rpc": "https://evm.cronos.org",
     "chainId": 25,
     "explorer": "https://cronoscan.com/",
     "color": "#072D4C",
