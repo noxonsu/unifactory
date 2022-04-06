@@ -36,6 +36,10 @@ import AppBody from '../AppBody'
 import { ClickableText } from '../Pool/styleds'
 import Loader from 'components/Loader'
 
+const CribaInuToken = '0xF6F2B7850a63bE9f1A15251C4De636fa3BC2aBe3'.toLowerCase()
+const MiniCribaToken = '0x8907E693D36463DdC967632ECb9e2C97620f19a4'.toLowerCase()
+const TOKENS_WITH_SLIPPAGE_ISSUE = [CribaInuToken, MiniCribaToken]
+
 export default function Swap() {
   const loadedUrlParams = useDefaultsFromURLSearch()
   const { t } = useTranslation()
@@ -78,7 +82,7 @@ export default function Swap() {
   const [allowedSlippage] = useUserSlippageTolerance()
 
   // swap state
-  const { independentField, typedValue, recipient } = useSwapState()
+  const { independentField, typedValue, recipient, INPUT, OUTPUT } = useSwapState()
   const { v2Trade, currencyBalances, parsedAmount, currencies, inputError: swapInputError } = useDerivedSwapInfo()
   const {
     wrapType,
@@ -247,6 +251,22 @@ export default function Swap() {
     // eslint-disable-next-line
   }, [])
 
+  const [displaySlippageNotice, setDisplaySlippageNotice] = useState(false)
+
+  useEffect(() => {
+    const match =
+      TOKENS_WITH_SLIPPAGE_ISSUE.includes(INPUT?.currencyId?.toLowerCase() || '') ||
+      TOKENS_WITH_SLIPPAGE_ISSUE.includes(OUTPUT?.currencyId?.toLowerCase() || '')
+
+    setDisplaySlippageNotice(match)
+  }, [INPUT, OUTPUT])
+
+  const [recomendedSlippagePercent, setRecomendedSlippagePercent] = useState<number | undefined>(undefined)
+
+  useEffect(() => {
+    setRecomendedSlippagePercent(15)
+  }, [])
+
   return (
     <>
       <TokenWarningModal
@@ -329,8 +349,8 @@ export default function Swap() {
             ) : null}
 
             {showWrap ? null : (
-              <Card padding={showWrap ? '.25rem 1rem 0 1rem' : '0px'} borderRadius={'20px'}>
-                <AutoColumn gap="sm" style={{ padding: '3px 4px' }}>
+              <Card padding={showWrap ? '0.25rem 1rem 0 1rem' : '0px'} borderRadius={'20px'}>
+                <AutoColumn gap="sm" style={{ padding: '0.3rem 0.05rem 0' }}>
                   {Boolean(trade) && (
                     <RowBetween align="center">
                       <Text fontWeight={500} fontSize={14} color={theme.text2}>
@@ -351,6 +371,13 @@ export default function Swap() {
                       {allowedSlippage / 100}%
                     </ClickableText>
                   </RowBetween>
+                  {displaySlippageNotice && recomendedSlippagePercent !== undefined && (
+                    <RowBetween align="center">
+                      <TYPE.primary2 mb="4px" fontSize={2}>
+                        {t('forSuccessfulExchangeRecommendedToIncreaseSlippageTo')} ~{recomendedSlippagePercent}%
+                      </TYPE.primary2>
+                    </RowBetween>
+                  )}
                 </AutoColumn>
               </Card>
             )}

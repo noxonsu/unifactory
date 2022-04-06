@@ -228,6 +228,8 @@ const StyledExternalLink = styled.a`
   font-weight: 500;
   color: ${({ theme }) => theme.text2};
   transition: 0.2s;
+  word-break: keep-all;
+  white-space: nowrap;
 
   &:not(:last-child) {
     margin-right: 0.14rem;

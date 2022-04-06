@@ -113,6 +113,9 @@ export const TYPE = {
   link(props: TextProps) {
     return <TextWrapper fontWeight={500} color={'primary1'} {...props} />
   },
+  primary2(props: TextProps) {
+    return <TextWrapper fontWeight={500} color={'primary2'} {...props} />
+  },
   black(props: TextProps) {
     return <TextWrapper fontWeight={500} color={'text1'} {...props} />
   },

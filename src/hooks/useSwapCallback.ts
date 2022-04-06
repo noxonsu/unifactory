@@ -145,16 +145,25 @@ export function useSwapCallback(
                   })
                   .catch((callError) => {
                     console.debug('Call threw error', call, callError)
+
                     let errorMessage: string
-                    switch (callError.reason) {
-                      case 'RouterV2: INSUFFICIENT_OUTPUT_AMOUNT':
-                      case 'RouterV2: EXCESSIVE_INPUT_AMOUNT':
-                        errorMessage =
-                          'This transaction will not succeed either due to price movement or fee on transfer. Try increasing your slippage tolerance.'
-                        break
-                      default:
-                        errorMessage = `The transaction cannot succeed due to error: ${callError.reason}. This is probably an issue with one of the tokens you are swapping.`
+                    const feeErrorLogs = /RouterV2: (INSUFFICIENT_OUTPUT_AMOUNT)|(EXCESSIVE_INPUT_AMOUNT)/
+
+                    if (callError.reason?.match(feeErrorLogs) || callError.data?.message?.match(feeErrorLogs)) {
+                      errorMessage =
+                        'This transaction will not succeed either due to price movement or fee on transfer. Try increasing your slippage tolerance.'
+                    } else {
+                      const reason = callError.reason
+                        ? callError.reason
+                        : callError.data?.message
+                        ? callError.data.message
+                        : ''
+
+                      errorMessage = `The transaction cannot succeed due to error${
+                        reason ? ` ${reason}` : ''
+                      }. This is probably an issue with one of the tokens you are swapping.`
                     }
+
                     return { call, error: new Error(errorMessage) }
                   })
               })

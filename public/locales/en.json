@@ -280,5 +280,6 @@
   "pleaseSelectOneOfTheFollowingNetworks": "Please select one of the following networks",
   "youAlreadyHaveSwapContractsWarning": "You have already deployed swap contracts. If you do it again, the old contract addresses will be overwritten. New contracts will be without liquidity and fee settings",
   "youAlreadyHaveStorageContractWarning": "You have already deployed storage contract. If you do it again, the old storage address will be overwritten. You will lose the interface settings",
-  "noPointToChangeAdminFeeWithoutFeeRecipient": "There is no point to change this commission until you set the fee recipient address"
+  "noPointToChangeAdminFeeWithoutFeeRecipient": "There is no point to change this commission until you set the fee recipient address",
+  "forSuccessfulExchangeRecommendedToIncreaseSlippageTo": "For a successful exchange it is recommended to increase Slippage Tolerance to"
 }

@@ -269,5 +269,6 @@
   "pleaseSelectOneOfTheFollowingNetworks": "בחר אחת מהרשתות הבאות",
   "youAlreadyHaveSwapContractsWarning": "כבר פרסתם חוזי החלפה. אם תעשה זאת שוב, כתובות החוזה הישנות יוחלפו. חוזים חדשים יהיו ללא נזילות והגדרות תשלום",
   "youAlreadyHaveStorageContractWarning": "כבר פרסתם חוזה אחסון. אם תעשה זאת שוב, כתובת האחסון הישנה תוחלף. אתה תאבד את הגדרות הממשק",
-  "noPointToChangeAdminFeeWithoutFeeRecipient": "זה לא הגיוני לשנות עמלה זו עד שתגדיר את הכתובת של הנמען של הוועדה"
+  "noPointToChangeAdminFeeWithoutFeeRecipient": "זה לא הגיוני לשנות עמלה זו עד שתגדיר את הכתובת של הנמען של הוועדה",
+  "forSuccessfulExchangeRecommendedToIncreaseSlippageTo": "להחלפה מוצלחת מומלץ להגביר את סובלנות החלקה ל"
 }
