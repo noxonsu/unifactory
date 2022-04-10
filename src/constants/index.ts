@@ -23,6 +23,10 @@ export const factoryMethods = {
   setProtocolFee: 'setProtocolFee',
 }
 
+export const HEX_COLOR_REGEXP = /^#([\dA-F]{3}){1,2}$/i
+export const RGB_COLOR_REGEXP = /^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/
+export const HSL_COLOR_REGEXP = /^hsl\(\s*(\d+)\s*,\s*([\d.]+)%\s*,\s*([\d.]+)%\s*\)$/
+
 export interface WalletInfo {
   connector?: AbstractConnector
   name: string
