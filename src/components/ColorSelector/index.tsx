@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import { HuePicker } from 'react-color'
 import InputPanel from 'components/InputPanel'
+import { isValidColor } from '../../utils/color'
 
 const SelectorWrapper = styled.div`
   padding: 0.3rem 0;
@@ -37,16 +38,15 @@ export default function ColorSelector({
 }: {
   name: string
   defaultColor: string
-  onColor: (v: string) => void
+  onColor: (color: string, valid: boolean) => void
 }) {
   const { t } = useTranslation()
   const [color, setColor] = useState(defaultColor)
   const [customColor, setCustomColor] = useState(false)
 
-  const updateColor = (value: string) => {
-    setColor(value)
-    onColor(value)
-  }
+  useEffect(() => {
+    onColor(color, !color || isValidColor(color))
+  }, [color, onColor])
 
   return (
     <SelectorWrapper>
@@ -59,11 +59,11 @@ export default function ColorSelector({
       </ColorTop>
 
       {customColor ? (
-        <InputPanel label={`(rgb, hsl, hex)`} value={color} onChange={updateColor} />
+        <InputPanel label={`(rgb, hsl, hex)`} value={color} onChange={setColor} />
       ) : (
         <HuePicker
           color={color}
-          onChangeComplete={(color: { hex: string }) => updateColor(color.hex)}
+          onChangeComplete={(color: { hex: string }) => setColor(color.hex)}
           styles={colorPickerStyles}
         />
       )}

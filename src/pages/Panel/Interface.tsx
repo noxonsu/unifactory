@@ -133,18 +133,24 @@ export default function Interface(props: any) {
   const [isValidLogo, setIsValidLogo] = useState(Boolean(validUrl.isUri(stateLogo)))
 
   useEffect(() => {
-    if (logoUrl) {
-      setIsValidLogo(Boolean(validUrl.isUri(logoUrl)))
-    } else {
-      setIsValidLogo(true)
-    }
+    setIsValidLogo(logoUrl ? Boolean(validUrl.isUri(logoUrl)) : true)
   }, [logoUrl])
 
+  // TODO: how to reduce amount of states ?
   const [brandColor, setBrandColor] = useState(stateBrandColor)
+  const [brandColorValid, setBrandColorValid] = useState(false)
+
   const [backgroundColorDark, setBackgroundColorDark] = useState(stateBackgroundColorDark)
+  const [bgColorDarkValid, setBgColorDarkValid] = useState(false)
+
   const [backgroundColorLight, setBackgroundColorLight] = useState(stateBackgroundColorLight)
+  const [bgColorLightValid, setBgColorLightValid] = useState(false)
+
   const [textColorDark, setTextColorDark] = useState(stateTextColorDark)
+  const [textColorDarkValid, setTextColorDarkValid] = useState(false)
+
   const [textColorLight, setTextColorLight] = useState(stateTextColorLight)
+  const [textColorLightValid, setTextColorLightValid] = useState(false)
 
   enum ColorType {
     BRAND,
@@ -172,6 +178,14 @@ export default function Interface(props: any) {
         setTextColorDark(value)
     }
   }
+
+  const [areColorsValid, setAreColorsValid] = useState(false)
+
+  useEffect(() => {
+    setAreColorsValid(
+      brandColorValid && bgColorDarkValid && bgColorLightValid && textColorDarkValid && textColorLightValid
+    )
+  }, [brandColorValid, bgColorDarkValid, bgColorLightValid, textColorDarkValid, textColorLightValid])
 
   const [navigationLinks, setNavigationLinks] = useState<LinkItem[]>(stateNavigationLinks)
   const [menuLinks, setMenuLinks] = useState<LinkItem[]>(stateMenuLinks)
@@ -404,7 +418,10 @@ export default function Interface(props: any) {
           <ColorSelector
             name={t('primaryColor')}
             defaultColor={stateBrandColor}
-            onColor={(color) => updateColor(color, ColorType.BRAND)}
+            onColor={(color, valid) => {
+              setBrandColorValid(valid)
+              updateColor(color, ColorType.BRAND)
+            }}
           />
         </OptionWrapper>
 
@@ -413,12 +430,18 @@ export default function Interface(props: any) {
           <ColorSelector
             name={t('light')}
             defaultColor={backgroundColorLight}
-            onColor={(color) => updateColor(color, ColorType.BACKGROUND_LIGHT)}
+            onColor={(color, valid) => {
+              setBgColorLightValid(valid)
+              updateColor(color, ColorType.BACKGROUND_LIGHT)
+            }}
           />
           <ColorSelector
             name={t('dark')}
             defaultColor={backgroundColorDark}
-            onColor={(color) => updateColor(color, ColorType.BACKGROUND_DARK)}
+            onColor={(color, valid) => {
+              setBgColorDarkValid(valid)
+              updateColor(color, ColorType.BACKGROUND_DARK)
+            }}
           />
         </OptionWrapper>
 
@@ -427,16 +450,22 @@ export default function Interface(props: any) {
           <ColorSelector
             name={t('light')}
             defaultColor={textColorLight}
-            onColor={(color) => updateColor(color, ColorType.TEXT_COLOR_LIGHT)}
+            onColor={(color, valid) => {
+              setTextColorLightValid(valid)
+              updateColor(color, ColorType.TEXT_COLOR_LIGHT)
+            }}
           />
           <ColorSelector
             name={t('dark')}
             defaultColor={textColorDark}
-            onColor={(color) => updateColor(color, ColorType.TEXT_COLOR_DARK)}
+            onColor={(color, valid) => {
+              setTextColorDarkValid(valid)
+              updateColor(color, ColorType.TEXT_COLOR_DARK)
+            }}
           />
         </OptionWrapper>
 
-        <Button onClick={saveSettings} disabled={!settingsChanged || !isValidLogo}>
+        <Button onClick={saveSettings} disabled={!settingsChanged || !isValidLogo || !areColorsValid}>
           {t('saveSettings')}
         </Button>
 
