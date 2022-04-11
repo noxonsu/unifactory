@@ -277,6 +277,7 @@
   "itWillNotWorkIfYouPasteWrongAddress": "Es wird nicht funktionieren, wenn die Adresse falsch ist oder die Tokenliste diese Adresse nicht enthält",
   "inputToken": "Eingabe-Token",
   "outputToken": "Ausgabe-Token",
+  "disableSourceCopyright": "Quellcode-Copyright deaktivieren",
   "youHaveToDeploySwapContractsFirst": "Zuerst müssen Sie die Swap-Verträge bereitstellen",
   "pleaseSelectOneOfTheFollowingNetworks": "Bitte wählen Sie eines der folgenden Netzwerke",
   "youAlreadyHaveSwapContractsWarning": "Sie haben bereits Swap-Verträge bereitgestellt. Wenn Sie es erneut tun, werden die alten Vertragsadressen überschrieben. Neue Verträge werden ohne Liquiditäts- und Gebühreneinstellungen sein",

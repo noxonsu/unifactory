@@ -265,6 +265,7 @@
   "itWillNotWorkIfYouPasteWrongAddress": "地址错误或token列表中不包含该地址将无法使用",
   "inputToken": "输入令牌",
   "outputToken": "输出令牌",
+  "disableSourceCopyright": "禁用源版权",
   "youHaveToDeploySwapContractsFirst": "首先，您必须部署掉期合约",
   "pleaseSelectOneOfTheFollowingNetworks": "请选择下列其中一个网络",
   "youAlreadyHaveSwapContractsWarning": "您已经部署了掉期合约。 如果你再这样做，旧的合同地址将被复盖。 新合约将没有流动性和费用设置",

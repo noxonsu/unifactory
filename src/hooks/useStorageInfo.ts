@@ -6,6 +6,7 @@ import { useAppState } from 'state/application/hooks'
 import { StorageState } from 'state/application/reducer'
 import { returnValidList } from 'utils/getTokenList'
 import { useActiveWeb3React } from 'hooks'
+import { isValidColor } from 'utils/color'
 
 type Settings = {
   domain: string
@@ -16,6 +17,7 @@ type Settings = {
   textColorDark: string
   textColorLight: string
   logo: string
+  background: string
   navigationLinks: StorageState['navigationLinks']
   menuLinks: StorageState['menuLinks']
   socialLinks: StorageState['socialLinks']
@@ -35,6 +37,7 @@ const defaultSettings = (): Settings => ({
   textColorDark: '',
   textColorLight: '',
   logo: '',
+  background: '',
   navigationLinks: [],
   menuLinks: [],
   socialLinks: [],
@@ -58,6 +61,7 @@ export const parseSettings = (settings: string): Settings => {
       textColorDark,
       textColorLight,
       logoUrl,
+      backgroundUrl,
       navigationLinks,
       menuLinks,
       socialLinks,
@@ -68,12 +72,14 @@ export const parseSettings = (settings: string): Settings => {
 
     if (domain) appSettings.domain = domain
     if (projectName) appSettings.projectName = projectName
-    if (brandColor) appSettings.brandColor = brandColor
-    if (backgroundColorDark) appSettings.backgroundColorDark = backgroundColorDark
-    if (backgroundColorLight) appSettings.backgroundColorLight = backgroundColorLight
-    if (textColorDark) appSettings.textColorDark = textColorDark
-    if (textColorLight) appSettings.textColorLight = textColorLight
 
+    if (isValidColor(brandColor)) appSettings.brandColor = brandColor
+    if (isValidColor(backgroundColorDark)) appSettings.backgroundColorDark = backgroundColorDark
+    if (isValidColor(backgroundColorLight)) appSettings.backgroundColorLight = backgroundColorLight
+    if (isValidColor(textColorDark)) appSettings.textColorDark = textColorDark
+    if (isValidColor(textColorLight)) appSettings.textColorLight = textColorLight
+
+    if (backgroundUrl) appSettings.background = backgroundUrl
     if (logoUrl) appSettings.logo = logoUrl
     if (Boolean(disableSourceCopyright)) appSettings.disableSourceCopyright = disableSourceCopyright
 

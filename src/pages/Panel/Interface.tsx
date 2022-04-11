@@ -58,6 +58,7 @@ export default function Interface(props: any) {
     storage: stateStorage,
     projectName: stateProjectName,
     logo: stateLogo,
+    background: stateBackground,
     brandColor: stateBrandColor,
     backgroundColorDark: stateBackgroundColorDark,
     backgroundColorLight: stateBackgroundColorLight,
@@ -133,18 +134,30 @@ export default function Interface(props: any) {
   const [isValidLogo, setIsValidLogo] = useState(Boolean(validUrl.isUri(stateLogo)))
 
   useEffect(() => {
-    if (logoUrl) {
-      setIsValidLogo(Boolean(validUrl.isUri(logoUrl)))
-    } else {
-      setIsValidLogo(true)
-    }
+    setIsValidLogo(logoUrl ? Boolean(validUrl.isUri(logoUrl)) : true)
   }, [logoUrl])
 
+  const [
+    backgroundUrl,
+    // setBackgroundUrl
+  ] = useState(stateBackground)
+  // const [isValidBackground, setIsValidBackground] = useState(Boolean(validUrl.isUri(backgroundUrl)))
+
+  // TODO: how to reduce amount of states ?
   const [brandColor, setBrandColor] = useState(stateBrandColor)
+  const [brandColorValid, setBrandColorValid] = useState(false)
+
   const [backgroundColorDark, setBackgroundColorDark] = useState(stateBackgroundColorDark)
+  const [bgColorDarkValid, setBgColorDarkValid] = useState(false)
+
   const [backgroundColorLight, setBackgroundColorLight] = useState(stateBackgroundColorLight)
+  const [bgColorLightValid, setBgColorLightValid] = useState(false)
+
   const [textColorDark, setTextColorDark] = useState(stateTextColorDark)
+  const [textColorDarkValid, setTextColorDarkValid] = useState(false)
+
   const [textColorLight, setTextColorLight] = useState(stateTextColorLight)
+  const [textColorLightValid, setTextColorLightValid] = useState(false)
 
   enum ColorType {
     BRAND,
@@ -173,6 +186,14 @@ export default function Interface(props: any) {
     }
   }
 
+  const [areColorsValid, setAreColorsValid] = useState(false)
+
+  useEffect(() => {
+    setAreColorsValid(
+      brandColorValid && bgColorDarkValid && bgColorLightValid && textColorDarkValid && textColorLightValid
+    )
+  }, [brandColorValid, bgColorDarkValid, bgColorLightValid, textColorDarkValid, textColorLightValid])
+
   const [navigationLinks, setNavigationLinks] = useState<LinkItem[]>(stateNavigationLinks)
   const [menuLinks, setMenuLinks] = useState<LinkItem[]>(stateMenuLinks)
   const [socialLinks, setSocialLinks] = useState<string[]>(stateSocialLinks)
@@ -185,6 +206,7 @@ export default function Interface(props: any) {
   const currentStrSettings = JSON.stringify({
     projectName: stateProjectName,
     logoUrl: stateLogo,
+    backgroundUrl: stateBackground,
     brandColor: stateBrandColor,
     navigationLinks: stateNavigationLinks,
     menuLinks: stateMenuLinks,
@@ -205,6 +227,7 @@ export default function Interface(props: any) {
     const newStrSettings = JSON.stringify({
       projectName,
       logoUrl,
+      backgroundUrl,
       brandColor,
       navigationLinks,
       menuLinks,
@@ -224,6 +247,7 @@ export default function Interface(props: any) {
     currentStrSettings,
     projectName,
     logoUrl,
+    backgroundUrl,
     brandColor,
     navigationLinks,
     menuLinks,
@@ -245,6 +269,7 @@ export default function Interface(props: any) {
       const storageSettings = JSON.stringify({
         projectName,
         logoUrl,
+        backgroundUrl,
         brandColor,
         navigationLinks,
         menuLinks,
@@ -346,6 +371,9 @@ export default function Interface(props: any) {
             error={Boolean(logoUrl) && !isValidLogo}
           />
         </OptionWrapper>
+        {/* <OptionWrapper flex>
+          <InputPanel label={`${t('backgroundUrl')}`} value={backgroundUrl} onChange={setBackgroundUrl} />
+        </OptionWrapper> */}
 
         <OptionWrapper>
           <MenuLinksFactory
@@ -392,8 +420,7 @@ export default function Interface(props: any) {
         />
 
         <OptionWrapper flex>
-          {t('Disable source copyright')}
-
+          {t('disableSourceCopyright')}
           <Toggle
             isActive={disableSourceCopyright}
             toggle={() => setDisableSourceCopyright((prevState) => !prevState)}
@@ -404,7 +431,10 @@ export default function Interface(props: any) {
           <ColorSelector
             name={t('primaryColor')}
             defaultColor={stateBrandColor}
-            onColor={(color) => updateColor(color, ColorType.BRAND)}
+            onColor={(color, valid) => {
+              setBrandColorValid(valid)
+              updateColor(color, ColorType.BRAND)
+            }}
           />
         </OptionWrapper>
 
@@ -413,12 +443,18 @@ export default function Interface(props: any) {
           <ColorSelector
             name={t('light')}
             defaultColor={backgroundColorLight}
-            onColor={(color) => updateColor(color, ColorType.BACKGROUND_LIGHT)}
+            onColor={(color, valid) => {
+              setBgColorLightValid(valid)
+              updateColor(color, ColorType.BACKGROUND_LIGHT)
+            }}
           />
           <ColorSelector
             name={t('dark')}
             defaultColor={backgroundColorDark}
-            onColor={(color) => updateColor(color, ColorType.BACKGROUND_DARK)}
+            onColor={(color, valid) => {
+              setBgColorDarkValid(valid)
+              updateColor(color, ColorType.BACKGROUND_DARK)
+            }}
           />
         </OptionWrapper>
 
@@ -427,16 +463,22 @@ export default function Interface(props: any) {
           <ColorSelector
             name={t('light')}
             defaultColor={textColorLight}
-            onColor={(color) => updateColor(color, ColorType.TEXT_COLOR_LIGHT)}
+            onColor={(color, valid) => {
+              setTextColorLightValid(valid)
+              updateColor(color, ColorType.TEXT_COLOR_LIGHT)
+            }}
           />
           <ColorSelector
             name={t('dark')}
             defaultColor={textColorDark}
-            onColor={(color) => updateColor(color, ColorType.TEXT_COLOR_DARK)}
+            onColor={(color, valid) => {
+              setTextColorDarkValid(valid)
+              updateColor(color, ColorType.TEXT_COLOR_DARK)
+            }}
           />
         </OptionWrapper>
 
-        <Button onClick={saveSettings} disabled={!settingsChanged || !isValidLogo}>
+        <Button onClick={saveSettings} disabled={!settingsChanged || !isValidLogo || !areColorsValid}>
           {t('saveSettings')}
         </Button>
 

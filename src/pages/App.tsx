@@ -46,13 +46,20 @@ const LoaderWrapper = styled.div`
   background-color: ${({ theme }) => theme.bg1};
 `
 
-const AppWrapper = styled.div`
+const AppWrapper = styled.div<{ background?: string }>`
   min-height: 100vh;
   display: flex;
   flex-flow: column;
   align-items: center;
   justify-content: space-between;
   overflow-x: hidden;
+  ${({ background }) =>
+    background
+      ? `
+      background-size: cover;
+      background-image: url(${background});
+    `
+      : ''}
 `
 
 const HeaderWrapper = styled.div`
@@ -118,7 +125,7 @@ export default function App() {
     dispatch(updateAppData(storageData ? { ...storageData } : storageData))
   }, [storageData, storageLoading, dispatch])
 
-  const { admin, factory, router, projectName } = useAppState()
+  const { admin, factory, router, projectName, background } = useAppState()
 
   const [appIsReady, setAppIsReady] = useState(false)
 
@@ -163,7 +170,7 @@ export default function App() {
                   <Panel setDomainDataTrigger={setDomainDataTrigger} />
                 </BodyWrapper>
               ) : (
-                <AppWrapper>
+                <AppWrapper background={background}>
                   {/* addition tag for the flex layout */}
                   <div>
                     <HeaderWrapper>

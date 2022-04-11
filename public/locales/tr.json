@@ -276,6 +276,7 @@
   "itWillNotWorkIfYouPasteWrongAddress": "Adres yanlışsa veya belirteç listesi bu adresi içermiyorsa çalışmaz.",
   "inputToken": "Giriş belirteci",
   "outputToken": "Çıkış jetonu",
+  "disableSourceCopyright": "Kaynak telif hakkını devre dışı bırak",
   "youHaveToDeploySwapContractsFirst": "İlk önce takas sözleşmelerini dağıtmanız gerekir",
   "pleaseSelectOneOfTheFollowingNetworks": "Lütfen aşağıdaki ağlardan birini seçin",
   "youAlreadyHaveSwapContractsWarning": "Zaten takas sözleşmeleri dağıttınız. Tekrar yaparsanız eski sözleşme adreslerinin üzerine yazılacaktır. Yeni sözleşmeler likidite ve ücret ayarları olmadan olacak",

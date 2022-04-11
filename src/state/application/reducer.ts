@@ -26,6 +26,7 @@ export type StorageState = {
   readonly textColorDark: string
   readonly textColorLight: string
   readonly logo: string
+  readonly background: string
   readonly tokenLists: TokenList[]
   readonly navigationLinks: { name: string; source: string }[]
   readonly menuLinks: { name: string; source: string }[]
@@ -78,6 +79,7 @@ const initialState: ApplicationState = {
   textColorDark: '',
   textColorLight: '',
   logo: '',
+  background: '',
   tokenLists: [],
   navigationLinks: [],
   menuLinks: [],
