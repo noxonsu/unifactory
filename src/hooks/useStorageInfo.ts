@@ -6,7 +6,7 @@ import { useAppState } from 'state/application/hooks'
 import { StorageState } from 'state/application/reducer'
 import { returnValidList } from 'utils/getTokenList'
 import { useActiveWeb3React } from 'hooks'
-import { HEX_COLOR_REGEXP, RGB_COLOR_REGEXP, HSL_COLOR_REGEXP } from '../constants'
+import { isValidColor } from 'utils/color'
 
 type Settings = {
   domain: string
@@ -26,9 +26,6 @@ type Settings = {
 }
 
 const validArray = (arr: any[]) => Array.isArray(arr) && !!arr.length
-
-const validColor = (color: string) =>
-  Boolean(color.match(HEX_COLOR_REGEXP) || color.match(RGB_COLOR_REGEXP) || color.match(HSL_COLOR_REGEXP))
 
 const defaultSettings = (): Settings => ({
   domain: '',
@@ -73,11 +70,11 @@ export const parseSettings = (settings: string): Settings => {
     if (domain) appSettings.domain = domain
     if (projectName) appSettings.projectName = projectName
 
-    if (validColor(brandColor)) appSettings.brandColor = brandColor
-    if (validColor(backgroundColorDark)) appSettings.backgroundColorDark = backgroundColorDark
-    if (validColor(backgroundColorLight)) appSettings.backgroundColorLight = backgroundColorLight
-    if (validColor(textColorDark)) appSettings.textColorDark = textColorDark
-    if (validColor(textColorLight)) appSettings.textColorLight = textColorLight
+    if (isValidColor(brandColor)) appSettings.brandColor = brandColor
+    if (isValidColor(backgroundColorDark)) appSettings.backgroundColorDark = backgroundColorDark
+    if (isValidColor(backgroundColorLight)) appSettings.backgroundColorLight = backgroundColorLight
+    if (isValidColor(textColorDark)) appSettings.textColorDark = textColorDark
+    if (isValidColor(textColorLight)) appSettings.textColorLight = textColorLight
 
     if (logoUrl) appSettings.logo = logoUrl
     if (Boolean(disableSourceCopyright)) appSettings.disableSourceCopyright = disableSourceCopyright
