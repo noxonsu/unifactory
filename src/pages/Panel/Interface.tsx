@@ -58,6 +58,7 @@ export default function Interface(props: any) {
     storage: stateStorage,
     projectName: stateProjectName,
     logo: stateLogo,
+    background: stateBackground,
     brandColor: stateBrandColor,
     backgroundColorDark: stateBackgroundColorDark,
     backgroundColorLight: stateBackgroundColorLight,
@@ -136,6 +137,12 @@ export default function Interface(props: any) {
     setIsValidLogo(logoUrl ? Boolean(validUrl.isUri(logoUrl)) : true)
   }, [logoUrl])
 
+  const [
+    backgroundUrl,
+    // setBackgroundUrl
+  ] = useState(stateBackground)
+  // const [isValidBackground, setIsValidBackground] = useState(Boolean(validUrl.isUri(backgroundUrl)))
+
   // TODO: how to reduce amount of states ?
   const [brandColor, setBrandColor] = useState(stateBrandColor)
   const [brandColorValid, setBrandColorValid] = useState(false)
@@ -199,6 +206,7 @@ export default function Interface(props: any) {
   const currentStrSettings = JSON.stringify({
     projectName: stateProjectName,
     logoUrl: stateLogo,
+    backgroundUrl: stateBackground,
     brandColor: stateBrandColor,
     navigationLinks: stateNavigationLinks,
     menuLinks: stateMenuLinks,
@@ -219,6 +227,7 @@ export default function Interface(props: any) {
     const newStrSettings = JSON.stringify({
       projectName,
       logoUrl,
+      backgroundUrl,
       brandColor,
       navigationLinks,
       menuLinks,
@@ -238,6 +247,7 @@ export default function Interface(props: any) {
     currentStrSettings,
     projectName,
     logoUrl,
+    backgroundUrl,
     brandColor,
     navigationLinks,
     menuLinks,
@@ -259,6 +269,7 @@ export default function Interface(props: any) {
       const storageSettings = JSON.stringify({
         projectName,
         logoUrl,
+        backgroundUrl,
         brandColor,
         navigationLinks,
         menuLinks,
@@ -360,6 +371,9 @@ export default function Interface(props: any) {
             error={Boolean(logoUrl) && !isValidLogo}
           />
         </OptionWrapper>
+        {/* <OptionWrapper flex>
+          <InputPanel label={`${t('backgroundUrl')}`} value={backgroundUrl} onChange={setBackgroundUrl} />
+        </OptionWrapper> */}
 
         <OptionWrapper>
           <MenuLinksFactory
@@ -406,8 +420,7 @@ export default function Interface(props: any) {
         />
 
         <OptionWrapper flex>
-          {t('Disable source copyright')}
-
+          {t('disableSourceCopyright')}
           <Toggle
             isActive={disableSourceCopyright}
             toggle={() => setDisableSourceCopyright((prevState) => !prevState)}

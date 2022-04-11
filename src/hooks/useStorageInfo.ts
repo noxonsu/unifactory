@@ -17,6 +17,7 @@ type Settings = {
   textColorDark: string
   textColorLight: string
   logo: string
+  background: string
   navigationLinks: StorageState['navigationLinks']
   menuLinks: StorageState['menuLinks']
   socialLinks: StorageState['socialLinks']
@@ -36,6 +37,7 @@ const defaultSettings = (): Settings => ({
   textColorDark: '',
   textColorLight: '',
   logo: '',
+  background: '',
   navigationLinks: [],
   menuLinks: [],
   socialLinks: [],
@@ -59,6 +61,7 @@ export const parseSettings = (settings: string): Settings => {
       textColorDark,
       textColorLight,
       logoUrl,
+      backgroundUrl,
       navigationLinks,
       menuLinks,
       socialLinks,
@@ -76,6 +79,7 @@ export const parseSettings = (settings: string): Settings => {
     if (isValidColor(textColorDark)) appSettings.textColorDark = textColorDark
     if (isValidColor(textColorLight)) appSettings.textColorLight = textColorLight
 
+    if (backgroundUrl) appSettings.background = backgroundUrl
     if (logoUrl) appSettings.logo = logoUrl
     if (Boolean(disableSourceCopyright)) appSettings.disableSourceCopyright = disableSourceCopyright
 

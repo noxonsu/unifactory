@@ -276,6 +276,7 @@
   "itWillNotWorkIfYouPasteWrongAddress": "It will not work if the address is wrong or the token list does not contain this address",
   "inputToken": "Input token",
   "outputToken": "Output token",
+  "disableSourceCopyright": "Disable source copyright",
   "youHaveToDeploySwapContractsFirst": "First you have to deploy the swap contracts",
   "pleaseSelectOneOfTheFollowingNetworks": "Please select one of the following networks",
   "youAlreadyHaveSwapContractsWarning": "You have already deployed swap contracts. If you do it again, the old contract addresses will be overwritten. New contracts will be without liquidity and fee settings",
