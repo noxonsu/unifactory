@@ -137,11 +137,12 @@ export default function Interface(props: any) {
     setIsValidLogo(logoUrl ? Boolean(validUrl.isUri(logoUrl)) : true)
   }, [logoUrl])
 
-  const [
-    backgroundUrl,
-    // setBackgroundUrl
-  ] = useState(stateBackground)
-  // const [isValidBackground, setIsValidBackground] = useState(Boolean(validUrl.isUri(backgroundUrl)))
+  const [backgroundUrl, setBackgroundUrl] = useState(stateBackground)
+  const [isValidBackground, setIsValidBackground] = useState(Boolean(validUrl.isUri(backgroundUrl)))
+
+  useEffect(() => {
+    setIsValidBackground(backgroundUrl ? Boolean(validUrl.isUri(backgroundUrl)) : true)
+  }, [backgroundUrl])
 
   // TODO: how to reduce amount of states ?
   const [brandColor, setBrandColor] = useState(stateBrandColor)
@@ -262,6 +263,12 @@ export default function Interface(props: any) {
     textColorLight,
   ])
 
+  const [cannotSaveSettings, setCannotSaveSettings] = useState(true)
+
+  useEffect(() => {
+    setCannotSaveSettings(!settingsChanged || !isValidLogo || !isValidBackground || !areColorsValid)
+  }, [settingsChanged, isValidLogo, isValidBackground, areColorsValid])
+
   const saveSettings = async () => {
     setPending(true)
 
@@ -364,16 +371,16 @@ export default function Interface(props: any) {
         </OptionWrapper>
 
         <OptionWrapper>
+          <InputPanel label={`${t('logoUrl')}`} value={logoUrl} onChange={setLogoUrl} error={!isValidLogo} />
+        </OptionWrapper>
+        <OptionWrapper flex>
           <InputPanel
-            label={`${t('logoUrl')}`}
-            value={logoUrl}
-            onChange={setLogoUrl}
-            error={Boolean(logoUrl) && !isValidLogo}
+            label={`${t('backgroundUrl')}`}
+            value={backgroundUrl}
+            onChange={setBackgroundUrl}
+            error={!isValidBackground}
           />
         </OptionWrapper>
-        {/* <OptionWrapper flex>
-          <InputPanel label={`${t('backgroundUrl')}`} value={backgroundUrl} onChange={setBackgroundUrl} />
-        </OptionWrapper> */}
 
         <OptionWrapper>
           <MenuLinksFactory
@@ -478,7 +485,7 @@ export default function Interface(props: any) {
           />
         </OptionWrapper>
 
-        <Button onClick={saveSettings} disabled={!settingsChanged || !isValidLogo || !areColorsValid}>
+        <Button onClick={saveSettings} disabled={cannotSaveSettings}>
           {t('saveSettings')}
         </Button>
 
