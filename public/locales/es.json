@@ -266,6 +266,7 @@
   "inputToken": "Input token",
   "outputToken": "Output token",
   "disableSourceCopyright": "Desactivar los derechos de autor de la fuente",
+  "backgroundUrl": "URL de fondo",
   "youHaveToDeploySwapContractsFirst": "Primero tienes que implementar los contratos de intercambio",
   "pleaseSelectOneOfTheFollowingNetworks": "Seleccione una de las siguientes redes",
   "youAlreadyHaveSwapContractsWarning": "Ya ha implementado contratos de intercambio. Si lo hace de nuevo, las direcciones de contrato antiguas se sobrescribirán. Los nuevos contratos no tendrán liquidez ni ajustes de comisiones",

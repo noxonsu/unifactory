@@ -278,6 +278,7 @@
   "inputToken": "Eingabe-Token",
   "outputToken": "Ausgabe-Token",
   "disableSourceCopyright": "Quellcode-Copyright deaktivieren",
+  "backgroundUrl": "Hintergrund-URL",
   "youHaveToDeploySwapContractsFirst": "Zuerst müssen Sie die Swap-Verträge bereitstellen",
   "pleaseSelectOneOfTheFollowingNetworks": "Bitte wählen Sie eines der folgenden Netzwerke",
   "youAlreadyHaveSwapContractsWarning": "Sie haben bereits Swap-Verträge bereitgestellt. Wenn Sie es erneut tun, werden die alten Vertragsadressen überschrieben. Neue Verträge werden ohne Liquiditäts- und Gebühreneinstellungen sein",

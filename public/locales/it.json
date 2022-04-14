@@ -277,6 +277,7 @@
   "inputToken": "Token di ingresso",
   "outputToken": "Gettone di uscita",
   "disableSourceCopyright": "Disabilita copyright sorgente",
+  "backgroundUrl": "URL di sfondo",
   "youHaveToDeploySwapContractsFirst": "Per prima cosa devi distribuire i contratti di swap",
   "pleaseSelectOneOfTheFollowingNetworks": "Selezionare una delle seguenti reti",
   "youAlreadyHaveSwapContractsWarning": "Hai già distribuito contratti di swap. Se lo fai di nuovo, i vecchi indirizzi del contratto verranno sovrascritti. I nuovi contratti saranno senza impostazioni di liquidità e commissioni",

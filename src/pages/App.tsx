@@ -57,6 +57,7 @@ const AppWrapper = styled.div<{ background?: string }>`
     background
       ? `
       background-size: cover;
+      background-position:center;
       background-image: url(${background});
     `
       : ''}
