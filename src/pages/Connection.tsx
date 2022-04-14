@@ -139,12 +139,14 @@ export default function Connection({ domainData, isAvailableNetwork, setDomainDa
                       : t('pleaseSelectTheFollowingNetwork')}
                     :
                   </SubTitle>
-                  {wordpressData.wpNetworkIds.map((id) => (
-                    <NetworkRow key={id}>
-                      {/* @ts-ignore */}
-                      {networks[id]?.name} (id: {networks[id]?.chainId})
-                    </NetworkRow>
-                  ))}
+                  {wordpressData.wpNetworkIds.map((id) =>
+                    !!id ? (
+                      <NetworkRow key={id}>
+                        {/* @ts-ignore */}
+                        {networks[id]?.name} (ID: {networks[id]?.chainId})
+                      </NetworkRow>
+                    ) : null
+                  )}
                 </div>
               </>
             ) : (

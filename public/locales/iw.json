@@ -266,6 +266,7 @@
   "inputToken": "אסימון קלט",
   "outputToken": "אסימון פלט",
   "disableSourceCopyright": "השבת זכויות יוצרים של מקור",
+  "backgroundUrl": "כתובת אתר רקע",
   "youHaveToDeploySwapContractsFirst": "ראשית אתה צריך לפרוס את חוזי ההחלפה",
   "pleaseSelectOneOfTheFollowingNetworks": "בחר אחת מהרשתות הבאות",
   "youAlreadyHaveSwapContractsWarning": "כבר פרסתם חוזי החלפה. אם תעשה זאת שוב, כתובות החוזה הישנות יוחלפו. חוזים חדשים יהיו ללא נזילות והגדרות תשלום",

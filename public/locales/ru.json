@@ -264,6 +264,7 @@
   "inputToken": "Входной токен",
   "outputToken": "Выходной токен",
   "disableSourceCopyright": "Отключить авторское право источника",
+  "backgroundUrl": "URL фонового изображения",
   "youHaveToDeploySwapContractsFirst": "Сначала вы должны развернуть контракты для обмена",
   "pleaseSelectOneOfTheFollowingNetworks": "Пожалуйста, выберите одну из следующих сетей",
   "youAlreadyHaveSwapContractsWarning": "Вы уже развернули контракты для обмена. Если вы сделаете это снова, старые адреса контрактов будут перезаписаны. Новые контракты будут без ликвидности и установленной комиссии",
