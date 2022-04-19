@@ -1,19 +1,40 @@
 import { Contract } from '@ethersproject/contracts'
 import { useWrappedToken } from 'hooks/useToken'
 import { useMemo } from 'react'
-import ENS_PUBLIC_RESOLVER_ABI from 'constants/abis/ens-public-resolver.json'
-import FACTORY from 'contracts/build/Factory.json'
+import Web3 from 'web3'
 import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
+import ENS_PUBLIC_RESOLVER_ABI from 'constants/abis/ens-public-resolver.json'
+import { ERC20_BYTES32_ABI } from 'constants/abis/erc20'
+import FACTORY from 'contracts/build/Factory.json'
 import STORAGE from 'contracts/build/Storage.json'
 import REGISTRY from 'contracts/build/Registry.json'
 import ENS_ABI from 'constants/abis/ens-registrar.json'
-import { ERC20_BYTES32_ABI } from 'constants/abis/erc20'
 import ERC20_ABI from 'constants/abis/erc20.json'
 import WETH_ABI from 'constants/abis/weth.json'
 import MULTICALL_ABI from 'constants/abis/multicallAbi.json'
+import { STORAGE_NETWORK_ID } from '../constants'
 import { getContract } from 'utils'
 import { useActiveWeb3React } from './index'
 import networks from 'networks.json'
+
+export function useStorageContractV2(address: string) {
+  return useMemo(() => {
+    if (!address) return null
+
+    try {
+      // @ts-ignore
+      const { storage, rpc } = networks[STORAGE_NETWORK_ID]
+
+      const web3 = new Web3(rpc)
+      // @ts-ignore
+      return new web3.eth.Contract(STORAGE.abi, storage)
+    } catch (error) {
+      console.error('Failed to get Storage contract', error)
+    }
+
+    return null
+  }, [address])
+}
 
 export function useRegistryContract(address: string | undefined): Contract | null {
   const { library } = useActiveWeb3React()

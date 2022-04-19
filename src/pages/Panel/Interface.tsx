@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import validUrl from 'valid-url'
 import styled from 'styled-components'
@@ -8,22 +8,16 @@ import { useAddPopup, useAppState } from 'state/application/hooks'
 import { ButtonPrimary } from 'components/Button'
 import { TokenLists } from './TokenLists'
 import InputPanel from 'components/InputPanel'
-import Accordion from 'components/Accordion'
 import Toggle from 'components/Toggle'
 import ListFactory from 'components/ListFactory'
 import MenuLinksFactory, { LinkItem } from 'components/MenuLinksFactory'
-import TextBlock from 'components/TextBlock'
 import ColorSelector from 'components/ColorSelector'
 import NetworkRelatedSettings from './NetworkRelatedSettings'
-import { PartitionWrapper, OptionWrapper } from './index'
+import { OptionWrapper } from './index'
 import { saveProjectOption } from 'utils/storage'
-import { deployStorage } from 'utils/contract'
 import { parseENSAddress } from 'utils/parseENSAddress'
 import uriToHttp from 'utils/uriToHttp'
 import { storageMethods } from '../../constants'
-import networks from 'networks.json'
-import ConfirmationModal from './ConfirmationModal'
-import useWordpressInfo from 'hooks/useWordpressInfo'
 
 const Button = styled(ButtonPrimary)`
   font-size: 0.8em;
@@ -35,27 +29,16 @@ const Title = styled.h3`
   margin: 1.4rem 0 0.6rem;
 `
 
-const NumList = styled.ol`
-  padding: 0 0 0 1rem;
-
-  li:not(:last-child) {
-    margin-bottom: 0.4rem;
-  }
-`
-
 export default function Interface(props: any) {
-  const { domain, pending, setPending, setDomainDataTrigger, activeNetworks } = props
+  const { pending, setPending, activeNetworks } = props
   const { t } = useTranslation()
-  const { library, chainId, account } = useActiveWeb3React()
-  const wordpressData = useWordpressInfo()
+  const { library, chainId } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
   const addPopup = useAddPopup()
 
   const {
-    admin: stateAdmin,
     factory: stateFactory,
     router: stateRouter,
-    storage: stateStorage,
     projectName: stateProjectName,
     logo: stateLogo,
     background: stateBackground,
@@ -72,62 +55,6 @@ export default function Interface(props: any) {
     disableSourceCopyright: stateDisableSourceCopyright,
     defaultSwapCurrency,
   } = useAppState()
-
-  const [showConfirm, setShowConfirm] = useState<boolean>(false)
-  const [txHash, setTxHash] = useState<string>('')
-  const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false)
-  const [canDeployStorage, setCanDeployStorage] = useState(false)
-
-  useEffect(() => {
-    const lowerAccount = account?.toLowerCase()
-    const adminIsFine = stateAdmin
-      ? lowerAccount === stateAdmin.toLowerCase()
-      : wordpressData?.wpAdmin
-      ? lowerAccount === wordpressData.wpAdmin.toLowerCase()
-      : true
-
-    setCanDeployStorage(Boolean(adminIsFine && stateFactory && stateRouter))
-  }, [library, stateFactory, stateRouter, account, wordpressData, stateAdmin])
-
-  const onStorageDeployment = async () => {
-    setAttemptingTxn(true)
-
-    try {
-      await deployStorage({
-        domain,
-        //@ts-ignore
-        registryAddress: networks[chainId]?.registry,
-        onHash: (hash: string) => {
-          setTxHash(hash)
-          addTransaction(
-            { hash },
-            {
-              summary: `Chain ${chainId}. Deploy storage`,
-            }
-          )
-        },
-        library,
-        admin: stateAdmin,
-        onSuccessfulDeploy: () => {
-          setAttemptingTxn(false)
-          setDomainDataTrigger((state: boolean) => !state)
-        },
-      })
-    } catch (error) {
-      addPopup({
-        error: {
-          message: error.message,
-          code: error.code,
-        },
-      })
-      setAttemptingTxn(false)
-    }
-  }
-
-  const handleDismissConfirmation = useCallback(() => {
-    setShowConfirm(false)
-    setTxHash('')
-  }, [])
 
   const [projectName, setProjectName] = useState(stateProjectName)
   const [logoUrl, setLogoUrl] = useState(stateLogo)
@@ -296,7 +223,6 @@ export default function Interface(props: any) {
       await saveProjectOption({
         //@ts-ignore
         library,
-        storageAddress: stateStorage,
         method: storageMethods.setSettings,
         value: storageSettings,
         onHash: (hash: string) => {
@@ -333,39 +259,9 @@ export default function Interface(props: any) {
 
   return (
     <section>
-      <ConfirmationModal
-        open={showConfirm}
-        onDismiss={handleDismissConfirmation}
-        onDeployment={onStorageDeployment}
-        txHash={txHash}
-        attemptingTxn={attemptingTxn}
-        titleId={'storageContract'}
-        confirmBtnMessageId={'deploy'}
-        content={
-          <div>
-            {t('youAreDeployingStorage')}. {t('youHaveToConfirmTheseTxs')}:
-            <NumList>
-              <li>{t('deployStorageContract')}</li>
-              <li>{t('saveInfoToDomainRegistry')}</li>
-            </NumList>
-          </div>
-        }
-      />
-
-      <PartitionWrapper highlighted>
-        {!stateFactory || !stateRouter ? <TextBlock warning>{t('youHaveToDeploySwapContractsFirst')}</TextBlock> : null}
-
-        <Accordion title={t('deployment')} openByDefault={!stateStorage} minimalStyles contentPadding>
-          {stateStorage ? <TextBlock warning>{t('youAlreadyHaveStorageContractWarning')}</TextBlock> : <></>}
-          <Button onClick={() => setShowConfirm(true)} disabled={pending || !canDeployStorage}>
-            {t('deployStorage')}
-          </Button>
-        </Accordion>
-      </PartitionWrapper>
-
       <Title>{t('settings')}</Title>
 
-      <div className={`${!stateStorage || pending ? 'disabled' : ''}`}>
+      <div className={`${!stateFactory || !stateRouter || pending ? 'disabled' : ''}`}>
         <OptionWrapper>
           <InputPanel label={`${t('projectName')}`} value={projectName} onChange={setProjectName} />
         </OptionWrapper>

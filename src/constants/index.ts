@@ -1,8 +1,13 @@
 import { JSBI, Percent } from 'sdk'
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import { injected, newWalletConnect, newWalletlink } from '../connectors'
+import networks from 'networks.json'
 
 export const DEV_FEE_ADMIN = '0x6D1EB33c063CBe69d064EE22537dBF107e8816f6'
+
+export const STORAGE_NETWORK_ID = networks[97].chainId
+// @ts-ignore
+export const STORAGE = networks[STORAGE_NETWORK_ID].storage
 
 export const storageMethods = {
   setSettings: 'setSettings',

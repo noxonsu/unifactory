@@ -1,6 +1,6 @@
 import { Web3Provider } from '@ethersproject/providers'
 import Storage from 'contracts/build/Storage.json'
-import { storageMethods } from '../constants'
+import { storageMethods, STORAGE } from '../constants'
 import { getTimestamp } from './index'
 import { getContractInstance } from './contract'
 
@@ -34,14 +34,13 @@ const returnValidTokenListJSON = (params: any) => {
 
 export const saveProjectOption = async (params: {
   library: Web3Provider
-  storageAddress: string
   method: string
   value: any
   onHash?: (hash: string) => void
 }) => {
-  const { library, storageAddress, method, value, onHash } = params
+  const { library, method, value, onHash } = params
 
-  const storage = getStorage(library, storageAddress)
+  const storage = getStorage(library, STORAGE)
   //@ts-ignore
   const accounts = await window?.ethereum?.request({ method: 'eth_accounts' })
   let args: any

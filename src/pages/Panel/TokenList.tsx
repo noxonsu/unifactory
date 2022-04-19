@@ -42,7 +42,6 @@ export function TokenList(props: {
   isNewList: boolean
   pending: boolean
   setPending: (x: any) => void
-  storage: string
   list: {
     name: string
     logoURI: string
@@ -55,7 +54,7 @@ export function TokenList(props: {
     }
   }
 }) {
-  const { list, activeWeb3React, setPending, storage, isNewList } = props
+  const { list, activeWeb3React, setPending,  isNewList } = props
   const { library, chainId } = activeWeb3React
   const { t } = useTranslation()
   const addTransaction = useTransactionAdder()
@@ -128,7 +127,6 @@ export function TokenList(props: {
     try {
       await saveProjectOption({
         library,
-        storageAddress: storage,
         method: isNewList ? storageMethods.addTokenList : storageMethods.updateTokenList,
         value: {
           oldName: list.name,
