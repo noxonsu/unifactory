@@ -8,6 +8,8 @@ export const DEV_FEE_ADMIN = '0x6D1EB33c063CBe69d064EE22537dBF107e8816f6'
 export const STORAGE_NETWORK_ID = networks[97].chainId
 // @ts-ignore
 export const STORAGE = networks[STORAGE_NETWORK_ID].storage
+// through this key we get/set this app settings (we use the storage contract for many app)
+export const STORAGE_APP_KEY = 'definance'
 
 export const storageMethods = {
   setSettings: 'setSettings',

@@ -7,7 +7,6 @@ import ENS_PUBLIC_RESOLVER_ABI from 'constants/abis/ens-public-resolver.json'
 import { ERC20_BYTES32_ABI } from 'constants/abis/erc20'
 import FACTORY from 'contracts/build/Factory.json'
 import STORAGE from 'contracts/build/Storage.json'
-import REGISTRY from 'contracts/build/Registry.json'
 import ENS_ABI from 'constants/abis/ens-registrar.json'
 import ERC20_ABI from 'constants/abis/erc20.json'
 import WETH_ABI from 'constants/abis/weth.json'
@@ -17,14 +16,14 @@ import { getContract } from 'utils'
 import { useActiveWeb3React } from './index'
 import networks from 'networks.json'
 
-export function useStorageContractV2(address: string) {
+export function useStorageContract() {
+  // @ts-ignore
+  const { storage, rpc } = networks[STORAGE_NETWORK_ID]
+
   return useMemo(() => {
-    if (!address) return null
+    if (!storage) return null
 
     try {
-      // @ts-ignore
-      const { storage, rpc } = networks[STORAGE_NETWORK_ID]
-
       const web3 = new Web3(rpc)
       // @ts-ignore
       return new web3.eth.Contract(STORAGE.abi, storage)
@@ -33,37 +32,7 @@ export function useStorageContractV2(address: string) {
     }
 
     return null
-  }, [address])
-}
-
-export function useRegistryContract(address: string | undefined): Contract | null {
-  const { library } = useActiveWeb3React()
-
-  return useMemo(() => {
-    if (!address || !library) return null
-
-    try {
-      return new Contract(address, REGISTRY.abi, library)
-    } catch (error) {
-      console.error('Failed to get Registry contract', error)
-      return null
-    }
-  }, [address, library])
-}
-
-export function useStorageContract(address: string | undefined): Contract | null {
-  const { library } = useActiveWeb3React()
-
-  return useMemo(() => {
-    if (!address || !library) return null
-
-    try {
-      return new Contract(address, STORAGE.abi, library)
-    } catch (error) {
-      console.error('Failed to get Storage contract', error)
-      return null
-    }
-  }, [address, library])
+  }, [storage, rpc])
 }
 
 // returns null on errors

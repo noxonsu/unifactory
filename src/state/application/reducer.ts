@@ -1,11 +1,8 @@
-import isNumber from 'is-number'
 import { createReducer, nanoid } from '@reduxjs/toolkit'
 import { TokenList } from '@uniswap/token-lists/dist/types'
-import { ZERO_ADDRESS } from 'sdk'
 import {
   setAppManagement,
   retrieveDomainData,
-  updateAppData,
   addPopup,
   PopupContent,
   removePopup,
@@ -18,37 +15,36 @@ import {
 type PopupList = Array<{ key: string; show: boolean; content: PopupContent; removeAfterMs: number | null }>
 
 export type StorageState = {
-  readonly domain: string
-  readonly projectName: string
-  readonly brandColor: string
-  readonly backgroundColorDark: string
-  readonly backgroundColorLight: string
-  readonly textColorDark: string
-  readonly textColorLight: string
-  readonly logo: string
-  readonly background: string
-  readonly tokenLists: TokenList[]
-  readonly navigationLinks: { name: string; source: string }[]
-  readonly menuLinks: { name: string; source: string }[]
-  readonly socialLinks: string[]
-  readonly addressesOfTokenLists: string[]
-  readonly disableSourceCopyright: boolean
-  readonly defaultSwapCurrency: { input: string; output: string }
+  admin: string
+  factory: string
+  router: string
+  pairHash: string
+  feeRecipient: string
+  protocolFee: number | undefined
+  totalFee: number | undefined
+  allFeeToProtocol: boolean | undefined
+  possibleProtocolPercent: number[]
+  totalSwaps: number | undefined
+  domain: string
+  projectName: string
+  brandColor: string
+  backgroundColorDark: string
+  backgroundColorLight: string
+  textColorDark: string
+  textColorLight: string
+  logo: string
+  background: string
+  tokenLists: TokenList[]
+  navigationLinks: { name: string; source: string }[]
+  menuLinks: { name: string; source: string }[]
+  socialLinks: string[]
+  addressesOfTokenLists: string[]
+  disableSourceCopyright: boolean
+  defaultSwapCurrency: { input: string; output: string }
 }
 
 export type ApplicationState = StorageState & {
   readonly appManagement: boolean
-  readonly admin: string
-  readonly factory: string
-  readonly router: string
-  readonly storage: string
-  readonly pairHash: string
-  readonly feeRecipient: string
-  readonly protocolFee: number | undefined
-  readonly totalFee: number | undefined
-  readonly allFeeToProtocol: boolean | undefined
-  readonly possibleProtocolPercent: number[]
-  readonly totalSwaps: number | undefined
   readonly pools: string[]
   readonly blockNumber: { readonly [chainId: number]: number }
   readonly popupList: PopupList
@@ -56,11 +52,10 @@ export type ApplicationState = StorageState & {
 }
 
 const initialState: ApplicationState = {
-  appManagement: false,
+  // external data -----------
   admin: '',
   factory: '',
   router: '',
-  storage: '',
   pairHash: '',
   feeRecipient: '',
   protocolFee: undefined,
@@ -70,7 +65,6 @@ const initialState: ApplicationState = {
   totalSwaps: undefined,
   disableSourceCopyright: false,
   pools: [],
-  defaultSwapCurrency: { input: '', output: '' },
   domain: '',
   projectName: '',
   brandColor: '',
@@ -85,6 +79,9 @@ const initialState: ApplicationState = {
   menuLinks: [],
   socialLinks: [],
   addressesOfTokenLists: [],
+  defaultSwapCurrency: { input: '', output: '' },
+  // --------------------------
+  appManagement: false,
   blockNumber: {},
   popupList: [],
   openModal: null,
@@ -98,62 +95,19 @@ export default createReducer(initialState, (builder) =>
       state.appManagement = status
     })
     .addCase(retrieveDomainData, (state, action) => {
-      const domainData = action.payload
+      const data = action.payload
 
-      if (domainData) {
-        let {
-          admin = '',
-          factory = '',
-          router = '',
-          storageAddr = '',
-          pairHash = '',
-          feeRecipient = '',
-          protocolFee,
-          totalFee,
-          allFeeToProtocol,
-          possibleProtocolPercent,
-          totalSwaps,
-        } = domainData
-
-        if (admin === ZERO_ADDRESS) admin = ''
-        if (factory === ZERO_ADDRESS) factory = ''
-        if (router === ZERO_ADDRESS) router = ''
-        if (storageAddr === ZERO_ADDRESS) storageAddr = ''
-        if (feeRecipient === ZERO_ADDRESS) feeRecipient = ''
-        if (possibleProtocolPercent?.length)
-          state.possibleProtocolPercent = possibleProtocolPercent.map((percent) => Number(percent))
-        if (isNumber(protocolFee)) state.protocolFee = Number(protocolFee)
-        if (isNumber(totalFee)) state.totalFee = Number(totalFee)
-        if (isNumber(totalSwaps)) state.totalSwaps = Number(totalSwaps)
-        if (typeof allFeeToProtocol === 'boolean') state.allFeeToProtocol = allFeeToProtocol
-
-        state.admin = admin
-        state.factory = factory
-        state.router = router
-        state.storage = storageAddr
-        state.pairHash = pairHash
-        state.feeRecipient = feeRecipient
-      } else {
-        state.admin = ''
-        state.factory = ''
-        state.router = ''
-        state.storage = ''
-        state.pairHash = ''
-        state.feeRecipient = ''
-      }
-    })
-    .addCase(updateAppData, (state, action) => {
-      const appData = action.payload
-      if (appData) {
-        Object.keys(appData).forEach((key: string) => {
+      if (data) {
+        // validation in the useDomainInfo.ts
+        Object.keys(data).forEach((key: string) => {
           if (key === 'defaultSwapCurrency') {
-            const { input, output } = appData[key]
+            const { input, output } = data[key]
 
             if (input) state.defaultSwapCurrency.input = input
             if (output) state.defaultSwapCurrency.output = output
           } else {
             // @ts-ignore
-            state[key] = appData[key]
+            state[key] = data[key]
           }
         })
       }

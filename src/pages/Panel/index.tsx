@@ -6,10 +6,9 @@ import { FiArrowUpRight } from 'react-icons/fi'
 import { shortenAddress } from 'utils'
 import { Text } from 'rebass'
 import networks from '../../networks.json'
-import Registry from 'contracts/build/Registry.json'
 import { useDispatch, useSelector } from 'react-redux'
 import { SUPPORTED_NETWORKS } from 'connectors'
-import { getContractInstance } from 'utils/contract'
+import { resetAppData } from 'utils/storage'
 import useWordpressInfo from 'hooks/useWordpressInfo'
 import { AppState } from 'state'
 import { useTranslation } from 'react-i18next'
@@ -174,14 +173,11 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
   //@ts-ignore
   const accountPrefix = networks[chainId]?.name || t('account')
 
-  const resetDomain = async () => {
+  const resetData = async () => {
     setShowConfirm(false)
-    //@ts-ignore
-    const registry: any = getContractInstance(library, networks[chainId]?.registry, Registry.abi)
 
-    await registry.methods.removeDomain(domain).send({
-      from: account,
-    })
+    await resetAppData({ library })
+
     setDomainDataTrigger((state: boolean) => !state)
   }
 
@@ -208,7 +204,7 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
             <Text fontWeight={500} fontSize={20}>
               {t('resetDomainDescription')}
             </Text>
-            <ButtonError error padding={'12px'} onClick={resetDomain}>
+            <ButtonError error padding={'12px'} onClick={resetData}>
               <Text fontSize={20} fontWeight={500} id="reset">
                 {t('resetDomainData')}
               </Text>

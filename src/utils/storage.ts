@@ -1,6 +1,6 @@
 import { Web3Provider } from '@ethersproject/providers'
 import Storage from 'contracts/build/Storage.json'
-import { storageMethods, STORAGE } from '../constants'
+import { storageMethods, STORAGE, STORAGE_APP_KEY } from '../constants'
 import { getTimestamp } from './index'
 import { getContractInstance } from './contract'
 
@@ -75,4 +75,15 @@ export const saveProjectOption = async (params: {
   } else {
     throw new Error('No such method')
   }
+}
+
+export const resetAppData = async ({ library }: any) => {
+  const storage = getStorage(library, STORAGE)
+  const domain = ''
+  const { info } = await storage.methods.getKeyData(domain).send()
+  const parsedData = JSON.parse(info)
+
+  const newData = { ...parsedData, [STORAGE_APP_KEY]: {} }
+
+  await storage.methods.setKeyData(domain, newData).send()
 }

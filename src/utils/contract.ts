@@ -2,12 +2,16 @@ import { Web3Provider } from '@ethersproject/providers'
 import { Contract } from '@ethersproject/contracts'
 import { isAddress } from 'web3-utils'
 import TokenAbi from 'human-standard-token-abi'
-import Registry from 'contracts/build/Registry.json'
 import Factory from 'contracts/build/Factory.json'
 import RouterV2 from 'contracts/build/RouterV2.json'
-import Storage from 'contracts/build/Storage.json'
 import { cache, addValue } from './cache'
 import { getWeb3Library } from './getLibrary'
+
+export const getContractInstance = (library: Web3Provider, address: string, abi: any) => {
+  const web3 = getWeb3Library(library.provider)
+
+  return new web3.eth.Contract(abi, address)
+}
 
 const deployContract = async (params: any) => {
   const { abi, byteCode, library, onDeploy = () => {}, onHash = () => {}, deployArguments } = params
@@ -68,49 +72,8 @@ export const deployRouter = async (params: any) => {
   })
 }
 
-export const getContractInstance = (library: Web3Provider, address: string, abi: any) => {
-  const web3 = getWeb3Library(library.provider)
-
-  return new web3.eth.Contract(abi, address)
-}
-
-export const deployStorage = async (params: any) => {
-  const { library, admin, onHash, registryAddress, domain, onSuccessfulDeploy } = params
-  const { abi, bytecode } = Storage
-
-  try {
-    const storage = await deployContract({
-      abi,
-      byteCode: bytecode,
-      deployArguments: [admin],
-      library,
-      onHash,
-    })
-    //@ts-ignore
-    const accounts = await window?.ethereum?.request({ method: 'eth_accounts' })
-    const registry: any = getContractInstance(library, registryAddress, Registry.abi)
-
-    await registry.methods.addDomainStorage(domain, storage.options.address).send({
-      from: accounts[0],
-    })
-    onSuccessfulDeploy()
-  } catch (error) {
-    throw error
-  }
-}
-
 export const deploySwapContracts = async (params: any) => {
-  const {
-    domain,
-    registryAddress,
-    admin,
-    library,
-    wrappedToken,
-    devFeeAdmin,
-    onFactoryHash,
-    onRouterHash,
-    onSuccessfulDeploy,
-  } = params
+  const { admin, library, wrappedToken, devFeeAdmin, onFactoryHash, onRouterHash, onSuccessfulDeploy } = params
 
   try {
     const factory = await deployFactory({
@@ -121,26 +84,12 @@ export const deploySwapContracts = async (params: any) => {
     })
 
     if (factory) {
-      const router = await deployRouter({
+      await deployRouter({
         onHash: onRouterHash,
         library,
         factory: factory.options.address,
         wrappedToken,
       })
-      //@ts-ignore
-      const accounts = await window?.ethereum?.request({ method: 'eth_accounts' })
-      const registry: any = getContractInstance(library, registryAddress, Registry.abi)
-
-      await registry.methods
-        .addDomainData(domain, {
-          admin,
-          factory: factory.options.address,
-          router: router.options.address,
-        })
-        .send({
-          from: accounts[0],
-        })
-
       onSuccessfulDeploy()
     } else {
       throw new Error('No factory contract')

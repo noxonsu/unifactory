@@ -1,54 +1,178 @@
 import { useEffect, useState } from 'react'
-import { ZERO_ADDRESS } from 'sdk'
+import { ZERO_ADDRESS, ZERO_HASH } from '../sdk/constants'
 import FACTORY from 'contracts/build/Factory.json'
-import { useRegistryContract } from './useContract'
+import { StorageState } from 'state/application/reducer'
+import { useStorageContract } from './useContract'
 import { useActiveWeb3React } from 'hooks'
 import { getContractInstance } from 'utils/contract'
-import networks from 'networks.json'
+import { returnValidList } from 'utils/getTokenList'
+import { isValidColor } from 'utils/color'
 
-type Data = {
-  admin: string
-  factory: string
-  router: string
-  storageAddr: string
-  pairHash: string
-  feeRecipient: string
-  protocolFee?: number
-  totalFee?: number
-  allFeeToProtocol?: boolean
-  possibleProtocolPercent?: string[]
-  totalSwaps: string
+const validArray = (arr: any[]) => Array.isArray(arr) && !!arr.length
+
+const defaultSettings = (): StorageState => ({
+  admin: '',
+  factory: '',
+  router: '',
+  pairHash: '',
+  feeRecipient: '',
+  protocolFee: undefined,
+  totalFee: undefined,
+  allFeeToProtocol: undefined,
+  possibleProtocolPercent: [],
+  totalSwaps: undefined,
+  domain: '',
+  projectName: '',
+  brandColor: '',
+  backgroundColorDark: '',
+  backgroundColorLight: '',
+  textColorDark: '',
+  textColorLight: '',
+  logo: '',
+  background: '',
+  tokenLists: [],
+  navigationLinks: [],
+  menuLinks: [],
+  socialLinks: [],
+  addressesOfTokenLists: [],
+  disableSourceCopyright: false,
+  defaultSwapCurrency: { input: '', output: '' },
+})
+
+const filterTokenLists = (lists: string[]) => {
+  return lists
+    .filter((strJson: string) => {
+      try {
+        const list = JSON.parse(strJson)
+        const namePattern = /^[ \w.'+\-%/À-ÖØ-öø-ÿ:]+$/
+
+        list.tokens = list.tokens
+          // filter not valid token before actuall external validation
+          // to leave the option of showing the entire token list
+          // (without it token list won't be displayed with an error in at least one token)
+          .filter((token: { name: string }) => token.name.match(namePattern))
+          .map((token: { decimals: number }) => ({
+            ...token,
+            // some value(s) has to be other types (for now it's only decimals)
+            // but JSON allows only strings
+            decimals: Number(token.decimals),
+          }))
+
+        return returnValidList(list)
+      } catch (error) {
+        return console.error(error)
+      }
+    })
+    .map((str: string) => JSON.parse(str))
+}
+
+const parseSettings = (settings: string): StorageState => {
+  const appSettings = defaultSettings()
+
+  try {
+    const settingsJSON = JSON.parse(settings)
+
+    if (!settingsJSON?.definance) settingsJSON.definance = {}
+
+    const { definance: parsedSettings } = settingsJSON
+
+    const {
+      factory,
+      router,
+      pairHash,
+      feeRecipient,
+      domain,
+      projectName,
+      brandColor,
+      backgroundColorDark,
+      backgroundColorLight,
+      textColorDark,
+      textColorLight,
+      logoUrl,
+      backgroundUrl,
+      navigationLinks,
+      menuLinks,
+      socialLinks,
+      tokenLists,
+      addressesOfTokenLists,
+      disableSourceCopyright,
+      defaultSwapCurrency,
+    } = parsedSettings
+
+    if (factory !== ZERO_ADDRESS) appSettings.factory = factory
+    if (router !== ZERO_ADDRESS) appSettings.router = router
+    if (pairHash !== ZERO_HASH) appSettings.pairHash = pairHash
+    if (feeRecipient !== ZERO_ADDRESS) appSettings.feeRecipient = feeRecipient
+    if (domain) appSettings.domain = domain
+    if (projectName) appSettings.projectName = projectName
+
+    if (isValidColor(brandColor)) appSettings.brandColor = brandColor
+    if (isValidColor(backgroundColorDark)) appSettings.backgroundColorDark = backgroundColorDark
+    if (isValidColor(backgroundColorLight)) appSettings.backgroundColorLight = backgroundColorLight
+    if (isValidColor(textColorDark)) appSettings.textColorDark = textColorDark
+    if (isValidColor(textColorLight)) appSettings.textColorLight = textColorLight
+
+    if (backgroundUrl) appSettings.background = backgroundUrl
+    if (logoUrl) appSettings.logo = logoUrl
+    if (Boolean(disableSourceCopyright)) appSettings.disableSourceCopyright = disableSourceCopyright
+
+    if (validArray(navigationLinks)) appSettings.navigationLinks = navigationLinks
+    if (validArray(menuLinks)) appSettings.menuLinks = menuLinks
+    if (validArray(socialLinks)) appSettings.socialLinks = socialLinks
+    if (validArray(addressesOfTokenLists)) appSettings.addressesOfTokenLists = addressesOfTokenLists
+
+    if (validArray(tokenLists)) {
+      appSettings.tokenLists = filterTokenLists(tokenLists)
+    }
+
+    if (defaultSwapCurrency) {
+      const { input, output } = defaultSwapCurrency
+
+      if (input) appSettings.defaultSwapCurrency.input = input
+      if (output) appSettings.defaultSwapCurrency.output = output
+    }
+  } catch (error) {
+    console.group('%c Storage settings', 'color: red')
+    console.error(error)
+    console.log('source settings: ', settings)
+    console.groupEnd()
+  }
+
+  return appSettings
 }
 
 export default function useDomainInfo(trigger: boolean): {
-  data: Data | null
+  data: StorageState | null
   isLoading: boolean
   error: Error | null
 } {
   const { chainId, library } = useActiveWeb3React()
-  // @ts-ignore
-  const registry = useRegistryContract(networks[chainId]?.registry)
-  const [data, setData] = useState(null)
+  const storage = useStorageContract()
+  const [data, setData] = useState<StorageState | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!registry) return setData(null)
+      if (!storage) return setData(null)
 
       setError(null)
       setIsLoading(true)
 
+      let fullData = defaultSettings()
+
       try {
-        let fullData = null
         const currentDomain = window.location.hostname || document.location.host
-        const data = await registry.domain(currentDomain)
-        const { admin, factory, router } = data
-        const registredDomain = admin !== ZERO_ADDRESS && factory !== ZERO_ADDRESS && router !== ZERO_ADDRESS
+        const { info, owner } = await storage.methods.getData(currentDomain).call()
+
+        const settings = parseSettings(info)
+        const { factory, router } = settings
+
+        const registredDomain = owner !== ZERO_ADDRESS && factory && router
 
         if (!registredDomain) return setData(null)
 
-        fullData = { ...data }
+        fullData = { ...settings, admin: owner }
         //@ts-ignore
         const factoryContract = getContractInstance(library, factory, FACTORY.abi)
         const INIT_CODE_PAIR_HASH = await factoryContract.methods.INIT_CODE_PAIR_HASH().call()
@@ -65,19 +189,13 @@ export default function useDomainInfo(trigger: boolean): {
             feeRecipient: feeTo,
             totalFee,
             allFeeToProtocol,
-            possibleProtocolPercent: POSSIBLE_PROTOCOL_PERCENT,
-            totalSwaps: totalSwaps || '',
+            possibleProtocolPercent: validArray(POSSIBLE_PROTOCOL_PERCENT) ? POSSIBLE_PROTOCOL_PERCENT.map(Number) : [],
+            totalSwaps: totalSwaps || undefined,
           }
         } catch (error) {
-          if (error.message.match(/\.allInfo is not a function/)) {
-            console.group('%c Factory', 'color: orange;')
-            console.log('not the latest version of the contract')
-            console.groupEnd()
-          } else {
-            console.group('%c Factory info', 'color: red;')
-            console.error(error)
-            console.groupEnd()
-          }
+          console.group('%c Factory info', 'color: red;')
+          console.error(error)
+          console.groupEnd()
         }
 
         setData(fullData)
@@ -92,7 +210,7 @@ export default function useDomainInfo(trigger: boolean): {
     }
 
     fetchData()
-  }, [registry, trigger, library, chainId])
+  }, [storage, trigger, library, chainId])
 
   return { data, isLoading, error }
 }
