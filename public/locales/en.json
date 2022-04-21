@@ -283,5 +283,10 @@
   "youAlreadyHaveSwapContractsWarning": "You have already deployed swap contracts. If you do it again, the old contract addresses will be overwritten. New contracts will be without liquidity and fee settings",
   "youAlreadyHaveStorageContractWarning": "You have already deployed storage contract. If you do it again, the old storage address will be overwritten. You will lose the interface settings",
   "noPointToChangeAdminFeeWithoutFeeRecipient": "There is no point to change this commission until you set the fee recipient address",
-  "forSuccessfulExchangeRecommendedToIncreaseSlippageTo": "For a successful exchange it is recommended to increase Slippage Tolerance to"
+  "forSuccessfulExchangeRecommendedToIncreaseSlippageTo": "For a successful exchange it is recommended to increase Slippage Tolerance to",
+  "HelloLetsConnectThisDomain" : "Hello! Let's connect this domain to your wallet address. Do you want to set",
+  "AddressAsTheOwnerOf" : "address as the owner of",
+  "ThenOnlyYouCanAccessAndChangeTheSettingsOfTheApp" : "Then only you can access and change the settings of the app.",
+  "IfYouWantToChangeTheAddressSwitchToAnotherAddress": "If you want to change the address, switch to another address. If you can't switch, just disconnect your wallet and connect it to the new address.",
+  "SetMyAddressAsTheOwner" : "Set my address as the owner"
 }

@@ -15,6 +15,7 @@ import Panel from './Panel'
 import Connection from './Connection'
 import Header from 'components/Header'
 import Popups from 'components/Popups'
+import GreetingScreen from 'components/GreetingScreen'
 import Web3ReactManager from 'components/Web3ReactManager'
 import DarkModeQueryParamReader from 'theme/DarkModeQueryParamReader'
 import AddLiquidity from './AddLiquidity'
@@ -98,6 +99,12 @@ export default function App() {
   }, [chainId])
 
   const [isAvailableNetwork, setIsAvailableNetwork] = useState(true)
+  const [greetingScreenActive, setGreetingScreenActive] = useState(false)
+
+  useEffect(() => {
+    const greetingScreenLoaclStorageValue = localStorage.getItem('greetingScreenActive')
+    setGreetingScreenActive(Boolean(greetingScreenLoaclStorageValue))
+  }, [greetingScreenActive])
 
   useEffect(() => {
     //@ts-ignore
@@ -211,11 +218,17 @@ export default function App() {
               )}
             </>
           ) : (
-            <Connection
-              setDomainDataTrigger={setDomainDataTrigger}
-              domainData={domainData}
-              isAvailableNetwork={isAvailableNetwork}
-            />
+            <>
+              {!greetingScreenActive ? (
+                <GreetingScreen setGreetingScreenActive={setGreetingScreenActive} />
+              ) : (
+                <Connection
+                  setDomainDataTrigger={setDomainDataTrigger}
+                  domainData={domainData}
+                  isAvailableNetwork={isAvailableNetwork}
+                />
+              )}
+            </>
           )}
         </Web3ReactManager>
       </HelmetProvider>

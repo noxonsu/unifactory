@@ -283,5 +283,10 @@
   "youAlreadyHaveSwapContractsWarning": "Hai già distribuito contratti di swap. Se lo fai di nuovo, i vecchi indirizzi del contratto verranno sovrascritti. I nuovi contratti saranno senza impostazioni di liquidità e commissioni",
   "youAlreadyHaveStorageContractWarning": "Hai già distribuito il contratto di archiviazione. Se lo fai di nuovo, il vecchio indirizzo di archiviazione verrà sovrascritto. Si perderanno le impostazioni dell'interfaccia",
   "noPointToChangeAdminFeeWithoutFeeRecipient": "Non ha senso modificare questa commissione finché non si imposta l'indirizzo del destinatario della commissione",
-  "forSuccessfulExchangeRecommendedToIncreaseSlippageTo": "Per uno scambio di successo si consiglia di aumentare la tolleranza di slittamento a"
+  "forSuccessfulExchangeRecommendedToIncreaseSlippageTo": "Per uno scambio di successo si consiglia di aumentare la tolleranza di slittamento a",
+  "HelloLetsConnectThisDomain" : "Ciao! Colleghiamo questo dominio all'indirizzo del tuo portafoglio. Vuoi impostare",
+  "AddressAsTheOwnerOf" : "indirizzo come proprietario di",
+  "ThenOnlyYouCanAccessAndChangeTheSettingsOfTheApp" : "Solo tu puoi accedere e modificare le impostazioni dell'app.",
+  "IfYouWantToChangeTheAddressSwitchToAnotherAddress": "Se si desidera modificare l'indirizzo, passare a un altro indirizzo. Se non puoi cambiare, scollega il tuo portafoglio e collegalo al nuovo indirizzo.",
+  "SetMyAddressAsTheOwner" : "Imposta il mio indirizzo come proprietario"
 }

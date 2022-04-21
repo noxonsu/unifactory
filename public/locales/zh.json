@@ -272,5 +272,10 @@
   "youAlreadyHaveSwapContractsWarning": "您已经部署了掉期合约。 如果你再这样做，旧的合同地址将被复盖。 新合约将没有流动性和费用设置",
   "youAlreadyHaveStorageContractWarning": "您已经部署了存储合同。 如果再这样做，旧的存储地址将被复盖。 您将丢失界面设置",
   "noPointToChangeAdminFeeWithoutFeeRecipient": "在您设置佣金收件人的地址之前，更改此佣金是没有意义的",
-  "forSuccessfulExchangeRecommendedToIncreaseSlippageTo": "為了成功交換，建議將滑點容差增加到"
+  "forSuccessfulExchangeRecommendedToIncreaseSlippageTo": "為了成功交換，建議將滑點容差增加到",
+  "HelloLetsConnectThisDomain" : "你好！讓我們將此域連接到您的錢包地址。你想設置",
+  "AddressAsTheOwnerOf" : "作為所有者的地址",
+  "ThenOnlyYouCanAccessAndChangeTheSettingsOfTheApp" : "然後只有您可以訪問和更改應用程序的設置。",
+  "IfYouWantToChangeTheAddressSwitchToAnotherAddress": "如果要更改地址，請切換到另一個地址。如果您無法切換，只需斷開您的錢包並將其連接到新地址即可。",
+  "SetMyAddressAsTheOwner" : "將我的地址設置為所有者”"
 }

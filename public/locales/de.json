@@ -284,5 +284,10 @@
   "youAlreadyHaveSwapContractsWarning": "Sie haben bereits Swap-Verträge bereitgestellt. Wenn Sie es erneut tun, werden die alten Vertragsadressen überschrieben. Neue Verträge werden ohne Liquiditäts- und Gebühreneinstellungen sein",
   "youAlreadyHaveStorageContractWarning": "Sie haben den Speichervertrag bereits bereitgestellt. Wenn Sie es erneut tun, wird die alte Speicheradresse überschrieben. Sie verlieren die Schnittstelleneinstellungen",
   "noPointToChangeAdminFeeWithoutFeeRecipient": "Es hat keinen Sinn, diese Provision zu ändern, bis Sie die Adresse des Gebührenempfängers festgelegt haben",
-  "forSuccessfulExchangeRecommendedToIncreaseSlippageTo": "Für einen erfolgreichen Austausch empfiehlt es sich, die Slippage Tolerance auf zu erhöhen"
+  "forSuccessfulExchangeRecommendedToIncreaseSlippageTo": "Für einen erfolgreichen Austausch empfiehlt es sich, die Slippage Tolerance auf zu erhöhen",
+  "HelloLetsConnectThisDomain" : "Hallo! Lassen Sie uns diese Domain mit Ihrer Wallet-Adresse verbinden. Wollen Sie einstellen",
+  "AddressAsTheOwnerOf" : "adresse als Eigentümer",
+  "ThenOnlyYouCanAccessAndChangeTheSettingsOfTheApp" : "Nur dann können Sie auf die Einstellungen der App zugreifen und diese ändern.",
+  "IfYouWantToChangeTheAddressSwitchToAnotherAddress": "Wenn Sie die Adresse ändern möchten, wechseln Sie zu einer anderen Adresse. Wenn Sie nicht wechseln können, trennen Sie einfach Ihre Brieftasche und verbinden Sie sie mit der neuen Adresse.",
+  "SetMyAddressAsTheOwner" : "Legen Sie meine Adresse als Eigentümer fest"
 }

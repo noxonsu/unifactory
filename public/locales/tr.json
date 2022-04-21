@@ -283,5 +283,10 @@
   "youAlreadyHaveSwapContractsWarning": "Zaten takas sözleşmeleri dağıttınız. Tekrar yaparsanız eski sözleşme adreslerinin üzerine yazılacaktır. Yeni sözleşmeler likidite ve ücret ayarları olmadan olacak",
   "youAlreadyHaveStorageContractWarning": "Depolama sözleşmesini zaten dağıttınız. Tekrar yaparsanız eski depolama adresinin üzerine yazılacaktır. Arayüz ayarlarını kaybedeceksiniz",
   "noPointToChangeAdminFeeWithoutFeeRecipient": "Ücret alıcı adresini belirleyene kadar bu komisyonu değiştirmenin bir anlamı yok.",
-  "forSuccessfulExchangeRecommendedToIncreaseSlippageTo": "Başarılı bir değişim için Kayma Toleransının artırılması önerilir."
+  "forSuccessfulExchangeRecommendedToIncreaseSlippageTo": "Başarılı bir değişim için Kayma Toleransının artırılması önerilir.",
+  "HelloLetsConnectThisDomain" : "Merhaba! Bu etki alanını cüzdan adresinize bağlayalım. ayarlamak istiyor musun",
+  "AddressAsTheOwnerOf" : "adresi sahibi olarak",
+  "ThenOnlyYouCanAccessAndChangeTheSettingsOfTheApp" : "Ardından, uygulamanın ayarlarına yalnızca siz erişebilir ve bunları değiştirebilirsiniz.",
+  "IfYouWantToChangeTheAddressSwitchToAnotherAddress": "Adresi değiştirmek istiyorsanız, başka bir adrese geçin. Geçiş yapamıyorsanız, cüzdanınızın bağlantısını kesin ve yeni adrese bağlayın.",
+  "SetMyAddressAsTheOwner" : "Adresimi sahip olarak ayarla"
 }
