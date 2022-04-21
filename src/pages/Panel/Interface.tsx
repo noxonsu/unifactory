@@ -17,7 +17,6 @@ import { OptionWrapper } from './index'
 import { saveProjectOption } from 'utils/storage'
 import { parseENSAddress } from 'utils/parseENSAddress'
 import uriToHttp from 'utils/uriToHttp'
-import { storageMethods } from '../../constants'
 
 const Button = styled(ButtonPrimary)`
   font-size: 0.8em;
@@ -32,7 +31,7 @@ const Title = styled.h3`
 export default function Interface(props: any) {
   const { pending, setPending, activeNetworks } = props
   const { t } = useTranslation()
-  const { library, chainId } = useActiveWeb3React()
+  const { library, chainId, account } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
   const addPopup = useAddPopup()
 
@@ -200,7 +199,7 @@ export default function Interface(props: any) {
     setPending(true)
 
     try {
-      const storageSettings = JSON.stringify({
+      const newSettings = {
         projectName,
         logoUrl,
         backgroundUrl,
@@ -218,13 +217,13 @@ export default function Interface(props: any) {
         backgroundColorLight,
         textColorDark,
         textColorLight,
-      })
+      }
 
       await saveProjectOption({
         //@ts-ignore
         library,
-        method: storageMethods.setSettings,
-        value: storageSettings,
+        owner: account || '',
+        data: newSettings,
         onHash: (hash: string) => {
           addTransaction(
             { hash },

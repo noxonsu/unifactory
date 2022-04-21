@@ -11,13 +11,24 @@ export const STORAGE = networks[STORAGE_NETWORK_ID].storage
 // through this key we get/set this app settings (we use the storage contract for many app)
 export const STORAGE_APP_KEY = 'definance'
 
-export const storageMethods = {
-  setSettings: 'setSettings',
-  addTokenList: 'addTokenList',
-  addTokenLists: 'addTokenLists',
-  updateTokenList: 'updateTokenList',
-  removeTokenList: 'removeTokenList',
-  clearTokenLists: 'clearTokenLists',
+export enum StorageMethod {
+  getData = 'getData',
+  allKeys = 'allKeys',
+  allKeysData = 'allKeysData',
+  setKeyData = 'setKeyData',
+  setKeysData = 'setKeysData',
+  clearKeyData = 'clearKeyData',
+  clearKeysData = 'clearKeysData',
+}
+
+export enum FactoryMethod {
+  allInfo = 'allInfo',
+  setFeeTo = 'setFeeTo',
+  setFeeToSetter = 'setFeeToSetter',
+  setAllFeeToProtocol = 'setAllFeeToProtocol',
+  setMainFees = 'setMainFees',
+  setTotalFee = 'setTotalFee',
+  setProtocolFee = 'setProtocolFee',
 }
 
 export const factoryMethods = {

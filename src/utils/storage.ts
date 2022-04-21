@@ -1,8 +1,9 @@
 import { Web3Provider } from '@ethersproject/providers'
 import Storage from 'contracts/build/Storage.json'
-import { storageMethods, STORAGE, STORAGE_APP_KEY } from '../constants'
+import { STORAGE, STORAGE_APP_KEY } from '../constants'
 import { getTimestamp } from './index'
 import { getContractInstance } from './contract'
+import { getCurrentDomain } from 'utils/app'
 
 export const getStorage = (library: Web3Provider, address: string) => {
   return getContractInstance(library, address, Storage.abi)
@@ -13,7 +14,6 @@ const returnValidTokenListJSON = (params: any) => {
   const list: any = {
     name,
     timestamp: getTimestamp(),
-    // TODO: track interface changes and change this version
     /* 
     Increment major version when tokens are removed
     Increment minor version when tokens are added
@@ -32,48 +32,51 @@ const returnValidTokenListJSON = (params: any) => {
   return JSON.stringify(list)
 }
 
+type Data = { [k: string]: any }
+
+const updateData = (oldData: Data, newData: Data) => {
+  return {
+    ...oldData,
+    [STORAGE_APP_KEY]: {
+      ...oldData[STORAGE_APP_KEY],
+      ...newData,
+    },
+  }
+}
+
 export const saveProjectOption = async (params: {
   library: Web3Provider
-  method: string
-  value: any
+  owner: string
+  data: Data
   onHash?: (hash: string) => void
 }) => {
-  const { library, method, value, onHash } = params
+  const { library, owner, data, onHash } = params
 
-  const storage = getStorage(library, STORAGE)
-  //@ts-ignore
-  const accounts = await window?.ethereum?.request({ method: 'eth_accounts' })
-  let args: any
+  console.group('%c save option', 'color:pink;font-size:20px')
+  console.log('params: ', params)
+  console.log(returnValidTokenListJSON)
+  console.groupEnd()
 
-  switch (method) {
-    case storageMethods.setSettings:
-      args = [value]
-      break
-    case storageMethods.addTokenList:
-      args = [value.name, returnValidTokenListJSON(value)]
-      break
-    case storageMethods.updateTokenList:
-      args = [value.oldName, value.name, returnValidTokenListJSON(value)]
-      break
-    case storageMethods.removeTokenList:
-      args = [value]
-      break
-    default:
-      args = []
-  }
+  try {
+    const storage = getStorage(library, STORAGE)
+    const { info } = await storage.methods.getData(getCurrentDomain()).call()
+    const newData = updateData(JSON.parse(info), data)
 
-  if (method) {
     return new Promise(async (resolve, reject) => {
-      storage.methods[method](...args)
-        .send({ from: accounts[0] })
+      storage.methods
+        .setKeyData(getCurrentDomain(), {
+          owner,
+          info: JSON.stringify(newData),
+        })
+        .send({ from: owner })
         .on('transactionHash', (hash: string) => {
           if (typeof onHash === 'function') onHash(hash)
         })
         .then(resolve)
         .catch(reject)
     })
-  } else {
-    throw new Error('No such method')
+  } catch (error) {
+    throw error
   }
 }
 

@@ -9,7 +9,6 @@ import InputPanel from 'components/InputPanel'
 import { useTranslation } from 'react-i18next'
 import { saveProjectOption } from 'utils/storage'
 import { returnTokenInfo, isValidAddress } from 'utils/contract'
-import { storageMethods } from '../../constants'
 import { shortenAddress } from 'utils'
 import Accordion from 'components/Accordion'
 
@@ -54,8 +53,8 @@ export function TokenList(props: {
     }
   }
 }) {
-  const { list, activeWeb3React, setPending,  isNewList } = props
-  const { library, chainId } = activeWeb3React
+  const { list, activeWeb3React, setPending, isNewList } = props
+  const { library, chainId, account } = activeWeb3React
   const { t } = useTranslation()
   const addTransaction = useTransactionAdder()
   const addPopup = useAddPopup()
@@ -126,13 +125,19 @@ export function TokenList(props: {
 
     try {
       await saveProjectOption({
+        //@ts-ignore
         library,
-        method: isNewList ? storageMethods.addTokenList : storageMethods.updateTokenList,
-        value: {
-          oldName: list.name,
-          name: tokenListName,
-          logoURI: tokenListLogo,
-          tokens,
+        owner: account,
+        data: {
+          tokenLists: {
+            // TODO: how to save tokens? Via his name? Old or new?
+            'fix this key': {
+              oldName: list.name,
+              name: tokenListName,
+              logoURI: tokenListLogo,
+              tokens,
+            },
+          },
         },
         onHash: (hash: string) => {
           addTransaction(
