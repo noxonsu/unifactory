@@ -9,15 +9,16 @@ import { ButtonPrimary } from 'components/Button'
 import { TokenLists } from './TokenLists'
 import InputPanel from 'components/InputPanel'
 import Toggle from 'components/Toggle'
-import TextBlock from 'components/TextBlock'
 import ListFactory from 'components/ListFactory'
 import MenuLinksFactory, { LinkItem } from 'components/MenuLinksFactory'
 import ColorSelector from 'components/ColorSelector'
 import NetworkRelatedSettings from './NetworkRelatedSettings'
 import { OptionWrapper } from './index'
+import { STORAGE_NETWORK_ID } from '../../constants'
 import { saveAppData } from 'utils/storage'
 import { parseENSAddress } from 'utils/parseENSAddress'
 import uriToHttp from 'utils/uriToHttp'
+import networks from 'networks.json'
 
 const Button = styled(ButtonPrimary)`
   font-size: 0.8em;
@@ -37,8 +38,6 @@ export default function Interface(props: any) {
   const addPopup = useAddPopup()
 
   const {
-    factory: stateFactory,
-    router: stateRouter,
     projectName: stateProjectName,
     logo: stateLogo,
     background: stateBackground,
@@ -193,8 +192,10 @@ export default function Interface(props: any) {
   const [cannotSaveSettings, setCannotSaveSettings] = useState(true)
 
   useEffect(() => {
-    setCannotSaveSettings(!settingsChanged || !isValidLogo || !isValidBackground || !areColorsValid)
-  }, [settingsChanged, isValidLogo, isValidBackground, areColorsValid])
+    setCannotSaveSettings(
+      chainId !== STORAGE_NETWORK_ID || !settingsChanged || !isValidLogo || !isValidBackground || !areColorsValid
+    )
+  }, [settingsChanged, isValidLogo, isValidBackground, areColorsValid, chainId])
 
   const saveSettings = async () => {
     setPending(true)
@@ -259,9 +260,7 @@ export default function Interface(props: any) {
 
   return (
     <section>
-      {!stateFactory || !stateRouter ? <TextBlock warning>{t('youHaveToDeploySwapContractsFirst')}</TextBlock> : null}
-
-      <div className={`${!stateFactory || !stateRouter || pending ? 'disabled' : ''}`}>
+      <div className={`${pending ? 'disabled' : ''}`}>
         <OptionWrapper>
           <InputPanel label={`${t('projectName')}`} value={projectName} onChange={setProjectName} />
         </OptionWrapper>
@@ -382,7 +381,10 @@ export default function Interface(props: any) {
         </OptionWrapper>
 
         <Button onClick={saveSettings} disabled={cannotSaveSettings}>
-          {t('saveSettings')}
+          {t(chainId === STORAGE_NETWORK_ID ? 'saveSettings' : 'switchToNetwork', {
+            //@ts-ignore
+            network: networks[STORAGE_NETWORK_ID].name,
+          })}
         </Button>
 
         <Title>{t('tokenLists')}</Title>
