@@ -1,6 +1,6 @@
 import { Web3Provider } from '@ethersproject/providers'
 import Storage from 'contracts/build/Storage.json'
-import { STORAGE, STORAGE_APP_KEY } from '../constants'
+import { STORAGE, STORAGE_APP_KEY, StorageMethod } from '../constants'
 import { getTimestamp } from './index'
 import { getContractInstance } from './contract'
 import { getCurrentDomain } from 'utils/app'
@@ -40,19 +40,24 @@ const updateData = (oldData: Data, newData: Data) => {
     [STORAGE_APP_KEY]: {
       ...oldData[STORAGE_APP_KEY],
       ...newData,
+      contracts: {
+        ...oldData[STORAGE_APP_KEY].contracts,
+        ...newData.contracts,
+      },
     },
   }
 }
 
-export const saveProjectOption = async (params: {
+export const saveAppData = async (params: {
   library: Web3Provider
   owner: string
   data: Data
   onHash?: (hash: string) => void
+  onReceipt?: (receipt: object, success: boolean) => void
 }) => {
-  const { library, owner, data, onHash } = params
+  const { library, owner, data, onHash, onReceipt } = params
 
-  console.group('%c save option', 'color:pink;font-size:20px')
+  console.group('%c save option', 'color: pink; font-size: 20px')
   console.log('params: ', params)
   console.log(returnValidTokenListJSON)
   console.groupEnd()
@@ -60,7 +65,12 @@ export const saveProjectOption = async (params: {
   try {
     const storage = getStorage(library, STORAGE)
     const { info } = await storage.methods.getData(getCurrentDomain()).call()
+
+    console.log('Old data: ', JSON.parse(info))
+
     const newData = updateData(JSON.parse(info), data)
+
+    console.log('newData: ', newData)
 
     return new Promise(async (resolve, reject) => {
       storage.methods
@@ -72,6 +82,9 @@ export const saveProjectOption = async (params: {
         .on('transactionHash', (hash: string) => {
           if (typeof onHash === 'function') onHash(hash)
         })
+        .on('receipt', (receipt: any) => {
+          if (typeof onReceipt === 'function') onReceipt(receipt, receipt?.status)
+        })
         .then(resolve)
         .catch(reject)
     })
@@ -80,13 +93,23 @@ export const saveProjectOption = async (params: {
   }
 }
 
-export const resetAppData = async ({ library }: any) => {
-  const storage = getStorage(library, STORAGE)
-  const domain = ''
-  const { info } = await storage.methods.getKeyData(domain).send()
-  const parsedData = JSON.parse(info)
+export const resetAppData = async ({ library, owner }: { library: any; owner: string }) => {
+  try {
+    const storage = getStorage(library, STORAGE)
+    const domain = getCurrentDomain()
+    const { info } = await storage.methods[StorageMethod.getData](domain).call()
 
-  const newData = { ...parsedData, [STORAGE_APP_KEY]: {} }
+    const parsedData = JSON.parse(info)
+    const newData = { ...parsedData, [STORAGE_APP_KEY]: {} }
 
-  await storage.methods.setKeyData(domain, newData).send()
+    await storage.methods[StorageMethod.setKeyData](domain, {
+      owner,
+      info: JSON.stringify(newData),
+    }).send({
+      from: owner,
+    })
+  } catch (error) {
+    console.error('Reset app data')
+    console.error(error)
+  }
 }

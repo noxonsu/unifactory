@@ -9,12 +9,13 @@ import { ButtonPrimary } from 'components/Button'
 import { TokenLists } from './TokenLists'
 import InputPanel from 'components/InputPanel'
 import Toggle from 'components/Toggle'
+import TextBlock from 'components/TextBlock'
 import ListFactory from 'components/ListFactory'
 import MenuLinksFactory, { LinkItem } from 'components/MenuLinksFactory'
 import ColorSelector from 'components/ColorSelector'
 import NetworkRelatedSettings from './NetworkRelatedSettings'
 import { OptionWrapper } from './index'
-import { saveProjectOption } from 'utils/storage'
+import { saveAppData } from 'utils/storage'
 import { parseENSAddress } from 'utils/parseENSAddress'
 import uriToHttp from 'utils/uriToHttp'
 
@@ -219,7 +220,7 @@ export default function Interface(props: any) {
         textColorLight,
       }
 
-      await saveProjectOption({
+      await saveAppData({
         //@ts-ignore
         library,
         owner: account || '',
@@ -258,7 +259,7 @@ export default function Interface(props: any) {
 
   return (
     <section>
-      <Title>{t('settings')}</Title>
+      {!stateFactory || !stateRouter ? <TextBlock warning>{t('youHaveToDeploySwapContractsFirst')}</TextBlock> : null}
 
       <div className={`${!stateFactory || !stateRouter || pending ? 'disabled' : ''}`}>
         <OptionWrapper>

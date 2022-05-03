@@ -8,6 +8,7 @@ import { Text } from 'rebass'
 import networks from '../../networks.json'
 import { useDispatch, useSelector } from 'react-redux'
 import { SUPPORTED_NETWORKS } from 'connectors'
+import { STORAGE_NETWORK_ID } from '../../constants'
 import { resetAppData } from 'utils/storage'
 import useWordpressInfo from 'hooks/useWordpressInfo'
 import { AppState } from 'state'
@@ -71,9 +72,11 @@ const BackButton = styled(CleanButton)`
 `
 
 const NetworkInfo = styled.div`
-  margin: 0.6rem 0;
-  display: flex;
-  justify-content: space-between;
+  .row {
+    margin: 0.6rem 0;
+    display: flex;
+    justify-content: space-between;
+  }
 `
 
 const Tabs = styled.div`
@@ -176,7 +179,7 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
   const resetData = async () => {
     setShowConfirm(false)
 
-    await resetAppData({ library })
+    await resetAppData({ library, owner: account || '' })
 
     setDomainDataTrigger((state: boolean) => !state)
   }
@@ -223,8 +226,14 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
 
       {account && (
         <NetworkInfo>
-          {accountPrefix ? `${accountPrefix}: ` : ' '}
-          <span className="monospace">{shortenAddress(account)}</span>
+          <div className="row">
+            {/* @ts-ignore */}
+            {t('storageNetwork')}: <span>{networks[STORAGE_NETWORK_ID].name}</span>
+          </div>
+          <div className="row">
+            {accountPrefix ? `${accountPrefix}: ` : ' '}
+            <span className="monospace">{shortenAddress(account)}</span>
+          </div>
         </NetworkInfo>
       )}
 
@@ -264,7 +273,9 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
         )}
       </Content>
 
-      {Boolean(admin && factory && router) && (
+      {Boolean(
+        admin?.toLowerCase() === account?.toLowerCase() && factory && router && chainId === STORAGE_NETWORK_ID
+      ) && (
         <DangerZone>
           <ButtonSecondary onClick={() => setShowConfirm(true)}>{t('resetDomainData')}</ButtonSecondary>
         </DangerZone>

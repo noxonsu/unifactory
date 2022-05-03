@@ -165,10 +165,18 @@ export default function useDomainInfo(trigger: boolean): {
         const currentDomain = window.location.hostname || document.location.host
         const { info, owner } = await storage.methods.getData(currentDomain).call()
 
+        console.group('%c info', 'color:pink;font-size:20px')
+        console.log(info)
+        console.log('owner: ', owner)
+
         const settings = parseSettings(info)
         const { factory, router } = settings
 
         const registredDomain = owner !== ZERO_ADDRESS && factory && router
+
+        console.log('parsed: ', settings)
+        console.log('registred domain: ', registredDomain)
+        console.groupEnd()
 
         if (!registredDomain) return setData(null)
 

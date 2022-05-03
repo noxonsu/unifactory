@@ -24,6 +24,7 @@
     "chainId": 56,
     "explorer": "https://bscscan.com",
     "color": "#CC9B00",
+    "storage": "0x4B2B549d0Be6013f30221f23d0165587cAc3f888",
     "registry": "0x39b6A4E28fF734311Da8b800025dEBD573Be3eaB",
     "multicall": "0x41263cBA59EB80dC200F3E2544eda4ed6A90E76C",
     "baseCurrency": {

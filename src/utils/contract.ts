@@ -72,7 +72,15 @@ export const deployRouter = async (params: any) => {
   })
 }
 
-export const deploySwapContracts = async (params: any) => {
+export const deploySwapContracts = async (params: {
+  admin: string
+  library: Web3Provider
+  wrappedToken: string
+  devFeeAdmin: string
+  onFactoryHash?: (hash: string) => void
+  onRouterHash?: (hash: string) => void
+  onSuccessfulDeploy?: (params: { factory: string; router: string }) => void
+}) => {
   const { admin, library, wrappedToken, devFeeAdmin, onFactoryHash, onRouterHash, onSuccessfulDeploy } = params
 
   try {
@@ -84,13 +92,19 @@ export const deploySwapContracts = async (params: any) => {
     })
 
     if (factory) {
-      await deployRouter({
+      const router = await deployRouter({
         onHash: onRouterHash,
         library,
         factory: factory.options.address,
         wrappedToken,
       })
-      onSuccessfulDeploy()
+
+      if (typeof onSuccessfulDeploy === 'function') {
+        onSuccessfulDeploy({
+          factory: factory.options.address,
+          router: router.options.address,
+        })
+      }
     } else {
       throw new Error('No factory contract')
     }

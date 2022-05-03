@@ -7,7 +7,7 @@ import { ButtonPrimary, CleanButton } from 'components/Button'
 import Input from 'components/Input'
 import InputPanel from 'components/InputPanel'
 import { useTranslation } from 'react-i18next'
-import { saveProjectOption } from 'utils/storage'
+import { saveAppData } from 'utils/storage'
 import { returnTokenInfo, isValidAddress } from 'utils/contract'
 import { shortenAddress } from 'utils'
 import Accordion from 'components/Accordion'
@@ -124,7 +124,7 @@ export function TokenList(props: {
     setPending(true)
 
     try {
-      await saveProjectOption({
+      await saveAppData({
         //@ts-ignore
         library,
         owner: account,

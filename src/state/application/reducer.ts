@@ -8,6 +8,7 @@ import {
   removePopup,
   updateBlockNumber,
   updateActivePools,
+  updateAppOptions,
   ApplicationModal,
   setOpenModal,
 } from './actions'
@@ -109,6 +110,14 @@ export default createReducer(initialState, (builder) =>
             // @ts-ignore
             state[key] = data[key]
           }
+        })
+      }
+    })
+    .addCase(updateAppOptions, (state, action) => {
+      if (action.payload?.length) {
+        action.payload.forEach(({ key, value }) => {
+          // @ts-ignore
+          if (key) state[key] = value
         })
       }
     })
