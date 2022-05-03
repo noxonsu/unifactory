@@ -13,6 +13,7 @@ import { useAddPopup, useAppState } from 'state/application/hooks'
 import { updateAppOptions } from 'state/application/actions'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useTranslation } from 'react-i18next'
+import { SUPPORTED_NETWORKS } from '../../connectors'
 import { DEV_FEE_ADMIN, FactoryMethod, STORAGE_NETWORK_ID } from '../../constants'
 import { ButtonPrimary } from 'components/Button'
 import Accordion from 'components/Accordion'
@@ -26,6 +27,7 @@ import { PartitionWrapper } from './index'
 import { isValidAddress, setFactoryOption, deploySwapContracts } from 'utils/contract'
 import { saveAppData } from 'utils/storage'
 import useWordpressInfo from 'hooks/useWordpressInfo'
+import networks from 'networks.json'
 
 const Title = styled.h3`
   font-weight: 400;
@@ -160,6 +162,7 @@ function SwapContracts(props: any) {
   const addTransaction = useTransactionAdder()
   const addPopup = useAddPopup()
   const {
+    contracts,
     admin: stateAdmin,
     factory: stateFactory,
     router: stateRouter,
@@ -182,12 +185,7 @@ function SwapContracts(props: any) {
       : true
 
     setCanDeploySwapContracts(
-      //@ts-ignore
-      isValidAddress(library, adminAddress) &&
-        wrappedToken &&
-        //@ts-ignore
-        isValidAddress(library, wrappedToken) &&
-        adminIsFine
+      isValidAddress(adminAddress) && wrappedToken && isValidAddress(wrappedToken) && adminIsFine
     )
   }, [library, adminAddress, wrappedToken, account, wordpressData, stateAdmin])
 
@@ -209,7 +207,26 @@ function SwapContracts(props: any) {
     setTxHash('')
   }, [])
 
-  const saveContractsData = async (factory: string, router: string) => {
+  const [userContractsChainId, setUserContractsChainId] = useState('')
+  const [userFactory, setUserFactory] = useState(contracts[chainId || 0]?.factory || '')
+  const [userRouter, setUserRouter] = useState(contracts[chainId || 0]?.router || '')
+  const [canSaveSwapContracts, setCanSaveSwapContracts] = useState(false)
+
+  useEffect(() => {
+    const differentContracts =
+      userFactory.toLowerCase() !== contracts[chainId || 0]?.factory?.toLowerCase() &&
+      userRouter.toLowerCase() !== contracts[chainId || 0]?.router?.toLowerCase()
+
+    setCanSaveSwapContracts(
+      chainId === STORAGE_NETWORK_ID &&
+        userContractsChainId in SUPPORTED_NETWORKS &&
+        isValidAddress(userFactory) &&
+        isValidAddress(userRouter) &&
+        differentContracts
+    )
+  }, [chainId, userContractsChainId, userFactory, userRouter, contracts])
+
+  const saveContractsData = async (chainId: number, factory: string, router: string) => {
     if (!chainId) return
 
     try {
@@ -241,12 +258,23 @@ function SwapContracts(props: any) {
     }
   }
 
+  const saveSwapContracts = () => {
+    try {
+      saveContractsData(Number(userContractsChainId), userFactory, userRouter)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   const onContractsDeployment = async () => {
+    if (!chainId) return
+
     setAttemptingTxn(true)
 
     try {
       await deploySwapContracts({
         domain,
+        chainId,
         //@ts-ignore
         library,
         admin: adminAddress,
@@ -270,11 +298,13 @@ function SwapContracts(props: any) {
             }
           )
         },
-        onSuccessfulDeploy: async ({ factory, router }) => {
+        onSuccessfulDeploy: async ({ chainId, factory, router }) => {
           if (chainId === STORAGE_NETWORK_ID) {
-            await saveContractsData(factory, router)
+            await saveContractsData(chainId, factory, router)
           } else {
-            // Display inputs for the contract addresses
+            setUserContractsChainId(String(chainId))
+            setUserFactory(factory)
+            setUserRouter(router)
           }
 
           setAttemptingTxn(false)
@@ -417,6 +447,29 @@ function SwapContracts(props: any) {
             {t('deploySwapContracts')}
           </Button>
         </Accordion>
+      </PartitionWrapper>
+
+      <PartitionWrapper>
+        <TextBlock positive>{t('instructionToSaveContractsFromDifferentNetwork')}</TextBlock>
+        <InputWrapper>
+          <InputPanel
+            label={`${t('contractsNetwork')} *`}
+            value={userContractsChainId}
+            onChange={setUserContractsChainId}
+          />
+        </InputWrapper>
+        <InputWrapper>
+          <InputPanel label="Factory *" value={userFactory} onChange={setUserFactory} />
+        </InputWrapper>
+        <InputWrapper>
+          <InputPanel label="Router *" value={userRouter} onChange={setUserRouter} />
+        </InputWrapper>
+        <Button onClick={saveSwapContracts} disabled={pending || !canSaveSwapContracts}>
+          {t(chainId === STORAGE_NETWORK_ID ? 'saveSwapContracts' : 'switchToNetwork', {
+            //@ts-ignore
+            network: networks[STORAGE_NETWORK_ID].name,
+          })}
+        </Button>
       </PartitionWrapper>
 
       <PartitionWrapper>

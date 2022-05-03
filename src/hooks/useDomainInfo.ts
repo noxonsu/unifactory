@@ -12,6 +12,7 @@ const validArray = (arr: any[]) => Array.isArray(arr) && !!arr.length
 
 const defaultSettings = (): StorageState => ({
   admin: '',
+  contracts: {},
   factory: '',
   router: '',
   pairHash: '',
@@ -66,19 +67,19 @@ const filterTokenLists = (lists: string[]) => {
     .map((str: string) => JSON.parse(str))
 }
 
-const parseSettings = (settings: string): StorageState => {
+const parseSettings = (settings: string, chainId: number): StorageState => {
   const appSettings = defaultSettings()
 
   try {
     const settingsJSON = JSON.parse(settings)
 
     if (!settingsJSON?.definance) settingsJSON.definance = {}
+    if (!settingsJSON.definance?.contracts) settingsJSON.definance.contracts = {}
 
     const { definance: parsedSettings } = settingsJSON
 
     const {
-      factory,
-      router,
+      contracts,
       pairHash,
       feeRecipient,
       domain,
@@ -99,8 +100,15 @@ const parseSettings = (settings: string): StorageState => {
       defaultSwapCurrency,
     } = parsedSettings
 
-    if (factory !== ZERO_ADDRESS) appSettings.factory = factory
-    if (router !== ZERO_ADDRESS) appSettings.router = router
+    appSettings.contracts = contracts
+
+    if (contracts[chainId]) {
+      const { factory, router } = contracts[chainId]
+
+      appSettings.factory = factory
+      appSettings.router = router
+    }
+
     if (pairHash !== ZERO_HASH) appSettings.pairHash = pairHash
     if (feeRecipient !== ZERO_ADDRESS) appSettings.feeRecipient = feeRecipient
     if (domain) appSettings.domain = domain
@@ -169,10 +177,10 @@ export default function useDomainInfo(trigger: boolean): {
         console.log(info)
         console.log('owner: ', owner)
 
-        const settings = parseSettings(info)
-        const { factory, router } = settings
+        const settings = parseSettings(info, chainId || 0)
+        const { contracts, factory, router } = settings
 
-        const registredDomain = owner !== ZERO_ADDRESS && factory && router
+        const registredDomain = owner !== ZERO_ADDRESS && Object.keys(contracts).length
 
         console.log('parsed: ', settings)
         console.log('registred domain: ', registredDomain)
@@ -181,8 +189,12 @@ export default function useDomainInfo(trigger: boolean): {
         if (!registredDomain) return setData(null)
 
         fullData = { ...settings, admin: owner }
+
+        if (!factory || !router) return setData(null)
+
         //@ts-ignore
         const factoryContract = getContractInstance(library, factory, FACTORY.abi)
+
         const INIT_CODE_PAIR_HASH = await factoryContract.methods.INIT_CODE_PAIR_HASH().call()
 
         fullData = { ...fullData, pairHash: INIT_CODE_PAIR_HASH }

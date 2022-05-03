@@ -1,5 +1,6 @@
 import { createReducer, nanoid } from '@reduxjs/toolkit'
 import { TokenList } from '@uniswap/token-lists/dist/types'
+import { SUPPORTED_NETWORKS } from '../../connectors'
 import {
   setAppManagement,
   retrieveDomainData,
@@ -17,6 +18,12 @@ type PopupList = Array<{ key: string; show: boolean; content: PopupContent; remo
 
 export type StorageState = {
   admin: string
+  contracts: {
+    [key in keyof typeof SUPPORTED_NETWORKS]: {
+      factory: string
+      router: string
+    }
+  }
   factory: string
   router: string
   pairHash: string
@@ -55,6 +62,7 @@ export type ApplicationState = StorageState & {
 const initialState: ApplicationState = {
   // external data -----------
   admin: '',
+  contracts: {},
   factory: '',
   router: '',
   pairHash: '',

@@ -74,14 +74,15 @@ export const deployRouter = async (params: any) => {
 
 export const deploySwapContracts = async (params: {
   admin: string
+  chainId: number
   library: Web3Provider
   wrappedToken: string
   devFeeAdmin: string
   onFactoryHash?: (hash: string) => void
   onRouterHash?: (hash: string) => void
-  onSuccessfulDeploy?: (params: { factory: string; router: string }) => void
+  onSuccessfulDeploy?: (params: { chainId: number; factory: string; router: string }) => void
 }) => {
-  const { admin, library, wrappedToken, devFeeAdmin, onFactoryHash, onRouterHash, onSuccessfulDeploy } = params
+  const { admin, chainId, library, wrappedToken, devFeeAdmin, onFactoryHash, onRouterHash, onSuccessfulDeploy } = params
 
   try {
     const factory = await deployFactory({
@@ -101,6 +102,7 @@ export const deploySwapContracts = async (params: {
 
       if (typeof onSuccessfulDeploy === 'function') {
         onSuccessfulDeploy({
+          chainId,
           factory: factory.options.address,
           router: router.options.address,
         })
@@ -141,8 +143,8 @@ export const isValidAddressFormat = (address: string) => {
   return typeof address === 'string' && /^0x[A-Fa-f0-9]{40}$/.test(address)
 }
 
-export const isValidAddress = (library: Web3Provider, address: string) => {
-  if (!isValidAddressFormat(address) || !library) return false
+export const isValidAddress = (address: string) => {
+  if (!isValidAddressFormat(address)) return false
 
   try {
     return isAddress(address)

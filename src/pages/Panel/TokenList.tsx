@@ -67,7 +67,7 @@ export function TokenList(props: {
   const [tokenAddressIsCorrect, setTokenAddressIsCorrect] = useState(true)
 
   useEffect(() => {
-    setTokenAddressIsCorrect(isValidAddress(library, newTokenAddress))
+    setTokenAddressIsCorrect(isValidAddress(newTokenAddress))
   }, [library, newTokenAddress])
 
   const addNewToken = async () => {

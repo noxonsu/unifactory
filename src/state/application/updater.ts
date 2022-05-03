@@ -4,7 +4,7 @@ import useDebounce from 'hooks/useDebounce'
 import { useFactoryContract } from 'hooks/useContract'
 import useIsWindowVisible from 'hooks/useIsWindowVisible'
 import { useAppState } from './hooks'
-import { updateBlockNumber, updateActivePools } from './actions'
+import { updateBlockNumber, updateActivePools, updateAppOptions } from './actions'
 import { useDispatch } from 'react-redux'
 
 export default function Updater(): null {
@@ -33,7 +33,7 @@ export default function Updater(): null {
 
   // attach/detach listeners
 
-  const { factory } = useAppState()
+  const { contracts, factory } = useAppState()
   const factoryContract = useFactoryContract(factory)
 
   useEffect(() => {
@@ -57,6 +57,26 @@ export default function Updater(): null {
 
     update()
   }, [chainId, factory, factoryContract, dispatch])
+
+  useEffect(() => {
+    if (chainId && contracts[chainId]) {
+      const { factory, router } = contracts[chainId]
+
+      dispatch(
+        updateAppOptions([
+          { key: 'factory', value: factory || '' },
+          { key: 'router', value: router || '' },
+        ])
+      )
+    } else {
+      dispatch(
+        updateAppOptions([
+          { key: 'factory', value: '' },
+          { key: 'router', value: '' },
+        ])
+      )
+    }
+  }, [chainId, contracts, dispatch])
 
   useEffect(() => {
     if (!library || !chainId || !account || !windowVisible) return undefined

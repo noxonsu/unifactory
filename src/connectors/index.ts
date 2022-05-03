@@ -27,9 +27,9 @@ export type Network = {
 }
 
 export const SUPPORTED_NETWORKS: { [chainId: string]: Network } = Object.values(networks).reduce((acc, network) => {
-  const { registry, multicall, wrappedToken, chainId } = network
+  const { multicall, wrappedToken, chainId } = network
 
-  if (Boolean(registry && multicall && wrappedToken?.address)) {
+  if (Boolean(multicall && wrappedToken?.address)) {
     return { ...acc, [chainId]: network }
   }
 
