@@ -1,16 +1,18 @@
 import { useCallback, useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
 import { useActiveWeb3React } from 'hooks'
+import { filterTokenLists } from 'utils/list'
 import useDebounce from 'hooks/useDebounce'
 import { useFactoryContract } from 'hooks/useContract'
 import useIsWindowVisible from 'hooks/useIsWindowVisible'
 import { useAppState } from './hooks'
 import { updateBlockNumber, updateActivePools, updateAppOptions } from './actions'
-import { useDispatch } from 'react-redux'
 
 export default function Updater(): null {
   const { library, chainId, account } = useActiveWeb3React()
   const dispatch = useDispatch()
-
+  const { contracts, factory, tokenListsByChain } = useAppState()
+  const factoryContract = useFactoryContract(factory)
   const windowVisible = useIsWindowVisible()
 
   const [state, setState] = useState<{ chainId: number | undefined; blockNumber: number | null }>({
@@ -32,9 +34,6 @@ export default function Updater(): null {
   )
 
   // attach/detach listeners
-
-  const { contracts, factory } = useAppState()
-  const factoryContract = useFactoryContract(factory)
 
   useEffect(() => {
     const update = async () => {
@@ -77,6 +76,14 @@ export default function Updater(): null {
       )
     }
   }, [chainId, contracts, dispatch])
+
+  useEffect(() => {
+    if (chainId && tokenListsByChain[chainId]) {
+      const tokenLists = filterTokenLists(tokenListsByChain[chainId])
+
+      dispatch(updateAppOptions([{ key: 'tokenLists', value: tokenLists }]))
+    }
+  }, [chainId, tokenListsByChain, dispatch])
 
   useEffect(() => {
     if (!library || !chainId || !account || !windowVisible) return undefined

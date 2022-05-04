@@ -7,6 +7,7 @@ import { useActiveWeb3React } from 'hooks'
 import { getContractInstance } from 'utils/contract'
 import { isValidColor } from 'utils/color'
 import { filterTokenLists } from 'utils/list'
+import { STORAGE_APP_KEY } from '../constants'
 
 const validArray = (arr: any[]) => Array.isArray(arr) && !!arr.length
 
@@ -47,8 +48,15 @@ const parseSettings = (settings: string, chainId: number): StorageState => {
   try {
     const settingsJSON = JSON.parse(settings)
 
-    if (!settingsJSON?.definance) settingsJSON.definance = {}
-    if (!settingsJSON.definance?.contracts) settingsJSON.definance.contracts = {}
+    if (!settingsJSON?.[STORAGE_APP_KEY]) {
+      settingsJSON[STORAGE_APP_KEY] = {}
+    }
+    if (!settingsJSON[STORAGE_APP_KEY]?.contracts) {
+      settingsJSON[STORAGE_APP_KEY].contracts = {}
+    }
+    if (!settingsJSON[STORAGE_APP_KEY]?.contracts) {
+      settingsJSON[STORAGE_APP_KEY].tokenLists = {}
+    }
 
     const { definance: parsedSettings } = settingsJSON
 
@@ -103,9 +111,7 @@ const parseSettings = (settings: string, chainId: number): StorageState => {
     if (validArray(socialLinks)) appSettings.socialLinks = socialLinks
     if (validArray(addressesOfTokenLists)) appSettings.addressesOfTokenLists = addressesOfTokenLists
 
-    console.log('parsedSettings: ', parsedSettings)
-
-    if (Object.keys(tokenLists).length) {
+    if (tokenLists && Object.keys(tokenLists).length) {
       appSettings.tokenListsByChain = tokenLists
 
       if (tokenLists[chainId]) {

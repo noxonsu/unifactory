@@ -1,4 +1,3 @@
-import { TokenList } from '@uniswap/token-lists/dist/types'
 import { Version } from '@uniswap/token-lists'
 import { DEFAULT_LIST_OF_LISTS } from './../constants/lists'
 import { returnValidList } from 'utils/getTokenList'
@@ -18,26 +17,30 @@ export function listVersionLabel(version: Version): string {
   return `v${version.major}.${version.minor}.${version.patch}`
 }
 
-export function filterTokenLists(lists: { [listId: string]: TokenList }) {
+export function filterTokenLists(lists: { [listId: string]: any }) {
+  console.log('lists: ', lists)
+
   return Object.values(lists).filter((list: any) => {
+    console.log('list: ', list)
+
     try {
       const namePattern = /^[ \w.'+\-%/À-ÖØ-öø-ÿ:]+$/
 
-      list.tokens = list.tokens
-        // filter not valid token before actuall external validation
-        // to leave the option of showing the entire token list
-        // (without it token list won't be displayed with an error in at least one token)
-        .filter((token: { name: string }) => token.name.match(namePattern))
-        .map((token: { decimals: number }) => ({
-          ...token,
-          // some value(s) has to be other types (for now it's only decimals)
-          // but JSON allows only strings
-          decimals: Number(token.decimals),
-        }))
-
-      return returnValidList(list)
+      return returnValidList({
+        ...list,
+        tokens: list.tokens
+          // filter not valid token before actuall external validation
+          // to leave the option of showing the entire token list
+          // (without it token list won't be displayed with an error in at least one token)
+          .filter((token: { name: string }) => token.name.match(namePattern))
+          .map((token: { decimals: number }) => ({
+            ...token,
+            // some value(s) has to be other types (for now it's only decimals)
+            // but JSON allows only strings
+            decimals: Number(token.decimals),
+          })),
+      })
     } catch (error) {
-      console.error('Filter token lists')
       console.error(error)
       return false
     }
