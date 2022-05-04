@@ -7,6 +7,8 @@ import { useTransactionAdder } from 'state/transactions/hooks'
 import { useAddPopup, useAppState } from 'state/application/hooks'
 import { ButtonPrimary } from 'components/Button'
 import { TokenLists } from './TokenLists'
+import Accordion from 'components/Accordion'
+import Input from 'components/Input'
 import InputPanel from 'components/InputPanel'
 import Toggle from 'components/Toggle'
 import ListFactory from 'components/ListFactory'
@@ -18,6 +20,7 @@ import { STORAGE_NETWORK_ID, STORAGE_NETWORK_NAME } from '../../constants'
 import { saveAppData } from 'utils/storage'
 import { parseENSAddress } from 'utils/parseENSAddress'
 import uriToHttp from 'utils/uriToHttp'
+import networks from 'networks.json'
 
 const Button = styled(ButtonPrimary)`
   font-size: 0.8em;
@@ -49,7 +52,7 @@ export default function Interface(props: any) {
     menuLinks: stateMenuLinks,
     socialLinks: stateSocialLinks,
     addressesOfTokenLists: stateAddressesOfTokenLists,
-    tokenLists: stateTokenLists,
+    tokenListsByChain: stateTokenListsByChain,
     disableSourceCopyright: stateDisableSourceCopyright,
     defaultSwapCurrency,
   } = useAppState()
@@ -124,7 +127,7 @@ export default function Interface(props: any) {
   const [menuLinks, setMenuLinks] = useState<LinkItem[]>(stateMenuLinks)
   const [socialLinks, setSocialLinks] = useState<string[]>(stateSocialLinks)
   const [addressesOfTokenLists, setAddressesOfTokenLists] = useState<string[]>(stateAddressesOfTokenLists)
-  const [tokenLists, setTokenLists] = useState<any>(stateTokenLists)
+  const [tokenLists, setTokenLists] = useState<any>(stateTokenListsByChain)
   const [disableSourceCopyright, setDisableSourceCopyright] = useState<boolean>(stateDisableSourceCopyright)
   const [swapInputCurrency, setSwapInputCurrency] = useState(defaultSwapCurrency.input || '')
   const [swapOutputCurrency, setSwapOutputCurrency] = useState(defaultSwapCurrency.output || '')
@@ -246,15 +249,26 @@ export default function Interface(props: any) {
     setPending(false)
   }
 
+  const [newListChainId, setNewListChainId] = useState('')
+  const [newListId, setNewListId] = useState('templatelist')
+  const [canCreateNewList, setCanCreateNewList] = useState(false)
+
+  useEffect(() => {
+    setCanCreateNewList(Boolean(networks[newListChainId as keyof typeof networks] && newListId))
+  }, [newListChainId, newListId])
+
   const createNewTokenList = () => {
-    setTokenLists((oldData: any) => [
+    setTokenLists((oldData: any) => ({
       ...oldData,
-      {
-        name: 'Template list',
-        logoURI: '',
-        tokens: [],
+      [newListChainId]: {
+        ...oldData[newListChainId],
+        [newListId]: {
+          name: 'Template list',
+          logoURI: '',
+          tokens: [],
+        },
       },
-    ])
+    }))
   }
 
   return (
@@ -273,6 +287,14 @@ export default function Interface(props: any) {
             value={backgroundUrl}
             onChange={setBackgroundUrl}
             error={!isValidBackground}
+          />
+        </OptionWrapper>
+
+        <OptionWrapper flex>
+          {t('disableSourceCopyright')}
+          <Toggle
+            isActive={disableSourceCopyright}
+            toggle={() => setDisableSourceCopyright((prevState) => !prevState)}
           />
         </OptionWrapper>
 
@@ -320,64 +342,58 @@ export default function Interface(props: any) {
           onOutputCurrency={setSwapOutputCurrency}
         />
 
-        <OptionWrapper flex>
-          {t('disableSourceCopyright')}
-          <Toggle
-            isActive={disableSourceCopyright}
-            toggle={() => setDisableSourceCopyright((prevState) => !prevState)}
-          />
-        </OptionWrapper>
+        <Accordion title={t('colors')} margin="0.5rem 0">
+          <OptionWrapper margin={0.4}>
+            <ColorSelector
+              name={t('primaryColor')}
+              defaultColor={stateBrandColor}
+              onColor={(color, valid) => {
+                setBrandColorValid(valid)
+                updateColor(color, ColorType.BRAND)
+              }}
+            />
+          </OptionWrapper>
 
-        <OptionWrapper margin={0.4}>
-          <ColorSelector
-            name={t('primaryColor')}
-            defaultColor={stateBrandColor}
-            onColor={(color, valid) => {
-              setBrandColorValid(valid)
-              updateColor(color, ColorType.BRAND)
-            }}
-          />
-        </OptionWrapper>
+          <OptionWrapper margin={0.4}>
+            <h4>{t('backgroundColor')}</h4>
+            <ColorSelector
+              name={t('light')}
+              defaultColor={backgroundColorLight}
+              onColor={(color, valid) => {
+                setBgColorLightValid(valid)
+                updateColor(color, ColorType.BACKGROUND_LIGHT)
+              }}
+            />
+            <ColorSelector
+              name={t('dark')}
+              defaultColor={backgroundColorDark}
+              onColor={(color, valid) => {
+                setBgColorDarkValid(valid)
+                updateColor(color, ColorType.BACKGROUND_DARK)
+              }}
+            />
+          </OptionWrapper>
 
-        <OptionWrapper margin={0.4}>
-          <h4>{t('backgroundColor')}</h4>
-          <ColorSelector
-            name={t('light')}
-            defaultColor={backgroundColorLight}
-            onColor={(color, valid) => {
-              setBgColorLightValid(valid)
-              updateColor(color, ColorType.BACKGROUND_LIGHT)
-            }}
-          />
-          <ColorSelector
-            name={t('dark')}
-            defaultColor={backgroundColorDark}
-            onColor={(color, valid) => {
-              setBgColorDarkValid(valid)
-              updateColor(color, ColorType.BACKGROUND_DARK)
-            }}
-          />
-        </OptionWrapper>
-
-        <OptionWrapper margin={0.5}>
-          <h4>{t('textColor')}</h4>
-          <ColorSelector
-            name={t('light')}
-            defaultColor={textColorLight}
-            onColor={(color, valid) => {
-              setTextColorLightValid(valid)
-              updateColor(color, ColorType.TEXT_COLOR_LIGHT)
-            }}
-          />
-          <ColorSelector
-            name={t('dark')}
-            defaultColor={textColorDark}
-            onColor={(color, valid) => {
-              setTextColorDarkValid(valid)
-              updateColor(color, ColorType.TEXT_COLOR_DARK)
-            }}
-          />
-        </OptionWrapper>
+          <OptionWrapper margin={0.5}>
+            <h4>{t('textColor')}</h4>
+            <ColorSelector
+              name={t('light')}
+              defaultColor={textColorLight}
+              onColor={(color, valid) => {
+                setTextColorLightValid(valid)
+                updateColor(color, ColorType.TEXT_COLOR_LIGHT)
+              }}
+            />
+            <ColorSelector
+              name={t('dark')}
+              defaultColor={textColorDark}
+              onColor={(color, valid) => {
+                setTextColorDarkValid(valid)
+                updateColor(color, ColorType.TEXT_COLOR_DARK)
+              }}
+            />
+          </OptionWrapper>
+        </Accordion>
 
         <Button onClick={saveSettings} disabled={cannotSaveSettings}>
           {t(chainId === STORAGE_NETWORK_ID ? 'saveSettings' : 'switchToNetwork', {
@@ -386,8 +402,25 @@ export default function Interface(props: any) {
         </Button>
 
         <Title>{t('tokenLists')}</Title>
-        <TokenLists pending={pending} setPending={setPending} tokenLists={tokenLists} setTokenLists={setTokenLists} />
-        <Button onClick={createNewTokenList}>{t('createNewTokenList')}</Button>
+        <TokenLists pending={pending} setPending={setPending} tokenLists={tokenLists} />
+
+        <OptionWrapper margin={0.4}>
+          <Input
+            label={`${t('listNetworkId')} *`}
+            questionHelper={t('listNetworkIdDescription')}
+            value={newListChainId}
+            onChange={setNewListChainId}
+          />
+          <Input
+            label={`${t('listId')} *`}
+            questionHelper={t('listIdDescription')}
+            value={newListId}
+            onChange={setNewListId}
+          />
+          <Button disabled={!canCreateNewList} onClick={createNewTokenList}>
+            {t('createNewTokenList')}
+          </Button>
+        </OptionWrapper>
       </div>
     </section>
   )

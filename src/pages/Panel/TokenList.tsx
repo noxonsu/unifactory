@@ -43,6 +43,8 @@ export function TokenList(props: {
   isNewList: boolean
   pending: boolean
   setPending: (x: any) => void
+  listChainId: string
+  listId: string
   list: {
     name: string
     logoURI: string
@@ -55,14 +57,14 @@ export function TokenList(props: {
     }
   }
 }) {
-  const { list, activeWeb3React, setPending, isNewList } = props
+  const { listChainId, listId, list, activeWeb3React, setPending, isNewList } = props
   const { library, chainId, account } = activeWeb3React
   const { t } = useTranslation()
   const addTransaction = useTransactionAdder()
   const addPopup = useAddPopup()
 
-  const [tokenListChainId, setTokenListChainId] = useState('')
-  const [tokenListId, setTokenListId] = useState('')
+  const [tokenListChainId, setTokenListChainId] = useState(listChainId)
+  const [tokenListId, setTokenListId] = useState(listId)
   const [tokenListName, setTokenListName] = useState(list.name || '')
   const [tokenListLogo, setTokenListLogo] = useState(list.logoURI || '')
   const [tokens, setTokens] = useState(list.tokens || [])
@@ -173,7 +175,12 @@ export function TokenList(props: {
 
   return (
     <Accordion title={list.name}>
-      <Input label={`${t('listNetworkId')} *`} value={tokenListChainId} onChange={setTokenListChainId} />
+      <Input
+        label={`${t('listNetworkId')} *`}
+        questionHelper={t('listNetworkIdDescription')}
+        value={tokenListChainId}
+        onChange={setTokenListChainId}
+      />
       <Input
         label={`${t('listId')} *`}
         questionHelper={t('listIdDescription')}
