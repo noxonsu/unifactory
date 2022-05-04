@@ -5,8 +5,8 @@ import { StorageState } from 'state/application/reducer'
 import { useStorageContract } from './useContract'
 import { useActiveWeb3React } from 'hooks'
 import { getContractInstance } from 'utils/contract'
-import { returnValidList } from 'utils/getTokenList'
 import { isValidColor } from 'utils/color'
+import { filterTokenLists } from 'utils/list'
 
 const validArray = (arr: any[]) => Array.isArray(arr) && !!arr.length
 
@@ -31,6 +31,7 @@ const defaultSettings = (): StorageState => ({
   textColorLight: '',
   logo: '',
   background: '',
+  tokenListsByChain: {},
   tokenLists: [],
   navigationLinks: [],
   menuLinks: [],
@@ -39,33 +40,6 @@ const defaultSettings = (): StorageState => ({
   disableSourceCopyright: false,
   defaultSwapCurrency: { input: '', output: '' },
 })
-
-const filterTokenLists = (lists: string[]) => {
-  return lists
-    .filter((strJson: string) => {
-      try {
-        const list = JSON.parse(strJson)
-        const namePattern = /^[ \w.'+\-%/À-ÖØ-öø-ÿ:]+$/
-
-        list.tokens = list.tokens
-          // filter not valid token before actuall external validation
-          // to leave the option of showing the entire token list
-          // (without it token list won't be displayed with an error in at least one token)
-          .filter((token: { name: string }) => token.name.match(namePattern))
-          .map((token: { decimals: number }) => ({
-            ...token,
-            // some value(s) has to be other types (for now it's only decimals)
-            // but JSON allows only strings
-            decimals: Number(token.decimals),
-          }))
-
-        return returnValidList(list)
-      } catch (error) {
-        return console.error(error)
-      }
-    })
-    .map((str: string) => JSON.parse(str))
-}
 
 const parseSettings = (settings: string, chainId: number): StorageState => {
   const appSettings = defaultSettings()
@@ -129,8 +103,14 @@ const parseSettings = (settings: string, chainId: number): StorageState => {
     if (validArray(socialLinks)) appSettings.socialLinks = socialLinks
     if (validArray(addressesOfTokenLists)) appSettings.addressesOfTokenLists = addressesOfTokenLists
 
-    if (validArray(tokenLists)) {
-      appSettings.tokenLists = filterTokenLists(tokenLists)
+    console.log('parsedSettings: ', parsedSettings)
+
+    if (Object.keys(tokenLists).length) {
+      appSettings.tokenListsByChain = tokenLists
+
+      if (tokenLists[chainId]) {
+        appSettings.tokenLists = filterTokenLists(tokenLists[chainId])
+      }
     }
 
     if (defaultSwapCurrency) {

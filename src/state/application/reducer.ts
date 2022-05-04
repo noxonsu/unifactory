@@ -24,6 +24,12 @@ export type StorageState = {
       router: string
     }
   }
+  tokenListsByChain: {
+    [chainId: string]: {
+      [tokenListId: string]: TokenList
+    }
+  }
+  tokenLists: TokenList[]
   factory: string
   router: string
   pairHash: string
@@ -42,7 +48,6 @@ export type StorageState = {
   textColorLight: string
   logo: string
   background: string
-  tokenLists: TokenList[]
   navigationLinks: { name: string; source: string }[]
   menuLinks: { name: string; source: string }[]
   socialLinks: string[]
@@ -83,6 +88,7 @@ const initialState: ApplicationState = {
   textColorLight: '',
   logo: '',
   background: '',
+  tokenListsByChain: {},
   tokenLists: [],
   navigationLinks: [],
   menuLinks: [],
