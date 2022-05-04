@@ -8,7 +8,7 @@ import { Text } from 'rebass'
 import networks from '../../networks.json'
 import { useDispatch, useSelector } from 'react-redux'
 import { SUPPORTED_NETWORKS } from 'connectors'
-import { STORAGE_NETWORK_ID } from '../../constants'
+import { STORAGE_NETWORK_ID, STORAGE_NETWORK_NAME } from '../../constants'
 import { resetAppData } from 'utils/storage'
 import useWordpressInfo from 'hooks/useWordpressInfo'
 import { AppState } from 'state'
@@ -228,7 +228,7 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
         <NetworkInfo>
           <div className="row">
             {/* @ts-ignore */}
-            {t('storageNetwork')}: <span>{networks[STORAGE_NETWORK_ID].name}</span>
+            {t('storageNetwork')}: <span>{STORAGE_NETWORK_NAME}</span>
           </div>
           <div className="row">
             {accountPrefix ? `${accountPrefix}: ` : ' '}

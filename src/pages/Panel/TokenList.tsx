@@ -6,11 +6,12 @@ import styled from 'styled-components'
 import { ButtonPrimary, CleanButton } from 'components/Button'
 import Input from 'components/Input'
 import InputPanel from 'components/InputPanel'
+import Accordion from 'components/Accordion'
 import { useTranslation } from 'react-i18next'
 import { saveAppData } from 'utils/storage'
 import { returnTokenInfo, isValidAddress } from 'utils/contract'
 import { shortenAddress } from 'utils'
-import Accordion from 'components/Accordion'
+import { STORAGE_NETWORK_ID, STORAGE_NETWORK_NAME } from '../../constants'
 
 const TokenRow = styled.div`
   margin: 0.2rem;
@@ -20,6 +21,7 @@ const TokenRow = styled.div`
   justify-content: space-between;
   border-radius: 1rem;
   border: 1px solid ${({ theme }) => theme.bg3};
+  background-color: ${({ theme }) => theme.green2};
 
   .address {
     display: flex;
@@ -59,6 +61,8 @@ export function TokenList(props: {
   const addTransaction = useTransactionAdder()
   const addPopup = useAddPopup()
 
+  const [tokenListChainId, setTokenListChainId] = useState('')
+  const [tokenListId, setTokenListId] = useState('')
   const [tokenListName, setTokenListName] = useState(list.name || '')
   const [tokenListLogo, setTokenListLogo] = useState(list.logoURI || '')
   const [tokens, setTokens] = useState(list.tokens || [])
@@ -77,7 +81,7 @@ export function TokenList(props: {
 
     setPending(true)
 
-    const tokenInfo = await returnTokenInfo(library, newTokenAddress)
+    const tokenInfo = await returnTokenInfo(tokenListChainId, newTokenAddress)
 
     if (tokenInfo) {
       const { name, symbol, decimals } = tokenInfo
@@ -120,6 +124,14 @@ export function TokenList(props: {
     setTokens(updatedList)
   }
 
+  const [canSaveTokenList, setCanSaveTokenList] = useState(false)
+
+  useEffect(() => {
+    setCanSaveTokenList(
+      Boolean(chainId === STORAGE_NETWORK_ID && tokenListChainId && tokenListId && tokenListName && tokens.length)
+    )
+  }, [chainId, tokenListChainId, tokenListId, tokenListName, tokens.length])
+
   const saveTokenList = async () => {
     setPending(true)
 
@@ -129,14 +141,13 @@ export function TokenList(props: {
         library,
         owner: account,
         data: {
-          tokenLists: {
-            // TODO: how to save tokens? Via his name? Old or new?
-            'fix this key': {
-              oldName: list.name,
-              name: tokenListName,
-              logoURI: tokenListLogo,
-              tokens,
-            },
+          tokenList: {
+            chainId: tokenListChainId,
+            id: tokenListId,
+            oldName: list.name,
+            name: tokenListName,
+            logoURI: tokenListLogo,
+            tokens,
           },
         },
         onHash: (hash: string) => {
@@ -162,6 +173,13 @@ export function TokenList(props: {
 
   return (
     <Accordion title={list.name}>
+      <Input label={`${t('listNetworkId')} *`} value={tokenListChainId} onChange={setTokenListChainId} />
+      <Input
+        label={`${t('listId')} *`}
+        questionHelper={t('listIdDescription')}
+        value={tokenListId}
+        onChange={setTokenListId}
+      />
       <Input label={`${t('listName')} *`} value={tokenListName} onChange={setTokenListName} />
       <Input label={t('logo')} value={tokenListLogo} onChange={setTokenListLogo} />
 
@@ -188,16 +206,28 @@ export function TokenList(props: {
       <div key={newTokenAddress}>
         <InputPanel label={`${t('tokenAddress')} *`} value={newTokenAddress} onChange={setNewTokenAddress} />
         <InputPanel label={t('tokenLogo')} value={newTokenLogo} onChange={setNewTokenLogo} />
-        <Button onClick={addNewToken} disabled={!tokenAddressIsCorrect}>
-          {t('add')} {t('token')}
+        <Button onClick={addNewToken} disabled={!tokenAddressIsCorrect || !tokenListChainId}>
+          {chainId !== STORAGE_NETWORK_ID ? (
+            t('switchToNetwork', { network: STORAGE_NETWORK_NAME })
+          ) : !tokenListChainId ? (
+            t('fillTokenListChainId')
+          ) : !tokenAddressIsCorrect ? (
+            t('enterValidTokenAddress')
+          ) : (
+            <span>
+              {t('add')} {t('token')}
+            </span>
+          )}
         </Button>
       </div>
 
-      <div>
-        <Button onClick={saveTokenList} disabled={!tokenListName || !tokens.length}>
-          {isNewList ? t('saveTokenList') : t('updateTokenList')}
-        </Button>
-      </div>
+      <Button onClick={saveTokenList} disabled={!canSaveTokenList}>
+        {chainId !== STORAGE_NETWORK_ID
+          ? t('switchToNetwork', { network: STORAGE_NETWORK_NAME })
+          : isNewList
+          ? t('saveTokenList')
+          : t('updateTokenList')}
+      </Button>
     </Accordion>
   )
 }

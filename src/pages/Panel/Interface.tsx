@@ -14,11 +14,10 @@ import MenuLinksFactory, { LinkItem } from 'components/MenuLinksFactory'
 import ColorSelector from 'components/ColorSelector'
 import NetworkRelatedSettings from './NetworkRelatedSettings'
 import { OptionWrapper } from './index'
-import { STORAGE_NETWORK_ID } from '../../constants'
+import { STORAGE_NETWORK_ID, STORAGE_NETWORK_NAME } from '../../constants'
 import { saveAppData } from 'utils/storage'
 import { parseENSAddress } from 'utils/parseENSAddress'
 import uriToHttp from 'utils/uriToHttp'
-import networks from 'networks.json'
 
 const Button = styled(ButtonPrimary)`
   font-size: 0.8em;
@@ -382,8 +381,7 @@ export default function Interface(props: any) {
 
         <Button onClick={saveSettings} disabled={cannotSaveSettings}>
           {t(chainId === STORAGE_NETWORK_ID ? 'saveSettings' : 'switchToNetwork', {
-            //@ts-ignore
-            network: networks[STORAGE_NETWORK_ID].name,
+            network: STORAGE_NETWORK_NAME,
           })}
         </Button>
 

@@ -8,6 +8,7 @@ export const DEV_FEE_ADMIN = '0x6D1EB33c063CBe69d064EE22537dBF107e8816f6'
 export type STORAGE_NETWORK = keyof typeof networks
 
 export const STORAGE_NETWORK_ID = networks[97].chainId
+export const STORAGE_NETWORK_NAME = networks[STORAGE_NETWORK_ID.toString() as STORAGE_NETWORK].name
 // @ts-ignore
 export const STORAGE = networks[STORAGE_NETWORK_ID.toString() as STORAGE_NETWORK].storage
 // through this key we get/set this app settings (we use the storage contract for many apps)

@@ -1,11 +1,13 @@
 import { Web3Provider } from '@ethersproject/providers'
 import { Contract } from '@ethersproject/contracts'
 import { isAddress } from 'web3-utils'
+import { ethers } from 'ethers'
 import TokenAbi from 'human-standard-token-abi'
 import Factory from 'contracts/build/Factory.json'
 import RouterV2 from 'contracts/build/RouterV2.json'
 import { cache, addValue } from './cache'
 import { getWeb3Library } from './getLibrary'
+import networks from 'networks.json'
 
 export const getContractInstance = (library: Web3Provider, address: string, abi: any) => {
   const web3 = getWeb3Library(library.provider)
@@ -154,14 +156,14 @@ export const isValidAddress = (address: string) => {
   }
 }
 
-export const isContract = async (library: Web3Provider, address: string) => {
+export const isContract = async (provider: any, address: string) => {
   if (cache.isContract && cache.isContract[address]) {
     return cache.isContract[address]
   }
 
   if (!isValidAddressFormat(address)) return false
 
-  const codeAtAddress = await library.getCode(address)
+  const codeAtAddress = await provider.getCode(address)
   const codeIsEmpty = !codeAtAddress || codeAtAddress === '0x' || codeAtAddress === '0x0'
 
   if (!cache.isContract) cache.isContract = {}
@@ -171,15 +173,20 @@ export const isContract = async (library: Web3Provider, address: string) => {
   return !codeIsEmpty
 }
 
-export const returnTokenInfo = async (library: Web3Provider, address: string) => {
-  const result = await isContract(library, address)
+export const returnTokenInfo = async (chainId: string, address: string) => {
+  type ChainId = keyof typeof networks
+
+  if (!networks[chainId as ChainId]?.rpc) return
+
+  const provider = new ethers.providers.JsonRpcProvider(networks[chainId as ChainId].rpc)
+  const result = await isContract(provider, address)
 
   if (result) {
     if (cache.tokenInfo && cache.tokenInfo[address]) {
       return cache.tokenInfo[address]
     }
-
-    const contract = new Contract(address, TokenAbi, library)
+    //@ts-ignore
+    const contract = new Contract(address, TokenAbi, provider)
     const name = await contract.name()
     const symbol = await contract.symbol()
     const decimals = await contract.decimals()

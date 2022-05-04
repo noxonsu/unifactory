@@ -9,8 +9,16 @@ export const getStorage = (library: Web3Provider, address: string) => {
   return getContractInstance(library, address, Storage.abi)
 }
 
-const returnValidTokenListJSON = (params: any) => {
-  const { name, tokens, logoURI } = params
+const returnValidTokenListJSON = (tokenList: {
+  chainId: number
+  id: string
+  oldName: string
+  name: string
+  logoURI?: string
+  tokens: any[]
+}) => {
+  const { name, tokens, logoURI } = tokenList
+
   const list: any = {
     name,
     timestamp: getTimestamp(),
@@ -29,23 +37,69 @@ const returnValidTokenListJSON = (params: any) => {
 
   if (logoURI) list.logoURI = logoURI
 
-  return JSON.stringify(list)
+  return list
 }
 
 type Data = { [k: string]: any }
 
-const updateData = (oldData: Data, newData: Data) => {
-  return {
-    ...oldData,
-    [STORAGE_APP_KEY]: {
-      ...oldData[STORAGE_APP_KEY],
-      ...newData,
-      contracts: {
-        ...oldData[STORAGE_APP_KEY].contracts,
-        ...newData.contracts,
-      },
-    },
+const makeBaseStructure = (data: { [k: string]: any }) => {
+  if (!data[STORAGE_APP_KEY]) {
+    data[STORAGE_APP_KEY] = {}
   }
+
+  if (!data[STORAGE_APP_KEY].tokenLists) {
+    data[STORAGE_APP_KEY].tokenLists = {}
+  }
+
+  if (!data[STORAGE_APP_KEY].tokenLists) {
+    data[STORAGE_APP_KEY].tokenLists = {}
+  }
+
+  return data
+}
+
+const updateData = (oldData: Data, newData: Data) => {
+  oldData = makeBaseStructure(oldData)
+
+  let result
+
+  if (newData.tokenList) {
+    const { chainId, id } = newData.tokenList
+
+    const tokenLists = {
+      ...oldData[STORAGE_APP_KEY].tokenLists,
+      [chainId]: {
+        ...oldData[STORAGE_APP_KEY].tokenLists[chainId],
+        [id]: returnValidTokenListJSON(newData.tokenList),
+      },
+    }
+
+    result = {
+      ...oldData,
+      [STORAGE_APP_KEY]: {
+        ...oldData[STORAGE_APP_KEY],
+        tokenLists,
+      },
+    }
+  } else {
+    result = {
+      ...oldData,
+      [STORAGE_APP_KEY]: {
+        ...oldData[STORAGE_APP_KEY],
+        ...newData,
+        contracts: {
+          ...oldData[STORAGE_APP_KEY].contracts,
+          ...newData.contracts,
+        },
+        tokenLists: {
+          ...oldData[STORAGE_APP_KEY].tokenLists,
+          ...newData.tokenLists,
+        },
+      },
+    }
+  }
+
+  return result
 }
 
 export const saveAppData = async (params: {
@@ -57,20 +111,17 @@ export const saveAppData = async (params: {
 }) => {
   const { library, owner, data, onHash, onReceipt } = params
 
-  console.group('%c save option', 'color: pink; font-size: 20px')
-  console.log('params: ', params)
-  console.log(returnValidTokenListJSON)
-  console.groupEnd()
-
   try {
     const storage = getStorage(library, STORAGE)
     const { info } = await storage.methods.getData(getCurrentDomain()).call()
 
-    console.log('Old data: ', JSON.parse(info))
+    console.group('%c saveAppData', 'color: orange; font-size: 20px')
+    console.log('old Data: ', JSON.parse(info))
 
     const newData = updateData(JSON.parse(info), data)
 
-    console.log('newData: ', newData)
+    console.log('new Data: ', newData)
+    console.groupEnd()
 
     return new Promise(async (resolve, reject) => {
       storage.methods

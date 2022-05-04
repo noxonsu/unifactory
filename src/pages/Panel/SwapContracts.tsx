@@ -14,7 +14,7 @@ import { updateAppOptions } from 'state/application/actions'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useTranslation } from 'react-i18next'
 import { SUPPORTED_NETWORKS } from '../../connectors'
-import { DEV_FEE_ADMIN, FactoryMethod, STORAGE_NETWORK_ID } from '../../constants'
+import { DEV_FEE_ADMIN, FactoryMethod, STORAGE_NETWORK_ID, STORAGE_NETWORK_NAME } from '../../constants'
 import { ButtonPrimary } from 'components/Button'
 import Accordion from 'components/Accordion'
 import QuestionHelper from 'components/QuestionHelper'
@@ -27,7 +27,6 @@ import { PartitionWrapper } from './index'
 import { isValidAddress, setFactoryOption, deploySwapContracts } from 'utils/contract'
 import { saveAppData } from 'utils/storage'
 import useWordpressInfo from 'hooks/useWordpressInfo'
-import networks from 'networks.json'
 
 const Title = styled.h3`
   font-weight: 400;
@@ -466,8 +465,7 @@ function SwapContracts(props: any) {
         </InputWrapper>
         <Button onClick={saveSwapContracts} disabled={pending || !canSaveSwapContracts}>
           {t(chainId === STORAGE_NETWORK_ID ? 'saveSwapContracts' : 'switchToNetwork', {
-            //@ts-ignore
-            network: networks[STORAGE_NETWORK_ID].name,
+            network: STORAGE_NETWORK_NAME,
           })}
         </Button>
       </PartitionWrapper>

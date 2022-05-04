@@ -1,7 +1,8 @@
 import React, { useContext, useCallback } from 'react'
 import styled, { ThemeContext } from 'styled-components'
-import { TYPE } from '../../theme'
+import { TYPE } from 'theme'
 import { AutoColumn } from '../Column'
+import QuestionHelper from 'components/QuestionHelper'
 
 const InputPanel = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
@@ -15,6 +16,8 @@ const Label = styled.div`
   font-size: 1.1em;
   margin: 0.2rem 0;
   padding: 0.2rem 0;
+  display: flex;
+  align-items: center;
 `
 
 const ContainerRow = styled.div`
@@ -68,12 +71,14 @@ const Input = styled.input<{ disabled: boolean }>`
 export default function AddressInputPanel({
   id,
   label,
+  questionHelper,
   disabled = false,
   value,
   onChange,
 }: {
   id?: string
   label?: string
+  questionHelper?: string
   disabled?: boolean
   value: string
   onChange: (value: string) => void
@@ -96,6 +101,7 @@ export default function AddressInputPanel({
           <TYPE.black color={theme.text2} fontWeight={500} fontSize={14}>
             {label}
           </TYPE.black>
+          {questionHelper && <QuestionHelper text={questionHelper} />}
         </Label>
       )}
       <ContainerRow>

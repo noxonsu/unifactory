@@ -1,7 +1,7 @@
 const rewire = require('rewire');
 const defaults = rewire('react-scripts/scripts/build.js');
 let config = defaults.__get__('config');
-console.log(config)
+
 //console.log(config.plugins.MiniCssExtractPlugin);
 config.plugins.forEach((plugin) => {
   if (plugin.options
