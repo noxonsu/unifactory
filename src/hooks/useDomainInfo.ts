@@ -159,7 +159,7 @@ export default function useDomainInfo(trigger: boolean): {
         const currentDomain = window.location.hostname || document.location.host
         const { info, owner } = await storage.methods.getData(currentDomain).call()
 
-        const settings = parseSettings(info, chainId || 0)
+        const settings = parseSettings(info || '{}', chainId || 0)
         const { contracts, factory, router } = settings
 
         const registredDomain = owner !== ZERO_ADDRESS && Object.keys(contracts).length
