@@ -290,6 +290,7 @@
   "listIdDescription": "Eindeutig für den Netzwerk-ID-Wert",
   "tokenLogo": "Markenlogo",
   "fillTokenListChainId": "Token-Listen-Ketten-ID ausfüllen",
+  "youHaveSuchList": "Sie haben eine solche Liste",
   "instructionToSaveContractsFromDifferentNetwork": "Wenn Sie Verträge aus einem anderen Netzwerk als dem Speichernetzwerk bereitstellen, müssen Sie sie manuell speichern. Wechseln Sie zum Speichernetzwerk, füllen Sie diese Eingaben aus und speichern Sie sie. Sie können auch bestehende Verträge verwenden, jedoch nur, wenn sie sich auf Folgendes beziehen Definance",
   "youHaveToDeploySwapContractsFirst": "Zuerst müssen Sie die Swap-Verträge bereitstellen",
   "pleaseSelectOneOfTheFollowingNetworks": "Bitte wählen Sie eines der folgenden Netzwerke",

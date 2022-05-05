@@ -278,6 +278,7 @@
   "listIdDescription": "Único para el valor de ID de red",
   "tokenLogo": "Logotipo de token",
   "fillTokenListChainId": "ID de cadena de lista de tokens de relleno",
+  "youHaveSuchList": "Tienes una lista de este tipo",
   "instructionToSaveContractsFromDifferentNetwork": "Si implementa contratos desde una red que no sea la red de almacenamiento, debe guardarlos manualmente. Cambie a la red de almacenamiento, complete estas entradas y guárdelas. También puede usar contratos existentes, pero solo si están relacionados con Definance",
   "youHaveToDeploySwapContractsFirst": "Primero tienes que implementar los contratos de intercambio",
   "pleaseSelectOneOfTheFollowingNetworks": "Seleccione una de las siguientes redes",

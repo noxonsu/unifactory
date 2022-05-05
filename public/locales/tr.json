@@ -289,6 +289,7 @@
   "listIdDescription": "Ağ kimliği değeri için benzersiz",
   "tokenLogo": "Jeton logosu",
   "fillTokenListChainId": "Simge listesi zincir kimliğini doldur",
+  "youHaveSuchList": "Böyle bir listen var.",
   "instructionToSaveContractsFromDifferentNetwork": "Sözleşmeleri Depolama ağı dışındaki bir ağdan dağıtırsanız, bunları el ile kaydetmeniz gerekir. Depolama ağına geçin, bu girişleri doldurun ve kaydedin. Mevcut sözleşmeleri de kullanabilirsiniz, ancak yalnızca bunlarla ilgiliyse Definance",
   "youHaveToDeploySwapContractsFirst": "İlk önce takas sözleşmelerini dağıtmanız gerekir",
   "pleaseSelectOneOfTheFollowingNetworks": "Lütfen aşağıdaki ağlardan birini seçin",

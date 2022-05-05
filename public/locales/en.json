@@ -289,6 +289,7 @@
   "listIdDescription": "Unique for the network ID value",
   "tokenLogo": "Token logo",
   "fillTokenListChainId": "Fill token list chain ID",
+  "youHaveSuchList": "You have such a list",
   "instructionToSaveContractsFromDifferentNetwork": "If you deploy contracts from a network other than the Storage network, you need to save them manually. Switch to the Storage network, fill these inputs and save it. You can also use existing contracts, but only if they are related to Definance",
   "youHaveToDeploySwapContractsFirst": "First you have to deploy the swap contracts",
   "pleaseSelectOneOfTheFollowingNetworks": "Please select one of the following networks",

@@ -18,11 +18,7 @@ export function listVersionLabel(version: Version): string {
 }
 
 export function filterTokenLists(lists: { [listId: string]: any }) {
-  console.log('lists: ', lists)
-
   return Object.values(lists).filter((list: any) => {
-    console.log('list: ', list)
-
     try {
       const namePattern = /^[ \w.'+\-%/À-ÖØ-öø-ÿ:]+$/
 

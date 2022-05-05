@@ -14,6 +14,7 @@ import Toggle from 'components/Toggle'
 import ListFactory from 'components/ListFactory'
 import MenuLinksFactory, { LinkItem } from 'components/MenuLinksFactory'
 import ColorSelector from 'components/ColorSelector'
+import TextBlock from 'components/TextBlock'
 import NetworkRelatedSettings from './NetworkRelatedSettings'
 import { OptionWrapper } from './index'
 import { STORAGE_NETWORK_ID, STORAGE_NETWORK_NAME } from '../../constants'
@@ -251,11 +252,15 @@ export default function Interface(props: any) {
 
   const [newListChainId, setNewListChainId] = useState('')
   const [newListId, setNewListId] = useState('templatelist')
+  const [isUniqueNewList, setIsUniqueNewList] = useState(false)
   const [canCreateNewList, setCanCreateNewList] = useState(false)
 
   useEffect(() => {
-    setCanCreateNewList(Boolean(networks[newListChainId as keyof typeof networks] && newListId))
-  }, [newListChainId, newListId])
+    const isUnique = newListChainId && newListId && !tokenLists[newListChainId]?.[newListId]
+
+    setIsUniqueNewList(Boolean(isUnique))
+    setCanCreateNewList(Boolean(networks[newListChainId as keyof typeof networks] && newListId && isUnique))
+  }, [newListChainId, newListId, tokenLists])
 
   const createNewTokenList = () => {
     setTokenLists((oldData: any) => ({
@@ -417,6 +422,9 @@ export default function Interface(props: any) {
             value={newListId}
             onChange={setNewListId}
           />
+
+          {newListChainId && newListId && !isUniqueNewList && <TextBlock warning>{t('youHaveSuchList')}</TextBlock>}
+
           <Button disabled={!canCreateNewList} onClick={createNewTokenList}>
             {t('createNewTokenList')}
           </Button>
