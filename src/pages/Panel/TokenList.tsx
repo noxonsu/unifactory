@@ -38,6 +38,16 @@ const Button = styled(ButtonPrimary)`
   margin-top: 0.3rem;
 `
 
+const makeListStructure = (chaniId: string, listId: string, list: { name: string; logoURI: string; tokens: any[] }) => {
+  return JSON.stringify({
+    chainId: chaniId,
+    listId,
+    name: list.name || '',
+    logo: list.logoURI || '',
+    tokens: list.tokens || [],
+  })
+}
+
 export function TokenList(props: {
   activeWeb3React: any
   isNewList: boolean
@@ -63,6 +73,8 @@ export function TokenList(props: {
   const addTransaction = useTransactionAdder()
   const addPopup = useAddPopup()
 
+  const [sourceListStructure] = useState(makeListStructure(listChainId, listId, list))
+  const [needToUpdate, setNeedToUpdate] = useState(false)
   const [tokenListChainId, setTokenListChainId] = useState(listChainId)
   const [tokenListId, setTokenListId] = useState(listId)
   const [tokenListName, setTokenListName] = useState(list.name || '')
@@ -129,10 +141,38 @@ export function TokenList(props: {
   const [canSaveTokenList, setCanSaveTokenList] = useState(false)
 
   useEffect(() => {
+    const currentStructure = makeListStructure(tokenListChainId, tokenListId, {
+      name: tokenListName,
+      logoURI: tokenListLogo,
+      tokens,
+    })
+
+    const needToUpdate = isNewList || sourceListStructure !== currentStructure
+
+    setNeedToUpdate(needToUpdate)
     setCanSaveTokenList(
-      Boolean(chainId === STORAGE_NETWORK_ID && tokenListChainId && tokenListId && tokenListName && tokens.length)
+      Boolean(
+        chainId === STORAGE_NETWORK_ID &&
+          tokenListChainId &&
+          tokenListId &&
+          tokenListName &&
+          tokens.length &&
+          needToUpdate
+      )
     )
-  }, [chainId, tokenListChainId, tokenListId, tokenListName, tokens.length])
+  }, [
+    sourceListStructure,
+    isNewList,
+    chainId,
+    tokenListChainId,
+    tokenListId,
+    tokenListName,
+    tokens,
+    list,
+    listChainId,
+    listId,
+    tokenListLogo,
+  ])
 
   const saveTokenList = async () => {
     setPending(true)
@@ -144,9 +184,12 @@ export function TokenList(props: {
         owner: account,
         data: {
           tokenList: {
+            needToUpdate,
+            oldChainId: listChainId,
+            oldId: listId,
+            oldName: list.name,
             chainId: tokenListChainId,
             id: tokenListId,
-            oldName: list.name,
             name: tokenListName,
             logoURI: tokenListLogo,
             tokens,

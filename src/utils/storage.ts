@@ -58,13 +58,17 @@ const makeBaseStructure = (data: { [k: string]: any }) => {
   return data
 }
 
+const isEmptyChain = (tokenLists: { [chainId: string]: any }, chainId: string) => {
+  return !Object.keys(tokenLists[chainId])?.length
+}
+
 const updateData = (oldData: Data, newData: Data) => {
   oldData = makeBaseStructure(oldData)
 
   let result
 
   if (newData.tokenList) {
-    const { chainId, id } = newData.tokenList
+    const { oldChainId, oldId, chainId, id } = newData.tokenList
 
     const tokenLists = {
       ...oldData[STORAGE_APP_KEY].tokenLists,
@@ -72,6 +76,20 @@ const updateData = (oldData: Data, newData: Data) => {
         ...oldData[STORAGE_APP_KEY].tokenLists[chainId],
         [id]: returnValidTokenListJSON(newData.tokenList),
       },
+    }
+
+    if (chainId !== oldChainId) {
+      delete tokenLists[oldChainId][oldId]
+    } else if (id !== oldId) {
+      delete tokenLists[chainId][oldId]
+    }
+
+    if (isEmptyChain(tokenLists, oldChainId)) {
+      delete tokenLists[oldChainId]
+    }
+
+    if (isEmptyChain(tokenLists, chainId)) {
+      delete tokenLists[chainId]
     }
 
     result = {
@@ -115,13 +133,7 @@ export const saveAppData = async (params: {
     const storage = getStorage(library, STORAGE)
     const { info } = await storage.methods.getData(getCurrentDomain()).call()
 
-    console.group('%c saveAppData', 'color: orange; font-size: 20px')
-    console.log('old Data: ', JSON.parse(info))
-
     const newData = updateData(JSON.parse(info), data)
-
-    console.log('new Data: ', newData)
-    console.groupEnd()
 
     return new Promise(async (resolve, reject) => {
       storage.methods
