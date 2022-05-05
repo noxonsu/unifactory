@@ -5,7 +5,6 @@
     "chainId": 25,
     "explorer": "https://cronoscan.com/",
     "color": "#072D4C",
-    "registry": "0x9664EC984D1c0d44dD22C161da1D06f7f72Ae092",
     "multicall": "0x79D5C019F2515Cbc0596170Da44FCd26412c4f83",
     "baseCurrency": {
       "decimals": 18,
@@ -25,7 +24,6 @@
     "explorer": "https://bscscan.com",
     "color": "#CC9B00",
     "storage": "0x4B2B549d0Be6013f30221f23d0165587cAc3f888",
-    "registry": "0x39b6A4E28fF734311Da8b800025dEBD573Be3eaB",
     "multicall": "0x41263cBA59EB80dC200F3E2544eda4ed6A90E76C",
     "baseCurrency": {
       "decimals": 18,
@@ -44,7 +42,6 @@
     "chainId": 137,
     "explorer": "https://polygonscan.com/",
     "color": "#8247E5",
-    "registry": "0x8746f10E3142987733D3f05D1FBe72E482F521A7",
     "multicall": "0x11ce4B23bD875D7F5C6a31084f55fDe1e9A87507",
     "baseCurrency": {
       "decimals": 18,
@@ -64,7 +61,6 @@
     "chainId": 43114,
     "explorer": "https://snowtrace.io",
     "color": "#D64F4A",
-    "registry": "0x79D5C019F2515Cbc0596170Da44FCd26412c4f83",
     "multicall": "0x04ad4Ce6015141F6f582A7451Cb7CD6866609298",
     "baseCurrency": {
       "decimals": 18,
@@ -83,7 +79,6 @@
     "chainId": 250,
     "explorer": "https://ftmscan.com",
     "color": "#0C30FF",
-    "registry": "0x79D5C019F2515Cbc0596170Da44FCd26412c4f83",
     "multicall": "0x9664EC984D1c0d44dD22C161da1D06f7f72Ae092",
     "baseCurrency": {
       "decimals": 18,
@@ -102,7 +97,6 @@
     "chainId": 122,
     "explorer": "https://explorer.fuse.io/",
     "color": "#C6F9AC",
-    "registry": "0x04ad4Ce6015141F6f582A7451Cb7CD6866609298",
     "multicall": "0x0755ba6D3e0B799AC7Cd6707AddE7B72208DE08e",
     "baseCurrency": {
       "decimals": 18,
@@ -121,7 +115,6 @@
     "chainId": 1285,
     "explorer": "https://moonriver.moonscan.io/",
     "color": "#F2B705",
-    "registry": "0x79D5C019F2515Cbc0596170Da44FCd26412c4f83",
     "multicall": "0x9664EC984D1c0d44dD22C161da1D06f7f72Ae092",
     "baseCurrency": {
       "decimals": 18,
@@ -140,7 +133,6 @@
     "chainId": 1666600000,
     "explorer": "https://explorer.harmony.one/",
     "color": "#66DEDD",
-    "registry": "0x04ad4ce6015141f6f582a7451cb7cd6866609298",
     "multicall": "0x79D5C019F2515Cbc0596170Da44FCd26412c4f83",
     "baseCurrency": {
       "decimals": 18,
@@ -159,7 +151,6 @@
     "chainId": 1313161554,
     "explorer": "https://aurorascan.dev/",
     "color": "#81D957",
-    "registry": "0x04ad4ce6015141f6f582a7451cb7cd6866609298",
     "multicall": "0x79d5c019f2515cbc0596170da44fcd26412c4f83",
     "baseCurrency": {
       "decimals": 18,
@@ -178,7 +169,6 @@
     "chainId": 4,
     "explorer": "https://rinkeby.etherscan.io",
     "color": "#f6c343",
-    "registry": "0xe941b2b03d0A6eAfAdC547EC20Ba0D9583CfcaD3",
     "multicall": "0x42Ad527de7d4e9d9d011aC45B31D8551f8Fe9821",
     "ENSRegistry": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
     "baseCurrency": {
@@ -199,7 +189,6 @@
     "explorer": "https://testnet.bscscan.com/",
     "color": "#CC9B00",
     "storage": "0xF0BCf27a2203E7E8c1e9D36F40EF2C5A8a6E7D0B",
-    "registry": "0x1F0760bF970DDA86F7De29E22FFBA4f841f5bfA0",
     "multicall": "0xae11C5B5f29A6a25e955F0CB8ddCc416f522AF5C",
     "ENSRegistry": "",
     "baseCurrency": {

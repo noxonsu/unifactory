@@ -102,9 +102,9 @@ export default function App() {
     //@ts-ignore
     if (chainId && networks[chainId]) {
       //@ts-ignore
-      const { registry, multicall, wrappedToken } = networks[chainId]
+      const { multicall, wrappedToken } = networks[chainId]
 
-      const contractsAreFine = registry && multicall && wrappedToken?.address
+      const contractsAreFine = multicall && wrappedToken?.address
       const networkIsFine =
         chainId && wordpressData?.wpNetworkIds?.length ? wordpressData.wpNetworkIds.includes(chainId) : true
 
