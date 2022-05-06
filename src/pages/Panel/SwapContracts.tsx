@@ -146,14 +146,7 @@ const setValidValue = ({
 }
 
 function SwapContracts(props: any) {
-  const {
-    domain,
-    pending,
-    setPending,
-    theme,
-    // setDomainDataTrigger,
-    wrappedToken,
-  } = props
+  const { domain, pending, setPending, theme, wrappedToken } = props
   const { t } = useTranslation()
   const dispatch = useDispatch()
   const { library, account, chainId } = useActiveWeb3React()
@@ -188,8 +181,8 @@ function SwapContracts(props: any) {
     )
   }, [library, adminAddress, wrappedToken, account, wordpressData, stateAdmin])
 
-  const [admin, setAdmin] = useState(stateAdmin)
-  const [feeRecipient, setFeeRecipient] = useState(currentFeeRecipient)
+  const [admin, setAdmin] = useState(stateAdmin || '')
+  const [feeRecipient, setFeeRecipient] = useState(currentFeeRecipient || '')
   const [allFeesToAdmin, setAllFeesToAdmin] = useState(allFeeToProtocol)
   const [totalFee, setTotalFee] = useState<number | string>(
     convertFee(Number(currentTotalFee), TOTAL_FEE_RATIO, Representations.interface) || ''

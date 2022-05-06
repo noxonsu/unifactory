@@ -132,7 +132,7 @@ export const saveAppData = async (params: {
     const storage = getStorage(library, STORAGE)
     const { info } = await storage.methods.getData(getCurrentDomain()).call()
 
-    const newData = updateData(JSON.parse(info), data)
+    const newData = updateData(JSON.parse(info || '{}'), data)
 
     return new Promise(async (resolve, reject) => {
       storage.methods

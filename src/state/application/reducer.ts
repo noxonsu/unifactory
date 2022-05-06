@@ -113,7 +113,7 @@ export default createReducer(initialState, (builder) =>
       const data = action.payload
 
       if (data) {
-        // validation in the useDomainInfo.ts
+        // validation in the utils/app.ts > fetchSettings()
         Object.keys(data).forEach((key: string) => {
           if (key === 'defaultSwapCurrency') {
             const { input, output } = data[key]

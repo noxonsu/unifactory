@@ -169,6 +169,7 @@
     "chainId": 4,
     "explorer": "https://rinkeby.etherscan.io",
     "color": "#f6c343",
+    "storage": "0xd2baDd65d97549EB8af9B83BcD74768c9ebaeC31",
     "multicall": "0x42Ad527de7d4e9d9d011aC45B31D8551f8Fe9821",
     "ENSRegistry": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
     "baseCurrency": {
@@ -180,26 +181,6 @@
       "address": "0xc778417E063141139Fce010982780140Aa0cD5Ab",
       "name": "Wrapped Ether",
       "symbol": "WETH"
-    }
-  },
-  "97": {
-    "name": "BSC Testnet",
-    "rpc": "https://data-seed-prebsc-1-s1.binance.org:8545",
-    "chainId": 97,
-    "explorer": "https://testnet.bscscan.com/",
-    "color": "#CC9B00",
-    "storage": "0xF0BCf27a2203E7E8c1e9D36F40EF2C5A8a6E7D0B",
-    "multicall": "0xae11C5B5f29A6a25e955F0CB8ddCc416f522AF5C",
-    "ENSRegistry": "",
-    "baseCurrency": {
-      "decimals": 18,
-      "name": "BNB",
-      "symbol": "BNB"
-    },
-    "wrappedToken": {
-      "address": "0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd",
-      "name": "Wrapped BNB",
-      "symbol": "WBNB"
     }
   }
 }

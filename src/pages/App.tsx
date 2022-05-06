@@ -6,9 +6,10 @@ import { AppState } from 'state'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
 import useWordpressInfo from 'hooks/useWordpressInfo'
-import useDomainInfo from 'hooks/useDomainInfo'
 import { useAppState } from 'state/application/hooks'
 import { retrieveDomainData } from 'state/application/actions'
+import { fetchDomainData } from 'utils/app'
+import { useStorageContract } from 'hooks/useContract'
 import { SUPPORTED_CHAIN_IDS } from '../connectors'
 import Loader from 'components/Loader'
 import Panel from './Panel'
@@ -87,9 +88,10 @@ const FooterWrapper = styled.footer`
 
 export default function App() {
   const dispatch = useDispatch()
-  const { active, chainId } = useWeb3React()
+  const { active, chainId, library } = useWeb3React()
   const wordpressData = useWordpressInfo()
-
+  const storage = useStorageContract()
+  const [domainData, setDomainData] = useState<any>(null)
   const [domainDataTrigger, setDomainDataTrigger] = useState<boolean>(false)
 
   useEffect(() => {
@@ -106,17 +108,29 @@ export default function App() {
     }
   }, [chainId, domainDataTrigger, wordpressData])
 
-  const { data: domainData, isLoading: domainLoading } = useDomainInfo(domainDataTrigger)
+  const { admin, factory, router, projectName, background } = useAppState()
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (domainData) {
-      dispatch(retrieveDomainData(domainData))
-      setLoading(domainLoading)
-    }
-  }, [domainData, domainLoading, dispatch])
+    if (!chainId || !library || !storage) return
 
-  const { admin, factory, router, projectName, background } = useAppState()
+    try {
+      const start = async () => {
+        const data = await fetchDomainData(chainId, library, storage)
+
+        if (data) {
+          dispatch(retrieveDomainData(data))
+          setDomainData(data)
+        }
+
+        setLoading(false)
+      }
+
+      if (!admin) start()
+    } catch (error) {
+      console.error(error)
+    }
+  }, [chainId, library, storage, admin, dispatch])
 
   const [appIsReady, setAppIsReady] = useState(false)
 

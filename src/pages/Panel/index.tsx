@@ -5,7 +5,7 @@ import { MdArrowBack } from 'react-icons/md'
 import { FiArrowUpRight } from 'react-icons/fi'
 import { shortenAddress } from 'utils'
 import { Text } from 'rebass'
-import networks from '../../networks.json'
+import networks from 'networks.json'
 import { useDispatch, useSelector } from 'react-redux'
 import { SUPPORTED_NETWORKS } from 'connectors'
 import { STORAGE_NETWORK_ID, STORAGE_NETWORK_NAME } from '../../constants'
@@ -258,7 +258,6 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
             setPending={setPending}
             setError={setError}
             wrappedToken={wrappedToken}
-            setDomainDataTrigger={setDomainDataTrigger}
           />
         )}
         {tab === 'interface' && (
@@ -268,7 +267,6 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
             activeNetworks={activeNetworks}
             setPending={setPending}
             setError={setError}
-            setDomainDataTrigger={setDomainDataTrigger}
           />
         )}
       </Content>
