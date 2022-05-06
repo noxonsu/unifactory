@@ -6,10 +6,11 @@ import { AppState } from 'state'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
 import useWordpressInfo from 'hooks/useWordpressInfo'
-import useDomainInfo from 'hooks/useDomainInfo'
-import useStorageInfo from 'hooks/useStorageInfo'
 import { useAppState } from 'state/application/hooks'
-import { retrieveDomainData, updateAppData } from 'state/application/actions'
+import { retrieveDomainData } from 'state/application/actions'
+import { fetchDomainData } from 'utils/app'
+import { useStorageContract } from 'hooks/useContract'
+import { SUPPORTED_CHAIN_IDS } from '../connectors'
 import Loader from 'components/Loader'
 import Panel from './Panel'
 import Connection from './Connection'
@@ -31,7 +32,6 @@ import { RedirectOldRemoveLiquidityPathStructure } from './RemoveLiquidity/redir
 import Swap from './Swap'
 import Footer from 'components/Footer'
 import { OpenClaimAddressModalAndRedirectToSwap, RedirectPathToSwapOnly } from './Swap/redirects'
-import networks from 'networks.json'
 
 const LoaderWrapper = styled.div`
   position: absolute;
@@ -88,9 +88,10 @@ const FooterWrapper = styled.footer`
 
 export default function App() {
   const dispatch = useDispatch()
-  const { active, chainId } = useWeb3React()
+  const { active, chainId, library } = useWeb3React()
   const wordpressData = useWordpressInfo()
-
+  const storage = useStorageContract()
+  const [domainData, setDomainData] = useState<any>(null)
   const [domainDataTrigger, setDomainDataTrigger] = useState<boolean>(false)
 
   useEffect(() => {
@@ -100,33 +101,36 @@ export default function App() {
   const [isAvailableNetwork, setIsAvailableNetwork] = useState(true)
 
   useEffect(() => {
-    //@ts-ignore
-    if (chainId && networks[chainId]) {
-      //@ts-ignore
-      const { registry, multicall, wrappedToken } = networks[chainId]
+    if (chainId) {
+      const networkIsFine = !wordpressData?.wpNetworkIds?.length || wordpressData.wpNetworkIds.includes(chainId)
 
-      const contractsAreFine = registry && multicall && wrappedToken?.address
-      const networkIsFine =
-        chainId && wordpressData?.wpNetworkIds?.length ? wordpressData.wpNetworkIds.includes(chainId) : true
-
-      setIsAvailableNetwork(Boolean(contractsAreFine && networkIsFine))
+      setIsAvailableNetwork(Boolean(SUPPORTED_CHAIN_IDS.includes(Number(chainId)) && networkIsFine))
     }
   }, [chainId, domainDataTrigger, wordpressData])
 
-  const { data: domainData, isLoading: domainLoading } = useDomainInfo(domainDataTrigger)
-  const { data: storageData, isLoading: storageLoading } = useStorageInfo()
-
-  useEffect(() => {
-    if (domainData) {
-      dispatch(retrieveDomainData(domainData))
-    }
-  }, [domainData, domainLoading, dispatch])
-
-  useEffect(() => {
-    dispatch(updateAppData(storageData ? { ...storageData } : storageData))
-  }, [storageData, storageLoading, dispatch])
-
   const { admin, factory, router, projectName, background } = useAppState()
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (!chainId || !library || !storage) return
+
+    try {
+      const start = async () => {
+        const data = await fetchDomainData(chainId, library, storage)
+
+        if (data) {
+          dispatch(retrieveDomainData(data))
+          setDomainData(data)
+        }
+
+        setLoading(false)
+      }
+
+      if (!admin) start()
+    } catch (error) {
+      console.error(error)
+    }
+  }, [chainId, library, storage, admin, dispatch])
 
   const [appIsReady, setAppIsReady] = useState(false)
 
@@ -137,12 +141,6 @@ export default function App() {
   const appManagement = useSelector<AppState, AppState['application']['appManagement']>(
     (state) => state.application.appManagement
   )
-
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    setLoading(domainLoading || storageLoading)
-  }, [domainLoading, storageLoading])
 
   const domain = window.location.hostname || document.location.host
   const DOMAIN_TITLES: { [domain: string]: string } = {

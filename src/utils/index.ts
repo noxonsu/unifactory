@@ -26,8 +26,8 @@ export function getExplorerLink(
   data: string,
   type: 'transaction' | 'token' | 'address' | 'block'
 ): string {
-  //@ts-ignore
-  const url = networks[chainId]?.explorer
+  type Key = keyof typeof networks
+  const url = networks[chainId.toString() as Key]?.explorer
 
   if (url) {
     switch (type) {

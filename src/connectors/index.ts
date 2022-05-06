@@ -11,7 +11,6 @@ export type Network = {
   chainId: number
   explorer?: string
   color?: string
-  registry: string
   multicall: string
   ENSRegistry?: string
   baseCurrency: {
@@ -26,17 +25,29 @@ export type Network = {
   }
 }
 
-export const SUPPORTED_NETWORKS: { [chainId: string]: Network } = Object.values(networks).reduce((acc, network) => {
-  const { registry, multicall, wrappedToken, chainId } = network
+export const EVM_ADDRESS_REGEXP = /^0x[A-Fa-f0-9]{40}$/
 
-  if (Boolean(registry && multicall && wrappedToken?.address)) {
+export const SUPPORTED_NETWORKS: { [chainId: string]: Network } = Object.values(networks).reduce((acc, network) => {
+  const { multicall, wrappedToken, chainId, rpc, baseCurrency } = network
+
+  if (
+    Boolean(
+      multicall?.match(EVM_ADDRESS_REGEXP) &&
+        wrappedToken?.address?.match(EVM_ADDRESS_REGEXP) &&
+        wrappedToken?.name &&
+        wrappedToken?.symbol &&
+        baseCurrency?.name &&
+        baseCurrency?.symbol &&
+        rpc
+    )
+  ) {
     return { ...acc, [chainId]: network }
   }
 
   return acc
 }, {})
 
-export const supportedChainIds = Object.keys(SUPPORTED_NETWORKS).map((id) => Number(id))
+export const SUPPORTED_CHAIN_IDS = Object.keys(SUPPORTED_NETWORKS).map((id) => Number(id))
 export const NETWORKS_RPC_BY_ID = Object.values(SUPPORTED_NETWORKS).reduce(
   (acc, { chainId, rpc }) => ({ ...acc, [chainId]: rpc }),
   {}
@@ -53,7 +64,7 @@ export function getNetworkLibrary(): Web3Provider {
 }
 
 export const injected = new InjectedConnector({
-  supportedChainIds,
+  supportedChainIds: SUPPORTED_CHAIN_IDS,
 })
 
 export const newWalletConnect = (chainId: number) =>

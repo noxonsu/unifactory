@@ -5,11 +5,11 @@ import { MdArrowBack } from 'react-icons/md'
 import { FiArrowUpRight } from 'react-icons/fi'
 import { shortenAddress } from 'utils'
 import { Text } from 'rebass'
-import networks from '../../networks.json'
-import Registry from 'contracts/build/Registry.json'
+import networks from 'networks.json'
 import { useDispatch, useSelector } from 'react-redux'
 import { SUPPORTED_NETWORKS } from 'connectors'
-import { getContractInstance } from 'utils/contract'
+import { STORAGE_NETWORK_ID, STORAGE_NETWORK_NAME } from '../../constants'
+import { resetAppData } from 'utils/storage'
 import useWordpressInfo from 'hooks/useWordpressInfo'
 import { AppState } from 'state'
 import { useTranslation } from 'react-i18next'
@@ -72,9 +72,11 @@ const BackButton = styled(CleanButton)`
 `
 
 const NetworkInfo = styled.div`
-  margin: 0.6rem 0;
-  display: flex;
-  justify-content: space-between;
+  .row {
+    margin: 0.6rem 0;
+    display: flex;
+    justify-content: space-between;
+  }
 `
 
 const Tabs = styled.div`
@@ -174,14 +176,11 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
   //@ts-ignore
   const accountPrefix = networks[chainId]?.name || t('account')
 
-  const resetDomain = async () => {
+  const resetData = async () => {
     setShowConfirm(false)
-    //@ts-ignore
-    const registry: any = getContractInstance(library, networks[chainId]?.registry, Registry.abi)
 
-    await registry.methods.removeDomain(domain).send({
-      from: account,
-    })
+    await resetAppData({ library, owner: account || '' })
+
     setDomainDataTrigger((state: boolean) => !state)
   }
 
@@ -208,7 +207,7 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
             <Text fontWeight={500} fontSize={20}>
               {t('resetDomainDescription')}
             </Text>
-            <ButtonError error padding={'12px'} onClick={resetDomain}>
+            <ButtonError error padding={'12px'} onClick={resetData}>
               <Text fontSize={20} fontWeight={500} id="reset">
                 {t('resetDomainData')}
               </Text>
@@ -227,8 +226,14 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
 
       {account && (
         <NetworkInfo>
-          {accountPrefix ? `${accountPrefix}: ` : ' '}
-          <span className="monospace">{shortenAddress(account)}</span>
+          <div className="row">
+            {/* @ts-ignore */}
+            {t('storageNetwork')}: <span>{STORAGE_NETWORK_NAME}</span>
+          </div>
+          <div className="row">
+            {accountPrefix ? `${accountPrefix}: ` : ' '}
+            <span className="monospace">{shortenAddress(account)}</span>
+          </div>
         </NetworkInfo>
       )}
 
@@ -253,7 +258,6 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
             setPending={setPending}
             setError={setError}
             wrappedToken={wrappedToken}
-            setDomainDataTrigger={setDomainDataTrigger}
           />
         )}
         {tab === 'interface' && (
@@ -263,12 +267,13 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
             activeNetworks={activeNetworks}
             setPending={setPending}
             setError={setError}
-            setDomainDataTrigger={setDomainDataTrigger}
           />
         )}
       </Content>
 
-      {Boolean(admin && factory && router) && (
+      {Boolean(
+        admin?.toLowerCase() === account?.toLowerCase() && factory && router && chainId === STORAGE_NETWORK_ID
+      ) && (
         <DangerZone>
           <ButtonSecondary onClick={() => setShowConfirm(true)}>{t('resetDomainData')}</ButtonSecondary>
         </DangerZone>

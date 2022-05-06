@@ -6,12 +6,15 @@ import { Box } from 'rebass'
 import { Label, Checkbox } from '@rebass/forms'
 import Slider, { SliderTooltip } from 'rc-slider'
 import 'rc-slider/assets/index.css'
+import { useDispatch } from 'react-redux'
 import { RiErrorWarningLine } from 'react-icons/ri'
 import { useActiveWeb3React } from 'hooks'
 import { useAddPopup, useAppState } from 'state/application/hooks'
+import { updateAppOptions } from 'state/application/actions'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useTranslation } from 'react-i18next'
-import { DEV_FEE_ADMIN, factoryMethods } from '../../constants'
+import { SUPPORTED_NETWORKS } from '../../connectors'
+import { DEV_FEE_ADMIN, FactoryMethod, STORAGE_NETWORK_ID, STORAGE_NETWORK_NAME } from '../../constants'
 import { ButtonPrimary } from 'components/Button'
 import Accordion from 'components/Accordion'
 import QuestionHelper from 'components/QuestionHelper'
@@ -21,8 +24,8 @@ import TextBlock from 'components/TextBlock'
 import ConfirmationModal from './ConfirmationModal'
 import { OptionWrapper } from './index'
 import { PartitionWrapper } from './index'
-import { isValidAddress, setFactoryOption, returnTokenInfo, deploySwapContracts } from 'utils/contract'
-import networks from 'networks.json'
+import { isValidAddress, setFactoryOption, deploySwapContracts } from 'utils/contract'
+import { saveAppData } from 'utils/storage'
 import useWordpressInfo from 'hooks/useWordpressInfo'
 
 const Title = styled.h3`
@@ -143,13 +146,15 @@ const setValidValue = ({
 }
 
 function SwapContracts(props: any) {
-  const { domain, pending, setPending, theme, setDomainDataTrigger, wrappedToken } = props
+  const { domain, pending, setPending, theme, wrappedToken } = props
   const { t } = useTranslation()
+  const dispatch = useDispatch()
   const { library, account, chainId } = useActiveWeb3React()
   const wordpressData = useWordpressInfo()
   const addTransaction = useTransactionAdder()
   const addPopup = useAddPopup()
   const {
+    contracts,
     admin: stateAdmin,
     factory: stateFactory,
     router: stateRouter,
@@ -172,17 +177,12 @@ function SwapContracts(props: any) {
       : true
 
     setCanDeploySwapContracts(
-      //@ts-ignore
-      isValidAddress(library, adminAddress) &&
-        wrappedToken &&
-        //@ts-ignore
-        isValidAddress(library, wrappedToken) &&
-        adminIsFine
+      isValidAddress(adminAddress) && wrappedToken && isValidAddress(wrappedToken) && adminIsFine
     )
   }, [library, adminAddress, wrappedToken, account, wordpressData, stateAdmin])
 
-  const [admin, setAdmin] = useState(stateAdmin)
-  const [feeRecipient, setFeeRecipient] = useState(currentFeeRecipient)
+  const [admin, setAdmin] = useState(stateAdmin || '')
+  const [feeRecipient, setFeeRecipient] = useState(currentFeeRecipient || '')
   const [allFeesToAdmin, setAllFeesToAdmin] = useState(allFeeToProtocol)
   const [totalFee, setTotalFee] = useState<number | string>(
     convertFee(Number(currentTotalFee), TOTAL_FEE_RATIO, Representations.interface) || ''
@@ -199,25 +199,76 @@ function SwapContracts(props: any) {
     setTxHash('')
   }, [])
 
+  const [userContractsChainId, setUserContractsChainId] = useState(chainId && !!contracts[chainId || 0] ? chainId : '')
+  const [userFactory, setUserFactory] = useState(contracts[chainId || 0]?.factory || '')
+  const [userRouter, setUserRouter] = useState(contracts[chainId || 0]?.router || '')
+  const [canSaveSwapContracts, setCanSaveSwapContracts] = useState(false)
+
+  useEffect(() => {
+    const differentContracts =
+      userFactory.toLowerCase() !== contracts[chainId || 0]?.factory?.toLowerCase() &&
+      userRouter.toLowerCase() !== contracts[chainId || 0]?.router?.toLowerCase() &&
+      userFactory.toLowerCase() !== userRouter.toLowerCase()
+
+    setCanSaveSwapContracts(
+      chainId === STORAGE_NETWORK_ID &&
+        userContractsChainId in SUPPORTED_NETWORKS &&
+        isValidAddress(userFactory) &&
+        isValidAddress(userRouter) &&
+        differentContracts
+    )
+  }, [chainId, userContractsChainId, userFactory, userRouter, contracts])
+
+  const saveContractsData = async (chainId: number, factory: string, router: string) => {
+    if (!chainId) return
+
+    try {
+      await saveAppData({
+        //@ts-ignore
+        library,
+        owner: adminAddress,
+        data: {
+          contracts: {
+            [chainId]: {
+              factory,
+              router,
+            },
+          },
+        },
+        onReceipt: (receipt, success) => {
+          if (success) {
+            dispatch(
+              updateAppOptions([
+                { key: 'factory', value: factory },
+                { key: 'router', value: router },
+              ])
+            )
+          }
+        },
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const saveSwapContracts = () => {
+    try {
+      saveContractsData(Number(userContractsChainId), userFactory, userRouter)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   const onContractsDeployment = async () => {
+    if (!chainId) return
+
     setAttemptingTxn(true)
 
     try {
-      //@ts-ignore
-      const tokenInfo = await returnTokenInfo(library, wrappedToken)
-
-      if (!tokenInfo) {
-        return addPopup({
-          error: {
-            message: 'Wrong wrapped token address',
-          },
-        })
-      }
-
       await deploySwapContracts({
         domain,
+        chainId,
         //@ts-ignore
-        registryAddress: networks[chainId]?.registry,
         library,
         admin: adminAddress,
         devFeeAdmin: DEV_FEE_ADMIN,
@@ -240,9 +291,16 @@ function SwapContracts(props: any) {
             }
           )
         },
-        onSuccessfulDeploy: () => {
+        onSuccessfulDeploy: async ({ chainId, factory, router }) => {
+          if (chainId === STORAGE_NETWORK_ID) {
+            await saveContractsData(chainId, factory, router)
+          } else {
+            setUserContractsChainId(String(chainId))
+            setUserFactory(factory)
+            setUserRouter(router)
+          }
+
           setAttemptingTxn(false)
-          setDomainDataTrigger((state: boolean) => !state)
         },
       })
     } catch (error) {
@@ -262,19 +320,19 @@ function SwapContracts(props: any) {
     const values: any[] = []
 
     switch (method) {
-      case factoryMethods.setFeeToSetter:
+      case FactoryMethod.setFeeToSetter:
         values.push(admin)
         break
-      case factoryMethods.setFeeTo:
+      case FactoryMethod.setFeeTo:
         values.push(feeRecipient)
         break
-      case factoryMethods.setAllFeeToProtocol:
+      case FactoryMethod.setAllFeeToProtocol:
         values.push(allFeesToAdmin)
         break
-      case factoryMethods.setTotalFee:
+      case FactoryMethod.setTotalFee:
         values.push(convertFee(totalFee, TOTAL_FEE_RATIO, Representations.contract))
         break
-      case factoryMethods.setProtocolFee:
+      case FactoryMethod.setProtocolFee:
         values.push(convertFee(protocolFee, PROTOCOL_FEE_RATIO, Representations.contract))
         break
     }
@@ -385,13 +443,35 @@ function SwapContracts(props: any) {
       </PartitionWrapper>
 
       <PartitionWrapper>
+        <TextBlock positive>{t('instructionToSaveContractsFromDifferentNetwork')}</TextBlock>
+        <InputWrapper>
+          <InputPanel
+            label={`${t('contractsNetwork')} *`}
+            value={userContractsChainId}
+            onChange={setUserContractsChainId}
+          />
+        </InputWrapper>
+        <InputWrapper>
+          <InputPanel label="Factory *" value={userFactory} onChange={setUserFactory} />
+        </InputWrapper>
+        <InputWrapper>
+          <InputPanel label="Router *" value={userRouter} onChange={setUserRouter} />
+        </InputWrapper>
+        <Button onClick={saveSwapContracts} disabled={pending || !canSaveSwapContracts}>
+          {t(chainId === STORAGE_NETWORK_ID ? 'saveSwapContracts' : 'switchToNetwork', {
+            network: STORAGE_NETWORK_NAME,
+          })}
+        </Button>
+      </PartitionWrapper>
+
+      <PartitionWrapper>
         <Title>{t('settings')}</Title>
         <TextBlock>{t('youCanUseTheSameAddressForBoothInputs')}</TextBlock>
 
         <div className={`${!stateFactory || pending ? 'disabled' : ''}`}>
           <OptionWrapper>
             <AddressInputPanel label={`${t('newAdmin')}`} value={admin} onChange={setAdmin} />
-            <Button onClick={() => saveOption(factoryMethods.setFeeToSetter)} disabled={!admin}>
+            <Button onClick={() => saveOption(FactoryMethod.setFeeToSetter)} disabled={!admin}>
               {t('save')}
             </Button>
           </OptionWrapper>
@@ -405,7 +485,7 @@ function SwapContracts(props: any) {
               value={feeRecipient}
               onChange={setFeeRecipient}
             />
-            <Button onClick={() => saveOption(factoryMethods.setFeeTo)} disabled={!feeRecipient}>
+            <Button onClick={() => saveOption(FactoryMethod.setFeeTo)} disabled={!feeRecipient}>
               {t('save')}
             </Button>
           </OptionWrapper>
@@ -418,7 +498,7 @@ function SwapContracts(props: any) {
                   {t('allFeesToAdmin')}
                 </LabelExtended>
               </Box>
-              <Button onClick={() => saveOption(factoryMethods.setAllFeeToProtocol)}>{t('save')}</Button>
+              <Button onClick={() => saveOption(FactoryMethod.setAllFeeToProtocol)}>{t('save')}</Button>
             </OptionWrapper>
 
             <TextBlock>
@@ -450,7 +530,7 @@ function SwapContracts(props: any) {
                 }
               />
               <Button
-                onClick={() => saveOption(factoryMethods.setTotalFee)}
+                onClick={() => saveOption(FactoryMethod.setTotalFee)}
                 disabled={
                   (!totalFee && totalFee !== 0) || isEqualCurrentFee(currentTotalFee, totalFee, TOTAL_FEE_RATIO)
                 }
@@ -501,7 +581,7 @@ function SwapContracts(props: any) {
             </SliderWrapper>
 
             <Button
-              onClick={() => saveOption(factoryMethods.setProtocolFee)}
+              onClick={() => saveOption(FactoryMethod.setProtocolFee)}
               disabled={
                 (!protocolFee && protocolFee !== 0) ||
                 isEqualCurrentFee(currentProtocolFee, protocolFee, PROTOCOL_FEE_RATIO)

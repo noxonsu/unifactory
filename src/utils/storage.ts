@@ -1,79 +1,177 @@
 import { Web3Provider } from '@ethersproject/providers'
 import Storage from 'contracts/build/Storage.json'
-import { storageMethods } from '../constants'
+import { STORAGE, STORAGE_APP_KEY, StorageMethod } from '../constants'
 import { getTimestamp } from './index'
 import { getContractInstance } from './contract'
+import { getCurrentDomain } from 'utils/app'
 
 export const getStorage = (library: Web3Provider, address: string) => {
   return getContractInstance(library, address, Storage.abi)
 }
 
-const returnValidTokenListJSON = (params: any) => {
-  const { name, tokens, logoURI } = params
+const returnValidTokenListJSON = (tokenList: {
+  oldChainId: number
+  chainId: number
+  id: string
+  oldName: string
+  name: string
+  logoURI?: string
+  tokens: any[]
+}) => {
+  const { oldChainId, chainId, name, tokens, logoURI } = tokenList
+
   const list: any = {
     name,
     timestamp: getTimestamp(),
-    // TODO: track interface changes and change this version
-    /* 
-    Increment major version when tokens are removed
-    Increment minor version when tokens are added
-    Increment patch version when tokens already on the list have minor details changed (name, symbol, logo URL, decimals)
-    */
     version: {
+      // Increment major version when tokens are removed
       major: 1,
+      // Increment minor version when tokens are added
       minor: 0,
+      // Increment patch version when tokens already on the list have details changed (name, symbol, logo URL, decimals)
       patch: 0,
     },
-    tokens,
+    tokens: chainId !== oldChainId ? tokens.map((token) => ({ ...token, chainId })) : tokens,
   }
 
   if (logoURI) list.logoURI = logoURI
 
-  return JSON.stringify(list)
+  return list
 }
 
-export const saveProjectOption = async (params: {
-  library: Web3Provider
-  storageAddress: string
-  method: string
-  value: any
-  onHash?: (hash: string) => void
-}) => {
-  const { library, storageAddress, method, value, onHash } = params
+type Data = { [k: string]: any }
 
-  const storage = getStorage(library, storageAddress)
-  //@ts-ignore
-  const accounts = await window?.ethereum?.request({ method: 'eth_accounts' })
-  let args: any
-
-  switch (method) {
-    case storageMethods.setSettings:
-      args = [value]
-      break
-    case storageMethods.addTokenList:
-      args = [value.name, returnValidTokenListJSON(value)]
-      break
-    case storageMethods.updateTokenList:
-      args = [value.oldName, value.name, returnValidTokenListJSON(value)]
-      break
-    case storageMethods.removeTokenList:
-      args = [value]
-      break
-    default:
-      args = []
+const makeBaseStructure = (data: { [k: string]: any }) => {
+  if (!data[STORAGE_APP_KEY]) {
+    data[STORAGE_APP_KEY] = {}
   }
 
-  if (method) {
+  if (!data[STORAGE_APP_KEY].tokenLists) {
+    data[STORAGE_APP_KEY].tokenLists = {}
+  }
+
+  if (!data[STORAGE_APP_KEY].tokenLists) {
+    data[STORAGE_APP_KEY].tokenLists = {}
+  }
+
+  return data
+}
+
+const isEmptyChain = (tokenLists: { [chainId: string]: any }, chainId: string) => {
+  return !Object.keys(tokenLists[chainId])?.length
+}
+
+const updateData = (oldData: Data, newData: Data) => {
+  oldData = makeBaseStructure(oldData)
+
+  let result
+
+  if (newData.tokenList) {
+    const { oldChainId, oldId, chainId, id } = newData.tokenList
+
+    const tokenLists = {
+      ...oldData[STORAGE_APP_KEY].tokenLists,
+      [chainId]: {
+        ...oldData[STORAGE_APP_KEY].tokenLists[chainId],
+        [id]: returnValidTokenListJSON(newData.tokenList),
+      },
+    }
+
+    if (chainId !== oldChainId) {
+      delete tokenLists[oldChainId][oldId]
+    } else if (id !== oldId) {
+      delete tokenLists[chainId][oldId]
+    }
+
+    if (isEmptyChain(tokenLists, oldChainId)) {
+      delete tokenLists[oldChainId]
+    }
+
+    if (isEmptyChain(tokenLists, chainId)) {
+      delete tokenLists[chainId]
+    }
+
+    result = {
+      ...oldData,
+      [STORAGE_APP_KEY]: {
+        ...oldData[STORAGE_APP_KEY],
+        tokenLists,
+      },
+    }
+  } else {
+    result = {
+      ...oldData,
+      [STORAGE_APP_KEY]: {
+        ...oldData[STORAGE_APP_KEY],
+        ...newData,
+        contracts: {
+          ...oldData[STORAGE_APP_KEY].contracts,
+          ...newData.contracts,
+        },
+        tokenLists: {
+          ...oldData[STORAGE_APP_KEY].tokenLists,
+          ...newData.tokenLists,
+        },
+      },
+    }
+  }
+
+  return result
+}
+
+export const saveAppData = async (params: {
+  library: Web3Provider
+  owner: string
+  data: Data
+  onHash?: (hash: string) => void
+  onReceipt?: (receipt: object, success: boolean) => void
+}) => {
+  const { library, owner, data, onHash, onReceipt } = params
+
+  try {
+    const storage = getStorage(library, STORAGE)
+    const { info } = await storage.methods.getData(getCurrentDomain()).call()
+
+    const newData = updateData(JSON.parse(info || '{}'), data)
+
     return new Promise(async (resolve, reject) => {
-      storage.methods[method](...args)
-        .send({ from: accounts[0] })
+      storage.methods
+        .setKeyData(getCurrentDomain(), {
+          owner,
+          info: JSON.stringify(newData),
+        })
+        .send({ from: owner })
         .on('transactionHash', (hash: string) => {
           if (typeof onHash === 'function') onHash(hash)
+        })
+        .on('receipt', (receipt: any) => {
+          if (typeof onReceipt === 'function') onReceipt(receipt, receipt?.status)
         })
         .then(resolve)
         .catch(reject)
     })
-  } else {
-    throw new Error('No such method')
+  } catch (error) {
+    throw error
+  }
+}
+
+export const resetAppData = async ({ library, owner }: { library: any; owner: string }) => {
+  try {
+    const storage = getStorage(library, STORAGE)
+    const domain = getCurrentDomain()
+    const { info } = await storage.methods[StorageMethod.getData](domain).call()
+
+    const parsedData = JSON.parse(info)
+    const newData = { ...parsedData, [STORAGE_APP_KEY]: {} }
+
+    await storage.methods[StorageMethod.setKeyData](domain, {
+      owner,
+      info: JSON.stringify(newData),
+    }).send({
+      from: owner,
+    })
+  } catch (error) {
+    console.error('Reset app data')
+    console.error(error)
   }
 }
