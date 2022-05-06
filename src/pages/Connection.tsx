@@ -121,7 +121,7 @@ export default function Connection({ domainData, isAvailableNetwork, setDomainDa
     setChangeAllowed(
       wordpressData?.wpAdmin
         ? wordpressData.wpAdmin.toLowerCase() === account?.toLowerCase()
-        : admin
+        : admin && admin !== ZERO_ADDRESS
         ? admin.toLowerCase() === account?.toLowerCase()
         : true
     )
