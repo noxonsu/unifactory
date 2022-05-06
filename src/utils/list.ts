@@ -17,24 +17,29 @@ export function listVersionLabel(version: Version): string {
   return `v${version.major}.${version.minor}.${version.patch}`
 }
 
-export function filterTokenLists(lists: { [listId: string]: any }) {
+export function filterTokenLists(chainId: number, lists: { [listId: string]: any }) {
   return Object.values(lists).filter((list: any) => {
     try {
       const namePattern = /^[ \w.'+\-%/À-ÖØ-öø-ÿ:]+$/
+      const filteredTokens = list.tokens
+        // filter not valid token before actuall external validation
+        // to leave the option of showing the entire token list
+        // (without it token list won't be displayed with an error in at least one token)
+        .filter(
+          (token: { name: string; chainId: number }) => token.name.match(namePattern) && token.chainId === chainId
+        )
+        .map((token: { decimals: number }) => ({
+          ...token,
+          // some value(s) has to be other types (for now it's only decimals)
+          // but JSON allows only strings
+          decimals: Number(token.decimals),
+        }))
+
+      if (!filteredTokens.length) return false
 
       return returnValidList({
         ...list,
-        tokens: list.tokens
-          // filter not valid token before actuall external validation
-          // to leave the option of showing the entire token list
-          // (without it token list won't be displayed with an error in at least one token)
-          .filter((token: { name: string }) => token.name.match(namePattern))
-          .map((token: { decimals: number }) => ({
-            ...token,
-            // some value(s) has to be other types (for now it's only decimals)
-            // but JSON allows only strings
-            decimals: Number(token.decimals),
-          })),
+        tokens: filteredTokens,
       })
     } catch (error) {
       console.error(error)

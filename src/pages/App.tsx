@@ -9,6 +9,7 @@ import useWordpressInfo from 'hooks/useWordpressInfo'
 import useDomainInfo from 'hooks/useDomainInfo'
 import { useAppState } from 'state/application/hooks'
 import { retrieveDomainData } from 'state/application/actions'
+import { SUPPORTED_CHAIN_IDS } from '../connectors'
 import Loader from 'components/Loader'
 import Panel from './Panel'
 import Connection from './Connection'
@@ -30,7 +31,6 @@ import { RedirectOldRemoveLiquidityPathStructure } from './RemoveLiquidity/redir
 import Swap from './Swap'
 import Footer from 'components/Footer'
 import { OpenClaimAddressModalAndRedirectToSwap, RedirectPathToSwapOnly } from './Swap/redirects'
-import networks from 'networks.json'
 
 const LoaderWrapper = styled.div`
   position: absolute;
@@ -99,16 +99,10 @@ export default function App() {
   const [isAvailableNetwork, setIsAvailableNetwork] = useState(true)
 
   useEffect(() => {
-    //@ts-ignore
-    if (chainId && networks[chainId]) {
-      //@ts-ignore
-      const { multicall, wrappedToken } = networks[chainId]
+    if (chainId) {
+      const networkIsFine = !wordpressData?.wpNetworkIds?.length || wordpressData.wpNetworkIds.includes(chainId)
 
-      const contractsAreFine = multicall && wrappedToken?.address
-      const networkIsFine =
-        chainId && wordpressData?.wpNetworkIds?.length ? wordpressData.wpNetworkIds.includes(chainId) : true
-
-      setIsAvailableNetwork(Boolean(contractsAreFine && networkIsFine))
+      setIsAvailableNetwork(Boolean(SUPPORTED_CHAIN_IDS.includes(Number(chainId)) && networkIsFine))
     }
   }, [chainId, domainDataTrigger, wordpressData])
 

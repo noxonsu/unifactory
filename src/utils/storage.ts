@@ -10,6 +10,7 @@ export const getStorage = (library: Web3Provider, address: string) => {
 }
 
 const returnValidTokenListJSON = (tokenList: {
+  oldChainId: number
   chainId: number
   id: string
   oldName: string
@@ -17,22 +18,20 @@ const returnValidTokenListJSON = (tokenList: {
   logoURI?: string
   tokens: any[]
 }) => {
-  const { name, tokens, logoURI } = tokenList
+  const { oldChainId, chainId, name, tokens, logoURI } = tokenList
 
   const list: any = {
     name,
     timestamp: getTimestamp(),
-    /* 
-    Increment major version when tokens are removed
-    Increment minor version when tokens are added
-    Increment patch version when tokens already on the list have minor details changed (name, symbol, logo URL, decimals)
-    */
     version: {
+      // Increment major version when tokens are removed
       major: 1,
+      // Increment minor version when tokens are added
       minor: 0,
+      // Increment patch version when tokens already on the list have details changed (name, symbol, logo URL, decimals)
       patch: 0,
     },
-    tokens,
+    tokens: chainId !== oldChainId ? tokens.map((token) => ({ ...token, chainId })) : tokens,
   }
 
   if (logoURI) list.logoURI = logoURI

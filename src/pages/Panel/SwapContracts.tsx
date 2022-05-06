@@ -206,7 +206,7 @@ function SwapContracts(props: any) {
     setTxHash('')
   }, [])
 
-  const [userContractsChainId, setUserContractsChainId] = useState('')
+  const [userContractsChainId, setUserContractsChainId] = useState(chainId && !!contracts[chainId || 0] ? chainId : '')
   const [userFactory, setUserFactory] = useState(contracts[chainId || 0]?.factory || '')
   const [userRouter, setUserRouter] = useState(contracts[chainId || 0]?.router || '')
   const [canSaveSwapContracts, setCanSaveSwapContracts] = useState(false)
@@ -214,7 +214,8 @@ function SwapContracts(props: any) {
   useEffect(() => {
     const differentContracts =
       userFactory.toLowerCase() !== contracts[chainId || 0]?.factory?.toLowerCase() &&
-      userRouter.toLowerCase() !== contracts[chainId || 0]?.router?.toLowerCase()
+      userRouter.toLowerCase() !== contracts[chainId || 0]?.router?.toLowerCase() &&
+      userFactory.toLowerCase() !== userRouter.toLowerCase()
 
     setCanSaveSwapContracts(
       chainId === STORAGE_NETWORK_ID &&

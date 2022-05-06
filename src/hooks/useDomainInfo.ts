@@ -115,7 +115,7 @@ const parseSettings = (settings: string, chainId: number): StorageState => {
       appSettings.tokenListsByChain = tokenLists
 
       if (tokenLists[chainId]) {
-        appSettings.tokenLists = filterTokenLists(tokenLists[chainId])
+        appSettings.tokenLists = filterTokenLists(chainId, tokenLists[chainId])
       }
     }
 
@@ -135,7 +135,7 @@ const parseSettings = (settings: string, chainId: number): StorageState => {
   return appSettings
 }
 
-export default function useDomainInfo(trigger: boolean): {
+export default function useDomainInfo(trigger?: boolean): {
   data: StorageState | null
   isLoading: boolean
   error: Error | null

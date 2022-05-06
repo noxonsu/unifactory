@@ -79,7 +79,7 @@ export default function Updater(): null {
 
   useEffect(() => {
     if (chainId && tokenListsByChain[chainId]) {
-      const tokenLists = filterTokenLists(tokenListsByChain[chainId])
+      const tokenLists = filterTokenLists(chainId, tokenListsByChain[chainId])
 
       dispatch(updateAppOptions([{ key: 'tokenLists', value: tokenLists }]))
     }
