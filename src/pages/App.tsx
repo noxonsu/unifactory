@@ -107,10 +107,12 @@ export default function App() {
   }, [chainId, domainDataTrigger, wordpressData])
 
   const { data: domainData, isLoading: domainLoading } = useDomainInfo(domainDataTrigger)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (domainData) {
       dispatch(retrieveDomainData(domainData))
+      setLoading(domainLoading)
     }
   }, [domainData, domainLoading, dispatch])
 
@@ -125,10 +127,6 @@ export default function App() {
   const appManagement = useSelector<AppState, AppState['application']['appManagement']>(
     (state) => state.application.appManagement
   )
-
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => setLoading(domainLoading), [domainLoading])
 
   const domain = window.location.hostname || document.location.host
   const DOMAIN_TITLES: { [domain: string]: string } = {

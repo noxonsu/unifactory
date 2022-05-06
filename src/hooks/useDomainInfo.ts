@@ -202,9 +202,9 @@ export default function useDomainInfo(trigger?: boolean): {
         console.error(error)
         console.groupEnd()
         setError(error)
-      } finally {
-        setIsLoading(false)
       }
+
+      setIsLoading(false)
     }
 
     fetchData()
