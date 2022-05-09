@@ -8,6 +8,7 @@ import Slider, { SliderTooltip } from 'rc-slider'
 import 'rc-slider/assets/index.css'
 import { useDispatch } from 'react-redux'
 import { RiErrorWarningLine } from 'react-icons/ri'
+import { ZERO_ADDRESS } from 'sdk'
 import { useActiveWeb3React } from 'hooks'
 import { useAddPopup, useAppState } from 'state/application/hooks'
 import { updateAppOptions } from 'state/application/actions'
@@ -166,22 +167,23 @@ function SwapContracts(props: any) {
   } = useAppState()
 
   const [canDeploySwapContracts, setCanDeploySwapContracts] = useState(false)
-  const [adminAddress, setAdminAddress] = useState(stateAdmin || account || '')
+  const [adminAddress, setAdminAddress] = useState(stateAdmin !== ZERO_ADDRESS ? stateAdmin : account || '')
 
   useEffect(() => {
     const lowerAccount = account?.toLowerCase()
-    const adminIsFine = stateAdmin
-      ? lowerAccount === stateAdmin.toLowerCase()
-      : wordpressData?.wpAdmin
-      ? lowerAccount === wordpressData.wpAdmin.toLowerCase()
-      : true
+    const adminIsFine =
+      stateAdmin && stateAdmin !== ZERO_ADDRESS
+        ? lowerAccount === stateAdmin.toLowerCase()
+        : wordpressData?.wpAdmin
+        ? lowerAccount === wordpressData.wpAdmin.toLowerCase()
+        : true
 
     setCanDeploySwapContracts(
       isValidAddress(adminAddress) && wrappedToken && isValidAddress(wrappedToken) && adminIsFine
     )
   }, [library, adminAddress, wrappedToken, account, wordpressData, stateAdmin])
 
-  const [admin, setAdmin] = useState(stateAdmin || '')
+  const [admin, setAdmin] = useState(stateAdmin !== ZERO_ADDRESS ? stateAdmin : '')
   const [feeRecipient, setFeeRecipient] = useState(currentFeeRecipient || '')
   const [allFeesToAdmin, setAllFeesToAdmin] = useState(allFeeToProtocol)
   const [totalFee, setTotalFee] = useState<number | string>(

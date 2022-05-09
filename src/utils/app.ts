@@ -137,7 +137,7 @@ const parseSettings = (settings: string, chainId: number): StorageState => {
 }
 
 export const fetchDomainData = async (
-  chainId: number,
+  chainId: undefined | number,
   library: any,
   storage: any,
   trigger?: boolean
