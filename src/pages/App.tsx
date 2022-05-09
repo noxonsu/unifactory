@@ -112,7 +112,7 @@ export default function App() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!chainId || !library || !storage) return
+    if (!storage) return
 
     try {
       const start = async () => {
