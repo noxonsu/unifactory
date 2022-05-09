@@ -2,15 +2,17 @@ import React, { Suspense, useEffect, useState } from 'react'
 import { Helmet, HelmetProvider } from 'react-helmet-async'
 import { Route, Switch } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-import { AppState } from 'state'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
+import { AppState } from 'state'
+import { ZERO_ADDRESS } from 'sdk'
 import useWordpressInfo from 'hooks/useWordpressInfo'
 import { useAppState } from 'state/application/hooks'
 import { retrieveDomainData } from 'state/application/actions'
 import { fetchDomainData } from 'utils/app'
 import { useStorageContract } from 'hooks/useContract'
 import { SUPPORTED_CHAIN_IDS } from '../connectors'
+import { STORAGE_NETWORK_ID } from '../constants'
 import Loader from 'components/Loader'
 import Panel from './Panel'
 import Connection from './Connection'
@@ -88,10 +90,11 @@ const FooterWrapper = styled.footer`
 
 export default function App() {
   const dispatch = useDispatch()
-  const { active, chainId, library } = useWeb3React()
+  const { active, chainId, library, account } = useWeb3React()
   const wordpressData = useWordpressInfo()
   const storage = useStorageContract()
   const [domainData, setDomainData] = useState<any>(null)
+  const { admin, factory, router, projectName, background } = useAppState()
   const [domainDataTrigger, setDomainDataTrigger] = useState<boolean>(false)
 
   useEffect(() => {
@@ -102,13 +105,22 @@ export default function App() {
 
   useEffect(() => {
     if (chainId) {
-      const networkIsFine = !wordpressData?.wpNetworkIds?.length || wordpressData.wpNetworkIds.includes(chainId)
+      const lowerAcc = account?.toLowerCase()
+      const appAdmin = wordpressData?.wpAdmin
+        ? wordpressData?.wpAdmin?.toLowerCase() === lowerAcc
+        : admin && admin !== ZERO_ADDRESS
+        ? admin.toLowerCase() === lowerAcc
+        : true
+
+      const accessToStorageNetwork = appAdmin && chainId === STORAGE_NETWORK_ID
+
+      const networkIsFine =
+        !wordpressData?.wpNetworkIds?.length || accessToStorageNetwork || wordpressData.wpNetworkIds.includes(chainId)
 
       setIsAvailableNetwork(Boolean(SUPPORTED_CHAIN_IDS.includes(Number(chainId)) && networkIsFine))
     }
-  }, [chainId, domainDataTrigger, wordpressData])
+  }, [chainId, domainDataTrigger, wordpressData, admin, account])
 
-  const { admin, factory, router, projectName, background } = useAppState()
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
