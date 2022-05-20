@@ -155,6 +155,36 @@ export const saveAppData = async (params: {
   }
 }
 
+export const migrateToNewDomain = async ({
+  oldDomain,
+  newDomain,
+  library,
+  owner,
+}: {
+  oldDomain: string
+  newDomain: string
+  library: any
+  owner: string
+}) => {
+  try {
+    const storage = getStorage(library, STORAGE)
+    const { info } = await storage.methods[StorageMethod.getData](oldDomain).call()
+
+    await storage.methods[StorageMethod.setKeyData](newDomain, {
+      owner,
+      info,
+    }).send({
+      from: owner,
+    })
+    await storage.methods[StorageMethod.clearKeyData](oldDomain).send({
+      from: owner,
+    })
+  } catch (error) {
+    console.error(error)
+    throw error
+  }
+}
+
 export const resetAppData = async ({ library, owner }: { library: any; owner: string }) => {
   try {
     const storage = getStorage(library, STORAGE)
@@ -171,7 +201,7 @@ export const resetAppData = async ({ library, owner }: { library: any; owner: st
       from: owner,
     })
   } catch (error) {
-    console.error('Reset app data')
     console.error(error)
+    throw error
   }
 }

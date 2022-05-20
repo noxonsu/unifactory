@@ -436,7 +436,7 @@ function SwapContracts(props: any) {
             />
           </InputWrapper>
           <InputWrapper>
-            <InputPanel label={`${t('domain')} *`} value={domain} onChange={() => null} disabled />
+            <InputPanel label={`${t('domain')} *`} value={domain} disabled />
           </InputWrapper>
           <Button onClick={() => setShowConfirm(true)} disabled={pending || !canDeploySwapContracts}>
             {t('deploySwapContracts')}
