@@ -17,11 +17,13 @@ import ColorSelector from 'components/ColorSelector'
 import TextBlock from 'components/TextBlock'
 import NetworkRelatedSettings from './NetworkRelatedSettings'
 import { OptionWrapper } from './index'
-import { STORAGE_NETWORK_ID, STORAGE_NETWORK_NAME } from '../../constants'
+import { STORAGE_NETWORK_ID, STORAGE_NETWORK_NAME, STORAGE_NETWORK } from '../../constants'
 import { saveAppData } from 'utils/storage'
 import { parseENSAddress } from 'utils/parseENSAddress'
 import uriToHttp from 'utils/uriToHttp'
 import networks from 'networks.json'
+
+import { Storage } from 'storage'
 
 const Button = styled(ButtonPrimary)`
   font-size: 0.8em;
@@ -39,6 +41,32 @@ export default function Interface(props: any) {
   const { library, chainId, account } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
   const addPopup = useAddPopup()
+
+  const [externalStorage, setExternalStorage] = useState<Storage | null>(null)
+
+  useEffect(() => {
+    setExternalStorage(
+      new Storage({
+        address: STORAGE_NETWORK.storage || '',
+        rpc: STORAGE_NETWORK.rpc,
+        library: library || null,
+      })
+    )
+  }, [library])
+
+  useEffect(() => {
+    console.log('externalStorage', externalStorage)
+
+    const fetch = async () => {
+      const r = await externalStorage?.get('localhost')
+
+      console.log('r', r)
+    }
+
+    if (externalStorage) {
+      fetch()
+    }
+  }, [externalStorage])
 
   const {
     projectName: stateProjectName,

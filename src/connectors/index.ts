@@ -11,6 +11,7 @@ export type Network = {
   chainId: number
   explorer?: string
   color?: string
+  storage?: string
   multicall: string
   ENSRegistry?: string
   baseCurrency: {
