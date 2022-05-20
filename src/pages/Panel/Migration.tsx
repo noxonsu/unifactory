@@ -20,7 +20,7 @@ export default function Migration() {
   useEffect(() => {
     if (!newDomain) return setIsValidDomain(true)
 
-    setIsValidDomain(!!newDomain.match(DOMAIN_REGEXP))
+    setIsValidDomain(newDomain === 'localhost' || !!newDomain.match(DOMAIN_REGEXP))
   }, [newDomain])
 
   useEffect(() => {
