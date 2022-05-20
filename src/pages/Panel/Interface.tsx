@@ -17,13 +17,11 @@ import ColorSelector from 'components/ColorSelector'
 import TextBlock from 'components/TextBlock'
 import NetworkRelatedSettings from './NetworkRelatedSettings'
 import { OptionWrapper } from './index'
-import { STORAGE_NETWORK_ID, STORAGE_NETWORK_NAME, STORAGE_NETWORK } from '../../constants'
-import { saveAppData } from 'utils/storage'
+import { STORAGE_NETWORK_ID, STORAGE_NETWORK_NAME, STORAGE_APP_KEY } from '../../constants'
+import { getCurrentDomain } from 'utils/app'
 import { parseENSAddress } from 'utils/parseENSAddress'
 import uriToHttp from 'utils/uriToHttp'
 import networks from 'networks.json'
-
-import { Storage } from 'storage'
 
 const Button = styled(ButtonPrimary)`
   font-size: 0.8em;
@@ -38,37 +36,12 @@ const Title = styled.h3`
 export default function Interface(props: any) {
   const { pending, setPending, activeNetworks } = props
   const { t } = useTranslation()
-  const { library, chainId, account } = useActiveWeb3React()
+  const { chainId, account } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
   const addPopup = useAddPopup()
 
-  const [externalStorage, setExternalStorage] = useState<Storage | null>(null)
-
-  useEffect(() => {
-    setExternalStorage(
-      new Storage({
-        address: STORAGE_NETWORK.storage || '',
-        rpc: STORAGE_NETWORK.rpc,
-        library: library || null,
-      })
-    )
-  }, [library])
-
-  useEffect(() => {
-    console.log('externalStorage', externalStorage)
-
-    const fetch = async () => {
-      const r = await externalStorage?.get('localhost')
-
-      console.log('r', r)
-    }
-
-    if (externalStorage) {
-      fetch()
-    }
-  }, [externalStorage])
-
   const {
+    storage,
     projectName: stateProjectName,
     logo: stateLogo,
     background: stateBackground,
@@ -232,7 +205,7 @@ export default function Interface(props: any) {
     setPending(true)
 
     try {
-      const newSettings = {
+      const settings = {
         projectName,
         logoUrl,
         backgroundUrl,
@@ -252,11 +225,12 @@ export default function Interface(props: any) {
         textColorLight,
       }
 
-      await saveAppData({
-        //@ts-ignore
-        library,
+      await storage?.set({
+        key: getCurrentDomain(),
+        data: {
+          [STORAGE_APP_KEY]: settings,
+        },
         owner: account || '',
-        data: newSettings,
         onHash: (hash: string) => {
           addTransaction(
             { hash },

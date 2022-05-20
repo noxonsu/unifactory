@@ -9,15 +9,24 @@ export const getStorage = (library: Web3Provider, address: string) => {
   return getContractInstance(library, address, Storage.abi)
 }
 
-const returnValidTokenListJSON = (tokenList: {
+type TokenList = {
   oldChainId: number
+  oldId: string
   chainId: number
   id: string
   oldName: string
   name: string
   logoURI?: string
   tokens: any[]
-}) => {
+}
+
+type TokenLists = {
+  [chainId: number]: {
+    [tokenId: string]: TokenList
+  }
+}
+
+const returnValidTokenListJSON = (tokenList: TokenList) => {
   const { oldChainId, chainId, name, tokens, logoURI } = tokenList
 
   const list: any = {
@@ -39,120 +48,36 @@ const returnValidTokenListJSON = (tokenList: {
   return list
 }
 
-type Data = { [k: string]: any }
-
-const makeBaseStructure = (data: { [k: string]: any }) => {
-  if (!data[STORAGE_APP_KEY]) {
-    data[STORAGE_APP_KEY] = {}
-  }
-
-  if (!data[STORAGE_APP_KEY].tokenLists) {
-    data[STORAGE_APP_KEY].tokenLists = {}
-  }
-
-  if (!data[STORAGE_APP_KEY].tokenLists) {
-    data[STORAGE_APP_KEY].tokenLists = {}
-  }
-
-  return data
-}
-
-const isEmptyChain = (tokenLists: { [chainId: string]: any }, chainId: string) => {
+const isEmptyChain = (tokenLists: { [chainId: string]: any }, chainId: number) => {
   return !Object.keys(tokenLists[chainId])?.length
 }
 
-const updateData = (oldData: Data, newData: Data) => {
-  oldData = makeBaseStructure(oldData)
+export const updateTokenLists = (oldTokenLists: TokenLists, newTokenList: TokenList) => {
+  const { oldChainId, oldId, chainId, id } = newTokenList
 
-  let result
-
-  if (newData.tokenList) {
-    const { oldChainId, oldId, chainId, id } = newData.tokenList
-
-    const tokenLists = {
-      ...oldData[STORAGE_APP_KEY].tokenLists,
-      [chainId]: {
-        ...oldData[STORAGE_APP_KEY].tokenLists[chainId],
-        [id]: returnValidTokenListJSON(newData.tokenList),
-      },
-    }
-
-    if (chainId !== oldChainId) {
-      delete tokenLists[oldChainId][oldId]
-    } else if (id !== oldId) {
-      delete tokenLists[chainId][oldId]
-    }
-
-    if (isEmptyChain(tokenLists, oldChainId)) {
-      delete tokenLists[oldChainId]
-    }
-
-    if (isEmptyChain(tokenLists, chainId)) {
-      delete tokenLists[chainId]
-    }
-
-    result = {
-      ...oldData,
-      [STORAGE_APP_KEY]: {
-        ...oldData[STORAGE_APP_KEY],
-        tokenLists,
-      },
-    }
-  } else {
-    result = {
-      ...oldData,
-      [STORAGE_APP_KEY]: {
-        ...oldData[STORAGE_APP_KEY],
-        ...newData,
-        contracts: {
-          ...oldData[STORAGE_APP_KEY].contracts,
-          ...newData.contracts,
-        },
-        tokenLists: {
-          ...oldData[STORAGE_APP_KEY].tokenLists,
-          ...newData.tokenLists,
-        },
-      },
-    }
+  const tokenLists = {
+    ...oldTokenLists,
+    [chainId]: {
+      ...oldTokenLists[chainId],
+      [id]: returnValidTokenListJSON(newTokenList),
+    },
   }
 
-  return result
-}
-
-export const saveAppData = async (params: {
-  library: Web3Provider
-  owner: string
-  data: Data
-  onHash?: (hash: string) => void
-  onReceipt?: (receipt: object, success: boolean) => void
-}) => {
-  const { library, owner, data, onHash, onReceipt } = params
-
-  try {
-    const storage = getStorage(library, STORAGE)
-    const { info } = await storage.methods.getData(getCurrentDomain()).call()
-
-    const newData = updateData(JSON.parse(info || '{}'), data)
-
-    return new Promise(async (resolve, reject) => {
-      storage.methods
-        .setKeyData(getCurrentDomain(), {
-          owner,
-          info: JSON.stringify(newData),
-        })
-        .send({ from: owner })
-        .on('transactionHash', (hash: string) => {
-          if (typeof onHash === 'function') onHash(hash)
-        })
-        .on('receipt', (receipt: any) => {
-          if (typeof onReceipt === 'function') onReceipt(receipt, receipt?.status)
-        })
-        .then(resolve)
-        .catch(reject)
-    })
-  } catch (error) {
-    throw error
+  if (chainId !== oldChainId) {
+    delete tokenLists[oldChainId][oldId]
+  } else if (id !== oldId) {
+    delete tokenLists[chainId][oldId]
   }
+
+  if (isEmptyChain(tokenLists, oldChainId)) {
+    delete tokenLists[oldChainId]
+  }
+
+  if (isEmptyChain(tokenLists, chainId)) {
+    delete tokenLists[chainId]
+  }
+
+  return tokenLists
 }
 
 export const migrateToNewDomain = async ({

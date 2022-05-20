@@ -43,23 +43,21 @@ const defaultSettings = (): StorageState => ({
   defaultSwapCurrency: { input: '', output: '' },
 })
 
-const parseSettings = (settings: string, chainId: number): StorageState => {
+const parseSettings = (settings: { [k: string]: any }, chainId: number): StorageState => {
   const appSettings = defaultSettings()
 
   try {
-    const settingsJSON = JSON.parse(settings)
-
-    if (!settingsJSON?.[STORAGE_APP_KEY]) {
-      settingsJSON[STORAGE_APP_KEY] = {}
+    if (!settings?.[STORAGE_APP_KEY]) {
+      settings[STORAGE_APP_KEY] = {}
     }
-    if (!settingsJSON[STORAGE_APP_KEY]?.contracts) {
-      settingsJSON[STORAGE_APP_KEY].contracts = {}
+    if (!settings[STORAGE_APP_KEY]?.contracts) {
+      settings[STORAGE_APP_KEY].contracts = {}
     }
-    if (!settingsJSON[STORAGE_APP_KEY]?.contracts) {
-      settingsJSON[STORAGE_APP_KEY].tokenLists = {}
+    if (!settings[STORAGE_APP_KEY]?.contracts) {
+      settings[STORAGE_APP_KEY].tokenLists = {}
     }
 
-    const { definance: parsedSettings } = settingsJSON
+    const { definance: parsedSettings } = settings
 
     const {
       contracts,
@@ -146,9 +144,9 @@ export const fetchDomainData = async (
 
   try {
     const currentDomain = window.location.hostname || document.location.host
-    const { info, owner } = await storage.methods.getData(currentDomain).call()
+    const { data, owner } = await storage.get(currentDomain)
 
-    const settings = parseSettings(info || '{}', chainId || 0)
+    const settings = parseSettings(data, chainId || 0)
     const { factory } = settings
 
     fullData = { ...settings, admin: owner }

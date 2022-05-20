@@ -92,7 +92,7 @@ export default function App() {
   const dispatch = useDispatch()
   const { active, chainId, library, account } = useWeb3React()
   const wordpressData = useWordpressInfo()
-  const storage = useStorageContract()
+  const storage = useStorageContract({ library })
   const [domainData, setDomainData] = useState<any>(null)
   const { admin, factory, router, projectName, background } = useAppState()
   const [domainDataTrigger, setDomainDataTrigger] = useState<boolean>(false)

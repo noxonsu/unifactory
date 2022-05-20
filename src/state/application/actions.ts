@@ -1,5 +1,6 @@
 import { createAction } from '@reduxjs/toolkit'
 import { TokenList } from '@uniswap/token-lists'
+import { Storage } from 'storage'
 import { StorageState } from './reducer'
 
 export type PopupContent =
@@ -38,6 +39,8 @@ export enum ApplicationModal {
 }
 
 export type StorageKeys = keyof StorageState
+
+export const setStorage = createAction<{ storage: Storage | null }>('application/setStorage')
 
 export const setAppManagement = createAction<{ status: boolean }>('application/setAppManagement')
 

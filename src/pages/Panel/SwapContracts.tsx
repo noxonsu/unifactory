@@ -15,7 +15,14 @@ import { updateAppOptions } from 'state/application/actions'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useTranslation } from 'react-i18next'
 import { SUPPORTED_NETWORKS } from '../../connectors'
-import { DEV_FEE_ADMIN, FactoryMethod, STORAGE_NETWORK_ID, STORAGE_NETWORK_NAME } from '../../constants'
+import { getCurrentDomain } from 'utils/app'
+import {
+  DEV_FEE_ADMIN,
+  FactoryMethod,
+  STORAGE_NETWORK_ID,
+  STORAGE_NETWORK_NAME,
+  STORAGE_APP_KEY,
+} from '../../constants'
 import { ButtonPrimary } from 'components/Button'
 import Accordion from 'components/Accordion'
 import QuestionHelper from 'components/QuestionHelper'
@@ -26,7 +33,6 @@ import ConfirmationModal from './ConfirmationModal'
 import { OptionWrapper } from './index'
 import { PartitionWrapper } from './index'
 import { isValidAddress, setFactoryOption, deploySwapContracts } from 'utils/contract'
-import { saveAppData } from 'utils/storage'
 import useWordpressInfo from 'hooks/useWordpressInfo'
 
 const Title = styled.h3`
@@ -155,6 +161,7 @@ function SwapContracts(props: any) {
   const addTransaction = useTransactionAdder()
   const addPopup = useAddPopup()
   const {
+    storage,
     contracts,
     admin: stateAdmin,
     factory: stateFactory,
@@ -225,27 +232,26 @@ function SwapContracts(props: any) {
     if (!chainId) return
 
     try {
-      await saveAppData({
-        //@ts-ignore
-        library,
-        owner: adminAddress,
+      await storage?.set({
+        key: getCurrentDomain(),
         data: {
-          contracts: {
-            [chainId]: {
-              factory,
-              router,
+          [STORAGE_APP_KEY]: {
+            contracts: {
+              [chainId]: {
+                factory,
+                router,
+              },
             },
           },
         },
-        onReceipt: (receipt, success) => {
-          if (success) {
-            dispatch(
-              updateAppOptions([
-                { key: 'factory', value: factory },
-                { key: 'router', value: router },
-              ])
-            )
-          }
+        owner: adminAddress,
+        onReceipt: (receipt: any) => {
+          dispatch(
+            updateAppOptions([
+              { key: 'factory', value: factory },
+              { key: 'router', value: router },
+            ])
+          )
         },
       })
     } catch (error) {

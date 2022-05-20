@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react'
 import { RiCloseFill } from 'react-icons/ri'
 import { useTransactionAdder } from 'state/transactions/hooks'
-import { useAddPopup } from 'state/application/hooks'
+import { useAddPopup, useAppState } from 'state/application/hooks'
 import styled from 'styled-components'
 import { ButtonPrimary, CleanButton } from 'components/Button'
 import Input from 'components/Input'
 import InputPanel from 'components/InputPanel'
 import Accordion from 'components/Accordion'
 import { useTranslation } from 'react-i18next'
-import { saveAppData } from 'utils/storage'
+import { getCurrentDomain } from 'utils/app'
+import { updateTokenLists } from 'utils/storage'
 import { returnTokenInfo, isValidAddress } from 'utils/contract'
 import { shortenAddress } from 'utils'
-import { STORAGE_NETWORK_ID, STORAGE_NETWORK_NAME } from '../../constants'
+import { STORAGE_NETWORK_ID, STORAGE_NETWORK_NAME, STORAGE_APP_KEY } from '../../constants'
 
 const TokenRow = styled.div`
   margin: 0.2rem;
@@ -73,8 +74,9 @@ export function TokenList(props: {
   const addTransaction = useTransactionAdder()
   const addPopup = useAddPopup()
 
+  const { storage } = useAppState()
+
   const [sourceListStructure] = useState(makeListStructure(listChainId, listId, list))
-  const [needToUpdate, setNeedToUpdate] = useState(false)
   const [tokenListChainId, setTokenListChainId] = useState(listChainId)
   const [tokenListId, setTokenListId] = useState(listId)
   const [tokenListName, setTokenListName] = useState(list.name || '')
@@ -149,10 +151,10 @@ export function TokenList(props: {
 
     const needToUpdate = isNewList || sourceListStructure !== currentStructure
 
-    setNeedToUpdate(needToUpdate)
     setCanSaveTokenList(
       Boolean(
         chainId === STORAGE_NETWORK_ID &&
+          storage &&
           tokenListChainId &&
           tokenListId &&
           tokenListName &&
@@ -161,6 +163,7 @@ export function TokenList(props: {
       )
     )
   }, [
+    storage,
     sourceListStructure,
     isNewList,
     chainId,
@@ -175,26 +178,31 @@ export function TokenList(props: {
   ])
 
   const saveTokenList = async () => {
+    if (!storage) return
+
     setPending(true)
 
     try {
-      await saveAppData({
-        //@ts-ignore
-        library,
-        owner: account,
+      const domain = getCurrentDomain()
+      const { data } = await storage.get(domain)
+
+      await storage.set({
+        key: domain,
         data: {
-          tokenList: {
-            needToUpdate,
-            oldChainId: listChainId,
-            oldId: listId,
-            oldName: list.name,
-            chainId: tokenListChainId,
-            id: tokenListId,
-            name: tokenListName,
-            logoURI: tokenListLogo,
-            tokens,
+          [STORAGE_APP_KEY]: {
+            tokenLists: updateTokenLists(data.tokenLists || {}, {
+              oldChainId: Number(listChainId),
+              oldId: listId,
+              oldName: list.name,
+              chainId: Number(tokenListChainId),
+              id: tokenListId,
+              name: tokenListName,
+              logoURI: tokenListLogo,
+              tokens,
+            }),
           },
         },
+        owner: account,
         onHash: (hash: string) => {
           addTransaction(
             { hash },

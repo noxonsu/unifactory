@@ -1,7 +1,9 @@
 import { createReducer, nanoid } from '@reduxjs/toolkit'
 import { TokenList } from '@uniswap/token-lists/dist/types'
+import { Storage } from 'storage'
 import { SUPPORTED_NETWORKS } from '../../connectors'
 import {
+  setStorage,
   setAppManagement,
   retrieveDomainData,
   addPopup,
@@ -57,6 +59,7 @@ export type StorageState = {
 }
 
 export type ApplicationState = StorageState & {
+  readonly storage: Storage | null
   readonly appManagement: boolean
   readonly pools: string[]
   readonly blockNumber: { readonly [chainId: number]: number }
@@ -65,6 +68,7 @@ export type ApplicationState = StorageState & {
 }
 
 const initialState: ApplicationState = {
+  storage: null,
   // external data -----------
   admin: '',
   contracts: {},
@@ -104,6 +108,11 @@ const initialState: ApplicationState = {
 
 export default createReducer(initialState, (builder) =>
   builder
+    .addCase(setStorage, (state, action) => {
+      const { storage = null } = action.payload
+
+      state.storage = storage
+    })
     .addCase(setAppManagement, (state, action) => {
       const { status } = action.payload
 
