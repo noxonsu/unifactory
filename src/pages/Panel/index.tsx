@@ -20,6 +20,7 @@ import ConfirmationModal from 'components/ConfirmationModal'
 import Wallet from './Wallet'
 import SwapContracts from './SwapContracts'
 import Interface from './Interface'
+import Migration from './Migration'
 
 const FAQLink = styled.a`
   display: flex;
@@ -135,7 +136,7 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
   const dispatch = useDispatch()
   const [pending, setPending] = useState<boolean>(false)
   const { chainId, account, library } = useActiveWeb3React()
-  const { admin, factory, router } = useAppState()
+  const { admin } = useAppState()
   const wordpressData = useWordpressInfo()
   const [error, setError] = useState<any | false>(false)
   const [domain] = useState(window.location.hostname || document.location.host)
@@ -185,10 +186,16 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
   }
 
   const returnTabs = () => {
-    return [
+    const tabs = [
       { tabKey: 'contracts', tabName: 'swapContracts' },
       { tabKey: 'interface', tabName: 'interface' },
-    ].map((info, index) => {
+    ]
+
+    if (chainId === STORAGE_NETWORK_ID) {
+      tabs.push({ tabKey: 'migration', tabName: 'migration' })
+    }
+
+    return tabs.map((info, index) => {
       return (
         <Tab key={index} active={tab === info.tabKey} onClick={() => setTab(info.tabKey)}>
           {t(info.tabName)}
@@ -269,14 +276,15 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
             setError={setError}
           />
         )}
+        {tab === 'migration' && <Migration />}
       </Content>
 
-      {Boolean(
-        admin?.toLowerCase() === account?.toLowerCase() && factory && router && chainId === STORAGE_NETWORK_ID
-      ) && (
-        <DangerZone>
-          <ButtonSecondary onClick={() => setShowConfirm(true)}>{t('resetDomainData')}</ButtonSecondary>
-        </DangerZone>
+      {Boolean(admin?.toLowerCase() === account?.toLowerCase() && chainId === STORAGE_NETWORK_ID) && (
+        <>
+          <DangerZone>
+            <ButtonSecondary onClick={() => setShowConfirm(true)}>{t('resetDomainData')}</ButtonSecondary>
+          </DangerZone>
+        </>
       )}
     </Wrapper>
   )

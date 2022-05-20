@@ -85,15 +85,17 @@ export default function AddressInputPanel({
   step?: number
   error?: boolean
   value: string | number
-  onChange: (value: string) => void
+  onChange?: (value: string) => void
 }) {
   const theme = useContext(ThemeContext)
 
   const handleInput = useCallback(
     (event) => {
-      const input = event.target.value
-      const withoutSpaces = input.replace(/\s+/g, '')
-      onChange(withoutSpaces)
+      if (typeof onChange === 'function') {
+        const input = event.target.value
+        const withoutSpaces = input.replace(/\s+/g, '')
+        onChange(withoutSpaces)
+      }
     },
     [onChange]
   )
