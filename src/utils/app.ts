@@ -154,19 +154,24 @@ export const fetchDomainData = async (
     fullData = { ...settings, admin: owner }
 
     if (factory) {
-      //@ts-ignore
-      const factoryContract = getContractInstance(library, factory, FACTORY.abi)
-
-      const INIT_CODE_PAIR_HASH = await factoryContract.methods.INIT_CODE_PAIR_HASH().call()
-
-      fullData = { ...fullData, pairHash: INIT_CODE_PAIR_HASH }
-
       try {
+        //@ts-ignore
+        const factoryContract = getContractInstance(library.provider, factory, FACTORY.abi)
         const factoryInfo = await factoryContract.methods.allInfo().call()
-        const { protocolFee, feeTo, totalFee, allFeeToProtocol, POSSIBLE_PROTOCOL_PERCENT, totalSwaps } = factoryInfo
+
+        const {
+          protocolFee,
+          feeTo,
+          totalFee,
+          allFeeToProtocol,
+          totalSwaps,
+          POSSIBLE_PROTOCOL_PERCENT,
+          INIT_CODE_PAIR_HASH,
+        } = factoryInfo
 
         return {
           ...fullData,
+          pairHash: INIT_CODE_PAIR_HASH,
           protocolFee,
           feeRecipient: feeTo,
           totalFee,

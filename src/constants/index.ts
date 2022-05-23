@@ -5,15 +5,15 @@ import networks from 'networks.json'
 
 export const DEV_FEE_ADMIN = '0x6D1EB33c063CBe69d064EE22537dBF107e8816f6'
 
-export type STORAGE_NETWORK = keyof typeof networks
+export type NETWORKS_ID = keyof typeof networks
 
 const BSC_ID = 56
 const RINKEBY_ID = 4
 
 export const STORAGE_NETWORK_ID = process.env.NODE_ENV === 'production' ? BSC_ID : RINKEBY_ID
-export const STORAGE_NETWORK_NAME = networks[STORAGE_NETWORK_ID.toString() as STORAGE_NETWORK].name
+export const STORAGE_NETWORK_NAME = networks[STORAGE_NETWORK_ID.toString() as NETWORKS_ID].name
 // @ts-ignore
-export const STORAGE = networks[STORAGE_NETWORK_ID.toString() as STORAGE_NETWORK].storage
+export const STORAGE = networks[STORAGE_NETWORK_ID.toString() as NETWORKS_ID].storage
 // through this key we get/set this app settings (we use the storage contract for many apps)
 export const STORAGE_APP_KEY = 'definance'
 

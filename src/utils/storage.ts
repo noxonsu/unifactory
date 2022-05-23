@@ -6,7 +6,7 @@ import { getContractInstance } from './contract'
 import { getCurrentDomain } from 'utils/app'
 
 export const getStorage = (library: Web3Provider, address: string) => {
-  return getContractInstance(library, address, Storage.abi)
+  return getContractInstance(library.provider, address, Storage.abi)
 }
 
 const returnValidTokenListJSON = (tokenList: {

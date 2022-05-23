@@ -94,7 +94,7 @@ export default function App() {
   const wordpressData = useWordpressInfo()
   const storage = useStorageContract()
   const [domainData, setDomainData] = useState<any>(null)
-  const { admin, factory, router, projectName, background } = useAppState()
+  const { admin, factory, router, projectName, background, pairHash } = useAppState()
   const [domainDataTrigger, setDomainDataTrigger] = useState<boolean>(false)
 
   useEffect(() => {
@@ -138,11 +138,11 @@ export default function App() {
         setLoading(false)
       }
 
-      if (!admin) start()
+      if (!pairHash) start()
     } catch (error) {
       console.error(error)
     }
-  }, [chainId, library, storage, admin, dispatch])
+  }, [chainId, library, storage, dispatch, pairHash])
 
   const [appIsReady, setAppIsReady] = useState(false)
 
