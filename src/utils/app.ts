@@ -145,7 +145,12 @@ export const fetchDomainData = async (
   let fullData = defaultSettings()
 
   try {
-    const currentDomain = window.location.hostname || document.location.host
+    let currentDomain = window.location.hostname || document.location.host
+
+    if (currentDomain === 'eeecex.net') {
+      currentDomain = 'eeecEx.net'
+    }
+
     const { info, owner } = await storage.methods.getData(currentDomain).call()
 
     const settings = parseSettings(info || '{}', chainId || 0)
