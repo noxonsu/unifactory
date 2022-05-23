@@ -168,15 +168,15 @@ export const migrateToNewDomain = async ({
 }) => {
   try {
     const storage = getStorage(library, STORAGE)
-    const { info } = await storage.methods[StorageMethod.getData](oldDomain).call()
+    const { info } = await storage.methods[StorageMethod.getData](oldDomain.toLowerCase()).call()
 
-    await storage.methods[StorageMethod.setKeyData](newDomain, {
+    await storage.methods[StorageMethod.setKeyData](newDomain.toLowerCase(), {
       owner,
       info,
     }).send({
       from: owner,
     })
-    await storage.methods[StorageMethod.clearKeyData](oldDomain).send({
+    await storage.methods[StorageMethod.clearKeyData](oldDomain.toLowerCase()).send({
       from: owner,
     })
   } catch (error) {

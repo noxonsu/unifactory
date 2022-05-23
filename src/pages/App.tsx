@@ -157,7 +157,7 @@ export default function App() {
   const domain = window.location.hostname || document.location.host
   const DOMAIN_TITLES: { [domain: string]: string } = {
     'internethedgefund.com': 'IHF Swap',
-    'eeecEx.net': 'eee Swap',
+    'eeecex.net': 'eeecEx',
   }
 
   return (
