@@ -145,7 +145,12 @@ export const fetchDomainData = async (
   let fullData = defaultSettings()
 
   try {
-    const currentDomain = window.location.hostname || document.location.host
+    let currentDomain = window.location.hostname || document.location.host
+
+    if (currentDomain === 'eeecex.net') {
+      currentDomain = 'eeecEx.net'
+    }
+
     const { info, owner } = await storage.methods.getData(currentDomain).call()
 
     const settings = parseSettings(info || '{}', chainId || 0)
@@ -154,19 +159,24 @@ export const fetchDomainData = async (
     fullData = { ...settings, admin: owner }
 
     if (factory) {
-      //@ts-ignore
-      const factoryContract = getContractInstance(library, factory, FACTORY.abi)
-
-      const INIT_CODE_PAIR_HASH = await factoryContract.methods.INIT_CODE_PAIR_HASH().call()
-
-      fullData = { ...fullData, pairHash: INIT_CODE_PAIR_HASH }
-
       try {
+        //@ts-ignore
+        const factoryContract = getContractInstance(library.provider, factory, FACTORY.abi)
         const factoryInfo = await factoryContract.methods.allInfo().call()
-        const { protocolFee, feeTo, totalFee, allFeeToProtocol, POSSIBLE_PROTOCOL_PERCENT, totalSwaps } = factoryInfo
+
+        const {
+          protocolFee,
+          feeTo,
+          totalFee,
+          allFeeToProtocol,
+          totalSwaps,
+          POSSIBLE_PROTOCOL_PERCENT,
+          INIT_CODE_PAIR_HASH,
+        } = factoryInfo
 
         return {
           ...fullData,
+          pairHash: INIT_CODE_PAIR_HASH,
           protocolFee,
           feeRecipient: feeTo,
           totalFee,

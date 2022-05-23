@@ -9,8 +9,8 @@ import { cache, addValue } from './cache'
 import { getWeb3Library } from './getLibrary'
 import networks from 'networks.json'
 
-export const getContractInstance = (library: Web3Provider, address: string, abi: any) => {
-  const web3 = getWeb3Library(library.provider)
+export const getContractInstance = (provider: any, address: string, abi: any) => {
+  const web3 = getWeb3Library(provider)
 
   return new web3.eth.Contract(abi, address)
 }
@@ -41,8 +41,8 @@ const deployContract = async (params: any) => {
         gas,
       })
       .on('transactionHash', (hash: string) => onHash(hash))
-      .on('error', (error: any) => console.error(error))
       .on('receipt', (receipt: any) => onDeploy(receipt))
+      .on('error', (error: any) => console.error(error))
   } catch (error) {
     throw error
   }
@@ -126,7 +126,7 @@ export const setFactoryOption = async (params: {
   onHash?: (hash: string) => void
 }) => {
   const { library, from, factoryAddress, method, values, onHash } = params
-  const factory = getContractInstance(library, factoryAddress, Factory.abi)
+  const factory = getContractInstance(library.provider, factoryAddress, Factory.abi)
 
   return new Promise((resolve, reject) => {
     factory.methods[method](...values)

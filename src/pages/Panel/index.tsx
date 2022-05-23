@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { useActiveWeb3React } from 'hooks'
 import styled from 'styled-components'
 import { MdArrowBack } from 'react-icons/md'
-import { FiArrowUpRight } from 'react-icons/fi'
 import { shortenAddress } from 'utils'
 import { Text } from 'rebass'
 import networks from 'networks.json'
@@ -21,12 +20,6 @@ import Wallet from './Wallet'
 import SwapContracts from './SwapContracts'
 import Interface from './Interface'
 import Migration from './Migration'
-
-const FAQLink = styled.a`
-  display: flex;
-  align-items: center;
-  margin: 0.6rem 0 1rem;
-`
 
 export const PartitionWrapper = styled.div<{ highlighted?: boolean }>`
   margin-top: 1rem;
@@ -243,10 +236,6 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
           </div>
         </NetworkInfo>
       )}
-
-      <FAQLink href="https://support.onout.org/hc/1331700057/category/2" target="_blank">
-        {t('Knowledge Base')} <FiArrowUpRight />
-      </FAQLink>
 
       {error && (
         <Error>
