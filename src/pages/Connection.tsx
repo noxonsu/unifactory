@@ -9,9 +9,10 @@ import { SUPPORTED_NETWORKS } from 'connectors'
 import AppBody from './AppBody'
 import Panel from './Panel'
 import Web3Status from 'components/Web3Status'
-import { ApplicationModal, setOpenModal } from '../state/application/actions'
-import { useDispatch } from 'react-redux'
 import { AppDispatch } from 'state'
+import { ApplicationModal, setOpenModal } from '../state/application/actions'
+import { useAppState } from 'state/application/hooks'
+import { useDispatch } from 'react-redux'
 import useWordpressInfo from 'hooks/useWordpressInfo'
 
 const Wrapper = styled.section`
@@ -96,19 +97,17 @@ export default function Connection({ domainData, isAvailableNetwork, setDomainDa
   const wordpressData = useWordpressInfo()
   const { t } = useTranslation()
   const dispatch = useDispatch<AppDispatch>()
+  const { admin, factory, router } = useAppState()
   const [needToConfigure, setNeedToConfigure] = useState(false)
 
   useEffect(() => {
     if (
       active &&
-      (!domainData ||
-        unavailableOrZeroAddr(domainData.admin) ||
-        unavailableOrZeroAddr(domainData.factory) ||
-        unavailableOrZeroAddr(domainData.router))
+      (!domainData || unavailableOrZeroAddr(admin) || unavailableOrZeroAddr(factory) || unavailableOrZeroAddr(router))
     ) {
       setNeedToConfigure(true)
     }
-  }, [active, domainData])
+  }, [active, admin, factory, router, domainData])
 
   useEffect(() => {
     if (isAvailableNetwork && !needToConfigure) {
@@ -119,10 +118,14 @@ export default function Connection({ domainData, isAvailableNetwork, setDomainDa
   const [changeAllowed, setChangeAllowed] = useState(false)
 
   useEffect(() => {
-    if (needToConfigure) {
-      setChangeAllowed(wordpressData?.wpAdmin ? wordpressData.wpAdmin.toLowerCase() === account?.toLowerCase() : true)
-    }
-  }, [needToConfigure, wordpressData, account])
+    setChangeAllowed(
+      wordpressData?.wpAdmin
+        ? wordpressData.wpAdmin.toLowerCase() === account?.toLowerCase()
+        : admin && admin !== ZERO_ADDRESS
+        ? admin.toLowerCase() === account?.toLowerCase()
+        : true
+    )
+  }, [needToConfigure, wordpressData, account, admin])
 
   return (
     <Wrapper>

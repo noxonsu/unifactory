@@ -37,24 +37,14 @@ export enum ApplicationModal {
   LANGUAGE,
 }
 
+export type StorageKeys = keyof StorageState
+
 export const setAppManagement = createAction<{ status: boolean }>('application/setAppManagement')
 
-export const retrieveDomainData = createAction<null | {
-  admin: string
-  factory: string
-  router: string
-  storageAddr: string
-  pairHash: string
-  feeRecipient: string
-  protocolFee?: number
-  totalFee?: number
-  allFeeToProtocol?: boolean
-  possibleProtocolPercent?: string[]
-  totalSwaps: string
-  disableSourceCopyright?: boolean
-}>('application/retrieveDomainData')
+export const retrieveDomainData = createAction<null | StorageState>('application/retrieveDomainData')
 
-export const updateAppData = createAction<null | StorageState>('application/updateAppData')
+export const updateAppOptions =
+  createAction<{ key: StorageKeys; value: StorageState[StorageKeys] }[]>('application/updateAppOptions')
 
 export const updateBlockNumber = createAction<{ chainId: number; blockNumber: number }>('application/updateBlockNumber')
 

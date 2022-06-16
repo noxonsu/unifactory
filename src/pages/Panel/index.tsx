@@ -2,14 +2,13 @@ import React, { useEffect, useState } from 'react'
 import { useActiveWeb3React } from 'hooks'
 import styled from 'styled-components'
 import { MdArrowBack } from 'react-icons/md'
-import { FiArrowUpRight } from 'react-icons/fi'
 import { shortenAddress } from 'utils'
 import { Text } from 'rebass'
-import networks from '../../networks.json'
-import Registry from 'contracts/build/Registry.json'
+import networks from 'networks.json'
 import { useDispatch, useSelector } from 'react-redux'
 import { SUPPORTED_NETWORKS } from 'connectors'
-import { getContractInstance } from 'utils/contract'
+import { STORAGE_NETWORK_ID, STORAGE_NETWORK_NAME } from '../../constants'
+import { resetAppData } from 'utils/storage'
 import useWordpressInfo from 'hooks/useWordpressInfo'
 import { AppState } from 'state'
 import { useTranslation } from 'react-i18next'
@@ -20,12 +19,7 @@ import ConfirmationModal from 'components/ConfirmationModal'
 import Wallet from './Wallet'
 import SwapContracts from './SwapContracts'
 import Interface from './Interface'
-
-const FAQLink = styled.a`
-  display: flex;
-  align-items: center;
-  margin: 0.6rem 0 1rem;
-`
+import Migration from './Migration'
 
 export const PartitionWrapper = styled.div<{ highlighted?: boolean }>`
   margin-top: 1rem;
@@ -72,9 +66,11 @@ const BackButton = styled(CleanButton)`
 `
 
 const NetworkInfo = styled.div`
-  margin: 0.6rem 0;
-  display: flex;
-  justify-content: space-between;
+  .row {
+    margin: 0.6rem 0;
+    display: flex;
+    justify-content: space-between;
+  }
 `
 
 const Tabs = styled.div`
@@ -133,7 +129,7 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
   const dispatch = useDispatch()
   const [pending, setPending] = useState<boolean>(false)
   const { chainId, account, library } = useActiveWeb3React()
-  const { admin, factory, router } = useAppState()
+  const { admin } = useAppState()
   const wordpressData = useWordpressInfo()
   const [error, setError] = useState<any | false>(false)
   const [domain] = useState(window.location.hostname || document.location.host)
@@ -174,22 +170,25 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
   //@ts-ignore
   const accountPrefix = networks[chainId]?.name || t('account')
 
-  const resetDomain = async () => {
+  const resetData = async () => {
     setShowConfirm(false)
-    //@ts-ignore
-    const registry: any = getContractInstance(library, networks[chainId]?.registry, Registry.abi)
 
-    await registry.methods.removeDomain(domain).send({
-      from: account,
-    })
+    await resetAppData({ library, owner: account || '' })
+
     setDomainDataTrigger((state: boolean) => !state)
   }
 
   const returnTabs = () => {
-    return [
+    const tabs = [
       { tabKey: 'contracts', tabName: 'swapContracts' },
       { tabKey: 'interface', tabName: 'interface' },
-    ].map((info, index) => {
+    ]
+
+    if (chainId === STORAGE_NETWORK_ID) {
+      tabs.push({ tabKey: 'migration', tabName: 'migration' })
+    }
+
+    return tabs.map((info, index) => {
       return (
         <Tab key={index} active={tab === info.tabKey} onClick={() => setTab(info.tabKey)}>
           {t(info.tabName)}
@@ -208,7 +207,7 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
             <Text fontWeight={500} fontSize={20}>
               {t('resetDomainDescription')}
             </Text>
-            <ButtonError error padding={'12px'} onClick={resetDomain}>
+            <ButtonError error padding={'12px'} onClick={resetData}>
               <Text fontSize={20} fontWeight={500} id="reset">
                 {t('resetDomainData')}
               </Text>
@@ -227,14 +226,16 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
 
       {account && (
         <NetworkInfo>
-          {accountPrefix ? `${accountPrefix}: ` : ' '}
-          <span className="monospace">{shortenAddress(account)}</span>
+          <div className="row">
+            {/* @ts-ignore */}
+            {t('storageNetwork')}: <span>{STORAGE_NETWORK_NAME}</span>
+          </div>
+          <div className="row">
+            {accountPrefix ? `${accountPrefix}: ` : ' '}
+            <span className="monospace">{shortenAddress(account)}</span>
+          </div>
         </NetworkInfo>
       )}
-
-      <FAQLink href="https://support.onout.org/hc/1331700057/category/2" target="_blank">
-        {t('Knowledge Base')} <FiArrowUpRight />
-      </FAQLink>
 
       {error && (
         <Error>
@@ -253,7 +254,6 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
             setPending={setPending}
             setError={setError}
             wrappedToken={wrappedToken}
-            setDomainDataTrigger={setDomainDataTrigger}
           />
         )}
         {tab === 'interface' && (
@@ -263,15 +263,17 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
             activeNetworks={activeNetworks}
             setPending={setPending}
             setError={setError}
-            setDomainDataTrigger={setDomainDataTrigger}
           />
         )}
+        {tab === 'migration' && <Migration />}
       </Content>
 
-      {Boolean(admin && factory && router) && (
-        <DangerZone>
-          <ButtonSecondary onClick={() => setShowConfirm(true)}>{t('resetDomainData')}</ButtonSecondary>
-        </DangerZone>
+      {Boolean(admin?.toLowerCase() === account?.toLowerCase() && chainId === STORAGE_NETWORK_ID) && (
+        <>
+          <DangerZone>
+            <ButtonSecondary onClick={() => setShowConfirm(true)}>{t('resetDomainData')}</ButtonSecondary>
+          </DangerZone>
+        </>
       )}
     </Wrapper>
   )

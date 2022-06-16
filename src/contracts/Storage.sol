@@ -1,18 +1,15 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.12;
 
-contract Storage {
-    struct TokenList {
-        string name;
-        string data;
-    }
+import "./interfaces/IStorage.sol";
 
-    address private _owner;
-    string private _settings;
-    TokenList[] private _tokenLists;
+contract Storage is IStorage {
+    mapping(string => Data) private allData;
+    string[] private keys;
 
-    modifier onlyOwner() {
-        require(msg.sender == _owner, 'Owner: FORBIDDEN');
+    modifier onlyDataOwner(string memory _key) {
+        require(allData[_key].owner != address(0), 'NO_OWNER');
+        require(msg.sender == allData[_key].owner, 'FORBIDDEN');
         _;
     }
 
@@ -22,100 +19,77 @@ contract Storage {
         _;
     }
 
-    constructor(address owner_) {
-        _owner = owner_;
+    function getData(string memory _key) external override view returns(Data memory) {
+        return _keyData(_key);
     }
 
-    function setOwner(address owner_) external onlyOwner {
-        require(owner_ != address(0), 'ZERO_ADDRESS');
-        _owner = owner_;
+    function allKeys() external override view returns(string[] memory) {
+        return keys;
     }
 
-    function setSettings(string memory settings_) external onlyOwner {
-        _setSettings(settings_);
+    function allKeysData() external override view returns(Data[] memory) {
+        Data[] memory _allKeysData = new Data[](keys.length);
+        for(uint x; x < keys.length; x++) {
+            _allKeysData[x] = _keyData(keys[x]);
+        }
+        return _allKeysData;
     }
 
-    function addTokenList(string memory _name, string memory _data) external onlyOwner {
-        _addTokenList(_name, _data);
+    function setKeyData(string memory _key, Data memory _data) external override {
+        _setKeyData(_key, _data);
     }
 
-    function addTokenLists(TokenList[] memory _lists) external onlyOwner {
-        _addTokenLists(_lists);
+    function setKeysData(KeyData[] memory _keysData) external override {
+        require(_keysData.length > 0, 'NO_DATA');
+        for(uint x; x < _keysData.length; x++) {
+            _setKeyData(_keysData[x].key, _keysData[x].data);
+        }
     }
 
-    function updateTokenList(
-        string memory _oldName,
-        string memory _name,
-        string memory _data
-    ) external notEmpty(_oldName) notEmpty(_name) onlyOwner {
-        for(uint x; x < _tokenLists.length; x++) {
-            if (keccak256(abi.encodePacked(_tokenLists[x].name)) == keccak256(abi.encodePacked(_oldName))) {
-                _tokenLists[x].name = _name;
-                _tokenLists[x].data = _data;
-                break;
+    function clearKeyData(string memory _key) external override {
+        _clearKeyData(_key);
+    }
+
+    function clearKeysData(string[] memory _keys) external override {
+        require(_keys.length > 0, 'NO_KEYS');
+        for(uint x; x < _keys.length; x++) {
+            _clearKeyData(_keys[x]);
+        }
+    }
+
+    function _keyData(string memory _key) private view notEmpty(_key) returns(Data memory _data) {
+        _data = Data({
+            owner: allData[_key].owner,
+            info: allData[_key].info
+        });
+    }
+
+    function _setKeyData(string memory _key, Data memory _data) private notEmpty(_key) {
+        if (allData[_key].owner != address(0)) {
+            require(msg.sender == allData[_key].owner, 'FORBIDDEN');
+        } else {
+            keys.push(_key);
+        }
+        allData[_key].owner = _data.owner;
+        allData[_key].info = _data.info;
+    }
+
+    function _clearKeyData(string memory _key) private notEmpty(_key) onlyDataOwner(_key) {
+        delete allData[_key];
+        if (keys.length == 0) return;
+        if (keys.length == 1) {
+            if (keccak256(abi.encodePacked(keys[0])) == keccak256(abi.encodePacked(_key))) {
+                keys.pop();
             }
-        }
-    }
-
-    function removeTokenList(string memory _name) external notEmpty(_name) onlyOwner {
-        bool arrayOffset;
-        for(uint x; x < _tokenLists.length - 1; x++) {
-            if (keccak256(abi.encodePacked(_tokenLists[x].name)) == keccak256(abi.encodePacked(_name))) {
-                arrayOffset = true;
+        } else {
+            bool arrayOffset;
+            for(uint x; x < keys.length - 1; x++) {
+                if (keccak256(abi.encodePacked(keys[x])) == keccak256(abi.encodePacked(_key))) {
+                    arrayOffset = true;
+                }
+                if (arrayOffset) keys[x] = keys[x + 1];
             }
-            if (arrayOffset) _tokenLists[x] = _tokenLists[x + 1];
-        }
-        if (arrayOffset) _tokenLists.pop();
-    }
-
-    function clearTokenLists() external onlyOwner {
-        delete _tokenLists;
-    }
-
-    function owner() external view returns(address) {
-        return _owner;
-    }
-
-    function settings() external view returns(string memory) {
-        return _settings;
-    }
-
-    function tokenList(string memory _name) external view returns(string memory _listData) {
-        for(uint x; x < _tokenLists.length; x++) {
-            if (keccak256(abi.encodePacked(_tokenLists[x].name)) == keccak256(abi.encodePacked(_name))) {
-                return _tokenLists[x].data;
-            }
-        }
-    }
-
-    function tokenLists() external view returns(string[] memory) {
-        string[] memory lists = new string[](_tokenLists.length);
-        for(uint x; x < _tokenLists.length; x++) {
-            lists[x] = _tokenLists[x].data;
-        }
-        return lists;
-    }
-
-    function _setSettings(string memory settings_) private {
-        _settings = settings_;
-    }
-
-    function _addTokenList(string memory _name, string memory _data) private notEmpty(_name) {
-        bool exist;
-        for(uint x; x < _tokenLists.length; x++) {
-            if (keccak256(abi.encodePacked(_tokenLists[x].name)) == keccak256(abi.encodePacked(_name))) {
-                _tokenLists[x].name = _name;
-                _tokenLists[x].data = _data;
-                exist = true;
-            }
-        }
-        if (!exist) _tokenLists.push(TokenList({name: _name, data: _data}));
-    }
-
-    function _addTokenLists(TokenList[] memory _lists) private {
-        require(_lists.length > 0, 'NO_DATA');
-        for(uint x; x < _lists.length; x++) {
-            _addTokenList(_lists[x].name, _lists[x].data);
+            if (arrayOffset) keys.pop();
         }
     }
 }

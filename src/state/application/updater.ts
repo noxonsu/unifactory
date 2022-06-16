@@ -1,16 +1,18 @@
 import { useCallback, useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
 import { useActiveWeb3React } from 'hooks'
+import { filterTokenLists } from 'utils/list'
 import useDebounce from 'hooks/useDebounce'
 import { useFactoryContract } from 'hooks/useContract'
 import useIsWindowVisible from 'hooks/useIsWindowVisible'
 import { useAppState } from './hooks'
-import { updateBlockNumber, updateActivePools } from './actions'
-import { useDispatch } from 'react-redux'
+import { updateBlockNumber, updateActivePools, updateAppOptions } from './actions'
 
 export default function Updater(): null {
   const { library, chainId, account } = useActiveWeb3React()
   const dispatch = useDispatch()
-
+  const { contracts, factory, tokenListsByChain } = useAppState()
+  const factoryContract = useFactoryContract(factory)
   const windowVisible = useIsWindowVisible()
 
   const [state, setState] = useState<{ chainId: number | undefined; blockNumber: number | null }>({
@@ -33,9 +35,6 @@ export default function Updater(): null {
 
   // attach/detach listeners
 
-  const { factory } = useAppState()
-  const factoryContract = useFactoryContract(factory)
-
   useEffect(() => {
     const update = async () => {
       if (factory && factoryContract) {
@@ -57,6 +56,34 @@ export default function Updater(): null {
 
     update()
   }, [chainId, factory, factoryContract, dispatch])
+
+  useEffect(() => {
+    if (chainId && contracts[chainId]) {
+      const { factory, router } = contracts[chainId]
+
+      dispatch(
+        updateAppOptions([
+          { key: 'factory', value: factory || '' },
+          { key: 'router', value: router || '' },
+        ])
+      )
+    } else {
+      dispatch(
+        updateAppOptions([
+          { key: 'factory', value: '' },
+          { key: 'router', value: '' },
+        ])
+      )
+    }
+  }, [chainId, contracts, dispatch])
+
+  useEffect(() => {
+    if (chainId && tokenListsByChain[chainId]) {
+      const tokenLists = filterTokenLists(chainId, tokenListsByChain[chainId])
+
+      dispatch(updateAppOptions([{ key: 'tokenLists', value: tokenLists }]))
+    }
+  }, [chainId, tokenListsByChain, dispatch])
 
   useEffect(() => {
     if (!library || !chainId || !account || !windowVisible) return undefined

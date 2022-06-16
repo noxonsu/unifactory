@@ -13,7 +13,7 @@ import { acceptListUpdate, removeList, disableList, enableList } from 'state/lis
 import { useIsListActive, useAllLists, useActiveListUrls } from 'state/lists/hooks'
 import { useAppState } from 'state/application/hooks'
 import { ExternalLink, LinkStyledButton, TYPE, IconWrapper } from 'theme'
-import listVersionLabel from 'utils/listVersionLabel'
+import { listVersionLabel } from 'utils/list'
 import { parseENSAddress } from 'utils/parseENSAddress'
 import uriToHttp from 'utils/uriToHttp'
 import { ButtonEmpty, ButtonPrimary } from '../Button'

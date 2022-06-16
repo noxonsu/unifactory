@@ -1,27 +1,43 @@
 import { JSBI, Percent } from 'sdk'
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import { injected, newWalletConnect, newWalletlink } from '../connectors'
+import networks from 'networks.json'
 
 export const DEV_FEE_ADMIN = '0x6D1EB33c063CBe69d064EE22537dBF107e8816f6'
 
-export const storageMethods = {
-  setSettings: 'setSettings',
-  addTokenList: 'addTokenList',
-  addTokenLists: 'addTokenLists',
-  updateTokenList: 'updateTokenList',
-  removeTokenList: 'removeTokenList',
-  clearTokenLists: 'clearTokenLists',
+export type NETWORKS_ID = keyof typeof networks
+
+const BSC_ID = 56
+const RINKEBY_ID = 4
+
+export const STORAGE_NETWORK_ID = process.env.NODE_ENV === 'production' ? BSC_ID : RINKEBY_ID
+export const STORAGE_NETWORK_NAME = networks[STORAGE_NETWORK_ID.toString() as NETWORKS_ID].name
+// @ts-ignore
+export const STORAGE = networks[STORAGE_NETWORK_ID.toString() as NETWORKS_ID].storage
+// through this key we get/set this app settings (we use the storage contract for many apps)
+export const STORAGE_APP_KEY = 'definance'
+
+export enum StorageMethod {
+  getData = 'getData',
+  allKeys = 'allKeys',
+  allKeysData = 'allKeysData',
+  setKeyData = 'setKeyData',
+  setKeysData = 'setKeysData',
+  clearKeyData = 'clearKeyData',
+  clearKeysData = 'clearKeysData',
 }
 
-export const factoryMethods = {
-  allInfo: 'allInfo',
-  setFeeTo: 'setFeeTo',
-  setFeeToSetter: 'setFeeToSetter',
-  setAllFeeToProtocol: 'setAllFeeToProtocol',
-  setMainFees: 'setMainFees',
-  setTotalFee: 'setTotalFee',
-  setProtocolFee: 'setProtocolFee',
+export enum FactoryMethod {
+  allInfo = 'allInfo',
+  setFeeTo = 'setFeeTo',
+  setFeeToSetter = 'setFeeToSetter',
+  setAllFeeToProtocol = 'setAllFeeToProtocol',
+  setMainFees = 'setMainFees',
+  setTotalFee = 'setTotalFee',
+  setProtocolFee = 'setProtocolFee',
 }
+
+export const DOMAIN_REGEXP = /^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+$/
 
 export const HEX_COLOR_REGEXP = /^#([\dA-F]{3}){1,2}$/i
 export const RGB_COLOR_REGEXP = /^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/
