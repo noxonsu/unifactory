@@ -37,17 +37,22 @@ const Text = styled.p`
   font-size: 1.2rem;
   word-break: break-word;
 `
-const Span = styled.span`
+const Span = styled.span<{ block?: boolean }>`
   font-weight: 500;
+  ${({ block, theme }) =>
+    block
+      ? `
+    display: block;
+    margin: 0.5rem 0;
+  `
+      : ''}
 `
 const WrapperNoticeText = styled.div`
-  border-left: 0.2rem solid #999;
-  padding-left: 1rem;
+  border-left: 0.2rem solid ${({ theme }) => theme.text4};
+  padding-left: 0.6rem;
 `
 const NoticeText = styled.p`
   font-size: 1rem;
-  font-weight: 500;
-  color: #999;
 `
 const ButtonBlock = styled.div`
   display: flex;
@@ -63,45 +68,36 @@ const WalletAction = styled(ButtonSecondary)`
   }
 `
 interface ComponentProps {
-  setGreetingScreenActive: (x: any) => void
+  setGreetingScreenIsActive: (state: boolean) => void
 }
 
-export default function GreetingScreen({ setGreetingScreenActive }: ComponentProps) {
+export default function GreetingScreen({ setGreetingScreenIsActive }: ComponentProps) {
   const { account, deactivate } = useActiveWeb3React()
   const [domain] = useState(window.location.hostname || document.location.host)
   const { t } = useTranslation()
 
-  const WalletActionOneClick = () => {
-    setGreetingScreenActive(true)
-    localStorage.setItem('greetingScreenActive', 'false')
+  const closeScreen = () => setGreetingScreenIsActive(false)
+
+  const disconnectWallet = () => {
+    deactivate()
+    closeScreen()
   }
 
   return (
     <Wrapper>
       <ContentWrapper>
         <Text>
-          {t('HelloLetsConnectThisDomain')} <Span>{account}</Span> {t('AddressAsTheOwnerOf')} <Span>{domain}</Span>{' '}
-          {t('ThenOnlyYouCanAccessAndChangeTheSettingsOfTheApp')}
+          {t('HelloLetsConnectThisDomain')} <Span block>{account}</Span> {t('AddressAsTheOwnerOf')}{' '}
+          <Span>{domain}</Span>? {t('ThenOnlyYouCanAccessAndChangeTheSettingsOfTheApp')}
         </Text>
         <WrapperNoticeText>
           <NoticeText>{t('IfYouWantToChangeTheAddressSwitchToAnotherAddress')}</NoticeText>
         </WrapperNoticeText>
         <ButtonBlock>
-          <WalletAction
-            style={{ fontSize: '.825rem', fontWeight: 400, marginRight: '8px' }}
-            onClick={() => {
-              deactivate()
-              WalletActionOneClick()
-            }}
-          >
+          <WalletAction style={{ fontSize: '.825rem', fontWeight: 400, marginRight: '8px' }} onClick={disconnectWallet}>
             {t('disconnect')}
           </WalletAction>
-          <WalletAction
-            style={{ fontSize: '.825rem', fontWeight: 400, marginRight: '8px' }}
-            onClick={() => {
-              WalletActionOneClick()
-            }}
-          >
+          <WalletAction style={{ fontSize: '.825rem', fontWeight: 400, marginRight: '8px' }} onClick={closeScreen}>
             {t('SetMyAddressAsTheOwner')}
           </WalletAction>
         </ButtonBlock>

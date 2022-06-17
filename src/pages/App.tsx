@@ -103,12 +103,11 @@ export default function App() {
   }, [chainId])
 
   const [isAvailableNetwork, setIsAvailableNetwork] = useState(true)
-  const [greetingScreenActive, setGreetingScreenActive] = useState(false)
+  const [greetingScreenIsActive, setGreetingScreenIsActive] = useState(false)
 
   useEffect(() => {
-    const greetingScreenLoaclStorageValue = localStorage.getItem('greetingScreenActive')
-    setGreetingScreenActive(Boolean(greetingScreenLoaclStorageValue))
-  }, [greetingScreenActive])
+    setGreetingScreenIsActive(!domainData || !domainData?.admin)
+  }, [domainData])
 
   useEffect(() => {
     if (chainId) {
@@ -230,8 +229,8 @@ export default function App() {
             </>
           ) : (
             <>
-              {!greetingScreenActive ? (
-                <GreetingScreen setGreetingScreenActive={setGreetingScreenActive} />
+              {greetingScreenIsActive ? (
+                <GreetingScreen setGreetingScreenIsActive={setGreetingScreenIsActive} />
               ) : (
                 <Connection
                   setDomainDataTrigger={setDomainDataTrigger}

@@ -156,7 +156,7 @@ export const fetchDomainData = async (
     const settings = parseSettings(info || '{}', chainId || 0)
     const { factory } = settings
 
-    fullData = { ...settings, admin: owner }
+    fullData = { ...settings, admin: owner === ZERO_ADDRESS ? '' : owner }
 
     if (factory) {
       try {
