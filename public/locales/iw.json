@@ -291,9 +291,9 @@
   "youAlreadyHaveStorageContractWarning": "כבר פרסתם חוזה אחסון. אם תעשה זאת שוב, כתובת האחסון הישנה תוחלף. אתה תאבד את הגדרות הממשק",
   "noPointToChangeAdminFeeWithoutFeeRecipient": "זה לא הגיוני לשנות עמלה זו עד שתגדיר את הכתובת של הנמען של הוועדה",
   "forSuccessfulExchangeRecommendedToIncreaseSlippageTo": "להחלפה מוצלחת מומלץ להגביר את סובלנות החלקה ל",
-  "HelloLetsConnectThisDomain" : "שלום! בוא נחבר את הדומיין הזה לכתובת הארנק שלך. האם אתה רוצה להגדיר",
-  "AddressAsTheOwnerOf" : "כתובת כבעלים של",
-  "ThenOnlyYouCanAccessAndChangeTheSettingsOfTheApp" : "אז רק אתה יכול לגשת ולשנות את ההגדרות של האפליקציה.",
+  "HelloLetsConnectThisDomain": "שלום! בואו נחבר דומיין זה לכתובת הארנק שלכם",
   "IfYouWantToChangeTheAddressSwitchToAnotherAddress": "אם ברצונך לשנות את הכתובת, עבור לכתובת אחרת. אם אינך יכול להחליף, פשוט נתק את הארנק וחבר אותו לכתובת החדשה.",
-  "SetMyAddressAsTheOwner" : "הגדר את הכתובת שלי כבעלים"
+  "setTheOwner": "הגדר את הבעלים",
+  "setAddressAsTheOwnerOfDomain": "הגדר את הכתובת שלך כבעלים של דומיין זה",
+  "onlyThisAddressCanAccessAppSettings": "רק כתובת זו יכולה לגשת ולשנות את הגדרות האפליקציה"
 }

@@ -302,9 +302,9 @@
   "youAlreadyHaveStorageContractWarning": "Depolama sözleşmesini zaten dağıttınız. Tekrar yaparsanız eski depolama adresinin üzerine yazılacaktır. Arayüz ayarlarını kaybedeceksiniz",
   "noPointToChangeAdminFeeWithoutFeeRecipient": "Ücret alıcı adresini belirleyene kadar bu komisyonu değiştirmenin bir anlamı yok.",
   "forSuccessfulExchangeRecommendedToIncreaseSlippageTo": "Başarılı bir değişim için Kayma Toleransının artırılması önerilir.",
-  "HelloLetsConnectThisDomain" : "Merhaba! Bu etki alanını cüzdan adresinize bağlayalım. ayarlamak istiyor musun",
-  "AddressAsTheOwnerOf" : "adresi sahibi olarak",
-  "ThenOnlyYouCanAccessAndChangeTheSettingsOfTheApp" : "Ardından, uygulamanın ayarlarına yalnızca siz erişebilir ve bunları değiştirebilirsiniz.",
+  "HelloLetsConnectThisDomain": "Merhaba! Bu alanı cüzdan adresinize bağlayalım",
   "IfYouWantToChangeTheAddressSwitchToAnotherAddress": "Adresi değiştirmek istiyorsanız, başka bir adrese geçin. Geçiş yapamıyorsanız, cüzdanınızın bağlantısını kesin ve yeni adrese bağlayın.",
-  "SetMyAddressAsTheOwner" : "Adresimi sahip olarak ayarla"
+  "setTheOwner": "Sahibini ayarla",
+  "setAddressAsThewnerOfDomain": "Adresinizi bu etki alanının sahibi olarak ayarlayın",
+  "onlyThisAddressCanAccessAppSettings": "Uygulama ayarlarına yalnızca bu adres erişebilir ve bunları değiştirebilir"
 }

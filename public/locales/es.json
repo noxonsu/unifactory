@@ -291,9 +291,9 @@
   "youAlreadyHaveStorageContractWarning": "Ya ha implementado un contrato de almacenamiento. Si lo hace de nuevo, la dirección de almacenamiento antigua se sobrescribirá. Perderá la configuración de la interfaz",
   "noPointToChangeAdminFeeWithoutFeeRecipient": "No tiene sentido cambiar esta comisión hasta que establezca la dirección del destinatario de la tarifa",
   "forSuccessfulExchangeRecommendedToIncreaseSlippageTo": "Para un intercambio exitoso, se recomienda aumentar la tolerancia al deslizamiento a",
-  "HelloLetsConnectThisDomain" : "Hola! Conectemos este dominio a la dirección de tu billetera. Quieres establecer",
-  "AddressAsTheOwnerOf" : "Dirección como el dueño de",
-  "ThenOnlyYouCanAccessAndChangeTheSettingsOfTheApp" : "Entonces solo usted puede acceder y cambiar la configuración de la aplicación.",
+  "HelloLetsConnectThisDomain": "¡Hola! Conectemos este dominio a la dirección de su billetera",
   "IfYouWantToChangeTheAddressSwitchToAnotherAddress": "Si desea cambiar la dirección, cambie a otra dirección. Si no puede cambiar, simplemente desconecte su billetera y conéctela a la nueva dirección.",
-  "SetMyAddressAsTheOwner" : "Establecer mi dirección como el dueño"
+  "setTheOwner": "Establecer el propietario",
+  "setAddressAsTheOwnerOfDomain": "Establece tu dirección como el propietario de este dominio",
+  "onlyThisAddressCanAccessAppSettings": "Solo esta dirección puede acceder y cambiar la configuración de la aplicación"
 }

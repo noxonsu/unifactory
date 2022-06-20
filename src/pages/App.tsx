@@ -9,7 +9,7 @@ import { ZERO_ADDRESS } from 'sdk'
 import useWordpressInfo from 'hooks/useWordpressInfo'
 import { useAppState } from 'state/application/hooks'
 import { retrieveDomainData } from 'state/application/actions'
-import { fetchDomainData } from 'utils/app'
+import { fetchDomainData, getCurrentDomain } from 'utils/app'
 import { useStorageContract } from 'hooks/useContract'
 import { SUPPORTED_CHAIN_IDS } from '../connectors'
 import { STORAGE_NETWORK_ID } from '../constants'
@@ -160,7 +160,7 @@ export default function App() {
     (state) => state.application.appManagement
   )
 
-  const domain = window.location.hostname || document.location.host
+  const domain = getCurrentDomain()
   const DOMAIN_TITLES: { [domain: string]: string } = {
     'internethedgefund.com': 'IHF Swap',
     'eeecex.net': 'eeecEx',

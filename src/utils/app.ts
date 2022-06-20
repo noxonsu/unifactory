@@ -7,7 +7,7 @@ import { filterTokenLists } from 'utils/list'
 import { STORAGE_APP_KEY } from '../constants'
 
 export const getCurrentDomain = (): string => {
-  return window.location.hostname || document.location.host || ''
+  return 'iu1g231g23i12gi23' // window.location.hostname || document.location.host || ''
 }
 
 const validArray = (arr: any[]) => Array.isArray(arr) && !!arr.length
@@ -145,7 +145,7 @@ export const fetchDomainData = async (
   let fullData = defaultSettings()
 
   try {
-    let currentDomain = window.location.hostname || document.location.host
+    let currentDomain = getCurrentDomain()
 
     if (currentDomain === 'eeecex.net') {
       currentDomain = 'eeecEx.net'

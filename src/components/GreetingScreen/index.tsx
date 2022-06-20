@@ -2,7 +2,9 @@ import { useActiveWeb3React } from 'hooks'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
-import { ButtonSecondary } from '../../components/Button'
+import AppBody from '../../pages/AppBody'
+import { ButtonSecondary } from 'components/Button'
+import { getCurrentDomain } from 'utils/app'
 
 const Wrapper = styled.section`
   position: absolute;
@@ -18,62 +20,59 @@ const Wrapper = styled.section`
   z-index: 100;
   background-color: ${({ theme }) => theme.bg2};
 `
-const ContentWrapper = styled.div`
-  margin: 0 auto;
-  position: relative;
-  max-width: 33.75rem;
-  width: 100%;
-  border-radius: 1.2rem;
-  padding: 1rem;
-  box-shadow: rgba(0, 0, 0, 0.01) 0px 0px 1px, rgba(0, 0, 0, 0.04) 0px 4px 8px, rgba(0, 0, 0, 0.04) 0px 16px 24px,
-    rgba(0, 0, 0, 0.01) 0px 24px 32px;
-  background-color: ${({ theme }) => theme.bg1};
 
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    width: 90%;
-  `}
+const ContentWrapper = styled.div`
+  padding: 1rem;
 `
-const Text = styled.p`
+
+const Text = styled.p<{ warning?: boolean }>`
   font-size: 1.2rem;
+  line-height: 1.5rem;
   word-break: break-word;
+  ${({ warning, theme }) =>
+    warning ? `padding: .6rem; border-radius: .3rem; background-color: ${theme.yellow1};` : ''}
+
+  :first-child {
+    margin-top: 0;
+  }
 `
-const Span = styled.span<{ block?: boolean }>`
-  font-weight: 500;
-  ${({ block, theme }) =>
+
+const Span = styled.span<{ block?: boolean; bold?: boolean }>`
+  ${({ block }) =>
     block
       ? `
     display: block;
-    margin: 0.5rem 0;
+    margin: 0.7rem 0;
   `
       : ''}
+  ${({ bold }) => (bold ? 'font-weight: 500' : '')}
 `
-const WrapperNoticeText = styled.div`
-  border-left: 0.2rem solid ${({ theme }) => theme.text4};
-  padding-left: 0.6rem;
-`
-const NoticeText = styled.p`
-  font-size: 1rem;
-`
+
 const ButtonBlock = styled.div`
   display: flex;
 `
-const WalletAction = styled(ButtonSecondary)`
-  font-weight: 400;
-  margin-left: 8px;
-  font-size: 0.825rem;
-  padding: 6px;
+
+const ActionButton = styled(ButtonSecondary)`
+  font-size: 0.9rem;
+  padding: 0.5rem;
+
+  :not(:last-child) {
+    margin-right: 0.5rem;
+  }
+
   :hover {
     cursor: pointer;
     text-decoration: underline;
   }
 `
+
 interface ComponentProps {
   setGreetingScreenIsActive: (state: boolean) => void
 }
 
 export default function GreetingScreen({ setGreetingScreenIsActive }: ComponentProps) {
   const { account, deactivate } = useActiveWeb3React()
-  const [domain] = useState(window.location.hostname || document.location.host)
+  const [domain] = useState(getCurrentDomain())
   const { t } = useTranslation()
 
   const closeScreen = () => setGreetingScreenIsActive(false)
@@ -85,23 +84,24 @@ export default function GreetingScreen({ setGreetingScreenIsActive }: ComponentP
 
   return (
     <Wrapper>
-      <ContentWrapper>
-        <Text>
-          {t('HelloLetsConnectThisDomain')} <Span block>{account}</Span> {t('AddressAsTheOwnerOf')}{' '}
-          <Span>{domain}</Span>? {t('ThenOnlyYouCanAccessAndChangeTheSettingsOfTheApp')}
-        </Text>
-        <WrapperNoticeText>
-          <NoticeText>{t('IfYouWantToChangeTheAddressSwitchToAnotherAddress')}</NoticeText>
-        </WrapperNoticeText>
-        <ButtonBlock>
-          <WalletAction style={{ fontSize: '.825rem', fontWeight: 400, marginRight: '8px' }} onClick={disconnectWallet}>
-            {t('disconnect')}
-          </WalletAction>
-          <WalletAction style={{ fontSize: '.825rem', fontWeight: 400, marginRight: '8px' }} onClick={closeScreen}>
-            {t('SetMyAddressAsTheOwner')}
-          </WalletAction>
-        </ButtonBlock>
-      </ContentWrapper>
+      <AppBody>
+        <ContentWrapper>
+          <Text>
+            <>
+              {t('HelloLetsConnectThisDomain')}. {t('setAddressAsTheOwnerOfDomain')}: <Span bold>{domain}</Span>?
+            </>
+            <Span block bold>
+              {account}
+            </Span>
+            {t('onlyThisAddressCanAccessAppSettings')}.
+          </Text>
+          <Text warning>{t('IfYouWantToChangeTheAddressSwitchToAnotherAddress')}</Text>
+          <ButtonBlock>
+            <ActionButton onClick={disconnectWallet}>{t('disconnect')}</ActionButton>
+            <ActionButton onClick={closeScreen}>{t('setTheOwner')}</ActionButton>
+          </ButtonBlock>
+        </ContentWrapper>
+      </AppBody>
     </Wrapper>
   )
 }
