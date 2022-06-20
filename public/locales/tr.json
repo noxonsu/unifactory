@@ -264,7 +264,7 @@
   "storageContract": "Depolama sözleşmesi",
   "chooseNetwork": "Ağ seçin",
   "chooseWallet": "Cüzdanı seçin",
-  "appIsNotReadyYet": "Uygulama henüz hazır değil",
+  "appIsNotReadyYet": "Takas sözleşmeleri henüz hazır değil. Yönetici bu ağı kullanmaya başlamak için yeni sözleşmeler dağıtmalıdır",
   "importPool": "havuzu içe aktar",
   "selectTokenToFindYourLiquidity": "Likiditenizi bulmak için bir jeton seçin",
   "findManually": "Kendiniz bulun",

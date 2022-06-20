@@ -2,9 +2,13 @@ import { useActiveWeb3React } from 'hooks'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
+import { useAddPopup } from 'state/application/hooks'
+import { useTransactionAdder } from 'state/transactions/hooks'
 import AppBody from '../../pages/AppBody'
-import { ButtonSecondary } from 'components/Button'
+import TransactionConfirmationModal, { ConfirmationModalContent } from 'components/TransactionConfirmationModal'
+import { ButtonSecondary, ButtonPrimary } from 'components/Button'
 import { getCurrentDomain } from 'utils/app'
+import { saveAppData } from 'utils/storage'
 
 const Wrapper = styled.section`
   position: absolute;
@@ -17,15 +21,19 @@ const Wrapper = styled.section`
   justify-content: center;
   overflow-y: auto;
   overflow-x: hidden;
-  z-index: 100;
-  background-color: ${({ theme }) => theme.bg2};
+`
+
+const Title = styled.h1`
+  font-size: 1.4rem;
+  line-height: 1.6rem;
 `
 
 const ContentWrapper = styled.div`
   padding: 1rem;
 `
 
-const Text = styled.p<{ warning?: boolean }>`
+const Text = styled.div<{ warning?: boolean }>`
+  margin: 0.6rem 0;
   font-size: 1.2rem;
   line-height: 1.5rem;
   word-break: break-word;
@@ -71,24 +79,85 @@ interface ComponentProps {
 }
 
 export default function GreetingScreen({ setGreetingScreenIsActive }: ComponentProps) {
-  const { account, deactivate } = useActiveWeb3React()
+  const { account, deactivate, library } = useActiveWeb3React()
   const [domain] = useState(getCurrentDomain())
   const { t } = useTranslation()
+  const addTransaction = useTransactionAdder()
+  const addPopup = useAddPopup()
 
-  const closeScreen = () => setGreetingScreenIsActive(false)
+  const [showConfirm, setShowConfirm] = useState(false)
+  const [attemptingTxn, setAttemptingTxn] = useState(false)
+  const [txHash, setTxHash] = useState('')
+
+  const closeModal = () => setShowConfirm(false)
+  const confirm = () => setShowConfirm(true)
+
+  const saveDomainOwner = async () => {
+    if (!account) return
+
+    setAttemptingTxn(true)
+
+    try {
+      await saveAppData({
+        //@ts-ignore
+        library,
+        owner: account || '',
+        data: {},
+        onHash: (hash: string) => {
+          setTxHash(hash)
+          addTransaction(
+            { hash },
+            {
+              summary: `A new admin has been set`,
+            }
+          )
+          setAttemptingTxn(false)
+        },
+      })
+    } catch (error) {
+      addPopup({
+        error: {
+          message: error.message,
+          code: error.code,
+        },
+      })
+      setAttemptingTxn(false)
+    }
+  }
 
   const disconnectWallet = () => {
     deactivate()
-    closeScreen()
+    setGreetingScreenIsActive(false)
   }
+
+  const BottomContent = () => (
+    <ButtonPrimary onClick={saveDomainOwner}>{t('saveThisAddressAsDomainOwner')}</ButtonPrimary>
+  )
 
   return (
     <Wrapper>
       <AppBody>
+        <TransactionConfirmationModal
+          isOpen={showConfirm}
+          onDismiss={closeModal}
+          attemptingTxn={attemptingTxn}
+          pendingText={t('waitUntilYourAddressWillBeSaved')}
+          hash={txHash || ''}
+          content={() => (
+            <ConfirmationModalContent
+              title={t('setNewDomainAdmin')}
+              onDismiss={closeModal}
+              topContent={() => null}
+              bottomContent={BottomContent}
+            />
+          )}
+        />
+
         <ContentWrapper>
           <Text>
             <>
-              {t('HelloLetsConnectThisDomain')}. {t('setAddressAsTheOwnerOfDomain')}: <Span bold>{domain}</Span>?
+              <Title>{t('HelloLetsConnectThisDomain')}</Title>
+              {t('setAddressAsTheOwnerOfDomain')}: <Span bold>{domain}</Span>?
             </>
             <Span block bold>
               {account}
@@ -98,7 +167,7 @@ export default function GreetingScreen({ setGreetingScreenIsActive }: ComponentP
           <Text warning>{t('IfYouWantToChangeTheAddressSwitchToAnotherAddress')}</Text>
           <ButtonBlock>
             <ActionButton onClick={disconnectWallet}>{t('disconnect')}</ActionButton>
-            <ActionButton onClick={closeScreen}>{t('setTheOwner')}</ActionButton>
+            <ActionButton onClick={confirm}>{t('setTheOwner')}</ActionButton>
           </ButtonBlock>
         </ContentWrapper>
       </AppBody>

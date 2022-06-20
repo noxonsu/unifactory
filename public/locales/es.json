@@ -253,7 +253,7 @@
   "storageContract": "Contrato de almacenamiento",
   "chooseNetwork": "Elija la red",
   "chooseWallet": "Elegir cartera",
-  "appIsNotReadyYet": "La aplicación no está lista",
+  "appIsNotReadyYet": "Los contratos de swap aún no están listos. El administrador debe implementar nuevos contratos para comenzar a usar esta red",
   "selectTokenToFindYourLiquidity": "Seleccione un token para encontrar su liquidez",
   "importPool": "Importar grupo",
   "findManually": "Buscar manualmente",

@@ -264,7 +264,7 @@
   "storageContract": "Contratto di ammasso",
   "chooseNetwork": "Scegli rete",
   "chooseWallet": "Scegli portafoglio",
-  "appIsNotReadyYet": "App non è pronto",
+  "appIsNotReadyYet": "I contratti di swap non sono ancora pronti. L'amministratore deve distribuire nuovi contratti per iniziare a utilizzare questa rete",
   "selectTokenToFindYourLiquidity": "Seleziona un token per trovare la tua liquidità",
   "importPool": "Importa pool",
   "findManually": "Trova manualmente",

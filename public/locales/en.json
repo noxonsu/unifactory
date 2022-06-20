@@ -264,7 +264,7 @@
   "storageContract": "Storage contract",
   "chooseNetwork": "Choose network",
   "chooseWallet": "Choose wallet",
-  "appIsNotReadyYet": "The app is not ready yet",
+  "appIsNotReadyYet": "Swap contracts are not ready yet. The admin must deploy new contracts to start using this network",
   "importPool": "Import pool",
   "selectTokenToFindYourLiquidity": "Select a token to find your liquidity",
   "findManually": "Find manually",

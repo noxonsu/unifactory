@@ -253,7 +253,7 @@
   "storageContract": "חוזה אחסון",
   "chooseNetwork": "בחר רשת",
   "chooseWallet": "בחר ארנק",
-  "appIsNotReadyYet": "האפליקציה אינה מוכנה",
+  "appIsNotReadyYet": "חוזי החלפה עדיין לא מוכנים. מנהל המערכת חייב לפרוס חוזים חדשים כדי להתחיל להשתמש ברשת זו",
   "selectTokenToFindYourLiquidity": "בחר אסימון כדי למצוא את הנזילות שלך",
   "importPool": "ייבוא מאגר",
   "findManually": "מצא באופן ידני",

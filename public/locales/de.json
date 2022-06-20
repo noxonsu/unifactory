@@ -265,7 +265,7 @@
   "storageContract": "Lagervertrag",
   "chooseNetwork": "Netzwerk auswählen",
   "chooseWallet": "Wallet auswählen",
-  "appIsNotReadyYet": "App ist nicht fertig",
+  "appIsNotReadyYet": "Swap-Verträge sind noch nicht fertig. Der Administrator muss neue Verträge bereitstellen, um dieses Netzwerk nutzen zu können",
   "selectTokenToFindYourLiquidity": "Wählen Sie einen Token aus, um Ihre Liquidität zu finden",
   "importPool": "Pool importieren",
   "findManually": "Manuell suchen",

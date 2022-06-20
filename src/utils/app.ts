@@ -7,7 +7,7 @@ import { filterTokenLists } from 'utils/list'
 import { STORAGE_APP_KEY } from '../constants'
 
 export const getCurrentDomain = (): string => {
-  return 'iu1g231g23i12gi23' // window.location.hostname || document.location.host || ''
+  return 'iu1g231g23i12gi13' // window.location.hostname || document.location.host || ''
 }
 
 const validArray = (arr: any[]) => Array.isArray(arr) && !!arr.length
