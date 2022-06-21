@@ -9,7 +9,7 @@ import { ZERO_ADDRESS } from 'sdk'
 import useWordpressInfo from 'hooks/useWordpressInfo'
 import { useAppState } from 'state/application/hooks'
 import { retrieveDomainData } from 'state/application/actions'
-import { fetchDomainData } from 'utils/app'
+import { fetchDomainData, getCurrentDomain } from 'utils/app'
 import { useStorageContract } from 'hooks/useContract'
 import { SUPPORTED_CHAIN_IDS } from '../connectors'
 import { STORAGE_NETWORK_ID } from '../constants'
@@ -18,6 +18,7 @@ import Panel from './Panel'
 import Connection from './Connection'
 import Header from 'components/Header'
 import Popups from 'components/Popups'
+import GreetingScreen from 'components/GreetingScreen'
 import Web3ReactManager from 'components/Web3ReactManager'
 import DarkModeQueryParamReader from 'theme/DarkModeQueryParamReader'
 import AddLiquidity from './AddLiquidity'
@@ -102,6 +103,11 @@ export default function App() {
   }, [chainId])
 
   const [isAvailableNetwork, setIsAvailableNetwork] = useState(true)
+  const [greetingScreenIsActive, setGreetingScreenIsActive] = useState(false)
+
+  useEffect(() => {
+    setGreetingScreenIsActive(!domainData || !domainData?.admin)
+  }, [domainData])
 
   useEffect(() => {
     if (chainId) {
@@ -154,7 +160,7 @@ export default function App() {
     (state) => state.application.appManagement
   )
 
-  const domain = window.location.hostname || document.location.host
+  const domain = getCurrentDomain()
   const DOMAIN_TITLES: { [domain: string]: string } = {
     'internethedgefund.com': 'IHF Swap',
     'eeecex.net': 'eeecEx',
@@ -222,11 +228,17 @@ export default function App() {
               )}
             </>
           ) : (
-            <Connection
-              setDomainDataTrigger={setDomainDataTrigger}
-              domainData={domainData}
-              isAvailableNetwork={isAvailableNetwork}
-            />
+            <>
+              {greetingScreenIsActive ? (
+                <GreetingScreen setGreetingScreenIsActive={setGreetingScreenIsActive} setDomainData={setDomainData} />
+              ) : (
+                <Connection
+                  setDomainDataTrigger={setDomainDataTrigger}
+                  domainData={domainData}
+                  isAvailableNetwork={isAvailableNetwork}
+                />
+              )}
+            </>
           )}
         </Web3ReactManager>
       </HelmetProvider>

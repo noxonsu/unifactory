@@ -145,7 +145,7 @@ export const fetchDomainData = async (
   let fullData = defaultSettings()
 
   try {
-    let currentDomain = window.location.hostname || document.location.host
+    let currentDomain = getCurrentDomain()
 
     if (currentDomain === 'eeecex.net') {
       currentDomain = 'eeecEx.net'
@@ -156,7 +156,7 @@ export const fetchDomainData = async (
     const settings = parseSettings(info || '{}', chainId || 0)
     const { factory } = settings
 
-    fullData = { ...settings, admin: owner }
+    fullData = { ...settings, admin: owner === ZERO_ADDRESS ? '' : owner }
 
     if (factory) {
       try {
