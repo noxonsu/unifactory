@@ -230,7 +230,7 @@ export default function App() {
           ) : (
             <>
               {greetingScreenIsActive ? (
-                <GreetingScreen setGreetingScreenIsActive={setGreetingScreenIsActive} />
+                <GreetingScreen setGreetingScreenIsActive={setGreetingScreenIsActive} setDomainData={setDomainData} />
               ) : (
                 <Connection
                   setDomainDataTrigger={setDomainDataTrigger}

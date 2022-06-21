@@ -1,8 +1,11 @@
 import { useActiveWeb3React } from 'hooks'
 import React, { useState } from 'react'
+import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import { useAddPopup } from 'state/application/hooks'
+import { updateAppOptions } from 'state/application/actions'
+import { StorageState } from 'state/application/reducer'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import AppBody from '../../pages/AppBody'
 import TransactionConfirmationModal, { ConfirmationModalContent } from 'components/TransactionConfirmationModal'
@@ -76,10 +79,12 @@ const ActionButton = styled(ButtonSecondary)`
 
 interface ComponentProps {
   setGreetingScreenIsActive: (state: boolean) => void
+  setDomainData: (data: StorageState | ((data: StorageState) => StorageState)) => void
 }
 
-export default function GreetingScreen({ setGreetingScreenIsActive }: ComponentProps) {
+export default function GreetingScreen({ setGreetingScreenIsActive, setDomainData }: ComponentProps) {
   const { account, deactivate, library } = useActiveWeb3React()
+  const dispatch = useDispatch()
   const [domain] = useState(getCurrentDomain())
   const { t } = useTranslation()
   const addTransaction = useTransactionAdder()
@@ -103,6 +108,12 @@ export default function GreetingScreen({ setGreetingScreenIsActive }: ComponentP
         library,
         owner: account || '',
         data: {},
+        onReceipt: () => {
+          setAttemptingTxn(false)
+          dispatch(updateAppOptions([{ key: 'admin', value: account }]))
+          setDomainData((oldData: StorageState) => ({ ...oldData, admin: account }))
+          setGreetingScreenIsActive(false)
+        },
         onHash: (hash: string) => {
           setTxHash(hash)
           addTransaction(
@@ -111,7 +122,6 @@ export default function GreetingScreen({ setGreetingScreenIsActive }: ComponentP
               summary: `A new admin has been set`,
             }
           )
-          setAttemptingTxn(false)
         },
       })
     } catch (error) {
