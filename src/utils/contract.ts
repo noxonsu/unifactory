@@ -33,12 +33,14 @@ const deployContract = async (params: any) => {
       arguments: deployArguments,
     })
 
-    const gas = await transaction.estimateGas({ from: accounts[0] })
+    const gasLimit = await transaction.estimateGas({ from: accounts[0] })
+    const gasPrice = await web3.eth.getGasPrice()
 
     return await transaction
       .send({
         from: accounts[0],
-        gas,
+        gas: gasLimit,
+        gasPrice,
       })
       .on('transactionHash', (hash: string) => onHash(hash))
       .on('receipt', (receipt: any) => onDeploy(receipt))
