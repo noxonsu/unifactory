@@ -54,7 +54,6 @@
       "symbol": "WMATIC"
     }
   },
-
   "43114": {
     "name": "Avalanche",
     "rpc": "https://api.avax.network/ext/bc/C/rpc",
