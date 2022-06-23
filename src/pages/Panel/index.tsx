@@ -3,6 +3,7 @@ import { useActiveWeb3React } from 'hooks'
 import styled from 'styled-components'
 import { MdArrowBack } from 'react-icons/md'
 import { shortenAddress } from 'utils'
+import { getCurrentDomain } from 'utils/app'
 import { Text } from 'rebass'
 import networks from 'networks.json'
 import { useDispatch, useSelector } from 'react-redux'
@@ -132,7 +133,7 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
   const { admin } = useAppState()
   const wordpressData = useWordpressInfo()
   const [error, setError] = useState<any | false>(false)
-  const [domain] = useState(window.location.hostname || document.location.host)
+  const [domain] = useState(getCurrentDomain())
   const [activeNetworks, setActiveNetworks] = useState<any[]>([])
 
   useEffect(() => {
