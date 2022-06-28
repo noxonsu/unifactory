@@ -54,6 +54,24 @@
       "symbol": "WMATIC"
     }
   },
+  "180": {
+    "name": "AME Chain",
+    "rpc": "https://node1.amechain.io/",
+    "chainId": 180,
+    "explorer": "https://amescan.io/",
+    "color": "#ff0500",
+    "multicall": "0x1763d5e86452Ed9C13b874fDe60A0669D11C5d40",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "AME",
+      "symbol": "AME"
+    },
+    "wrappedToken": {
+      "address": "0xCc9bD40124EfedF6F198B8b5b50697dC635FaaC4",
+      "name": "Wrapped AME",
+      "symbol": "WAME"
+    }
+  },
   "43114": {
     "name": "Avalanche",
     "rpc": "https://api.avax.network/ext/bc/C/rpc",

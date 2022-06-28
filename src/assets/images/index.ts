@@ -15,6 +15,7 @@ import FTM from './ftm.svg'
 import FUSE from './fuse.svg'
 import MOVR from './movr.svg'
 import ONE from './one.svg'
+import AME from './ame.png'
 
 export const CURRENCY = {
   ETH,
@@ -34,6 +35,7 @@ export const CURRENCY = {
   FUSE,
   MOVR,
   ONE,
+  AME,
 
   // ------------
 
@@ -72,4 +74,5 @@ export const CURRENCY = {
   123: FUSE,
   1285: MOVR,
   1666600000: ONE,
+  180: AME,
 }
