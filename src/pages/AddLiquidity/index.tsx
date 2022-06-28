@@ -133,14 +133,15 @@ export default function AddLiquidity({
       [Field.CURRENCY_B]: calculateSlippageAmount(parsedAmountB, noLiquidity ? 0 : allowedSlippage)[0],
     }
 
-    let estimate,
-      method: (...args: any) => Promise<TransactionResponse>,
-      args: Array<string | string[] | number>,
-      value: BigNumber | null
+    let estimateMethod
+    let method: (...args: any) => Promise<TransactionResponse>
+    let args: Array<string | string[] | number>
+    let value: BigNumber | null
+
     if (isAssetEqual(currencyA, baseCurrency) || isAssetEqual(currencyB, baseCurrency)) {
       const tokenBIsETH = isAssetEqual(currencyB, baseCurrency)
 
-      estimate = router.estimateGas.addLiquidityETH
+      estimateMethod = router.estimateGas.addLiquidityETH
       method = router.addLiquidityETH
       args = [
         wrappedCurrency(tokenBIsETH ? currencyA : currencyB, chainId, wrappedToken, baseCurrency)?.address ?? '', // token
@@ -152,7 +153,7 @@ export default function AddLiquidity({
       ]
       value = BigNumber.from((tokenBIsETH ? parsedAmountB : parsedAmountA).raw.toString())
     } else {
-      estimate = router.estimateGas.addLiquidity
+      estimateMethod = router.estimateGas.addLiquidity
       method = router.addLiquidity
       args = [
         wrappedCurrency(currencyA, chainId, wrappedToken, baseCurrency)?.address ?? '',
@@ -168,11 +169,16 @@ export default function AddLiquidity({
     }
 
     setAttemptingTxn(true)
-    await estimate(...args, value ? { value } : {})
-      .then((estimatedGasLimit) =>
+
+    await estimateMethod(...args, value ? { value } : {})
+      .then(async (estimatedGasLimit) => {
+        const gasPrice = await library.getGasPrice()
+        const gasLimit = calculateGasMargin(estimatedGasLimit)
+
         method(...args, {
           ...(value ? { value } : {}),
-          gasLimit: calculateGasMargin(estimatedGasLimit),
+          gasPrice,
+          gasLimit,
         }).then((response) => {
           setAttemptingTxn(false)
 
@@ -190,7 +196,7 @@ export default function AddLiquidity({
 
           setTxHash(response.hash)
         })
-      )
+      })
       .catch((error) => {
         setAttemptingTxn(false)
         // we only care if the error is something _other_ than the user rejected the tx
