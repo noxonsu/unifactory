@@ -303,7 +303,9 @@ export default function RemoveLiquidity({
       const safeGasEstimate = safeGasEstimates[indexOfSuccessfulEstimation]
 
       setAttemptingTxn(true)
+
       await router[methodName](...args, {
+        gasPrice: await library.getGasPrice(),
         gasLimit: safeGasEstimate,
       })
         .then((response: TransactionResponse) => {

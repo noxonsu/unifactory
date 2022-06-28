@@ -178,7 +178,11 @@ export function useSwapCallback(
 
         if (!successfulEstimation) {
           const errorCalls = estimatedCalls.filter((call): call is FailedCall => 'error' in call)
-          if (errorCalls.length > 0) throw errorCalls[errorCalls.length - 1].error
+
+          if (errorCalls.length > 0) {
+            throw errorCalls[errorCalls.length - 1].error
+          }
+
           throw new Error('Unexpected error. Please contact support: none of the calls threw an error')
         }
 
@@ -191,6 +195,7 @@ export function useSwapCallback(
         } = successfulEstimation
 
         return contract[methodName](...args, {
+          gasPrice: await library.getGasPrice(),
           gasLimit: calculateGasMargin(gasEstimate),
           ...(value && !isZero(value) ? { value, from: account } : { from: account }),
         })
