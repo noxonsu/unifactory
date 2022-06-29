@@ -2,7 +2,7 @@
 
 We only need to add a new object in this file: [networks.json](https://github.com/noxonsu/unifactory/blob/main/src/networks.json). Object structure:
 
-```JSON
+```json5
   // key as a chain id
   "56": {
     "name": "BSC",
