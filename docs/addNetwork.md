@@ -32,3 +32,5 @@ We only need to add a new object in this file: [networks.json](https://github.co
     }
   },
 ```
+
+In the end do not forget to verify `multicall` and `wrappedToken` contracts in the network explorer.
