@@ -271,6 +271,7 @@
   "contractsNetwork": "Red de contratos",
   "saveSwapContracts": "Guardar contratos de swap",
   "switchToNetwork": "Cambiar a {{network}}",
+  "youHaveToBeOn": "Tienes que estar en {{network}}",
   "colors": "Color",
   "listNetworkId": "Lista de ID de red",
   "listNetworkIdDescription": "ID de la red donde se encuentran los tokens de lista",

@@ -271,6 +271,7 @@
   "contractsNetwork": "רשת חוזים",
   "saveSwapContracts": "שמור חוזי החלפה",
   "switchToNetwork": "עבור אל {{network}}",
+  "youHaveToBeOn": "אתה צריך להיות על {{network}}",
   "colors": "צבעים",
   "listNetworkId": "מזהה רשת רשימה",
   "listNetworkIdDescription": "מזהה של הרשת שבה נמצאים רשימת אסימונים",

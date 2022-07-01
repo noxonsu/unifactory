@@ -282,6 +282,7 @@
   "contractsNetwork": "Sözleşmeler ağı",
   "saveSwapContracts": "Takas sözleşmelerini kaydet",
   "switchToNetwork": "Değiştirmek {{network}}",
+  "youHaveToBeOn": "Olman gerekiyor  {{network}}",
   "colors": "Renk",
   "listNetworkId": "Ağ kimliğini listele",
   "listNetworkIdDescription": "Liste belirteçlerinin bulunduğu ağın kimliği",

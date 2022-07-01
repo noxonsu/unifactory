@@ -1,8 +1,12 @@
 import { useActiveWeb3React } from 'hooks'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
+import { useWeb3React } from '@web3-react/core'
+import { InjectedConnector } from '@web3-react/injected-connector'
+import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
+import { switchInjectedNetwork } from 'utils/wallet'
 import { useAddPopup } from 'state/application/hooks'
 import { updateAppOptions } from 'state/application/actions'
 import { StorageState } from 'state/application/reducer'
@@ -12,6 +16,7 @@ import TransactionConfirmationModal, { ConfirmationModalContent } from 'componen
 import { ButtonSecondary, ButtonPrimary } from 'components/Button'
 import { getCurrentDomain } from 'utils/app'
 import { saveAppData } from 'utils/storage'
+import { STORAGE_NETWORK_ID, STORAGE_NETWORK_NAME } from '../../constants'
 
 const Wrapper = styled.section`
   position: absolute;
@@ -84,11 +89,34 @@ interface ComponentProps {
 
 export default function GreetingScreen({ setGreetingScreenIsActive, setDomainData }: ComponentProps) {
   const { account, deactivate, library } = useActiveWeb3React()
+  const { connector, chainId } = useWeb3React()
+
   const dispatch = useDispatch()
   const [domain] = useState(getCurrentDomain())
   const { t } = useTranslation()
   const addTransaction = useTransactionAdder()
   const addPopup = useAddPopup()
+
+  const [onStorageNetwork, setOnStorageNetwork] = useState(false)
+
+  useEffect(() => {
+    setOnStorageNetwork(chainId === STORAGE_NETWORK_ID)
+  }, [chainId])
+
+  const switchToStorage = async () => {
+    if (!connector) return
+
+    try {
+      if (connector instanceof InjectedConnector) {
+        await switchInjectedNetwork(STORAGE_NETWORK_ID)
+      } // if the connector is walletconnect and the user has already tried to connect, manually reset the connector
+      else if (connector instanceof WalletConnectConnector && connector.walletConnectProvider?.wc?.uri) {
+        connector.walletConnectProvider = undefined
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const [showConfirm, setShowConfirm] = useState(false)
   const [attemptingTxn, setAttemptingTxn] = useState(false)
@@ -174,10 +202,19 @@ export default function GreetingScreen({ setGreetingScreenIsActive, setDomainDat
             </Span>
             {t('onlyThisAddressCanAccessAppSettings')}.
           </Text>
+
           <Text warning>{t('IfYouWantToChangeTheAddressSwitchToAnotherAddress')}</Text>
+          {!onStorageNetwork && <Text warning>{t('youHaveToBeOn', { network: STORAGE_NETWORK_NAME })}</Text>}
+
           <ButtonBlock>
             <ActionButton onClick={disconnectWallet}>{t('disconnect')}</ActionButton>
-            <ActionButton onClick={confirm}>{t('setTheOwner')}</ActionButton>
+            {!onStorageNetwork ? (
+              <ActionButton onClick={switchToStorage}>
+                {t('switchToNetwork', { network: STORAGE_NETWORK_NAME })}
+              </ActionButton>
+            ) : (
+              <ActionButton onClick={confirm}>{t('setTheOwner')}</ActionButton>
+            )}
           </ButtonBlock>
         </ContentWrapper>
       </AppBody>

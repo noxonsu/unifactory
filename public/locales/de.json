@@ -283,6 +283,7 @@
   "contractsNetwork": "Vertragsnetzwerk",
   "saveSwapContracts": "Swap-Kontrakte speichern",
   "switchToNetwork": "Wechseln zu {{network}}",
+  "youHaveToBeOn": "Du musst auf sein {{network}}",
   "colors": "Farbe",
   "listNetworkId": "Netzwerk-ID auflisten",
   "listNetworkIdDescription": "ID des Netzwerks, in dem sich Listen-Token befinden",
