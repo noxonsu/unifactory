@@ -111,7 +111,7 @@ export function TokenList(props: {
         symbol,
         decimals: Number(decimals),
         address: newTokenAddress,
-        chainId,
+        chainId: parseInt(tokenListChainId),
       }
 
       if (newTokenLogo) token.logoURI = newTokenLogo
