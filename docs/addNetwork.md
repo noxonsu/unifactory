@@ -1,6 +1,6 @@
 # How to add a new network
 
-We only need to add a new object in this file: [networks.json](https://github.com/noxonsu/unifactory/blob/main/src/networks.json). Object structure:
+1. Add a new object in this file: [networks.json](https://github.com/noxonsu/unifactory/blob/main/src/networks.json). Object structure:
 
 ```json5
   // key as a chain id
@@ -32,3 +32,7 @@ We only need to add a new object in this file: [networks.json](https://github.co
     }
   },
 ```
+
+> In the end do not forget to verify `multicall` and `wrappedToken` contracts in the network explorer.
+
+2. Add a network logo in the `src/assets/images/<chain symbol>.png` (**.png** or **.svg** format). Import it in `index.ts` in the same directory.
