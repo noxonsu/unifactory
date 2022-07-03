@@ -70,9 +70,11 @@ export function useTokenBalancesWithLoadingIndicator(
           ? validatedTokens.reduce<{ [tokenAddress: string]: TokenAmount | undefined }>((memo, token, i) => {
               const value = balances?.[i]?.result?.[0]
               const amount = value ? JSBI.BigInt(value.toString()) : undefined
+
               if (amount) {
                 memo[token.address] = new TokenAmount(token, amount)
               }
+
               return memo
             }, {})
           : {},

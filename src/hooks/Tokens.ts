@@ -169,6 +169,7 @@ export function useToken(tokenAddress?: string): Token | undefined | null {
         parseStringOrBytes32(tokenName.result?.[0], tokenNameBytes32.result?.[0], 'Unknown Token')
       )
     }
+
     return undefined
   }, [
     address,
