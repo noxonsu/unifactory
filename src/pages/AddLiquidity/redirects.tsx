@@ -14,6 +14,7 @@ export function RedirectOldAddLiquidityPathStructure(props: RouteComponentProps<
     },
   } = props
   const match = currencyIdA.match(OLD_PATH_STRUCTURE)
+
   if (match?.length) {
     return <Redirect to={`/add/${match[1]}/${match[2]}`} />
   }
@@ -27,8 +28,10 @@ export function RedirectDuplicateTokenIds(props: RouteComponentProps<{ currencyI
       params: { currencyIdA, currencyIdB },
     },
   } = props
+
   if (currencyIdA.toLowerCase() === currencyIdB.toLowerCase()) {
     return <Redirect to={`/add/${currencyIdA}`} />
   }
+
   return <AddLiquidity {...props} />
 }
