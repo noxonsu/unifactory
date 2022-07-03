@@ -1,13 +1,13 @@
 import { Currency, BaseCurrency, CurrencyAmount, currencyEquals, Token } from 'sdk'
-import React, { CSSProperties, MutableRefObject, useCallback, useEffect, useMemo, useState } from 'react'
+import React, { CSSProperties, MutableRefObject, useCallback, useMemo } from 'react'
 import { FixedSizeList } from 'react-window'
 import { Text } from 'rebass'
 import styled from 'styled-components'
 import { useActiveWeb3React } from 'hooks'
 import { WrappedTokenInfo, useCombinedActiveList } from 'state/lists/hooks'
-import { getBalance } from 'utils/token'
 import { TYPE } from 'theme'
 import { useIsUserAddedToken, useAllInactiveTokens } from 'hooks/Tokens'
+import { useCurrencyBalance } from 'state/wallet/hooks'
 import { useBaseCurrency } from 'hooks/useCurrency'
 import { useWrappedToken } from 'hooks/useToken'
 import Column from '../Column'
@@ -100,24 +100,13 @@ function CurrencyRow({
   otherSelected: boolean
   style: CSSProperties
 }) {
-  const { chainId = 0, account, library } = useActiveWeb3React()
+  const { chainId = 0, account } = useActiveWeb3React()
   const baseCurrency = useBaseCurrency()
   const key = currencyKey(currency, baseCurrency)
   const selectedTokenList = useCombinedActiveList(chainId)
   const isOnSelectedList = isTokenOnList(selectedTokenList, baseCurrency, currency)
   const customAdded = useIsUserAddedToken(currency)
-
-  const [balance, setBalance] = useState<CurrencyAmount | undefined>(undefined)
-
-  useEffect(() => {
-    async function fetch() {
-      const balance = await getBalance({ account: account ?? undefined, currency, baseCurrency, library })
-
-      if (balance) setBalance(balance)
-    }
-
-    fetch()
-  }, [account, currency, library, baseCurrency])
+  const balance = useCurrencyBalance(account ?? undefined, currency)
 
   // only show add or remove buttons if not on selected list
   return (
@@ -200,17 +189,19 @@ export default function CurrencyList({
             dim={true}
           />
         )
+      } else if (currency) {
+        return (
+          <CurrencyRow
+            style={style}
+            currency={currency}
+            isSelected={isSelected}
+            onSelect={handleSelect}
+            otherSelected={otherSelected}
+          />
+        )
       }
 
-      return (
-        <CurrencyRow
-          style={style}
-          currency={currency}
-          isSelected={isSelected}
-          onSelect={handleSelect}
-          otherSelected={otherSelected}
-        />
-      )
+      return null
     },
     [
       chainId,

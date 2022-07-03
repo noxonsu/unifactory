@@ -89,6 +89,7 @@ export function useBytes32TokenContract(tokenAddress?: string, withSignerIfPossi
 
 export function useMulticallContract(): Contract | null {
   const { chainId } = useActiveWeb3React()
-  //@ts-ignore
-  return useContract(chainId ? networks[chainId]?.multicall : '', MULTICALL_ABI, false)
+  type Id = keyof typeof networks
+
+  return useContract(chainId ? networks[String(chainId) as Id]?.multicall : '', MULTICALL_ABI, false)
 }
