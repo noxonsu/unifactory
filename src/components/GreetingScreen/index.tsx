@@ -114,7 +114,7 @@ export default function GreetingScreen({ setGreetingScreenIsActive, setDomainDat
         connector.walletConnectProvider = undefined
       }
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
   }
 
