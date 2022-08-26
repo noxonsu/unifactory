@@ -1,4 +1,23 @@
 {
+  "1": {
+    "name": "Ethereum",
+    "rpc": "https://rpc.ankr.com/eth",
+    "chainId": 1,
+    "explorer": "https://etherscan.io",
+    "color": "#627EEA",
+    "multicall": "0xeefBa1e63905eF1D7ACbA5a8513c70307C1cE441",
+    "ENSRegistry": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "ETH",
+      "symbol": "ETH"
+    },
+    "wrappedToken": {
+      "address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+      "name": "Wrapped Etherer",
+      "symbol": "WETH"
+    }
+  },
   "25": {
     "name": "Cronos",
     "rpc": "https://evm.cronos.org",
@@ -19,7 +38,7 @@
   },
   "56": {
     "name": "BSC",
-    "rpc": "https://bsc-dataseed.binance.org",
+    "rpc": "https://bscrpc.com/",
     "chainId": 56,
     "explorer": "https://bscscan.com",
     "color": "#CC9B00",
