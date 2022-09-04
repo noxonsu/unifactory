@@ -96,11 +96,7 @@ const CustomListRow = memo(function CustomListRow({ list }: { list: TokenList; k
 
   return (
     <RowWrapper active={false} bgColor={listColor} id={list.name}>
-      {list.logoURI ? (
-        <ListLogo size="40px" style={{ marginRight: '1rem' }} logoURI={list.logoURI} alt={`${list.name} list logo`} />
-      ) : (
-        <div style={{ width: '24px', height: '24px', marginRight: '1rem' }} />
-      )}
+      <ListLogo size="40px" style={{ marginRight: '1rem' }} logoURI={list.logoURI} alt={`${list.name} list logo`} />
       <Column style={{ flex: '1' }}>
         <Row>
           <StyledTitleText active={false}>{list.name}</StyledTitleText>

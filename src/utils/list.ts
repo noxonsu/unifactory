@@ -20,8 +20,9 @@ export function listVersionLabel(version: Version): string {
 export function filterTokenLists(chainId: number, lists: { [listId: string]: any }) {
   return Object.values(lists).filter((list: any) => {
     try {
-      const namePattern = /^[a-zA-Z0-9+\-%/$]+$/
-      const filteredTokens = list.tokens
+      // eslint-disable-next-line
+      const namePattern = /^[a-zA-Z0-9+\\\-%\/$.() ]+$/
+      let filteredTokens = list.tokens
         // filter not valid token before actuall external validation
         // to leave the option of showing the entire token list
         // (without it token list won't be displayed with an error in at least one token)
