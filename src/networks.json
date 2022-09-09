@@ -236,5 +236,23 @@
       "name": "Wrapped Ether",
       "symbol": "WETH"
     }
+  },
+  "19845": {
+    "name": "BTCIX Network",
+    "rpc": "https://seed.btcix.org/rpc",
+    "chainId": 19845,
+    "explorer": "https://btcixscan.com",
+    "color": "#91ac14",
+    "multicall": "0xcd8F23091F5379cf355F365dBa8C48A2C721C1e5",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "BITCOLOJIX",
+      "symbol": "BTCIX"
+    },
+    "wrappedToken": {
+      "address": "0x1763d5e86452Ed9C13b874fDe60A0669D11C5d40",
+      "name": "Wrapped BITCOLOJIX",
+      "symbol": "WBTCIX"
+    }
   }
 }

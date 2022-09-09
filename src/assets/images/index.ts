@@ -16,6 +16,8 @@ import FUSE from './fuse.svg'
 import MOVR from './movr.svg'
 import ONE from './one.svg'
 import AME from './ame.png'
+import BTCIX from './btcix.png'
+import CNDL from './cndl.svg'
 
 export const CURRENCY = {
   ETH,
@@ -36,6 +38,8 @@ export const CURRENCY = {
   MOVR,
   ONE,
   AME,
+  BTCIX,
+  CNDL,
 
   // ------------
 
@@ -75,4 +79,6 @@ export const CURRENCY = {
   1285: MOVR,
   1666600000: ONE,
   180: AME,
+  19845: BTCIX,
+  534: CNDL,
 }
