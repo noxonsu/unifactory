@@ -188,7 +188,8 @@ export function useToken(tokenAddress?: string): Token | undefined | null {
 
 export function useCurrency(currencyId: string | undefined): Currency | BaseCurrency | null | undefined {
   const baseCurrency = useBaseCurrency()
-  const isBaseCurrency = baseCurrency && currencyId?.toUpperCase() === baseCurrency.name
+  const isBaseCurrency = baseCurrency && currencyId?.toUpperCase() === baseCurrency.name?.toUpperCase()
+
   const token = useToken(isBaseCurrency ? undefined : currencyId)
 
   return isBaseCurrency ? baseCurrency : token
