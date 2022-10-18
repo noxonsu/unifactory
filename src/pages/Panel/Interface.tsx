@@ -43,6 +43,7 @@ export default function Interface(props: any) {
   const {
     projectName: stateProjectName,
     logo: stateLogo,
+    favicon: stateFavicon,
     background: stateBackground,
     brandColor: stateBrandColor,
     backgroundColorDark: stateBackgroundColorDark,
@@ -61,10 +62,16 @@ export default function Interface(props: any) {
   const [projectName, setProjectName] = useState(stateProjectName)
   const [logoUrl, setLogoUrl] = useState(stateLogo)
   const [isValidLogo, setIsValidLogo] = useState(Boolean(validUrl.isUri(stateLogo)))
+  const [faviconUrl, setFaviconUrl] = useState(stateFavicon)
+  const [isValidFavicon, setIsValidFavicon] = useState(Boolean(validUrl.isUri(stateFavicon)))
 
   useEffect(() => {
     setIsValidLogo(logoUrl ? Boolean(validUrl.isUri(logoUrl)) : true)
   }, [logoUrl])
+
+  useEffect(() => {
+    setIsValidFavicon(faviconUrl ? Boolean(validUrl.isUri(faviconUrl)) : true)
+  }, [faviconUrl])
 
   const [backgroundUrl, setBackgroundUrl] = useState(stateBackground)
   const [isValidBackground, setIsValidBackground] = useState(Boolean(validUrl.isUri(backgroundUrl)))
@@ -136,6 +143,7 @@ export default function Interface(props: any) {
   const currentStrSettings = JSON.stringify({
     projectName: stateProjectName,
     logoUrl: stateLogo,
+    faviconUrl: stateFavicon,
     backgroundUrl: stateBackground,
     brandColor: stateBrandColor,
     navigationLinks: stateNavigationLinks,
@@ -157,6 +165,7 @@ export default function Interface(props: any) {
     const newStrSettings = JSON.stringify({
       projectName,
       logoUrl,
+      faviconUrl,
       backgroundUrl,
       brandColor,
       navigationLinks,
@@ -177,6 +186,7 @@ export default function Interface(props: any) {
     currentStrSettings,
     projectName,
     logoUrl,
+    faviconUrl,
     backgroundUrl,
     brandColor,
     navigationLinks,
@@ -196,9 +206,14 @@ export default function Interface(props: any) {
 
   useEffect(() => {
     setCannotSaveSettings(
-      chainId !== STORAGE_NETWORK_ID || !settingsChanged || !isValidLogo || !isValidBackground || !areColorsValid
+      chainId !== STORAGE_NETWORK_ID ||
+        !settingsChanged ||
+        !isValidLogo ||
+        !isValidFavicon ||
+        !isValidBackground ||
+        !areColorsValid
     )
-  }, [settingsChanged, isValidLogo, isValidBackground, areColorsValid, chainId])
+  }, [settingsChanged, isValidLogo, isValidFavicon, isValidBackground, areColorsValid, chainId])
 
   const saveSettings = async () => {
     setPending(true)
@@ -207,6 +222,7 @@ export default function Interface(props: any) {
       const newSettings = {
         projectName,
         logoUrl,
+        faviconUrl,
         backgroundUrl,
         brandColor,
         navigationLinks,
@@ -285,6 +301,14 @@ export default function Interface(props: any) {
 
         <OptionWrapper>
           <InputPanel label={`${t('logoUrl')}`} value={logoUrl} onChange={setLogoUrl} error={!isValidLogo} />
+        </OptionWrapper>
+        <OptionWrapper>
+          <InputPanel
+            label={`${t('faviconUrl')}`}
+            value={faviconUrl}
+            onChange={setFaviconUrl}
+            error={!isValidFavicon}
+          />
         </OptionWrapper>
         <OptionWrapper flex>
           <InputPanel

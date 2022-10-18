@@ -107,6 +107,14 @@ export default function App() {
 
   useEffect(() => {
     setGreetingScreenIsActive(!domainData || !domainData?.admin)
+
+    // Set favicon
+    const faviconUrl = localStorage.getItem('faviconUrl')
+
+    if (domainData?.favicon && domainData.favicon !== faviconUrl) {
+      localStorage.setItem('faviconUrl', domainData.favicon)
+      window.location.reload()
+    }
   }, [domainData])
 
   useEffect(() => {
