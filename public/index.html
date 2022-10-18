@@ -27,19 +27,19 @@
       }
 
       // Set favicon
-      let link = document.getElementById('favicon')
+      let favicon = document.getElementById('favicon')
 
-      if (!link) {
-        link = document.createElement('link')
-        link.rel = 'shortcut icon'
-        link.id = 'favicon'
-        link.type = 'image/png'
-        document.getElementsByTagName('head')[0].appendChild(link)
+      if (!favicon) {
+        favicon = document.createElement('link')
+        favicon.rel = 'shortcut icon'
+        favicon.id = 'favicon'
+        favicon.type = 'image/png'
+        document.getElementsByTagName('head')[0].appendChild(favicon)
       }
 
       const faviconUrl = localStorage.getItem('faviconUrl')
       if (faviconUrl) {
-        link.href = faviconUrl
+        favicon.href = faviconUrl
       }
     </script>
   </head>

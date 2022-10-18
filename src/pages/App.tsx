@@ -105,6 +105,8 @@ export default function App() {
   const [isAvailableNetwork, setIsAvailableNetwork] = useState(true)
   const [greetingScreenIsActive, setGreetingScreenIsActive] = useState(false)
 
+  const [loading, setLoading] = useState(true)
+
   useEffect(() => {
     setGreetingScreenIsActive(!domainData || !domainData?.admin)
 
@@ -114,8 +116,11 @@ export default function App() {
     if (domainData?.favicon && domainData.favicon !== faviconUrl) {
       localStorage.setItem('faviconUrl', domainData.favicon)
       window.location.reload()
+    } else if (!loading && !domainData?.favicon && faviconUrl) {
+      localStorage.removeItem('faviconUrl')
+      window.location.reload()
     }
-  }, [domainData])
+  }, [domainData, loading])
 
   useEffect(() => {
     if (chainId) {
@@ -134,8 +139,6 @@ export default function App() {
       setIsAvailableNetwork(Boolean(SUPPORTED_CHAIN_IDS.includes(Number(chainId)) && networkIsFine))
     }
   }, [chainId, domainDataTrigger, wordpressData, admin, account])
-
-  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (!storage) return
