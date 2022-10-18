@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-ignore */
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
@@ -8,7 +9,7 @@ import { useActiveWeb3React } from 'hooks'
 import { useAppState } from 'state/application/hooks'
 import Menu from '../Menu'
 import { LightCard } from '../Card'
-// import { CURRENCY } from 'assets/images'
+import { CURRENCY } from 'assets/images'
 import Row, { RowFixed } from '../Row'
 import Web3Status from '../Web3Status'
 import networks from 'networks.json'
@@ -261,6 +262,22 @@ export default function Header() {
   const { t } = useTranslation()
   const { logo: logoUrl, navigationLinks } = useAppState()
 
+  const NetworkInfo = () => {
+    if (!chainId) return
+    // @ts-ignore
+    const networkConfig = networks[chainId]
+    // @ts-ignore
+    const networkImage = CURRENCY[chainId]
+    return (
+      networkConfig?.name && (
+        <NetworkCard title={`${networkImage.name} network`}>
+          {!!networkImage && <img src={networkImage} style={{ marginRight: '0.4rem' }} alt="network logo" />}
+          {networkConfig.name}
+        </NetworkCard>
+      )
+    )
+  }
+
   return (
     <HeaderFrame>
       <HeaderRow>
@@ -299,19 +316,7 @@ export default function Header() {
 
       <HeaderControls>
         <HeaderElement>
-          <HideSmall>
-            {/* @ts-ignore */}
-            {chainId && networks[chainId]?.name && (
-              // @ts-ignore
-              <NetworkCard title={`${networks[chainId].name} network`}>
-                {/* TOOD: fix element styles to correctly display network image */}
-                {/* @ts-ignore */}
-                {/* {!!CURRENCY[chainId] && <img src={CURRENCY[chainId]} alt="network logo" />} */}
-                {/* @ts-ignore */}
-                {networks[chainId].name}
-              </NetworkCard>
-            )}
-          </HideSmall>
+          <HideSmall>{NetworkInfo()}</HideSmall>
           <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
             <Web3Status />
           </AccountElement>

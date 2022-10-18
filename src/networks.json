@@ -218,7 +218,7 @@
     }
   },
   "5": {
-    "name": "Goerli",
+    "name": "Görli",
     "rpc": "https://goerli.infura.io/v3/fc55ddb25b694fef8e2363f6b6c9341f",
     "chainId": 5,
     "explorer": "https://goerli.etherscan.io",
