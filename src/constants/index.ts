@@ -8,9 +8,9 @@ export const DEV_FEE_ADMIN = '0x6D1EB33c063CBe69d064EE22537dBF107e8816f6'
 export type NETWORKS_ID = keyof typeof networks
 
 const BSC_ID = 56
-const RINKEBY_ID = 4
+const GOERLI_ID = 5
 
-export const STORAGE_NETWORK_ID = process.env.NODE_ENV === 'production' ? BSC_ID : RINKEBY_ID
+export const STORAGE_NETWORK_ID = process.env.NODE_ENV === 'production' ? BSC_ID : GOERLI_ID
 export const STORAGE_NETWORK_NAME = networks[STORAGE_NETWORK_ID.toString() as NETWORKS_ID].name
 // @ts-ignore
 export const STORAGE = networks[STORAGE_NETWORK_ID.toString() as NETWORKS_ID].storage
@@ -81,7 +81,7 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
     color: '#E8831D',
   },
   WALLET_CONNECT: {
-    connector: newWalletConnect(4),
+    connector: newWalletConnect(STORAGE_NETWORK_ID),
     name: WALLET_NAMES.WALLET_CONNECT,
     iconName: 'walletConnectIcon.svg',
     description: 'Connect to Trust Wallet, Rainbow Wallet and more...',
@@ -90,7 +90,7 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
     mobile: true,
   },
   WALLET_LINK: {
-    connector: newWalletlink(4),
+    connector: newWalletlink(STORAGE_NETWORK_ID),
     name: WALLET_NAMES.WALLET_LINK,
     iconName: 'coinbaseWalletIcon.svg',
     description: 'Use Coinbase Wallet app on mobile device',
