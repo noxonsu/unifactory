@@ -181,6 +181,7 @@
   "resetDomainData": "Reimposta i dati del dominio",
   "projectName": "Nome del progetto",
   "logoUrl": "Url del logo",
+  "faviconUrl": "Url della favicon",
   "socialLinks": "Collegamenti sociali",
   "resetDomainDescription": "Tutti i dati per questo dominio verranno cancellati (amministratore, indirizzi di contatto e impostazioni)",
   "youAreDeployingSwapContracts": "Stai distribuendo contratti di swap",
