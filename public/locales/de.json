@@ -182,6 +182,7 @@
   "resetDomainData": "Domain-Daten zurücksetzen",
   "projectName": "Projektnamen",
   "logoUrl": "Logo-URL",
+  "faviconUrl": "Favicon-URL",
   "socialLinks": "Soziale Links",
   "resetDomainDescription": "Alle Daten für diese Domain werden gelöscht (Admin, Kontaktadressen und Einstellungen)",
   "youAreDeployingSwapContracts": "Sie stellen Swap-Verträge bereit",

@@ -181,6 +181,7 @@
   "resetDomainData": "Reset domain data",
   "projectName": "Project name",
   "logoUrl": "Logo URL",
+  "faviconUrl": "Favicon URL",
   "socialLinks": "Social links",
   "resetDomainDescription": "All data for this domain will be erased (admin, contract addresses and settings)",
   "youAreDeployingSwapContracts": "You are going to deploy swap contracts",

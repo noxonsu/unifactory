@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="shortcut icon" type="image/png" href="%PUBLIC_URL%/favicon.png" />
+    <link rel="shortcut icon" id="favicon" type="image/png" href="%PUBLIC_URL%/favicon.png" />
     <link rel="apple-touch-icon" sizes="192x192" href="%PUBLIC_URL%/images/192x192_App_Icon.png" />
     <link rel="apple-touch-icon" sizes="512x512" href="%PUBLIC_URL%/images/512x512_App_Icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -24,6 +24,22 @@
 
       if (hostname !== 'localhost' && protocol !== 'https:') {
         location.replace(`https:${href.substring(protocol.length)}`)
+      }
+
+      // Set favicon
+      let favicon = document.getElementById('favicon')
+
+      if (!favicon) {
+        favicon = document.createElement('link')
+        favicon.rel = 'shortcut icon'
+        favicon.id = 'favicon'
+        favicon.type = 'image/png'
+        document.getElementsByTagName('head')[0].appendChild(favicon)
+      }
+
+      const faviconUrl = localStorage.getItem('faviconUrl')
+      if (faviconUrl) {
+        favicon.href = faviconUrl
       }
     </script>
   </head>

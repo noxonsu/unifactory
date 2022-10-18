@@ -181,6 +181,7 @@
   "resetDomainData": "Reset domain data",
   "projectName": "Proje Adı",
   "logoUrl": "Logo url",
+  "faviconUrl": "Favicon url",
   "socialLinks": "Social links",
   "resetDomainDescription": "Bu alan adına ait tüm veriler silinecek(admin, contract addresses and settings)",
   "youAreDeployingSwapContracts": "Takas sözleşmeleri dağıtacaksınız",

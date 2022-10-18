@@ -32,6 +32,7 @@ const defaultSettings = (): StorageState => ({
   textColorDark: '',
   textColorLight: '',
   logo: '',
+  favicon: '',
   background: '',
   tokenListsByChain: {},
   tokenLists: [],
@@ -73,6 +74,7 @@ const parseSettings = (settings: string, chainId: number): StorageState => {
       textColorDark,
       textColorLight,
       logoUrl,
+      faviconUrl,
       backgroundUrl,
       navigationLinks,
       menuLinks,
@@ -105,6 +107,7 @@ const parseSettings = (settings: string, chainId: number): StorageState => {
 
     if (backgroundUrl) appSettings.background = backgroundUrl
     if (logoUrl) appSettings.logo = logoUrl
+    if (faviconUrl) appSettings.favicon = faviconUrl
     if (Boolean(disableSourceCopyright)) appSettings.disableSourceCopyright = disableSourceCopyright
 
     if (validArray(navigationLinks)) appSettings.navigationLinks = navigationLinks

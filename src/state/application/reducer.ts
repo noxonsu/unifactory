@@ -47,6 +47,7 @@ export type StorageState = {
   textColorDark: string
   textColorLight: string
   logo: string
+  favicon: string
   background: string
   navigationLinks: { name: string; source: string }[]
   menuLinks: { name: string; source: string }[]
@@ -87,6 +88,7 @@ const initialState: ApplicationState = {
   textColorDark: '',
   textColorLight: '',
   logo: '',
+  favicon: '',
   background: '',
   tokenListsByChain: {},
   tokenLists: [],

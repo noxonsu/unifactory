@@ -173,6 +173,7 @@
   "resetDomainData": "Сброс данных домена",
   "projectName": "Название проекта",
   "logoUrl": "URL-адрес логотипа",
+  "faviconUrl": "URL-адрес favicon",
   "socialLinks": "Социальные ссылки",
   "resetDomainDescription": "Все данные для этого домена будут удалены (администратор, aдреса контрактов и настройки)",
   "youAreDeployingSwapContracts": "Вы развертываете контракты для обмен",

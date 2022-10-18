@@ -55,7 +55,7 @@ export const NETWORKS_RPC_BY_ID = Object.values(SUPPORTED_NETWORKS).reduce(
 
 export const network = new NetworkConnector({
   urls: NETWORKS_RPC_BY_ID,
-  defaultChainId: 4,
+  defaultChainId: 5, // goerli testnet
 })
 
 let networkLibrary: Web3Provider | undefined
