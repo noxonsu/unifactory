@@ -28,4 +28,4 @@ Infrastructure is the key element of the blockchain success. Decentralised appli
 # Join the community
 
 - Join Our Discord https://discord.gg/HwmxY8CVyp
-- Subscribe for e-mail updates https://forms.gle/GpenjHAsEW92UFf6A
+- Subscribe for e-mail updates https://dash.onout.org/
