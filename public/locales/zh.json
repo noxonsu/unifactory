@@ -280,5 +280,6 @@
   "IfYouWantToChangeTheAddressSwitchToAnotherAddress": "如果要更改地址，請切換到另一個地址。如果您無法切換，只需斷開您的錢包並將其連接到新地址即可。",
   "setTheOwner": "设置所有者",
   "setAddressAsTheOwnerOfDomain": "将您的地址设置为该域的所有者",
-  "onlyThisAddressCanAccessAppSettings": "只有这个地址才能访问和更改应用程序设置"
+  "onlyThisAddressCanAccessAppSettings": "只有这个地址才能访问和更改应用程序设置",
+  "add_token_to_metamask": "Add token to wallet"
 }
