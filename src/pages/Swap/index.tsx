@@ -263,6 +263,33 @@ export default function Swap() {
 
   const [recomendedSlippagePercent, setRecomendedSlippagePercent] = useState<number | undefined>(undefined)
 
+  const doAddTokenToMetamask = () => {
+    try {
+      // @ts-ignore
+      window.ethereum.request({
+        method: 'wallet_watchAsset',
+        params: {
+          type: 'ERC20',
+          options: {
+            // @ts-ignore
+            address: currencies[Field.OUTPUT].address,
+            // @ts-ignore
+            symbol: currencies[Field.OUTPUT].symbol,
+            // @ts-ignore
+            decimals: currencies[Field.OUTPUT].decimals,
+            image: ``,
+          },
+        },
+      }).then((wasAdded: boolean) => {
+        if (wasAdded) {
+          /* ok */
+        }
+      })
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   useEffect(() => {
     setRecomendedSlippagePercent(15)
   }, [])
@@ -387,10 +414,28 @@ export default function Swap() {
             {!account ? (
               <ButtonPrimary onClick={toggleWalletModal}>{t('connectWallet')}</ButtonPrimary>
             ) : showWrap ? (
-              <ButtonPrimary disabled={Boolean(wrapInputError)} onClick={onWrap}>
-                {wrapInputError ??
-                  (wrapType === WrapType.WRAP ? 'Wrap' : wrapType === WrapType.UNWRAP ? 'Unwrap' : null)}
-              </ButtonPrimary>
+              <>
+                { /* @ts-ignore */ }
+                {currencies && currencies[Field.OUTPUT] && currencies[Field.OUTPUT].address && (
+                  <>
+                    <RowBetween>
+                      <ButtonPrimary
+                          onClick={doAddTokenToMetamask}
+                          disabled={false}
+                        >
+                        {t('add_token_to_metamask')}
+                      </ButtonPrimary>
+                    </RowBetween>
+                    <br />
+                  </>
+                )}
+                <RowBetween>
+                  <ButtonPrimary disabled={Boolean(wrapInputError)} onClick={onWrap}>
+                    {wrapInputError ??
+                      (wrapType === WrapType.WRAP ? 'Wrap' : wrapType === WrapType.UNWRAP ? 'Unwrap' : null)}
+                  </ButtonPrimary>
+                </RowBetween>
+              </>
             ) : noRoute && userHasSpecifiedInputOutput ? (
               <GreyCard style={{ textAlign: 'center' }}>
                 <TYPE.main mb="4px">{t('insufficientLiquidity')}</TYPE.main>
