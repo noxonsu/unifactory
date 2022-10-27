@@ -252,7 +252,6 @@ export default function Swap() {
   }, [])
 
   const [displaySlippageNotice, setDisplaySlippageNotice] = useState(false)
-  const [displayAddToken, setDisplayAddToken] = useState(true)
 
   useEffect(() => {
     const match =
@@ -283,7 +282,7 @@ export default function Swap() {
         },
       }).then((wasAdded: boolean) => {
         if (wasAdded) {
-          setDisplayAddToken(false)
+          /* ok */
         }
       })
     } catch (error) {
@@ -417,7 +416,7 @@ export default function Swap() {
             ) : showWrap ? (
               <>
                 { /* @ts-ignore */ }
-                {displayAddToken && currencies && currencies[Field.OUTPUT] && currencies[Field.OUTPUT].address && (
+                {currencies && currencies[Field.OUTPUT] && currencies[Field.OUTPUT].address && (
                   <>
                     <RowBetween>
                       <ButtonPrimary
