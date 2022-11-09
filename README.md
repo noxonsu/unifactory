@@ -29,3 +29,9 @@ Infrastructure is the key element of the blockchain success. Decentralised appli
 
 - Join Our Discord https://discord.gg/HwmxY8CVyp
 - Subscribe for e-mail updates https://dash.onout.org/
+
+
+# for devops
+1. merge to master
+2. push build to https://github.com/appsource/dex  (html files)
+3. push build to https://github.com/noxonsu/definance (see readme)
