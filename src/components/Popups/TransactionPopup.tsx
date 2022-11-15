@@ -7,6 +7,10 @@ import { ExternalLink } from 'theme/components'
 import { getExplorerLink } from 'utils'
 import { AutoColumn } from '../Column'
 import { AutoRow } from '../Row'
+import { TokenAmount, Trade } from 'sdk'
+import { WrappedTokenInfo } from 'state/lists/hooks'
+import { ButtonOutlined } from 'components/Button'
+import { TokenInfo } from '@uniswap/token-lists'
 
 const RowNoFlex = styled(AutoRow)`
   flex-wrap: nowrap;
@@ -16,14 +20,50 @@ export default function TransactionPopup({
   hash,
   success,
   summary,
+  trade,
 }: {
   hash: string
   success?: boolean
   summary?: string
+  trade?: Trade
 }) {
   const { chainId } = useActiveWeb3React()
+  const isMetamask = window.ethereum && window.ethereum.isMetaMask
 
   const theme = useContext(ThemeContext)
+
+  const withRecipient = summary?.match(' to ')
+  const token =
+    trade?.outputAmount instanceof TokenAmount &&
+    trade?.outputAmount?.token instanceof WrappedTokenInfo &&
+    trade?.outputAmount?.token
+
+  const showAddTokenButton = isMetamask && !withRecipient
+
+  const addTokenToMetamask = ({ address, symbol, decimals, logoURI = '' }: TokenInfo) => {
+    try {
+      window.ethereum
+        ?.request?.({
+          method: 'wallet_watchAsset',
+          params: {
+            type: 'ERC20',
+            options: {
+              address,
+              symbol,
+              decimals,
+              image: logoURI,
+            },
+          },
+        })
+        .then((wasAdded: boolean) => {
+          if (wasAdded) {
+            /* ok */
+          }
+        })
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   return (
     <RowNoFlex>
@@ -32,6 +72,11 @@ export default function TransactionPopup({
       </div>
       <AutoColumn gap="8px">
         <TYPE.body fontWeight={500}>{summary ?? 'Hash: ' + hash.slice(0, 8) + '...' + hash.slice(58, 65)}</TYPE.body>
+        {showAddTokenButton && !!token && (
+          <ButtonOutlined onClick={() => addTokenToMetamask(token.tokenInfo)}>
+            {`Add ${token.tokenInfo.symbol} to Metamask`}
+          </ButtonOutlined>
+        )}
         {chainId && <ExternalLink href={getExplorerLink(chainId, hash, 'transaction')}>View in Explorer</ExternalLink>}
       </AutoColumn>
     </RowNoFlex>

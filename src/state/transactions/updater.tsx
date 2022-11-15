@@ -72,6 +72,7 @@ export default function Updater(): null {
                     hash,
                     success: receipt.status === 1,
                     summary: transactions[hash]?.summary,
+                    trade: transactions[hash]?.trade,
                   },
                 },
                 hash

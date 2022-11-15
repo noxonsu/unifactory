@@ -1,4 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit'
+import { Trade } from 'sdk'
 import {
   addTransaction,
   checkedTransaction,
@@ -13,6 +14,7 @@ export interface TransactionDetails {
   hash: string
   approval?: { tokenAddress: string; spender: string }
   summary?: string
+  trade?: Trade
   claim?: { recipient: string }
   receipt?: SerializableTransactionReceipt
   lastCheckedBlockNumber?: number
@@ -31,12 +33,12 @@ export const initialState: TransactionState = {}
 
 export default createReducer(initialState, (builder) =>
   builder
-    .addCase(addTransaction, (transactions, { payload: { chainId, from, hash, approval, summary, claim } }) => {
+    .addCase(addTransaction, (transactions, { payload: { chainId, from, hash, approval, summary, claim, trade } }) => {
       if (transactions[chainId]?.[hash]) {
         throw Error('Attempted to add existing transaction.')
       }
       const txs = transactions[chainId] ?? {}
-      txs[hash] = { hash, approval, summary, claim, from, addedTime: now() }
+      txs[hash] = { hash, approval, summary, trade, claim, from, addedTime: now() }
       transactions[chainId] = txs
     })
     .addCase(clearAllTransactions, (transactions, { payload: { chainId } }) => {
