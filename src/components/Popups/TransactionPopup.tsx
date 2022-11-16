@@ -9,11 +9,21 @@ import { AutoColumn } from '../Column'
 import { AutoRow } from '../Row'
 import { TokenAmount, Trade } from 'sdk'
 import { WrappedTokenInfo } from 'state/lists/hooks'
-import { ButtonOutlined } from 'components/Button'
 import { TokenInfo } from '@uniswap/token-lists'
 
 const RowNoFlex = styled(AutoRow)`
   flex-wrap: nowrap;
+`
+
+const LinkButton = styled.a`
+  color: ${({ theme }) => theme.blue2};
+  text-decoration: none;
+
+  :hover,
+  :focus {
+    cursor: pointer;
+    color: ${({ theme }) => theme.blue1};
+  }
 `
 
 export default function TransactionPopup({
@@ -73,9 +83,9 @@ export default function TransactionPopup({
       <AutoColumn gap="8px">
         <TYPE.body fontWeight={500}>{summary ?? 'Hash: ' + hash.slice(0, 8) + '...' + hash.slice(58, 65)}</TYPE.body>
         {showAddTokenButton && !!token && (
-          <ButtonOutlined onClick={() => addTokenToMetamask(token.tokenInfo)}>
+          <LinkButton theme={theme} onClick={() => addTokenToMetamask(token.tokenInfo)}>
             {`Add ${token.tokenInfo.symbol} to Metamask`}
-          </ButtonOutlined>
+          </LinkButton>
         )}
         {chainId && <ExternalLink href={getExplorerLink(chainId, hash, 'transaction')}>View in Explorer</ExternalLink>}
       </AutoColumn>
