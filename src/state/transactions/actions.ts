@@ -1,4 +1,5 @@
 import { createAction } from '@reduxjs/toolkit'
+import { Trade } from 'sdk'
 
 export interface SerializableTransactionReceipt {
   to: string
@@ -18,6 +19,7 @@ export const addTransaction = createAction<{
   approval?: { tokenAddress: string; spender: string }
   claim?: { recipient: string }
   summary?: string
+  trade?: Trade
 }>('transactions/addTransaction')
 export const clearAllTransactions = createAction<{ chainId: number }>('transactions/clearAllTransactions')
 export const finalizeTransaction = createAction<{
