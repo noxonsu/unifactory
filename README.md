@@ -1,4 +1,4 @@
-White Label Exchange Solution based on uniswap.org's sources. Set up your commission from 0.05% to 20%. (we do not provide liquidity for this, if you don't want to provide liquidity please take a look on https://tools.onout.org/wallet/ )
+White Label Exchange Solution based on uniswap.org's sources. Set up your commission from 0.05% to 20%. (we do not provide liquidity for this, if you don't want to provide liquidity please take a look on https://onout.org/wallet/ )
 
 Admin can create own DEX. Add logo, change colors, use own domain name, add/edit token to tokenlist (main dropdown).
 
