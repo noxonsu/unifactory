@@ -254,5 +254,23 @@
       "name": "Wrapped BITCOLOJIX",
       "symbol": "WBTCIX"
     }
+  },
+  "2021": {
+    "name": "Edgeware",
+    "rpc": "https://edgeware-rpc.dwellir.com",
+    "chainId": 2021,
+    "explorer": "https://edgscan.live",
+    "color": "#ff3b80",
+    "multicall": "0xF579269Aec2168E44FE4EBA632D942e9701331db",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "EDG",
+      "symbol": "EDG"
+    },
+    "wrappedToken": {
+      "address": "0x457dE4e275A6b3C0D3750519221dD1dF19d54f01",
+      "name": "Wrapped EDG",
+      "symbol": "WEDG"
+    }
   }
 }
