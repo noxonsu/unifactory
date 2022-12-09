@@ -18,6 +18,7 @@ import ONE from './one.svg'
 import AME from './ame.png'
 import BTCIX from './btcix.png'
 import CNDL from './cndl.svg'
+import EDG from './edg.svg'
 
 export const CURRENCY = {
   ETH,
@@ -40,6 +41,7 @@ export const CURRENCY = {
   AME,
   BTCIX,
   CNDL,
+  EDG,
 
   // ------------
 
@@ -81,4 +83,5 @@ export const CURRENCY = {
   180: AME,
   19845: BTCIX,
   534: CNDL,
+  2021: EDG,
 }
