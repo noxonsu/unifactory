@@ -272,5 +272,24 @@
       "name": "Wrapped EDG",
       "symbol": "WEDG"
     }
+  },
+  "97": {
+    "name": "BSC testnet",
+    "rpc": "https://bsc-testnet.public.blastapi.io",
+    "chainId": 97,
+    "explorer": "https://testnet.bscscan.com",
+    "color": "#CC9B00",
+    "storage": "0x91a0DCC7a78Da02244212D36eAFd9E0dBB3174B4",
+    "multicall": "0xAEd1D4cD398a21d8AdAf0203C1acb864D3553C50",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "BNB",
+      "symbol": "BNB"
+    },
+    "wrappedToken": {
+      "address": "0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd",
+      "name": "Wrapped BNB",
+      "symbol": "WBNB"
+    }
   }
 }

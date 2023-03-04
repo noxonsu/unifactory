@@ -1,6 +1,7 @@
 import { createReducer, nanoid } from '@reduxjs/toolkit'
 import { TokenList } from '@uniswap/token-lists/dist/types'
 import { SUPPORTED_NETWORKS } from '../../connectors'
+import { Addition } from '../../constants/onout'
 import {
   setAppManagement,
   retrieveDomainData,
@@ -55,6 +56,7 @@ export type StorageState = {
   addressesOfTokenLists: string[]
   disableSourceCopyright: boolean
   defaultSwapCurrency: { input: string; output: string }
+  additions: Partial<Record<Addition, string>>
 }
 
 export type ApplicationState = StorageState & {
@@ -97,6 +99,7 @@ const initialState: ApplicationState = {
   socialLinks: [],
   addressesOfTokenLists: [],
   defaultSwapCurrency: { input: '', output: '' },
+  additions: {},
   // --------------------------
   appManagement: false,
   blockNumber: {},

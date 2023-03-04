@@ -20,6 +20,7 @@ import ConfirmationModal from 'components/ConfirmationModal'
 import Wallet from './Wallet'
 import SwapContracts from './SwapContracts'
 import Interface from './Interface'
+import Upgrade from './Upgrade'
 import Migration from './Migration'
 
 export const PartitionWrapper = styled.div<{ highlighted?: boolean }>`
@@ -67,17 +68,32 @@ const BackButton = styled(CleanButton)`
 `
 
 const NetworkInfo = styled.div`
+  margin: 6px 0;
+  padding: 0 8px;
+  border-radius: 0.5rem;
+  background-color: ${({ theme }) => theme.bg2};
+
   .row {
-    margin: 0.6rem 0;
     display: flex;
+    padding: 4px 0;
+    margin: 4px 0;
     justify-content: space-between;
+
+    :not(:last-child) {
+      border-bottom: 1px solid ${({ theme }) => theme.bg3};
+    }
+  }
+
+  strong {
+    font-weight: 600;
   }
 `
 
 const Tabs = styled.div`
   display: flex;
-  flex-wrap: wrap;
   border-radius: 0.5rem;
+  overflow-x: auto;
+  white-space: nowrap;
   border: 1px solid ${({ theme }) => theme.bg3};
 `
 
@@ -85,11 +101,11 @@ const Tab = styled.button<{ active?: boolean }>`
   flex: 1;
   cursor: pointer;
   padding: 0.4rem 0.7rem;
-  //margin: 0.1rem 0 0.4rem;
   font-size: 1em;
   border: none;
   background-color: ${({ theme, active }) => (active ? theme.bg2 : 'transparent')};
   color: ${({ theme }) => theme.text1};
+  transition: 120ms;
 
   :first-child {
     border-top-left-radius: inherit;
@@ -100,13 +116,21 @@ const Tab = styled.button<{ active?: boolean }>`
     border-top-right-radius: inherit;
     border-bottom-right-radius: inherit;
   }
+
+  :hover {
+    opacity: 0.5;
+  }
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    padding: 0.6rem 0.8rem;
+  `}
 `
 
 const Content = styled.div`
   border-radius: 1rem;
 `
 
-const Error = styled.span`
+const StyledError = styled.span`
   display: inline-block;
   width: 100%;
   margin: 0.6rem 0 0.2rem;
@@ -119,6 +143,7 @@ const Error = styled.span`
 
 const DangerZone = styled.div`
   margin-top: 1rem;
+  opacity: 0.7;
 `
 
 interface ComponentProps {
@@ -183,16 +208,17 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
     const tabs = [
       { tabKey: 'contracts', tabName: 'swapContracts' },
       { tabKey: 'interface', tabName: 'interface' },
+      { tabKey: 'upgrade', tabName: 'upgrade' },
     ]
 
     if (chainId === STORAGE_NETWORK_ID) {
       tabs.push({ tabKey: 'migration', tabName: 'migration' })
     }
 
-    return tabs.map((info, index) => {
+    return tabs.map(({ tabKey, tabName }, index) => {
       return (
-        <Tab key={index} active={tab === info.tabKey} onClick={() => setTab(info.tabKey)}>
-          {t(info.tabName)}
+        <Tab key={index} active={tab === tabKey} onClick={() => setTab(tabKey)}>
+          {t(tabName)}
         </Tab>
       )
     })
@@ -227,22 +253,21 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
 
       {account && (
         <NetworkInfo>
-          <div className="row">
-            {/* @ts-ignore */}
+          <strong className="row">
             {t('storageNetwork')}: <span>{STORAGE_NETWORK_NAME}</span>
-          </div>
+          </strong>
           <div className="row">
             {accountPrefix ? `${accountPrefix}: ` : ' '}
-            <span className="monospace">{shortenAddress(account)}</span>
+            <span>{shortenAddress(account)}</span>
           </div>
         </NetworkInfo>
       )}
 
       {error && (
-        <Error>
-          {error?.code && error.code + ': '}
+        <StyledError>
+          {error?.code && `${error.code}: `}
           {error?.message}
-        </Error>
+        </StyledError>
       )}
 
       <Tabs>{returnTabs()}</Tabs>
@@ -266,6 +291,7 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
             setError={setError}
           />
         )}
+        {tab === 'upgrade' && <Upgrade />}
         {tab === 'migration' && <Migration />}
       </Content>
 

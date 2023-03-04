@@ -10,7 +10,7 @@ export const getCurrentDomain = (): string => {
   return window.location.hostname || document.location.host || ''
 }
 
-const validArray = (arr: any[]) => Array.isArray(arr) && !!arr.length
+const validArray = (arr: unknown[]) => Array.isArray(arr) && !!arr.length
 
 const defaultSettings = (): StorageState => ({
   admin: '',
@@ -42,6 +42,7 @@ const defaultSettings = (): StorageState => ({
   addressesOfTokenLists: [],
   disableSourceCopyright: false,
   defaultSwapCurrency: { input: '', output: '' },
+  additions: {},
 })
 
 const parseSettings = (settings: string, chainId: number): StorageState => {
@@ -83,6 +84,7 @@ const parseSettings = (settings: string, chainId: number): StorageState => {
       addressesOfTokenLists,
       disableSourceCopyright,
       defaultSwapCurrency,
+      additions,
     } = parsedSettings
 
     appSettings.contracts = contracts
@@ -108,7 +110,7 @@ const parseSettings = (settings: string, chainId: number): StorageState => {
     if (backgroundUrl) appSettings.background = backgroundUrl
     if (logoUrl) appSettings.logo = logoUrl
     if (faviconUrl) appSettings.favicon = faviconUrl
-    if (Boolean(disableSourceCopyright)) appSettings.disableSourceCopyright = disableSourceCopyright
+    if (disableSourceCopyright) appSettings.disableSourceCopyright = disableSourceCopyright
 
     if (validArray(navigationLinks)) appSettings.navigationLinks = navigationLinks
     if (validArray(menuLinks)) appSettings.menuLinks = menuLinks
@@ -129,6 +131,8 @@ const parseSettings = (settings: string, chainId: number): StorageState => {
       if (input) appSettings.defaultSwapCurrency.input = input
       if (output) appSettings.defaultSwapCurrency.output = output
     }
+
+    if (additions) appSettings.additions = additions
   } catch (error) {
     console.group('%c Storage settings', 'color: red')
     console.error(error)
@@ -141,7 +145,7 @@ const parseSettings = (settings: string, chainId: number): StorageState => {
 
 export const fetchDomainData = async (
   chainId: undefined | number,
-  library: any,
+  library: unknown,
   storage: any,
   trigger?: boolean
 ): Promise<StorageState | null> => {

@@ -108,7 +108,7 @@ export default function App() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    setGreetingScreenIsActive(!domainData || !domainData?.admin)
+    setGreetingScreenIsActive(!domainData?.admin)
 
     // Set favicon
     const faviconUrl = localStorage.getItem('faviconUrl')
@@ -181,7 +181,7 @@ export default function App() {
     <Suspense fallback={null}>
       <HelmetProvider>
         <Helmet>
-          <title>{!!DOMAIN_TITLES[domain] ? DOMAIN_TITLES[domain] : projectName || document.title}</title>
+          <title>{DOMAIN_TITLES[domain] ? DOMAIN_TITLES[domain] : projectName || document.title}</title>
         </Helmet>
 
         <Route component={DarkModeQueryParamReader} />
@@ -194,7 +194,7 @@ export default function App() {
             </LoaderWrapper>
           ) : appIsReady && isAvailableNetwork ? (
             <>
-              {appManagement ? (
+              {true || appManagement ? (
                 <BodyWrapper>
                   <Panel setDomainDataTrigger={setDomainDataTrigger} />
                 </BodyWrapper>

@@ -51,13 +51,13 @@ const deployContract = async (params: any) => {
 }
 
 export const deployFactory = async (params: any) => {
-  const { library, onHash, admin, devFeeAdmin } = params
+  const { library, onHash, admin, originFeeAdmin, originFeeAddress } = params
   const { abi, bytecode } = Factory
 
   return deployContract({
     abi,
     byteCode: bytecode,
-    deployArguments: [admin, devFeeAdmin],
+    deployArguments: [admin, originFeeAdmin, originFeeAddress],
     library,
     onHash,
   })
@@ -81,19 +81,31 @@ export const deploySwapContracts = async (params: {
   chainId: number
   library: Web3Provider
   wrappedToken: string
-  devFeeAdmin: string
+  originFeeAdmin: string
+  originFeeAddress: string
   onFactoryHash?: (hash: string) => void
   onRouterHash?: (hash: string) => void
   onSuccessfulDeploy?: (params: { chainId: number; factory: string; router: string }) => void
 }) => {
-  const { admin, chainId, library, wrappedToken, devFeeAdmin, onFactoryHash, onRouterHash, onSuccessfulDeploy } = params
+  const {
+    admin,
+    chainId,
+    library,
+    wrappedToken,
+    originFeeAdmin,
+    originFeeAddress,
+    onFactoryHash,
+    onRouterHash,
+    onSuccessfulDeploy,
+  } = params
 
   try {
     const factory = await deployFactory({
       onHash: onFactoryHash,
       library,
       admin,
-      devFeeAdmin,
+      originFeeAdmin,
+      originFeeAddress,
     })
 
     if (factory) {

@@ -134,7 +134,7 @@ export const saveAppData = async (params: {
 
     const newData = updateData(JSON.parse(info || '{}'), data)
 
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
       storage.methods
         .setKeyData(getCurrentDomain(), {
           owner,

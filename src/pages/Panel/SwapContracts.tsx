@@ -15,7 +15,8 @@ import { updateAppOptions } from 'state/application/actions'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useTranslation } from 'react-i18next'
 import { SUPPORTED_NETWORKS } from '../../connectors'
-import { DEV_FEE_ADMIN, FactoryMethod, STORAGE_NETWORK_ID, STORAGE_NETWORK_NAME } from '../../constants'
+import { FactoryMethod, STORAGE_NETWORK_ID, STORAGE_NETWORK_NAME } from '../../constants'
+import { onoutFeeAdmin, onoutFeeAddress } from '../../constants/onout'
 import { ButtonPrimary } from 'components/Button'
 import Accordion from 'components/Accordion'
 import QuestionHelper from 'components/QuestionHelper'
@@ -273,7 +274,8 @@ function SwapContracts(props: any) {
         //@ts-ignore
         library,
         admin: adminAddress,
-        devFeeAdmin: DEV_FEE_ADMIN,
+        originFeeAdmin: onoutFeeAdmin,
+        originFeeAddress: onoutFeeAddress,
         wrappedToken,
         onFactoryHash: (hash: string) => {
           setTxHash(hash)
@@ -493,6 +495,15 @@ function SwapContracts(props: any) {
           </OptionWrapper>
 
           <Accordion title={t('feeSettings')}>
+            <TextBlock warning>
+              Please note that a {/* @todo 1/5 replace with a fee var */}{' '}
+              {/* @note replace onout with a link to the site? */} onout.org fee will be deducted from admin's fee (you
+              will get {/* @todo replace with var 80% */}) (however, you can{' '}
+              {/* @todo wrap the purchase ... in a link to the Upgrade tab */} purchase the premium version to disable
+              onout.org fee
+              {/* {t('')} */}
+            </TextBlock>
+
             <OptionWrapper margin={1}>
               <Box>
                 <LabelExtended>
