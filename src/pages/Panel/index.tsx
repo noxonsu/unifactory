@@ -1,27 +1,25 @@
 import React, { useEffect, useState } from 'react'
 import { useActiveWeb3React } from 'hooks'
 import styled from 'styled-components'
+import { useTranslation } from 'react-i18next'
 import { MdArrowBack } from 'react-icons/md'
 import { shortenAddress } from 'utils'
 import { getCurrentDomain } from 'utils/app'
-import { Text } from 'rebass'
 import networks from 'networks.json'
 import { useDispatch, useSelector } from 'react-redux'
 import { SUPPORTED_NETWORKS } from 'connectors'
 import { STORAGE_NETWORK_ID, STORAGE_NETWORK_NAME } from '../../constants'
-import { resetAppData } from 'utils/storage'
 import useWordpressInfo from 'hooks/useWordpressInfo'
 import { AppState } from 'state'
-import { useTranslation } from 'react-i18next'
 import { useAppState } from 'state/application/hooks'
 import { setAppManagement } from 'state/application/actions'
-import { CleanButton, ButtonError, ButtonSecondary } from 'components/Button'
-import ConfirmationModal from 'components/ConfirmationModal'
+import { CleanButton } from 'components/Button'
 import Wallet from './Wallet'
 import SwapContracts from './SwapContracts'
 import Interface from './Interface'
 import Upgrade from './Upgrade'
 import Migration from './Migration'
+import Reset from './Reset'
 
 export const PartitionWrapper = styled.div<{ highlighted?: boolean }>`
   margin-top: 1rem;
@@ -141,11 +139,6 @@ const StyledError = styled.span`
   color: ${({ theme }) => theme.red1};
 `
 
-const DangerZone = styled.div`
-  margin-top: 1rem;
-  opacity: 0.7;
-`
-
 interface ComponentProps {
   setDomainDataTrigger: (x: any) => void
 }
@@ -154,7 +147,7 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
   const { t } = useTranslation()
   const dispatch = useDispatch()
   const [pending, setPending] = useState<boolean>(false)
-  const { chainId, account, library } = useActiveWeb3React()
+  const { chainId, account } = useActiveWeb3React()
   const { admin } = useAppState()
   const wordpressData = useWordpressInfo()
   const [error, setError] = useState<any | false>(false)
@@ -191,18 +184,9 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
   }
 
   const [tab, setTab] = useState('contracts')
-  const [showConfirm, setShowConfirm] = useState<boolean>(false)
 
   //@ts-ignore
   const accountPrefix = networks[chainId]?.name || t('account')
-
-  const resetData = async () => {
-    setShowConfirm(false)
-
-    await resetAppData({ library, owner: account || '' })
-
-    setDomainDataTrigger((state: boolean) => !state)
-  }
 
   const returnTabs = () => {
     const tabs = [
@@ -214,10 +198,13 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
     if (chainId === STORAGE_NETWORK_ID) {
       tabs.push({ tabKey: 'migration', tabName: 'migration' })
     }
+    if (admin?.toLowerCase() === account?.toLowerCase() && chainId === STORAGE_NETWORK_ID) {
+      tabs.push({ tabKey: 'reset', tabName: 'reset' })
+    }
 
-    return tabs.map(({ tabKey, tabName }, index) => {
+    return tabs.map(({ tabKey, tabName }, i) => {
       return (
-        <Tab key={index} active={tab === tabKey} onClick={() => setTab(tabKey)}>
+        <Tab key={i} active={tab === tabKey} onClick={() => setTab(tabKey)}>
           {t(tabName)}
         </Tab>
       )
@@ -226,22 +213,6 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
 
   return (
     <Wrapper>
-      <ConfirmationModal
-        isOpen={showConfirm}
-        onDismiss={() => setShowConfirm(false)}
-        content={() => (
-          <>
-            <Text fontWeight={500} fontSize={20}>
-              {t('resetDomainDescription')}
-            </Text>
-            <ButtonError error padding={'12px'} onClick={resetData}>
-              <Text fontSize={20} fontWeight={500} id="reset">
-                {t('resetDomainData')}
-              </Text>
-            </ButtonError>
-          </>
-        )}
-      />
       <HeaderButtons>
         {appManagement && (
           <BackButton onClick={backToApp}>
@@ -293,15 +264,8 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
         )}
         {tab === 'upgrade' && <Upgrade />}
         {tab === 'migration' && <Migration />}
+        {tab === 'reset' && <Reset setDomainDataTrigger={setDomainDataTrigger} />}
       </Content>
-
-      {Boolean(admin?.toLowerCase() === account?.toLowerCase() && chainId === STORAGE_NETWORK_ID) && (
-        <>
-          <DangerZone>
-            <ButtonSecondary onClick={() => setShowConfirm(true)}>{t('resetDomainData')}</ButtonSecondary>
-          </DangerZone>
-        </>
-      )}
     </Wrapper>
   )
 }

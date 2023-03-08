@@ -126,7 +126,7 @@ const setValidValue = ({
   maxDecimals,
 }: {
   v: string
-  set: (v: any) => void
+  set: (v: string) => void
   min: number
   max: number
   maxDecimals: number
@@ -424,7 +424,7 @@ function SwapContracts(props: any) {
         }
       />
       <PartitionWrapper highlighted>
-        <Accordion title={t('deployment')} openByDefault={!stateFactory || !stateRouter} minimalStyles contentPadding>
+        <Accordion title={t('deployment')} openByDefault={!(stateFactory && stateRouter)} minimalStyles contentPadding>
           {stateFactory && stateRouter ? (
             <TextBlock warning>{t('youAlreadyHaveSwapContractsWarning')}</TextBlock>
           ) : (
