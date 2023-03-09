@@ -256,7 +256,7 @@ export function TokenList(props: {
       <div key={newTokenAddress}>
         <InputPanel label={`${t('tokenAddress')} *`} value={newTokenAddress} onChange={setNewTokenAddress} />
         <InputPanel label={t('tokenLogo')} value={newTokenLogo} onChange={setNewTokenLogo} />
-        <Button onClick={addNewToken} disabled={!tokenAddressIsCorrect || !tokenListChainId}>
+        <Button onClick={addNewToken} disabled={!(tokenAddressIsCorrect && tokenListChainId)}>
           {chainId !== STORAGE_NETWORK_ID ? (
             t('switchToNetwork', { network: STORAGE_NETWORK_NAME })
           ) : !tokenListChainId ? (

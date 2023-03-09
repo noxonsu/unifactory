@@ -79,7 +79,7 @@ type Props = {
   description?: string
   cryptoCost?: number
   assetName: string
-  usdCost: number
+  usdCost?: number
   isPurchased: boolean
   onPayment: () => void
 }

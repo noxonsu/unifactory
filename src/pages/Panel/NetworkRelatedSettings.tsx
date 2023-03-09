@@ -22,7 +22,11 @@ const Label = styled.label`
   }
 `
 
-const Input = styled.input``
+const Input = styled.input`
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+`
 
 export default function NetworkRelatedSettings(props: any) {
   const { onInputCurrency, onOutputCurrency } = props
@@ -43,7 +47,7 @@ export default function NetworkRelatedSettings(props: any) {
   return (
     <>
       <Accordion title={t('swapFormDefaultCurrency')}>
-        <TextBlock warning>{t('itWillNotWorkIfYouPasteWrongAddress')}</TextBlock>
+        <TextBlock type="warning">{t('itWillNotWorkIfYouPasteWrongAddress')}</TextBlock>
 
         <OptionWrapper>
           <InputRow>

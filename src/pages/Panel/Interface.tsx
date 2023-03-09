@@ -447,7 +447,9 @@ export default function Interface(props: any) {
             onChange={setNewListId}
           />
 
-          {newListChainId && newListId && !isUniqueNewList && <TextBlock warning>{t('youHaveSuchList')}</TextBlock>}
+          {newListChainId && newListId && !isUniqueNewList && (
+            <TextBlock type="warning">{t('youHaveSuchList')}</TextBlock>
+          )}
 
           <Button disabled={!canCreateNewList} onClick={createNewTokenList}>
             {t('createNewTokenList')}

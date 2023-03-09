@@ -426,7 +426,7 @@ function SwapContracts(props: any) {
       <PartitionWrapper highlighted>
         <Accordion title={t('deployment')} openByDefault={!(stateFactory && stateRouter)} minimalStyles contentPadding>
           {stateFactory && stateRouter ? (
-            <TextBlock warning>{t('youAlreadyHaveSwapContractsWarning')}</TextBlock>
+            <TextBlock type="warning">{t('youAlreadyHaveSwapContractsWarning')}</TextBlock>
           ) : (
             <></>
           )}
@@ -447,7 +447,7 @@ function SwapContracts(props: any) {
       </PartitionWrapper>
 
       <PartitionWrapper>
-        <TextBlock positive>{t('instructionToSaveContractsFromDifferentNetwork')}</TextBlock>
+        <TextBlock type="positive">{t('instructionToSaveContractsFromDifferentNetwork')}</TextBlock>
         <InputWrapper>
           <InputPanel
             label={`${t('contractsNetwork')} *`}
@@ -495,7 +495,7 @@ function SwapContracts(props: any) {
           </OptionWrapper>
 
           <Accordion title={t('feeSettings')}>
-            <TextBlock warning>
+            <TextBlock type="notice">
               Please note that a {/* @todo 1/5 replace with a fee var */}{' '}
               {/* @note replace onout with a link to the site? */} onout.org fee will be deducted from admin's fee (you
               will get {/* @todo replace with var 80% */}) (however, you can{' '}
@@ -553,7 +553,7 @@ function SwapContracts(props: any) {
             </OptionWrapper>
 
             {!feeRecipient ? (
-              <TextBlock warning>{t('noPointToChangeAdminFeeWithoutFeeRecipient')}</TextBlock>
+              <TextBlock type="warning">{t('noPointToChangeAdminFeeWithoutFeeRecipient')}</TextBlock>
             ) : (
               <span />
             )}

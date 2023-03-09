@@ -48,15 +48,18 @@ export function colors(darkMode: boolean) {
     primaryText1: darkMode ? '#fff' : '#000',
 
     red1: '#FD4040',
+    red1Soft: '#FD404070',
     red2: '#F82D3A',
     red3: '#D60000',
     green1: '#27AE60',
+    green1Soft: '#27ae5f57',
     green2: '#27ae5f54',
     yellow1: '#ff9c0840',
     yellow2: '#FFE270',
     yellow3: '#F3841E',
     blue1: '#3B6A9C',
     blue2: '#2568af',
+    blue2Soft: '#2568af55',
     white1: '#ffffff',
   }
 }

@@ -57,7 +57,7 @@ export default function Migration() {
           error={!!newDomain && !isValidDomain}
         />
       </OptionWrapper>
-      <TextBlock warning>{t('afterMigrationYourDataWillBeDeleted')}</TextBlock>
+      <TextBlock type="warning">{t('afterMigrationYourDataWillBeDeleted')}</TextBlock>
       <ButtonPrimary onClick={startMigration} disabled={!canStartMigration}>
         {t('migrateToNewDomain')}
       </ButtonPrimary>
