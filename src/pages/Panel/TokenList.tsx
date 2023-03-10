@@ -52,7 +52,7 @@ export function TokenList(props: {
   activeWeb3React: any
   isNewList: boolean
   pending: boolean
-  setPending: (x: any) => void
+  setPending: (v: boolean) => void
   listChainId: string
   listId: string
   list: {
@@ -133,7 +133,9 @@ export function TokenList(props: {
   }
 
   const removeToken = (address: string) => {
-    const updatedList = tokens.filter((item: any) => item.address.toLowerCase() !== address.toLowerCase())
+    const updatedList = tokens.filter(
+      (item: { address: string }) => item.address.toLowerCase() !== address.toLowerCase()
+    )
 
     setTokens(updatedList)
   }

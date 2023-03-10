@@ -3,7 +3,7 @@ import { originUrl } from '../../constants/onout'
 const MAX_PERCENT = 100
 const USD_TICKET = 'USD'
 
-const getOriginPrice = async ({
+const fetchCryptoPrice = async ({
   symbol,
   fiatTicket = USD_TICKET,
 }: {
@@ -22,8 +22,8 @@ const getOriginPrice = async ({
   }
 }
 
-const fetchCryptoPrice = (): void => {
-  return
+const calculateCryptoAmount = ({ fiatAmount, cryptoPrice }: { fiatAmount: number; cryptoPrice: number }) => {
+  return fiatAmount / (cryptoPrice / MAX_PERCENT) / MAX_PERCENT
 }
 
 const fetchPriceInCrypto = async ({
@@ -35,17 +35,17 @@ const fetchPriceInCrypto = async ({
   symbol: string
   fiatTicket?: string
 }): Promise<number | void> => {
-  const cryptoPrice = await getOriginPrice({ symbol, fiatTicket })
+  const cryptoPrice = await fetchCryptoPrice({ symbol, fiatTicket })
 
-  if (cryptoPrice) {
-    const onePercentPrice = cryptoPrice / MAX_PERCENT
-    const amountPercentageOfTotal = fiatAmount / onePercentPrice
-
-    return amountPercentageOfTotal / MAX_PERCENT
-  }
+  if (cryptoPrice)
+    return calculateCryptoAmount({
+      fiatAmount,
+      cryptoPrice,
+    })
 }
 
 export default {
   fetchCryptoPrice,
   fetchPriceInCrypto,
+  calculateCryptoAmount,
 }

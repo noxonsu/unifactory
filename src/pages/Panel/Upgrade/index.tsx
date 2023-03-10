@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useState } from 'react'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { UnsupportedChainIdError } from '@web3-react/core'
 import { InjectedConnector } from '@web3-react/injected-connector'
@@ -7,12 +7,13 @@ import { useTranslation } from 'react-i18next'
 import { useActiveWeb3React } from 'hooks'
 import { useAppState } from 'state/application/hooks'
 import { useTransactionAdder } from 'state/transactions/hooks'
-import { SUPPORTED_WALLETS } from '../../../constants'
-import { Addition, paidAdditions, requiredPaymentNetworkId } from '../../../constants/onout'
+import { SUPPORTED_WALLETS, THIRTY_SECONDS_IN_MS } from '../../../constants'
+import { Addition, AdditionName, paidAdditions, requiredPaymentNetworkId } from '../../../constants/onout'
 import { switchInjectedNetwork } from 'utils/wallet'
 import crypto from 'utils/crypto'
 import onout from 'shared/services/onout'
-// import price from 'shared/services/price'
+import cache from 'utils/cache'
+import price from 'shared/services/price'
 import TextBlock from 'components/TextBlock'
 import { ButtonPrimary } from 'components/Button'
 import AdditionBlock from './AdditionBlock'
@@ -59,6 +60,52 @@ const Upgrade: FC = () => {
   const { account, library, chainId, activate } = useActiveWeb3React()
   const { additions } = useAppState()
   const addTransaction = useTransactionAdder()
+
+  const [paymentCryptoPrice, setPaymentCryptoPrice] = useState<number | undefined>()
+
+  useEffect(() => {
+    const priceItem = cache.get<number>('cryptoPrice', String(requiredPaymentNetworkId))
+    const now = Date.now()
+
+    if (priceItem?.value && priceItem?.deadline && priceItem.deadline > now) {
+      setPaymentCryptoPrice(priceItem.value)
+    } else {
+      const fetch = async () => {
+        const cryptoPrice = await price.fetchCryptoPrice({
+          symbol: requiredPaymentNetwork.baseCurrency.symbol,
+        })
+
+        if (cryptoPrice) {
+          cache.add({
+            area: 'cryptoPrice',
+            key: String(requiredPaymentNetworkId),
+            value: cryptoPrice,
+            deadline: now + THIRTY_SECONDS_IN_MS,
+          })
+          setPaymentCryptoPrice(cryptoPrice)
+        }
+      }
+
+      fetch()
+    }
+  }, [])
+
+  const cryptoPrices = useMemo(() => {
+    const prices = {} as Record<AdditionName, number | undefined>
+
+    if (typeof paymentCryptoPrice === 'number') {
+      Object.keys(paidAdditions).forEach((k) => {
+        const { usdCost } = paidAdditions[k as AdditionName]
+
+        prices[k as AdditionName] = price.calculateCryptoAmount({
+          fiatAmount: usdCost,
+          cryptoPrice: paymentCryptoPrice,
+        })
+      })
+    }
+
+    return prices
+  }, [paymentCryptoPrice])
 
   // @todo move this check in the loading data step
   const verifiedAdds = useMemo((): Record<Addition, boolean> => {
@@ -120,7 +167,7 @@ const Upgrade: FC = () => {
       onout.payment({
         library,
         from: account,
-        cryptoAmount: '0.001',
+        cryptoAmount: String(cryptoPrices.switchCopyright),
         onHash: onTxHash,
       })
     }
@@ -131,7 +178,7 @@ const Upgrade: FC = () => {
       onout.payment({
         library,
         from: account,
-        cryptoAmount: '0.001',
+        cryptoAmount: String(cryptoPrices.premiumVersion),
         onHash: onTxHash,
       })
     }
@@ -155,17 +202,18 @@ const Upgrade: FC = () => {
         <AdditionBlock
           name={t('switchOnoutCopyright')}
           description={t('youCanTurnOffOnoutCopyright')}
+          assetName={requiredPaymentNetwork.baseCurrency.symbol}
           usdCost={paidAdditions.switchCopyright.usdCost}
-          assetName="BNB"
+          cryptoCost={cryptoPrices.switchCopyright}
           isPurchased={verifiedAdds[Addition.switchCopyright]}
           onPayment={buyCopyrightSwitching}
         />
         <AdditionBlock
           name={t('premiumVersion')}
           description={t('youWillBeAbleToTurnOffOnoutFeeAndCopyright')}
-          cryptoCost={2}
-          assetName="BNB"
+          assetName={requiredPaymentNetwork.baseCurrency.symbol}
           usdCost={paidAdditions.premiumVersion.usdCost}
+          cryptoCost={cryptoPrices.premiumVersion}
           isPurchased={verifiedAdds[Addition.premiumVersion]}
           onPayment={buyPremiumVersion}
         />

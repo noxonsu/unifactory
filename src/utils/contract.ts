@@ -5,7 +5,8 @@ import { ethers } from 'ethers'
 import TokenAbi from 'human-standard-token-abi'
 import Factory from 'contracts/build/Factory.json'
 import RouterV2 from 'contracts/build/RouterV2.json'
-import { cache, addValue } from './cache'
+import { ONE_HOUR_IN_MS } from '../constants'
+import cache from './cache'
 import { getWeb3Library } from './getLibrary'
 import networks from 'networks.json'
 
@@ -171,8 +172,11 @@ export const isValidAddress = (address: string) => {
 }
 
 export const isContract = async (provider: any, address: string) => {
-  if (cache.isContract && cache.isContract[address]) {
-    return cache.isContract[address]
+  const contractItem = cache.get('isContract', address)
+  const now = Date.now()
+
+  if (contractItem?.value && contractItem?.deadline && contractItem.deadline > now) {
+    return contractItem?.value
   }
 
   if (!isValidAddressFormat(address)) return false
@@ -180,11 +184,20 @@ export const isContract = async (provider: any, address: string) => {
   const codeAtAddress = await provider.getCode(address)
   const codeIsEmpty = !codeAtAddress || codeAtAddress === '0x' || codeAtAddress === '0x0'
 
-  if (!cache.isContract) cache.isContract = {}
-
-  addValue('isContract', address, !codeIsEmpty)
+  cache.add({
+    area: 'isContract',
+    key: address,
+    value: !codeIsEmpty,
+    deadline: now + ONE_HOUR_IN_MS,
+  })
 
   return !codeIsEmpty
+}
+
+interface TokenInfo {
+  name: string
+  symbol: string
+  decimals: number
 }
 
 export const returnTokenInfo = async (chainId: string, address: string) => {
@@ -196,19 +209,24 @@ export const returnTokenInfo = async (chainId: string, address: string) => {
   const result = await isContract(provider, address)
 
   if (result) {
-    if (cache.tokenInfo && cache.tokenInfo[address]) {
-      return cache.tokenInfo[address]
-    }
+    const tokenItem = cache.get<TokenInfo>('tokenInfo', address)
+
+    if (tokenItem?.value) return tokenItem.value
+
     //@ts-ignore
     const contract = new Contract(address, TokenAbi, provider)
     const name = await contract.name()
     const symbol = await contract.symbol()
     const decimals = await contract.decimals()
 
-    addValue('tokenInfo', address, {
-      name,
-      symbol,
-      decimals,
+    cache.add<TokenInfo>({
+      area: 'tokenInfo',
+      key: address,
+      value: {
+        name,
+        symbol,
+        decimals,
+      },
     })
 
     return {

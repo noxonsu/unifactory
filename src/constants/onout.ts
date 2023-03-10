@@ -13,16 +13,16 @@ export enum Addition {
 
 export interface PaidAddition {
   id: Addition
-  cryptoCost?: number
-  usdCost?: number
+  usdCost: number
 }
 
+export type AdditionName = 'switchCopyright' | 'premiumVersion'
+
 export const paidAdditions: {
-  [name: string]: PaidAddition
+  [name in AdditionName]: PaidAddition
 } = {
   switchCopyright: {
     id: Addition.switchCopyright,
-    // cryptoCost: 0.1,
     usdCost: 30,
   },
   premiumVersion: {
