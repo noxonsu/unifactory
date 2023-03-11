@@ -1,7 +1,9 @@
 import axios from 'axios'
+import { ethers } from 'ethers'
 import { Web3Provider } from '@ethersproject/providers'
-import { originUrl, onoutFeeAddress } from '../../constants/onout'
-import { getCurrentDomain } from '../../utils/app'
+import { Addition, originUrl, onoutFeeAddress } from '../../constants/onout'
+import { getCurrentDomain } from 'utils/app'
+import crypto from 'utils/crypto'
 
 export enum FeedbackStatus {
   danger = 1,
@@ -41,8 +43,10 @@ type TxProps = {
   from: string
   to?: string
   cryptoAmount: string
-  onHash?: (h: string) => void
+  onComplete?: (args: { hash: string; isSuccess: boolean }) => void
 }
+
+const SUCCESSFUL_TX_STATUS = 1
 
 const sendTx = async ({
   library,
@@ -51,17 +55,23 @@ const sendTx = async ({
   cryptoAmount,
 }: TxProps): Promise<{
   hash: string
+  isSuccess: boolean
 }> => {
   try {
     const signer = library.getSigner()
-    const signedTx = await signer.signTransaction({
+    const txWithoutGasLimit = {
       to,
       from,
-      value: cryptoAmount,
-    })
-    const hash = await library.sendTransaction(signedTx).then((res) => res.hash)
+      value: ethers.utils.parseEther(cryptoAmount),
+    }
+    const percentToAddToGasLimit = 5
+    const gasLimit = (await signer.estimateGas(txWithoutGasLimit)).mul(100 + percentToAddToGasLimit).div(100)
+    const tx = { ...txWithoutGasLimit, gasLimit }
+    const res = await signer.sendTransaction(tx)
 
-    return { hash }
+    const txReceipt = await res.wait()
+
+    return { hash: res.hash, isSuccess: txReceipt.status === SUCCESSFUL_TX_STATUS }
   } catch (error) {
     console.group('%c sendTx', 'color: red;')
     console.error(error)
@@ -70,19 +80,33 @@ const sendTx = async ({
   }
 }
 
-const payment = async ({ library, from, cryptoAmount, onHash }: TxProps): Promise<void> => {
+const payment = async ({
+  forWhat,
+  library,
+  from,
+  cryptoAmount,
+  onComplete,
+}: TxProps & { forWhat: string }): Promise<void> => {
   try {
-    const { hash } = await sendTx({ library, from, to: onoutFeeAddress, cryptoAmount })
+    const result = await sendTx({ library, from, to: onoutFeeAddress, cryptoAmount })
 
-    if (onHash) onHash(hash)
+    if (onComplete) onComplete(result)
 
-    feedback({ msg: 'Payment', status: FeedbackStatus.payment })
+    feedback({
+      msg: `Payment (${forWhat}); Success (${result.isSuccess}); TX: ${result.hash};`,
+      status: FeedbackStatus.payment,
+    })
   } catch (error) {
     console.error(error)
   }
 }
 
+const generateAdditionKey = ({ addition, account }: { addition: Addition; account: string }) => {
+  return crypto.generateMd5Hash(`${addition}-${account}`)
+}
+
 export default {
   feedback,
   payment,
+  generateAdditionKey,
 }

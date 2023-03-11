@@ -1,5 +1,6 @@
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
+import { useWeb3React } from '@web3-react/core'
 import { UnsupportedChainIdError } from '@web3-react/core'
 import { InjectedConnector } from '@web3-react/injected-connector'
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
@@ -10,7 +11,6 @@ import { useTransactionAdder } from 'state/transactions/hooks'
 import { SUPPORTED_WALLETS, THIRTY_SECONDS_IN_MS } from '../../../constants'
 import { Addition, AdditionName, paidAdditions, requiredPaymentNetworkId } from '../../../constants/onout'
 import { switchInjectedNetwork } from 'utils/wallet'
-import crypto from 'utils/crypto'
 import onout from 'shared/services/onout'
 import cache from 'utils/cache'
 import price from 'shared/services/price'
@@ -57,7 +57,8 @@ const requiredPaymentNetwork = networks[requiredPaymentNetworkId]
 
 const Upgrade: FC = () => {
   const { t } = useTranslation()
-  const { account, library, chainId, activate } = useActiveWeb3React()
+  const { library } = useWeb3React()
+  const { account, chainId, activate } = useActiveWeb3React()
   const { additions } = useAppState()
   const addTransaction = useTransactionAdder()
 
@@ -110,12 +111,12 @@ const Upgrade: FC = () => {
   // @todo move this check in the loading data step
   const verifiedAdds = useMemo((): Record<Addition, boolean> => {
     if (Object.keys(additions).length && account) {
-      if (additions[Addition.switchCopyright] === crypto.generateMd5Hash(`${Addition.switchCopyright}-${account}`)) {
-        adds[Addition.switchCopyright] = true
-      }
-      if (additions[Addition.premiumVersion] === crypto.generateMd5Hash(`${Addition.premiumVersion}-${account}`)) {
-        adds[Addition.premiumVersion] = true
-      }
+      adds[Addition.switchCopyright] =
+        additions[Addition.switchCopyright] ===
+        onout.generateAdditionKey({ addition: Addition.switchCopyright, account })
+
+      adds[Addition.premiumVersion] =
+        additions[Addition.premiumVersion] === onout.generateAdditionKey({ addition: Addition.premiumVersion, account })
     }
 
     return adds
@@ -150,25 +151,22 @@ const Upgrade: FC = () => {
     setIsNetworkPending(false)
   }
 
-  const onTxHash = (hash: string) => {
-    console.log(hash)
-
-    addTransaction(
-      { hash },
-      {
-        summary: 'Paid for copyright switching',
-      }
-    )
-    // @todo activation transaction
-  }
-
   const buyCopyrightSwitching = () => {
     if (library && account) {
       onout.payment({
+        forWhat: 'Copyright switching',
         library,
         from: account,
         cryptoAmount: String(cryptoPrices.switchCopyright),
-        onHash: onTxHash,
+        onComplete: ({ hash, isSuccess }) => {
+          addTransaction(
+            { hash },
+            {
+              summary: 'Paid for copyright switching',
+            }
+          )
+          // @todo activation transaction
+        },
       })
     }
   }
@@ -176,10 +174,19 @@ const Upgrade: FC = () => {
   const buyPremiumVersion = () => {
     if (library && account) {
       onout.payment({
+        forWhat: 'Premium version',
         library,
         from: account,
         cryptoAmount: String(cryptoPrices.premiumVersion),
-        onHash: onTxHash,
+        onComplete: ({ hash, isSuccess }) => {
+          addTransaction(
+            { hash },
+            {
+              summary: 'Paid for premium version',
+            }
+          )
+          // @todo activation transaction
+        },
       })
     }
   }
