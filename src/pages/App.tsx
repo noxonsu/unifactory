@@ -194,8 +194,7 @@ export default function App() {
             </LoaderWrapper>
           ) : appIsReady && isAvailableNetwork ? (
             <>
-              {/* @todo fix condition */}
-              {true || appManagement ? (
+              {appManagement ? (
                 <BodyWrapper>
                   <Panel setDomainDataTrigger={setDomainDataTrigger} />
                 </BodyWrapper>

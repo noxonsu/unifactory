@@ -61,6 +61,7 @@ const isEmptyChain = (tokenLists: { [chainId: string]: any }, chainId: string) =
   return !Object.keys(tokenLists[chainId])?.length
 }
 
+// @todo Update data with recursion. Get rid of this mess.
 const updateData = (oldData: Data, newData: Data) => {
   oldData = makeBaseStructure(oldData)
 
@@ -78,17 +79,17 @@ const updateData = (oldData: Data, newData: Data) => {
     }
 
     if (chainId !== oldChainId) {
-      delete tokenLists[oldChainId][oldId]
+      tokenLists[oldChainId][oldId] = undefined
     } else if (id !== oldId) {
-      delete tokenLists[chainId][oldId]
+      tokenLists[chainId][oldId] = undefined
     }
 
     if (isEmptyChain(tokenLists, oldChainId)) {
-      delete tokenLists[oldChainId]
+      tokenLists[oldChainId] = undefined
     }
 
     if (isEmptyChain(tokenLists, chainId)) {
-      delete tokenLists[chainId]
+      tokenLists[chainId] = undefined
     }
 
     result = {
@@ -111,6 +112,10 @@ const updateData = (oldData: Data, newData: Data) => {
         tokenLists: {
           ...oldData[STORAGE_APP_KEY].tokenLists,
           ...newData.tokenLists,
+        },
+        additions: {
+          ...oldData[STORAGE_APP_KEY].additions,
+          ...newData.additions,
         },
       },
     }

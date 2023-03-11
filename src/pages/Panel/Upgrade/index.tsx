@@ -11,8 +11,9 @@ import { useTransactionAdder } from 'state/transactions/hooks'
 import { SUPPORTED_WALLETS, THIRTY_SECONDS_IN_MS } from '../../../constants'
 import { Addition, AdditionName, paidAdditions, requiredPaymentNetworkId } from '../../../constants/onout'
 import { switchInjectedNetwork } from 'utils/wallet'
-import onout from 'shared/services/onout'
 import cache from 'utils/cache'
+import { saveAppData } from 'utils/storage'
+import onout from 'shared/services/onout'
 import price from 'shared/services/price'
 import TextBlock from 'components/TextBlock'
 import { ButtonPrimary } from 'components/Button'
@@ -47,11 +48,6 @@ const Button = styled(ButtonPrimary)`
     background-color: ${({ theme }) => theme.blue2};
   }
 `
-
-const adds = {
-  [Addition.switchCopyright]: false,
-  [Addition.premiumVersion]: false,
-}
 
 const requiredPaymentNetwork = networks[requiredPaymentNetworkId]
 
@@ -108,20 +104,6 @@ const Upgrade: FC = () => {
     return prices
   }, [paymentCryptoPrice])
 
-  // @todo move this check in the loading data step
-  const verifiedAdds = useMemo((): Record<Addition, boolean> => {
-    if (Object.keys(additions).length && account) {
-      adds[Addition.switchCopyright] =
-        additions[Addition.switchCopyright] ===
-        onout.generateAdditionKey({ addition: Addition.switchCopyright, account })
-
-      adds[Addition.premiumVersion] =
-        additions[Addition.premiumVersion] === onout.generateAdditionKey({ addition: Addition.premiumVersion, account })
-    }
-
-    return adds
-  }, [additions, account])
-
   const [isNetworkPending, setIsNetworkPending] = useState(false)
 
   const switchToRequiredPaymentNetwork = async () => {
@@ -151,6 +133,49 @@ const Upgrade: FC = () => {
     setIsNetworkPending(false)
   }
 
+  const saveAdditionKey = async ({
+    hash,
+    isSuccess,
+    summaryName,
+    addition,
+  }: {
+    hash: string
+    isSuccess: boolean
+    summaryName: string
+    addition: Addition
+  }) => {
+    addTransaction(
+      { hash },
+      {
+        summary: `${isSuccess ? 'Successful' : 'Unsuccessful'} paid for ${summaryName}`,
+      }
+    )
+
+    if (isSuccess && account) {
+      // @todo save in local storage
+      const additionKey = onout.generateAdditionKey({ addition, account })
+
+      await saveAppData({
+        //@ts-ignore
+        library,
+        owner: account,
+        data: {
+          additions: {
+            [addition]: additionKey,
+          },
+        },
+        onHash: (hash: string) => {
+          addTransaction(
+            { hash },
+            {
+              summary: 'Addition key was saved',
+            }
+          )
+        },
+      })
+    }
+  }
+
   const buyCopyrightSwitching = () => {
     if (library && account) {
       onout.payment({
@@ -158,15 +183,13 @@ const Upgrade: FC = () => {
         library,
         from: account,
         cryptoAmount: String(cryptoPrices.switchCopyright),
-        onComplete: ({ hash, isSuccess }) => {
-          addTransaction(
-            { hash },
-            {
-              summary: 'Paid for copyright switching',
-            }
-          )
-          // @todo activation transaction
-        },
+        onComplete: async ({ hash, isSuccess }) =>
+          saveAdditionKey({
+            hash,
+            isSuccess,
+            summaryName: 'copyright switching',
+            addition: Addition.switchCopyright,
+          }),
       })
     }
   }
@@ -178,15 +201,13 @@ const Upgrade: FC = () => {
         library,
         from: account,
         cryptoAmount: String(cryptoPrices.premiumVersion),
-        onComplete: ({ hash, isSuccess }) => {
-          addTransaction(
-            { hash },
-            {
-              summary: 'Paid for premium version',
-            }
-          )
-          // @todo activation transaction
-        },
+        onComplete: ({ hash, isSuccess }) =>
+          saveAdditionKey({
+            hash,
+            isSuccess,
+            summaryName: 'premium version',
+            addition: Addition.premiumVersion,
+          }),
       })
     }
   }
@@ -212,7 +233,7 @@ const Upgrade: FC = () => {
           assetName={requiredPaymentNetwork.baseCurrency.symbol}
           usdCost={paidAdditions.switchCopyright.usdCost}
           cryptoCost={cryptoPrices.switchCopyright}
-          isPurchased={verifiedAdds[Addition.switchCopyright]}
+          isPurchased={additions[Addition.switchCopyright]?.isValid}
           onPayment={buyCopyrightSwitching}
         />
         <AdditionBlock
@@ -221,7 +242,7 @@ const Upgrade: FC = () => {
           assetName={requiredPaymentNetwork.baseCurrency.symbol}
           usdCost={paidAdditions.premiumVersion.usdCost}
           cryptoCost={cryptoPrices.premiumVersion}
-          isPurchased={verifiedAdds[Addition.premiumVersion]}
+          isPurchased={additions[Addition.premiumVersion]?.isValid}
           onPayment={buyPremiumVersion}
         />
       </StyledAdditions>

@@ -56,7 +56,15 @@ export type StorageState = {
   addressesOfTokenLists: string[]
   disableSourceCopyright: boolean
   defaultSwapCurrency: { input: string; output: string }
-  additions: Partial<Record<Addition, string>>
+  additions: Partial<
+    Record<
+      Addition,
+      {
+        key: string
+        isValid: boolean
+      }
+    >
+  >
 }
 
 export type ApplicationState = StorageState & {

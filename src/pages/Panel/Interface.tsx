@@ -80,7 +80,6 @@ export default function Interface(props: any) {
     setIsValidBackground(backgroundUrl ? Boolean(validUrl.isUri(backgroundUrl)) : true)
   }, [backgroundUrl])
 
-  // TODO: how to reduce amount of states ?
   const [brandColor, setBrandColor] = useState(stateBrandColor)
   const [brandColorValid, setBrandColorValid] = useState(false)
 

@@ -23,9 +23,9 @@ const marks = {
   [FeedbackStatus.payment]: '💰',
 }
 
-const host = getCurrentDomain()
-
 const feedback = ({ msg, status }: { msg: string; status?: FeedbackStatus }) => {
+  const host = getCurrentDomain()
+
   if (host === 'localhost' || !originUrl) return
 
   const statusMark = status && marks[status] ? `${marks[status]} ` : ''

@@ -4,6 +4,8 @@ import { StorageState } from 'state/application/reducer'
 import { getContractInstance } from 'utils/contract'
 import { isValidColor } from 'utils/color'
 import { filterTokenLists } from 'utils/list'
+import onout from 'shared/services/onout'
+import { Addition } from '../constants/onout'
 import { STORAGE_APP_KEY } from '../constants'
 
 export const getCurrentDomain = (): string => {
@@ -45,7 +47,7 @@ const defaultSettings = (): StorageState => ({
   additions: {},
 })
 
-const parseSettings = (settings: string, chainId: number): StorageState => {
+const parseSettings = (settings: string, chainId: number, owner: string): StorageState => {
   const appSettings = defaultSettings()
 
   try {
@@ -132,11 +134,24 @@ const parseSettings = (settings: string, chainId: number): StorageState => {
       if (output) appSettings.defaultSwapCurrency.output = output
     }
 
-    if (additions) appSettings.additions = additions
+    if (additions) {
+      // Update format of the object from the Storage and check if each addition has a valid key.
+      appSettings.additions = Object.keys(additions).reduce((adds, additionKey) => {
+        return {
+          ...adds,
+          [additionKey]: {
+            key: additions[additionKey],
+            isValid:
+              additions[additionKey] ===
+              onout.generateAdditionKey({ addition: additionKey as unknown as Addition, account: owner }),
+          },
+        }
+      }, {})
+    }
   } catch (error) {
     console.group('%c Storage settings', 'color: red')
-    console.error(error)
     console.log('source settings: ', settings)
+    console.error(error)
     console.groupEnd()
   }
 
@@ -160,7 +175,7 @@ export const fetchDomainData = async (
 
     const { info, owner } = await storage.methods.getData(currentDomain).call()
 
-    const settings = parseSettings(info || '{}', chainId || 0)
+    const settings = parseSettings(info || '{}', chainId || 0, owner)
     const { factory } = settings
 
     fullData = { ...settings, admin: owner === ZERO_ADDRESS ? '' : owner }

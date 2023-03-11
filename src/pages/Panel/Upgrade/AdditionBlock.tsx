@@ -14,7 +14,7 @@ const StyledNumList = styled.ol`
   }
 `
 
-const StyledOption = styled.div<{ isPurchased: boolean }>`
+const StyledOption = styled.div<{ isPurchased?: boolean }>`
   padding: 14px;
   display: flex;
   align-items: flex-start;
@@ -80,7 +80,7 @@ type Props = {
   cryptoCost?: number
   assetName: string
   usdCost?: number
-  isPurchased: boolean
+  isPurchased: boolean | undefined
   onPayment: () => void
 }
 

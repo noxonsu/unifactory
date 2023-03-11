@@ -46,6 +46,7 @@ export default function Migration() {
 
   return (
     <section>
+      <TextBlock type="warning">{t('afterMigrationYourDataWillBeDeleted')}</TextBlock>
       <OptionWrapper>
         <InputPanel label={`${t('oldDomain')}`} value={oldDomain} disabled />
       </OptionWrapper>
@@ -57,7 +58,6 @@ export default function Migration() {
           error={!!newDomain && !isValidDomain}
         />
       </OptionWrapper>
-      <TextBlock type="warning">{t('afterMigrationYourDataWillBeDeleted')}</TextBlock>
       <ButtonPrimary onClick={startMigration} disabled={!canStartMigration}>
         {t('migrateToNewDomain')}
       </ButtonPrimary>
