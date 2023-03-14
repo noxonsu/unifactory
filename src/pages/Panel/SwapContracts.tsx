@@ -521,14 +521,10 @@ function SwapContracts(props: any) {
             ) : (
               <>
                 <TextBlock type="notice">
-                  {/* {t('noticeAboutOnoutFee', {
-                    onoutFeePercent: 20,
-                    adminFeePercent: 80,
-                  })} */}
-                  Please note that a {/* @todo 1/5 replace with a fee var */} onout.org fee will be deducted from
-                  admin's fee (you will get {/* @todo replace with var 80% */}) (however, you can{' '}
-                  {/* @todo wrap the purchase ... in a link to the Upgrade tab */} "purchase the premium version" to
-                  disable onout.org fee
+                  {t('noticeAboutOnoutFee', {
+                    onoutFee: '20%',
+                    adminFee: '80%',
+                  })}
                   <StyledPurchaseButton onClick={() => setTab(PanelTab.upgrade)} width="100%">
                     {t('purchase')}
                   </StyledPurchaseButton>

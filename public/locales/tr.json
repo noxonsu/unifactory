@@ -288,5 +288,16 @@
   "setTheOwner": "Sahibini ayarla",
   "setAddressAsThewnerOfDomain": "Adresinizi bu etki alanının sahibi olarak ayarlayın",
   "onlyThisAddressCanAccessAppSettings": "Uygulama ayarlarına yalnızca bu adres erişebilir ve bunları değiştirebilir",
+  "purchase": "Satın alma",
+  "getAbilityToDisableCopyright": "Devre dışı bırakma seçeneğini edinin Onout telif hakkı",
+  "switchOnoutCopyright": "Anahtarı değiştir Onout telif hakkı",
+  "youCanTurnOffOnoutCopyright": "Devre dışı bırakabilirsiniz Onout görünür olmaması için telif hakkı",
+  "premiumVersion": "Premium sürüm",
+  "youCanTurnOffOnoutFeeAndCopyright": "Devre dışı bırakabilirsiniz Onout ücret ve telif hakkı",
+  "youBuyThisAddition": "Bu eklentiyi satın alıyorsunuz",
+  "confirmPaymentTransaction": "Ödeme işlemini onaylayın",
+  "saveYourAdditionKey": "Eklenti anahtarınızı kaydedin",
+  "buy": "Almak",
+  "noticeAboutOnoutFee": "Lütfen bir {{onoutFee}} onout.org ücret, yöneticinin ücretinden düşülecektir (alacaksın {{adminFee}}). Ancak, devre dışı bırakmak için premium bir sürüm satın alabilirsiniz onout.org ücret.",
   "addTokenToMetamask": "Metamask'a {{tokenSymbol}} ekleyin"
 }

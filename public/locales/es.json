@@ -281,5 +281,16 @@
   "setTheOwner": "Establecer el propietario",
   "setAddressAsTheOwnerOfDomain": "Establece tu dirección como el propietario de este dominio",
   "onlyThisAddressCanAccessAppSettings": "Solo esta dirección puede acceder y cambiar la configuración de la aplicación",
+  "purchase": "Compra",
+  "getAbilityToDisableCopyright": "Obtenga la opción de deshabilitar los derechos de autor de Onout",
+  "switchOnoutCopyright": "Cambiar los derechos de autor de Onout",
+  "youCanTurnOffOnoutCopyright": "Puede desactivar los derechos de autor de Onout para que no sean visibles",
+  "premiumVersion": "Versión premium",
+  "youCanTurnOffOnoutFeeAndCopyright": "Puede desactivar la tarifa de activación y los derechos de autor",
+  "youBuyThisAddition": "Estás comprando este complemento",
+  "confirmPaymentTransaction": "Confirmar la transacción de pago",
+  "saveYourAdditionKey": "Guarde su clave de complemento",
+  "buy": "Comprar",
+  "noticeAboutOnoutFee": "Tenga en cuenta que un {{onoutFee}} onout.org la tarifa se deducirá de la tarifa del administrador (usted conseguirá {{adminFee}}). Sin embargo, puede comprar una versión premium para deshabilitar la onout.org tarifa.",
   "addTokenToMetamask": "Agregar {{tokenSymbol}} a Metamask"
 }

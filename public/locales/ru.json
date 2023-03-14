@@ -280,5 +280,16 @@
   "setTheOwner": "Установить владельца",
   "setAddressAsTheOwnerOfDomain": "Указать ваш адрес в качестве владельца этого домена",
   "onlyThisAddressCanAccessAppSettings": "Только этот адрес может получить доступ к настройкам приложения и изменить их",
+  "purchase": "Приобрести",
+  "getAbilityToDisableCopyright": "Получите возможность отключить авторское право Onout",
+  "switchOnoutCopyright": "Выключите видимость авторского права Onout",
+  "youCanTurnOffOnoutCopyright": "Вы можете отключить авторское право Onout, чтобы оно не было видно",
+  "premiumVersion": "Премиум-версия",
+  "youCanTurnOffOnoutFeeAndCopyright": "Вы можете отключить Onout комиссию и авторские права",
+  "youBuyThisAddition": "Вы покупаете это дополнение",
+  "confirmPaymentTransaction": "Подтвердите платежную транзакцию",
+  "saveYourAdditionKey": "Сохраните ключ дополнения",
+  "buy": "Купить",
+  "noticeAboutOnoutFee": "Пожалуйста, обратите внимание, что {{onoutFee}} onout.org комиссии будет вычтено из комиссии администратора (вы получите {{adminFee}}). Однако вы можете приобрести премиум-версию, чтобы отключить onout.org комиссию.",
   "addTokenToMetamask": "Добавить {{tokenSymbol}} в Metamask"
 }

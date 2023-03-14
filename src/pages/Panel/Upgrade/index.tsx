@@ -238,7 +238,7 @@ const Upgrade: FC = () => {
         />
         <AdditionBlock
           name={t('premiumVersion')}
-          description={t('youWillBeAbleToTurnOffOnoutFeeAndCopyright')}
+          description={t('youCanTurnOffOnoutFeeAndCopyright')}
           assetName={requiredPaymentNetwork.baseCurrency.symbol}
           usdCost={paidAdditions.premiumVersion.usdCost}
           cryptoCost={cryptoPrices.premiumVersion}

@@ -281,5 +281,16 @@
   "setTheOwner": "设置所有者",
   "setAddressAsTheOwnerOfDomain": "将您的地址设置为该域的所有者",
   "onlyThisAddressCanAccessAppSettings": "只有这个地址才能访问和更改应用程序设置",
+  "purchase": "购买",
+  "getAbilityToDisableCopyright": "获取禁用Onout版权的选项",
+  "switchOnoutCopyright": "切换Onout版权",
+  "youCanTurnOffOnoutCopyright": "您可以禁用Onout版权，使其不可见",
+  "premiumVersion": "高级版本",
+  "youCanTurnOffOnoutFeeAndCopyright": "您可以禁用Onout费用和版权",
+  "youBuyThisAddition": "您正在购买此附加组件",
+  "confirmPaymentTransaction": "确认付款交易",
+  "saveYourAdditionKey": "保存您的附加密钥",
+  "buy": "购买",
+  "noticeAboutOnoutFee": "请注意，{{onoutFee}}onout.org 费用将从管理员的费用中扣除(您将得到{{adminFee}}). 但是，您可以购买高级版本来禁用onout.org 免费。",
   "addTokenToMetamask": "添加 {{tokenSymbol}} 到 Metamask"
 }

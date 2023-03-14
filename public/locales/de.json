@@ -289,5 +289,16 @@
   "setTheOwner": "Legen Sie den Eigentümer fest",
   "setAddressAsTheOwnerOfDomain": "Legen Sie Ihre Adresse als Eigentümer dieser Domain fest",
   "onlyThisAddressCanAccessAppSettings": "Nur diese Adresse kann auf App-Einstellungen zugreifen und diese ändern",
+  "purchase": "Kauf",
+  "getAbilityToDisableCopyright": "Holen Sie sich die Option, das Onout-Copyright zu deaktivieren",
+  "switchOnoutCopyright": "Schalten Sie das Onout-Urheberrecht ein",
+  "youCanTurnOffOnoutCopyright": "Sie können das Onout-Copyright deaktivieren, damit es nicht sichtbar ist",
+  "premiumVersion": "Premium-Version",
+  "youCanTurnOffOnoutFeeAndCopyright": "Sie können die Onout-Gebühr und das Urheberrecht deaktivieren",
+  "youBuyThisAddition": "Sie kaufen dieses Add-on",
+  "confirmPaymentTransaction": "Bestätigen Sie die Zahlungstransaktion",
+  "saveYourAdditionKey": "Speichern Sie Ihren Add-On-Schlüssel",
+  "buy": "Kaufen",
+  "noticeAboutOnoutFee": "Bitte beachten Sie, dass ein {{onoutFee}} onout.org die Gebühr wird von der Verwaltungsgebühr abgezogen (du wirst bekommen {{adminFee}}). Sie können jedoch eine Premium-Version erwerben, um die onout.org Gebühr zu deaktivieren.",
   "addTokenToMetamask": "Fügen Sie {{tokenSymbol}} zu Metamask hinzu"
 }
