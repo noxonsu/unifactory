@@ -18,6 +18,9 @@ import TextBlock from 'components/TextBlock'
 import NetworkRelatedSettings from './NetworkRelatedSettings'
 import { OptionWrapper } from './index'
 import { STORAGE_NETWORK_ID, STORAGE_NETWORK_NAME } from '../../constants'
+import { Addition } from '../../constants/onout'
+import { PanelTab } from './'
+import { StyledPurchaseButton } from './styled'
 import { saveAppData } from 'utils/storage'
 import { parseENSAddress } from 'utils/parseENSAddress'
 import uriToHttp from 'utils/uriToHttp'
@@ -33,8 +36,15 @@ const Title = styled.h3`
   margin: 1.4rem 0 0.6rem;
 `
 
-export default function Interface(props: any) {
-  const { pending, setPending, activeNetworks } = props
+type Props = {
+  pending: boolean
+  setPending: (v: boolean) => void
+  activeNetworks: Record<string, any>[]
+  setTab: (t: PanelTab) => void
+}
+
+export default function Interface(props: Props) {
+  const { pending, setPending, activeNetworks, setTab } = props
   const { t } = useTranslation()
   const { library, chainId, account } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
@@ -57,6 +67,7 @@ export default function Interface(props: any) {
     tokenListsByChain: stateTokenListsByChain,
     disableSourceCopyright: stateDisableSourceCopyright,
     defaultSwapCurrency,
+    additions,
   } = useAppState()
 
   const [projectName, setProjectName] = useState(stateProjectName)
@@ -318,12 +329,25 @@ export default function Interface(props: any) {
           />
         </OptionWrapper>
 
-        <OptionWrapper flex>
-          {t('disableSourceCopyright')}
-          <Toggle
-            isActive={disableSourceCopyright}
-            toggle={() => setDisableSourceCopyright((prevState) => !prevState)}
-          />
+        <OptionWrapper>
+          {additions[Addition.premiumVersion]?.isValid || additions[Addition.switchCopyright]?.isValid ? (
+            <>
+              {t('disableSourceCopyright')}
+              <Toggle
+                isActive={disableSourceCopyright}
+                toggle={() => setDisableSourceCopyright((prevState) => !prevState)}
+              />
+            </>
+          ) : (
+            <>
+              <TextBlock type="notice">
+                {t('getAbilityToDisableCopyright')}
+                <StyledPurchaseButton onClick={() => setTab(PanelTab.upgrade)} width="100%">
+                  {t('purchase')}
+                </StyledPurchaseButton>
+              </TextBlock>
+            </>
+          )}
         </OptionWrapper>
 
         <OptionWrapper>

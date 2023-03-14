@@ -101,8 +101,8 @@ const payment = async ({
   }
 }
 
-const generateAdditionKey = ({ addition, account }: { addition: Addition; account: string }) => {
-  return crypto.generateMd5Hash(`${addition}-${account}`)
+const generateAdditionKey = ({ addition, account }: { addition: Addition; account: string }): string => {
+  return crypto.generateHash(`${addition}-${account}`)
 }
 
 export default {

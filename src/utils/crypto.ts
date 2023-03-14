@@ -1,14 +1,16 @@
-import md5 from 'crypto-js/md5'
+const generateHash = (value: string): string => {
+  let numHash = 0
 
-const generateMd5Hash = (value: string): string => {
-  return md5(value).toString()
-}
+  for (let i = 0; i < value.length; i++) {
+    const code = value.charCodeAt(i)
 
-const validateMd5Hash = (value: string, hash: string): boolean => {
-  return hash === generateMd5Hash(value)
+    numHash = (numHash << 5) - numHash + code
+    numHash |= 0 // Convert to 32bit integer
+  }
+
+  return window.btoa(String(numHash))
 }
 
 export default {
-  generateMd5Hash,
-  validateMd5Hash,
+  generateHash,
 }

@@ -139,11 +139,19 @@ const StyledError = styled.span`
   color: ${({ theme }) => theme.red1};
 `
 
-interface ComponentProps {
+export enum PanelTab {
+  contracts = 'contracts',
+  interface = 'interface',
+  upgrade = 'upgrade',
+  migration = 'migration',
+  reset = 'reset',
+}
+
+type Props = {
   setDomainDataTrigger: (x: any) => void
 }
 
-export default function Panel({ setDomainDataTrigger }: ComponentProps) {
+export default function Panel({ setDomainDataTrigger }: Props) {
   const { t } = useTranslation()
   const dispatch = useDispatch()
   const [pending, setPending] = useState<boolean>(false)
@@ -183,23 +191,23 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
     dispatch(setAppManagement({ status: false }))
   }
 
-  const [tab, setTab] = useState('contracts')
+  const [tab, setTab] = useState<PanelTab>(PanelTab.contracts)
 
   //@ts-ignore
   const accountPrefix = networks[chainId]?.name || t('account')
 
   const returnTabs = () => {
     const tabs = [
-      { tabKey: 'contracts', tabName: 'swapContracts' },
-      { tabKey: 'interface', tabName: 'interface' },
-      { tabKey: 'upgrade', tabName: 'upgrade' },
+      { tabKey: PanelTab.contracts, tabName: 'swapContracts' },
+      { tabKey: PanelTab.interface, tabName: 'interface' },
+      { tabKey: PanelTab.upgrade, tabName: 'upgrade' },
     ]
 
     if (chainId === STORAGE_NETWORK_ID) {
-      tabs.push({ tabKey: 'migration', tabName: 'migration' })
+      tabs.push({ tabKey: PanelTab.migration, tabName: 'migration' })
     }
     if (admin?.toLowerCase() === account?.toLowerCase() && chainId === STORAGE_NETWORK_ID) {
-      tabs.push({ tabKey: 'reset', tabName: 'reset' })
+      tabs.push({ tabKey: PanelTab.reset, tabName: 'reset' })
     }
 
     return tabs.map(({ tabKey, tabName }, i) => {
@@ -251,16 +259,11 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
             setPending={setPending}
             setError={setError}
             wrappedToken={wrappedToken}
+            setTab={setTab}
           />
         )}
         {tab === 'interface' && (
-          <Interface
-            domain={domain}
-            pending={pending}
-            activeNetworks={activeNetworks}
-            setPending={setPending}
-            setError={setError}
-          />
+          <Interface pending={pending} activeNetworks={activeNetworks} setPending={setPending} setTab={setTab} />
         )}
         {tab === 'upgrade' && <Upgrade />}
         {tab === 'migration' && <Migration />}

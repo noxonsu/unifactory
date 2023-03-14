@@ -16,7 +16,7 @@ import { useTransactionAdder } from 'state/transactions/hooks'
 import { useTranslation } from 'react-i18next'
 import { SUPPORTED_NETWORKS } from '../../connectors'
 import { FactoryMethod, STORAGE_NETWORK_ID, STORAGE_NETWORK_NAME } from '../../constants'
-import { onoutFeeAdmin, onoutFeeAddress } from '../../constants/onout'
+import { Addition, onoutFeeAdmin, onoutFeeAddress } from '../../constants/onout'
 import { ButtonPrimary } from 'components/Button'
 import Accordion from 'components/Accordion'
 import QuestionHelper from 'components/QuestionHelper'
@@ -29,6 +29,8 @@ import { PartitionWrapper } from './index'
 import { isValidAddress, setFactoryOption, deploySwapContracts } from 'utils/contract'
 import { saveAppData } from 'utils/storage'
 import useWordpressInfo from 'hooks/useWordpressInfo'
+import { PanelTab } from './'
+import { StyledPurchaseButton } from './styled'
 
 const Title = styled.h3`
   font-weight: 400;
@@ -148,7 +150,7 @@ const setValidValue = ({
 }
 
 function SwapContracts(props: any) {
-  const { domain, pending, setPending, theme, wrappedToken } = props
+  const { domain, pending, setPending, theme, wrappedToken, setTab } = props
   const { t } = useTranslation()
   const dispatch = useDispatch()
   const { library, account, chainId } = useActiveWeb3React()
@@ -165,10 +167,17 @@ function SwapContracts(props: any) {
     feeRecipient: currentFeeRecipient,
     possibleProtocolPercent,
     allFeeToProtocol,
+    onoutFeeTo,
+    additions,
   } = useAppState()
 
   const [canDeploySwapContracts, setCanDeploySwapContracts] = useState(false)
   const [adminAddress, setAdminAddress] = useState(stateAdmin !== ZERO_ADDRESS ? stateAdmin : account || '')
+  const [hasOnoutFee, setHasOnoutFee] = useState(false)
+
+  useEffect(() => {
+    setHasOnoutFee(!!onoutFeeTo && onoutFeeTo !== ZERO_ADDRESS)
+  }, [onoutFeeTo])
 
   useEffect(() => {
     const lowerAccount = account?.toLowerCase()
@@ -275,7 +284,7 @@ function SwapContracts(props: any) {
         library,
         admin: adminAddress,
         originFeeAdmin: onoutFeeAdmin,
-        originFeeAddress: onoutFeeAddress,
+        originFeeAddress: onoutFeeAddress, // || ZERO_ADDRESS
         wrappedToken,
         onFactoryHash: (hash: string) => {
           setTxHash(hash)
@@ -321,7 +330,7 @@ function SwapContracts(props: any) {
   const updateFeesToAdmin = (event: any) => setAllFeesToAdmin(event.target.checked)
 
   const saveOption = async (method: string) => {
-    const values: any[] = []
+    const values: unknown[] = []
 
     switch (method) {
       case FactoryMethod.setFeeToSetter:
@@ -329,6 +338,10 @@ function SwapContracts(props: any) {
         break
       case FactoryMethod.setFeeTo:
         values.push(feeRecipient)
+        break
+      case FactoryMethod.setOnoutFeeTo:
+        // With a zero EVM address there isn't any fees
+        values.push(hasOnoutFee ? ZERO_ADDRESS : onoutFeeAddress)
         break
       case FactoryMethod.setAllFeeToProtocol:
         values.push(allFeesToAdmin)
@@ -495,14 +508,33 @@ function SwapContracts(props: any) {
           </OptionWrapper>
 
           <Accordion title={t('feeSettings')}>
-            <TextBlock type="notice">
-              Please note that a {/* @todo 1/5 replace with a fee var */}{' '}
-              {/* @note replace onout with a link to the site? */} onout.org fee will be deducted from admin's fee (you
-              will get {/* @todo replace with var 80% */}) (however, you can{' '}
-              {/* @todo wrap the purchase ... in a link to the Upgrade tab */} purchase the premium version to disable
-              onout.org fee
-              {/* {t('')} */}
-            </TextBlock>
+            {additions[Addition.premiumVersion]?.isValid ? (
+              <OptionWrapper margin={1}>
+                <Box>
+                  <LabelExtended>
+                    <Checkbox name="Onout fee is enabled" onChange={updateFeesToAdmin} checked={hasOnoutFee} />
+                    {t('onoutFeeIsEnabled')}
+                  </LabelExtended>
+                </Box>
+                <Button onClick={() => saveOption(FactoryMethod.setOnoutFeeTo)}>{t('save')}</Button>
+              </OptionWrapper>
+            ) : (
+              <>
+                <TextBlock type="notice">
+                  {/* {t('noticeAboutOnoutFee', {
+                    onoutFeePercent: 20,
+                    adminFeePercent: 80,
+                  })} */}
+                  Please note that a {/* @todo 1/5 replace with a fee var */} onout.org fee will be deducted from
+                  admin's fee (you will get {/* @todo replace with var 80% */}) (however, you can{' '}
+                  {/* @todo wrap the purchase ... in a link to the Upgrade tab */} "purchase the premium version" to
+                  disable onout.org fee
+                  <StyledPurchaseButton onClick={() => setTab(PanelTab.upgrade)} width="100%">
+                    {t('purchase')}
+                  </StyledPurchaseButton>
+                </TextBlock>
+              </>
+            )}
 
             <OptionWrapper margin={1}>
               <Box>

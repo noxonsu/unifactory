@@ -56,6 +56,7 @@ export type StorageState = {
   addressesOfTokenLists: string[]
   disableSourceCopyright: boolean
   defaultSwapCurrency: { input: string; output: string }
+  onoutFeeTo: string
   additions: Partial<
     Record<
       Addition,
@@ -107,6 +108,7 @@ const initialState: ApplicationState = {
   socialLinks: [],
   addressesOfTokenLists: [],
   defaultSwapCurrency: { input: '', output: '' },
+  onoutFeeTo: '',
   additions: {},
   // --------------------------
   appManagement: false,

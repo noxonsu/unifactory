@@ -44,6 +44,7 @@ const defaultSettings = (): StorageState => ({
   addressesOfTokenLists: [],
   disableSourceCopyright: false,
   defaultSwapCurrency: { input: '', output: '' },
+  onoutFeeTo: '',
   additions: {},
 })
 
@@ -86,10 +87,12 @@ const parseSettings = (settings: string, chainId: number, owner: string): Storag
       addressesOfTokenLists,
       disableSourceCopyright,
       defaultSwapCurrency,
+      OnoutFeeTo,
       additions,
     } = parsedSettings
 
     appSettings.contracts = contracts
+    appSettings.onoutFeeTo = OnoutFeeTo
 
     if (contracts[chainId]) {
       const { factory, router } = contracts[chainId]
@@ -137,13 +140,13 @@ const parseSettings = (settings: string, chainId: number, owner: string): Storag
     if (additions) {
       // Update format of the object from the Storage and check if each addition has a valid key.
       appSettings.additions = Object.keys(additions).reduce((adds, additionKey) => {
+        const key = onout.generateAdditionKey({ addition: additionKey as unknown as Addition, account: owner })
+
         return {
           ...adds,
           [additionKey]: {
             key: additions[additionKey],
-            isValid:
-              additions[additionKey] ===
-              onout.generateAdditionKey({ addition: additionKey as unknown as Addition, account: owner }),
+            isValid: additions[additionKey] === key,
           },
         }
       }, {})

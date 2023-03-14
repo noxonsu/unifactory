@@ -29,6 +29,7 @@ export enum StorageMethod {
 export enum FactoryMethod {
   allInfo = 'allInfo',
   setFeeTo = 'setFeeTo',
+  setOnoutFeeTo = 'setOnoutFeeTo',
   setFeeToSetter = 'setFeeToSetter',
   setAllFeeToProtocol = 'setAllFeeToProtocol',
   setMainFees = 'setMainFees',

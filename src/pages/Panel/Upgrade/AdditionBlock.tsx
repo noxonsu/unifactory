@@ -2,9 +2,9 @@ import React, { FC, useState, useCallback } from 'react'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import { useAddPopup } from 'state/application/hooks'
-import { ButtonEmpty } from 'components/Button'
-import ConfirmationModal from '../ConfirmationModal'
 import QuestionHelper from 'components/QuestionHelper'
+import ConfirmationModal from '../ConfirmationModal'
+import { StyledPurchaseButton } from '../styled'
 
 const StyledNumList = styled.ol`
   padding: 0 0 0 1rem;
@@ -55,22 +55,6 @@ const StyledLabel = styled.span`
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     width: 100%;
     text-align: center;
-  `}
-`
-
-const StyledButton = styled(ButtonEmpty)`
-  width: fit-content;
-  padding: 12px 7%;
-  background-color: ${({ theme }) => theme.blue2};
-  color: ${({ theme }) => theme.white1};
-  transition: 120ms;
-
-  :hover {
-    opacity: 0.7;
-  }
-
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    width: 100%;
   `}
 `
 
@@ -157,7 +141,7 @@ const AdditionBlock: FC<Props> = ({ name, description, cryptoCost, assetName, us
       {isPurchased ? (
         <StyledLabel>{t('purchased')}</StyledLabel>
       ) : (
-        <StyledButton onClick={onConfirm}>{t('buy')}</StyledButton>
+        <StyledPurchaseButton onClick={onConfirm}>{t('buy')}</StyledPurchaseButton>
       )}
     </StyledOption>
   )
