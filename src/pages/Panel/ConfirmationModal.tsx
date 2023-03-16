@@ -10,7 +10,7 @@ export default function ConfirmationModal(props: {
   onDeployment: () => void
   txHash: string
   attemptingTxn: boolean
-  titleId: string
+  title: JSX.Element
   content: JSX.Element
   confirmBtnMessageId: string
   pendingMessageId?: string
@@ -21,7 +21,7 @@ export default function ConfirmationModal(props: {
     onDeployment,
     txHash,
     attemptingTxn,
-    titleId,
+    title,
     content,
     confirmBtnMessageId,
     pendingMessageId,
@@ -49,7 +49,7 @@ export default function ConfirmationModal(props: {
       pendingText={pendingMessageId ? t(pendingMessageId) : ''}
       content={() => (
         <ConfirmationModalContent
-          title={t(titleId)}
+          title={title}
           onDismiss={onDismiss}
           topContent={() => null}
           bottomContent={ModalBottom}

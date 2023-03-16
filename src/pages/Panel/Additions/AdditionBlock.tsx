@@ -1,6 +1,7 @@
 import React, { FC, useState, useCallback } from 'react'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
+import Big from 'big.js'
 import { useAddPopup } from 'state/application/hooks'
 import QuestionHelper from 'components/QuestionHelper'
 import ConfirmationModal from '../ConfirmationModal'
@@ -59,7 +60,7 @@ const StyledLabel = styled.span`
 `
 
 type Props = {
-  name: string
+  name: JSX.Element
   description?: string
   cryptoCost?: number
   assetName: string
@@ -111,7 +112,7 @@ const AdditionBlock: FC<Props> = ({ name, description, cryptoCost, assetName, us
         onDeployment={startPayment}
         txHash={txHash}
         attemptingTxn={attemptingTx}
-        titleId={name}
+        title={name}
         confirmBtnMessageId={'buy'}
         content={
           <div>
@@ -130,10 +131,12 @@ const AdditionBlock: FC<Props> = ({ name, description, cryptoCost, assetName, us
           {description && <QuestionHelper text={description} />}
         </StyledText>
         <span>
-          {typeof cryptoCost === 'number' && (
-            <span>
-              {cryptoCost} {assetName}
-            </span>
+          {typeof cryptoCost === 'number' ? (
+            <b>
+              {new Big(cryptoCost).toPrecision(6)} {assetName}
+            </b>
+          ) : (
+            '...'
           )}{' '}
           {typeof usdCost === 'number' && <>(${usdCost})</>}
         </span>

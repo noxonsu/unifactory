@@ -18,9 +18,9 @@ import TextBlock from 'components/TextBlock'
 import NetworkRelatedSettings from './NetworkRelatedSettings'
 import { OptionWrapper } from './index'
 import { STORAGE_NETWORK_ID, STORAGE_NETWORK_NAME } from '../../constants'
-import { Addition } from '../../constants/onout'
+import { Addition, onoutUrl } from '../../constants/onout'
 import { PanelTab } from './'
-import { StyledPurchaseButton } from './styled'
+import { StyledPurchaseButton, StyledOnoutLink } from './styled'
 import { saveAppData } from 'utils/storage'
 import { parseENSAddress } from 'utils/parseENSAddress'
 import uriToHttp from 'utils/uriToHttp'
@@ -329,7 +329,7 @@ export default function Interface(props: Props) {
           />
         </OptionWrapper>
 
-        <OptionWrapper>
+        <OptionWrapper flex>
           {additions[Addition.premiumVersion]?.isValid || additions[Addition.switchCopyright]?.isValid ? (
             <>
               {t('disableSourceCopyright')}
@@ -341,8 +341,11 @@ export default function Interface(props: Props) {
           ) : (
             <>
               <TextBlock type="notice">
-                {t('getAbilityToDisableCopyright')}
-                <StyledPurchaseButton onClick={() => setTab(PanelTab.upgrade)} width="100%">
+                {t('getAbilityToRemoveCopyrightOf')}{' '}
+                <StyledOnoutLink href={onoutUrl} target="_blank" rel="noopener noreferrer">
+                  onout.org
+                </StyledOnoutLink>
+                <StyledPurchaseButton onClick={() => setTab(PanelTab.additions)} width="100%" margin="12px 0 0">
                   {t('purchase')}
                 </StyledPurchaseButton>
               </TextBlock>

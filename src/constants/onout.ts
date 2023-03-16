@@ -1,7 +1,7 @@
 import { BSC_TESTNET_ID, BSC_ID } from './'
 
+export const onoutUrl = 'https://onout.org'
 export const originUrl = 'https://noxon.wpmix.net'
-export const onoutFeeAdmin = '0x6D1EB33c063CBe69d064EE22537dBF107e8816f6'
 export const onoutFeeAddress = '0xDf50EF7E506536354e7a805442dcBF25c7Ac249B'
 
 export const requiredPaymentNetworkId = process.env.NODE_ENV === 'production' ? BSC_ID : BSC_TESTNET_ID

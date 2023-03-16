@@ -17,7 +17,7 @@ import { CleanButton } from 'components/Button'
 import Wallet from './Wallet'
 import SwapContracts from './SwapContracts'
 import Interface from './Interface'
-import Upgrade from './Upgrade'
+import Additions from './Additions'
 import Migration from './Migration'
 import Reset from './Reset'
 
@@ -142,7 +142,7 @@ const StyledError = styled.span`
 export enum PanelTab {
   contracts = 'contracts',
   interface = 'interface',
-  upgrade = 'upgrade',
+  additions = 'additions',
   migration = 'migration',
   reset = 'reset',
 }
@@ -200,7 +200,7 @@ export default function Panel({ setDomainDataTrigger }: Props) {
     const tabs = [
       { tabKey: PanelTab.contracts, tabName: 'swapContracts' },
       { tabKey: PanelTab.interface, tabName: 'interface' },
-      { tabKey: PanelTab.upgrade, tabName: 'upgrade' },
+      { tabKey: PanelTab.additions, tabName: 'buyPremium' },
     ]
 
     if (chainId === STORAGE_NETWORK_ID) {
@@ -252,7 +252,7 @@ export default function Panel({ setDomainDataTrigger }: Props) {
       <Tabs>{returnTabs()}</Tabs>
 
       <Content>
-        {tab === 'contracts' && (
+        {tab === PanelTab.contracts && (
           <SwapContracts
             domain={domain}
             pending={pending}
@@ -262,12 +262,12 @@ export default function Panel({ setDomainDataTrigger }: Props) {
             setTab={setTab}
           />
         )}
-        {tab === 'interface' && (
+        {tab === PanelTab.interface && (
           <Interface pending={pending} activeNetworks={activeNetworks} setPending={setPending} setTab={setTab} />
         )}
-        {tab === 'upgrade' && <Upgrade />}
-        {tab === 'migration' && <Migration />}
-        {tab === 'reset' && <Reset setDomainDataTrigger={setDomainDataTrigger} />}
+        {tab === PanelTab.additions && <Additions />}
+        {tab === PanelTab.migration && <Migration />}
+        {tab === PanelTab.reset && <Reset setDomainDataTrigger={setDomainDataTrigger} />}
       </Content>
     </Wrapper>
   )

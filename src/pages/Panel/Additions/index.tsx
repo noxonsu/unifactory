@@ -9,7 +9,7 @@ import { useActiveWeb3React } from 'hooks'
 import { useAppState } from 'state/application/hooks'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { SUPPORTED_WALLETS, THIRTY_SECONDS_IN_MS } from '../../../constants'
-import { Addition, AdditionName, paidAdditions, requiredPaymentNetworkId } from '../../../constants/onout'
+import { Addition, AdditionName, paidAdditions, requiredPaymentNetworkId, onoutUrl } from '../../../constants/onout'
 import { switchInjectedNetwork } from 'utils/wallet'
 import cache from 'utils/cache'
 import { saveAppData } from 'utils/storage'
@@ -18,6 +18,7 @@ import price from 'shared/services/price'
 import TextBlock from 'components/TextBlock'
 import { ButtonPrimary } from 'components/Button'
 import AdditionBlock from './AdditionBlock'
+import { StyledOnoutLink } from '../styled'
 import networks from 'networks.json'
 
 const StyledWrapper = styled.div`
@@ -228,7 +229,14 @@ const Upgrade: FC = () => {
       )}
       <StyledAdditions disabled={!isRightNetwork}>
         <AdditionBlock
-          name={t('switchOnoutCopyright')}
+          name={
+            <>
+              {t('removeCopyrightOf')}{' '}
+              <StyledOnoutLink href={onoutUrl} target="_blank" rel="noopener noreferrer">
+                onout.org
+              </StyledOnoutLink>
+            </>
+          }
           description={t('youCanTurnOffOnoutCopyright')}
           assetName={requiredPaymentNetwork.baseCurrency.symbol}
           usdCost={paidAdditions.switchCopyright.usdCost}

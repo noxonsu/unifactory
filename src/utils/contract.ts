@@ -10,14 +10,23 @@ import cache from './cache'
 import { getWeb3Library } from './getLibrary'
 import networks from 'networks.json'
 
+const noop = () => {}
+
 export const getContractInstance = (provider: any, address: string, abi: any) => {
   const web3 = getWeb3Library(provider)
 
   return new web3.eth.Contract(abi, address)
 }
 
-const deployContract = async (params: any) => {
-  const { abi, byteCode, library, onDeploy = () => {}, onHash = () => {}, deployArguments } = params
+const deployContract = async (params: {
+  abi: any
+  byteCode: string
+  library: Web3Provider
+  onDeploy?: (v: unknown) => void
+  onHash?: (h: string) => void
+  deployArguments: unknown[]
+}) => {
+  const { abi, byteCode, library, onDeploy = noop, onHash = noop, deployArguments } = params
 
   let contract
   let accounts
@@ -51,20 +60,30 @@ const deployContract = async (params: any) => {
   }
 }
 
-export const deployFactory = async (params: any) => {
-  const { library, onHash, admin, originFeeAdmin, originFeeAddress } = params
+export const deployFactory = async (params: {
+  library: Web3Provider
+  onHash?: (h: string) => void
+  admin: string
+  originFeeAddress: string
+}) => {
+  const { library, onHash, admin, originFeeAddress } = params
   const { abi, bytecode } = Factory
 
   return deployContract({
     abi,
     byteCode: bytecode,
-    deployArguments: [admin, originFeeAdmin, originFeeAddress],
+    deployArguments: [admin, originFeeAddress],
     library,
     onHash,
   })
 }
 
-export const deployRouter = async (params: any) => {
+export const deployRouter = async (params: {
+  library: Web3Provider
+  factory: string
+  onHash?: (h: string) => void
+  wrappedToken: string
+}) => {
   const { library, factory, onHash, wrappedToken } = params
   const { abi, bytecode } = RouterV2
 
@@ -82,30 +101,19 @@ export const deploySwapContracts = async (params: {
   chainId: number
   library: Web3Provider
   wrappedToken: string
-  originFeeAdmin: string
   originFeeAddress: string
   onFactoryHash?: (hash: string) => void
   onRouterHash?: (hash: string) => void
   onSuccessfulDeploy?: (params: { chainId: number; factory: string; router: string }) => void
 }) => {
-  const {
-    admin,
-    chainId,
-    library,
-    wrappedToken,
-    originFeeAdmin,
-    originFeeAddress,
-    onFactoryHash,
-    onRouterHash,
-    onSuccessfulDeploy,
-  } = params
+  const { admin, chainId, library, wrappedToken, originFeeAddress, onFactoryHash, onRouterHash, onSuccessfulDeploy } =
+    params
 
   try {
     const factory = await deployFactory({
       onHash: onFactoryHash,
       library,
       admin,
-      originFeeAdmin,
       originFeeAddress,
     })
 

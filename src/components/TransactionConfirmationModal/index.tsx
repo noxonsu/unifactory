@@ -112,7 +112,7 @@ export function ConfirmationModalContent({
   onDismiss,
   topContent,
 }: {
-  title: string
+  title: JSX.Element | string
   onDismiss: () => void
   topContent: () => React.ReactNode
   bottomContent: () => React.ReactNode

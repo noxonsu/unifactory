@@ -16,7 +16,7 @@ import { useTransactionAdder } from 'state/transactions/hooks'
 import { useTranslation } from 'react-i18next'
 import { SUPPORTED_NETWORKS } from '../../connectors'
 import { FactoryMethod, STORAGE_NETWORK_ID, STORAGE_NETWORK_NAME } from '../../constants'
-import { Addition, onoutFeeAdmin, onoutFeeAddress } from '../../constants/onout'
+import { Addition, onoutFeeAddress } from '../../constants/onout'
 import { ButtonPrimary } from 'components/Button'
 import Accordion from 'components/Accordion'
 import QuestionHelper from 'components/QuestionHelper'
@@ -276,6 +276,8 @@ function SwapContracts(props: any) {
 
     setAttemptingTxn(true)
 
+    const originFeeAddress = additions[Addition.premiumVersion]?.isValid ? ZERO_ADDRESS : onoutFeeAddress
+
     try {
       await deploySwapContracts({
         domain,
@@ -283,8 +285,7 @@ function SwapContracts(props: any) {
         //@ts-ignore
         library,
         admin: adminAddress,
-        originFeeAdmin: onoutFeeAdmin,
-        originFeeAddress: onoutFeeAddress, // || ZERO_ADDRESS
+        originFeeAddress,
         wrappedToken,
         onFactoryHash: (hash: string) => {
           setTxHash(hash)
@@ -327,6 +328,7 @@ function SwapContracts(props: any) {
     }
   }
 
+  const toggleOnoutFee = () => {}
   const updateFeesToAdmin = (event: any) => setAllFeesToAdmin(event.target.checked)
 
   const saveOption = async (method: string) => {
@@ -423,7 +425,7 @@ function SwapContracts(props: any) {
         onDeployment={onContractsDeployment}
         txHash={txHash}
         attemptingTxn={attemptingTxn}
-        titleId={'swapContracts'}
+        title={t('swapContracts')}
         confirmBtnMessageId={'deploy'}
         content={
           <div>
@@ -512,7 +514,7 @@ function SwapContracts(props: any) {
               <OptionWrapper margin={1}>
                 <Box>
                   <LabelExtended>
-                    <Checkbox name="Onout fee is enabled" onChange={updateFeesToAdmin} checked={hasOnoutFee} />
+                    <Checkbox name="Onout fee is enabled" onChange={toggleOnoutFee} checked={hasOnoutFee} />
                     {t('onoutFeeIsEnabled')}
                   </LabelExtended>
                 </Box>
@@ -525,7 +527,7 @@ function SwapContracts(props: any) {
                     onoutFee: '20%',
                     adminFee: '80%',
                   })}
-                  <StyledPurchaseButton onClick={() => setTab(PanelTab.upgrade)} width="100%">
+                  <StyledPurchaseButton onClick={() => setTab(PanelTab.additions)} width="100%" margin="12px 0 0">
                     {t('purchase')}
                   </StyledPurchaseButton>
                 </TextBlock>
