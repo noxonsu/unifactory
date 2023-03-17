@@ -18,8 +18,7 @@
       "symbol": "WETH"
     }
   },
-  
-"42161": {
+  "42161": {
     "name": "Arbitrum",
      "rpc": "https://arb1.arbitrum.io/rpc",
      "chainId":42161 ,
@@ -36,8 +35,7 @@
       "name": "Wrapped Ether",
       "symbol": "WETH"
      }
-},
-
+  },
   "25": {
     "name": "Cronos",
     "rpc": "https://evm.cronos.org",
