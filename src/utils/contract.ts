@@ -145,7 +145,7 @@ export const setFactoryOption = async (params: {
   from: string
   factoryAddress: string
   method: string
-  values: any[]
+  values: unknown[]
   onHash?: (hash: string) => void
 }) => {
   const { library, from, factoryAddress, method, values, onHash } = params

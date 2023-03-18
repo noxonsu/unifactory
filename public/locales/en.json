@@ -301,5 +301,7 @@
   "buyPremium": "Buy premium",
   "purchased": "Purchased",
   "disableSourceCopyright": "Disable Onout copyright",
+  "reset": "Reset",
+  "onoutFeeIsDisabled": "Onout fee is disabled",
   "addTokenToMetamask": "Add {{tokenSymbol}} to Metamask"
 }

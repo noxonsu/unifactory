@@ -173,11 +173,29 @@ function SwapContracts(props: any) {
 
   const [canDeploySwapContracts, setCanDeploySwapContracts] = useState(false)
   const [adminAddress, setAdminAddress] = useState(stateAdmin !== ZERO_ADDRESS ? stateAdmin : account || '')
-  const [hasOnoutFee, setHasOnoutFee] = useState(false)
+  const [isOnoutFeeActive, setIsOnoutFeeActive] = useState(false)
 
   useEffect(() => {
-    setHasOnoutFee(!!onoutFeeTo && onoutFeeTo !== ZERO_ADDRESS)
+    setIsOnoutFeeActive(!!onoutFeeTo && onoutFeeTo !== ZERO_ADDRESS)
   }, [onoutFeeTo])
+
+  const [originFeeAddress, setOriginFeeAddress] = useState(
+    additions[Addition.premiumVersion]?.isValid ? ZERO_ADDRESS : onoutFeeAddress
+  )
+
+  useEffect(() => {
+    setOriginFeeAddress(additions[Addition.premiumVersion]?.isValid ? ZERO_ADDRESS : onoutFeeAddress)
+  }, [additions])
+
+  const switchOnoutFee = () => {
+    setIsOnoutFeeActive((isActive) => {
+      const newState = !isActive
+
+      setOriginFeeAddress(newState ? onoutFeeAddress : ZERO_ADDRESS)
+
+      return newState
+    })
+  }
 
   useEffect(() => {
     const lowerAccount = account?.toLowerCase()
@@ -276,8 +294,6 @@ function SwapContracts(props: any) {
 
     setAttemptingTxn(true)
 
-    const originFeeAddress = additions[Addition.premiumVersion]?.isValid ? ZERO_ADDRESS : onoutFeeAddress
-
     try {
       await deploySwapContracts({
         domain,
@@ -328,7 +344,6 @@ function SwapContracts(props: any) {
     }
   }
 
-  const toggleOnoutFee = () => {}
   const updateFeesToAdmin = (event: any) => setAllFeesToAdmin(event.target.checked)
 
   const saveOption = async (method: string) => {
@@ -342,8 +357,7 @@ function SwapContracts(props: any) {
         values.push(feeRecipient)
         break
       case FactoryMethod.setOnoutFeeTo:
-        // With a zero EVM address there isn't any fees
-        values.push(hasOnoutFee ? ZERO_ADDRESS : onoutFeeAddress)
+        values.push(originFeeAddress)
         break
       case FactoryMethod.setAllFeeToProtocol:
         values.push(allFeesToAdmin)
@@ -514,8 +528,8 @@ function SwapContracts(props: any) {
               <OptionWrapper margin={1}>
                 <Box>
                   <LabelExtended>
-                    <Checkbox name="Onout fee is enabled" onChange={toggleOnoutFee} checked={hasOnoutFee} />
-                    {t('onoutFeeIsEnabled')}
+                    <Checkbox name="Onout fee is disabled" onChange={switchOnoutFee} checked={isOnoutFeeActive} />
+                    {t('onoutFeeIsDisabled')}
                   </LabelExtended>
                 </Box>
                 <Button onClick={() => saveOption(FactoryMethod.setOnoutFeeTo)}>{t('save')}</Button>

@@ -37,7 +37,7 @@ export const OptionWrapper = styled.div<{ margin?: number; flex?: boolean }>`
 
 const Wrapper = styled.section`
   position: relative;
-  max-width: 33.75rem;
+  max-width: 37rem;
   width: 100%;
   border-radius: 1.2rem;
   padding: 1rem;

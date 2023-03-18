@@ -153,8 +153,16 @@ const Upgrade: FC = () => {
     )
 
     if (isSuccess && account) {
-      // @todo save in local storage
       const additionKey = onout.generateAdditionKey({ addition, account })
+      // Save it just in case the user has any problems approving the second TX
+      localStorage.setItem(
+        `${addition}_${account}_addition_key`,
+        JSON.stringify({
+          addition,
+          account,
+          additionKey,
+        })
+      )
 
       await saveAppData({
         //@ts-ignore
