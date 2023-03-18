@@ -89,8 +89,8 @@ contract Pair is ERC20 {
 
     function _mintFee(uint112 _reserve0, uint112 _reserve1) private returns (bool feeOn) {
         address feeTo = IFactory(factory).feeTo();
-        address devFeeTo = IFactory(factory).devFeeTo();
-        uint devFeePercent = IFactory(factory).devFeePercent();
+        address OnoutFeeTo = IFactory(factory).OnoutFeeTo();
+        uint OnoutFeePercent = IFactory(factory).OnoutFeePercent();
         uint totalFee = IFactory(factory).totalFee();
         uint protocolFee = IFactory(factory).protocolFee();
         uint _kLast = kLast; // gas savings
@@ -104,15 +104,15 @@ contract Pair is ERC20 {
                     uint liquidity = _protocolLiquidity(rootK, rootKLast);
                     emit ProtocolLiquidity(liquidity);
                     if (liquidity > 0) {
-                        if (devFeePercent == 0 || devFeeTo == address(0)) {
+                        if (OnoutFeePercent == 0 || OnoutFeeTo == address(0)) {
                             _mint(feeTo, liquidity);
                         } else {
                             uint onePercentOfLiquidity = liquidity / 100;
-                            uint devLiquidity = onePercentOfLiquidity.mul(devFeePercent);
-                            uint protocolLiquidity = liquidity.sub(devLiquidity);
-                            require(protocolLiquidity.add(devLiquidity) <= liquidity, 'Pair: INSUFFICIENT_PROTOCOL_LIQUIDITY');
+                            uint OnoutLiquidity = onePercentOfLiquidity.mul(OnoutFeePercent);
+                            uint protocolLiquidity = liquidity.sub(OnoutLiquidity);
+                            require(protocolLiquidity.add(OnoutLiquidity) <= liquidity, 'Pair: INSUFFICIENT_PROTOCOL_LIQUIDITY');
                             _mint(feeTo, protocolLiquidity);
-                            _mint(devFeeTo, devLiquidity);
+                            _mint(OnoutFeeTo, OnoutLiquidity);
                         }
                     }
                 }

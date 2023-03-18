@@ -9,11 +9,11 @@ interface IFactory {
         uint totalSwaps;
         uint protocolFee;
         uint totalFee;
-        uint devFeePercent;
+        uint OnoutFeePercent;
         address feeTo;
         address feeToSetter;
-        address devFeeTo;
-        address devFeeSetter;
+        address OnoutFeeTo;
+        address OnoutFeeSetter;
         bool allFeeToProtocol;
         bytes32 INIT_CODE_PAIR_HASH;
     }
@@ -25,11 +25,11 @@ interface IFactory {
     function totalSwaps() external view returns(uint);
     function protocolFee() external view returns(uint);
     function totalFee() external view returns(uint);
-    function devFeePercent() external view returns(uint);
+    function OnoutFeePercent() external view returns(uint);
     function feeTo() external view returns (address);
     function feeToSetter() external view returns (address);
-    function devFeeTo() external view returns(address);
-    function devFeeSetter() external view returns(address);
+    function OnoutFeeTo() external view returns(address);
+    function OnoutFeeSetter() external view returns(address);
     function allFeeToProtocol() external view returns(bool);
 
     function getPair(address tokenA, address tokenB) external view returns (address pair);
@@ -39,11 +39,11 @@ interface IFactory {
 
     function createPair(address tokenA, address tokenB) external returns (address pair);
 
-    function setDevFeePercent(uint) external;
+    function setOnoutFeePercent(uint) external;
     function setFeeTo(address) external;
     function setFeeToSetter(address) external;
-    function setDevFeeTo(address) external;
-    function setDevFeeSetter(address) external;
+    function setOnoutFeeTo(address) external;
+    function setOnoutFeeSetter(address) external;
     function setAllFeeToProtocol(bool) external;
     function setMainFees(uint _totalFee, uint _protocolFee) external;
     function setTotalFee(uint) external;

@@ -13,11 +13,11 @@ contract Factory is IFactory {
     uint public override totalSwaps;
     uint public override protocolFee;
     uint public override totalFee;
-    uint public override devFeePercent;
+    uint public override OnoutFeePercent;
     address public override feeTo;
     address public override feeToSetter;
-    address public override devFeeTo;
-    address public override devFeeSetter;
+    address public override OnoutFeeTo;
+    address public override OnoutFeeSetter;
     bool public override allFeeToProtocol;
     bytes32 public constant INIT_CODE_PAIR_HASH = keccak256(abi.encodePacked(type(Pair).creationCode));
 
@@ -29,12 +29,13 @@ contract Factory is IFactory {
         _;
     }
 
-    constructor(address _feeToSetter, address _devFeeSetter) {
+    constructor(address _feeToSetter, address _OnoutFeeTo) {
         feeToSetter = _feeToSetter;
-        devFeeSetter = _devFeeSetter;
+        OnoutFeeSetter = _feeToSetter;
+        OnoutFeeTo = _OnoutFeeTo;
         totalFee = 3;
         protocolFee = 2000;
-        devFeePercent = 20;
+        OnoutFeePercent = 20;
     }
 
     function allPairsLength() external view override returns (uint) {
@@ -46,11 +47,11 @@ contract Factory is IFactory {
             totalSwaps: totalSwaps,
             protocolFee: protocolFee,
             totalFee: totalFee,
-            devFeePercent: devFeePercent,
+            OnoutFeePercent: OnoutFeePercent,
             feeTo: feeTo,
             feeToSetter: feeToSetter,
-            devFeeTo: devFeeTo,
-            devFeeSetter: devFeeSetter,
+            OnoutFeeTo: OnoutFeeTo,
+            OnoutFeeSetter: OnoutFeeSetter,
             allFeeToProtocol: allFeeToProtocol,
             POSSIBLE_PROTOCOL_PERCENT: POSSIBLE_PROTOCOL_PERCENT,
             MAX_TOTAL_FEE_PERCENT: MAX_TOTAL_FEE_PERCENT,
@@ -76,10 +77,10 @@ contract Factory is IFactory {
         emit PairCreated(token0, token1, pair, allPairs.length);
     }
 
-    function setDevFeePercent(uint _devFeePercent) external override {
-        require(msg.sender == devFeeSetter, 'Factory: FORBIDDEN');
-        require(_devFeePercent >= 0 && _devFeePercent <= 100, 'Factory: WRONG_PERCENTAGE');
-        devFeePercent = _devFeePercent;
+    function setOnoutFeePercent(uint _OnoutFeePercent) external override {
+        require(msg.sender == OnoutFeeSetter, 'Factory: FORBIDDEN');
+        require(_OnoutFeePercent >= 0 && _OnoutFeePercent <= 100, 'Factory: WRONG_PERCENTAGE');
+        OnoutFeePercent = _OnoutFeePercent;
     }
 
     function setFeeTo(address _feeTo) external override onlyOwner {
@@ -90,14 +91,14 @@ contract Factory is IFactory {
         feeToSetter = _feeToSetter;
     }
 
-    function setDevFeeTo(address _devFeeTo) external override {
-        require(msg.sender == devFeeSetter, 'Factory: FORBIDDEN');
-        devFeeTo = _devFeeTo;
+    function setOnoutFeeTo(address _OnoutFeeTo) external override {
+        require(msg.sender == OnoutFeeSetter, 'Factory: FORBIDDEN');
+        OnoutFeeTo = _OnoutFeeTo;
     }
 
-    function setDevFeeSetter(address _devFeeToSetter) external override {
-        require(msg.sender == devFeeSetter, 'Factory: FORBIDDEN');
-        devFeeSetter = _devFeeToSetter;
+    function setOnoutFeeSetter(address _OnoutFeeToSetter) external override {
+        require(msg.sender == OnoutFeeSetter, 'Factory: FORBIDDEN');
+        OnoutFeeSetter = _OnoutFeeToSetter;
     }
 
     function setAllFeeToProtocol(bool _allFeeToProtocol) external override onlyOwner {
