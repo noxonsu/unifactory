@@ -1,11 +1,13 @@
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
+import { useDispatch } from 'react-redux'
 import { useWeb3React } from '@web3-react/core'
 import { UnsupportedChainIdError } from '@web3-react/core'
 import { InjectedConnector } from '@web3-react/injected-connector'
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 import { useTranslation } from 'react-i18next'
 import { useActiveWeb3React } from 'hooks'
+import { updateAppOptions } from 'state/application/actions'
 import { useAppState } from 'state/application/hooks'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { SUPPORTED_WALLETS, THIRTY_SECONDS_IN_MS } from '../../../constants'
@@ -57,6 +59,7 @@ const Upgrade: FC = () => {
   const { library } = useWeb3React()
   const { account, chainId, activate } = useActiveWeb3React()
   const { additions } = useAppState()
+  const dispatch = useDispatch()
   const addTransaction = useTransactionAdder()
 
   const [paymentCryptoPrice, setPaymentCryptoPrice] = useState<number | undefined>()
@@ -134,6 +137,23 @@ const Upgrade: FC = () => {
     setIsNetworkPending(false)
   }
 
+  const updateAdditionStateInfo = (addition: Addition, key: string) => {
+    dispatch(
+      updateAppOptions([
+        {
+          key: 'additions',
+          value: {
+            ...additions,
+            [addition]: {
+              key,
+              isValid: true,
+            },
+          },
+        },
+      ])
+    )
+  }
+
   const saveAdditionKey = async ({
     hash,
     isSuccess,
@@ -180,6 +200,9 @@ const Upgrade: FC = () => {
               summary: 'Addition key was saved',
             }
           )
+        },
+        onReceipt: (_, success) => {
+          if (success) updateAdditionStateInfo(addition, additionKey)
         },
       })
     }

@@ -275,7 +275,7 @@
   },
   "97": {
     "name": "BSC testnet",
-    "rpc": "https://bsc-testnet.public.blastapi.io",
+    "rpc": "https://data-seed-prebsc-1-s2.binance.org:8545",
     "chainId": 97,
     "explorer": "https://testnet.bscscan.com",
     "color": "#CC9B00",
@@ -290,6 +290,25 @@
       "address": "0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd",
       "name": "Wrapped BNB",
       "symbol": "WBNB"
+    }
+  },
+  "80001": {
+    "name": "Polygon testnet",
+    "rpc": "https://polygon-mumbai.blockpi.network/v1/rpc/public",
+    "chainId": 80001,
+    "explorer": "https://mumbai.polygonscan.com/",
+    "color": "#8247E5",
+    "storage": "0x3E75D01fea47910E47Bb5E37599E56D3Ac8356f7",
+    "multicall": "0xEF65BF9e225A4B606aa5C46f944De35f566e58e4",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "Matic",
+      "symbol": "MATIC"
+    },
+    "wrappedToken": {
+      "address": "0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889",
+      "name": "Wrapped Matic",
+      "symbol": "WMATIC"
     }
   }
 }

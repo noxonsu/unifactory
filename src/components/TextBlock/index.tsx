@@ -10,6 +10,7 @@ const Info = styled.div<{ flex?: boolean; type?: ContentType }>`
   font-size: 0.9rem;
   opacity: 0.6;
   border: 1px solid transparent;
+  width: 100%;
 
   ${({ flex }) => (flex ? 'display: flex; align-items: center;' : '')}
   ${({ type, theme }) => {

@@ -87,12 +87,10 @@ const parseSettings = (settings: string, chainId: number, owner: string): Storag
       addressesOfTokenLists,
       disableSourceCopyright,
       defaultSwapCurrency,
-      OnoutFeeTo,
       additions,
     } = parsedSettings
 
     appSettings.contracts = contracts
-    appSettings.onoutFeeTo = OnoutFeeTo
 
     if (contracts[chainId]) {
       const { factory, router } = contracts[chainId]
@@ -197,6 +195,7 @@ export const fetchDomainData = async (
           totalSwaps,
           POSSIBLE_PROTOCOL_PERCENT,
           INIT_CODE_PAIR_HASH,
+          OnoutFeeTo,
         } = factoryInfo
 
         return {
@@ -206,6 +205,7 @@ export const fetchDomainData = async (
           feeRecipient: feeTo,
           totalFee,
           allFeeToProtocol,
+          onoutFeeTo: OnoutFeeTo,
           possibleProtocolPercent: validArray(POSSIBLE_PROTOCOL_PERCENT) ? POSSIBLE_PROTOCOL_PERCENT.map(Number) : [],
           totalSwaps: totalSwaps || undefined,
         }
