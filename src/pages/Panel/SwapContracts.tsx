@@ -528,7 +528,7 @@ function SwapContracts(props: any) {
               <OptionWrapper margin={1}>
                 <Box>
                   <LabelExtended>
-                    <Checkbox name="Onout fee is disabled" onChange={switchOnoutFee} checked={isOnoutFeeActive} />
+                    <Checkbox name="Onout fee is disabled" onChange={switchOnoutFee} checked={!isOnoutFeeActive} />
                     {t('onoutFeeIsDisabled')}
                   </LabelExtended>
                 </Box>

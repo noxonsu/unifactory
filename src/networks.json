@@ -294,7 +294,7 @@
   },
   "80001": {
     "name": "Polygon testnet",
-    "rpc": "https://polygon-mumbai.blockpi.network/v1/rpc/public",
+    "rpc": "https://endpoints.omniatech.io/v1/matic/mumbai/public",
     "chainId": 80001,
     "explorer": "https://mumbai.polygonscan.com/",
     "color": "#8247E5",
@@ -309,6 +309,25 @@
       "address": "0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889",
       "name": "Wrapped Matic",
       "symbol": "WMATIC"
+    }
+  },
+  "43113": {
+    "name": "Avalanche testnet",
+    "rpc": "https://endpoints.omniatech.io/v1/avax/fuji/public",
+    "chainId": 43113,
+    "explorer": "https://testnet.snowtrace.io/",
+    "color": "#D64F4A",
+    "storage": "0xb66e94f5B2a475D98EEc9012A95114AF6fB1fa02",
+    "multicall": "0xEF65BF9e225A4B606aa5C46f944De35f566e58e4",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "AVAX",
+      "symbol": "AVAX"
+    },
+    "wrappedToken": {
+      "address": "0xd00ae08403B9bbb9124bB305C09058E32C39A48c",
+      "name": "Wrapped AVAX",
+      "symbol": "WAVAX"
     }
   }
 }

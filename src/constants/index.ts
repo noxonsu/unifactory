@@ -8,9 +8,10 @@ export type NetworksId = keyof typeof networks
 export const BSC_ID = 56
 export const BSC_TESTNET_ID = 97
 export const POLYGON_TESTNET_ID = 80001
+export const AVALANCHE_TESTNET_ID = 43113
 export const GOERLI_ID = 5
 
-export const STORAGE_NETWORK_ID = process.env.NODE_ENV === 'production' ? BSC_ID : POLYGON_TESTNET_ID
+export const STORAGE_NETWORK_ID = process.env.NODE_ENV === 'production' ? BSC_ID : AVALANCHE_TESTNET_ID
 export const STORAGE_NETWORK_NAME = networks[STORAGE_NETWORK_ID.toString() as NetworksId].name
 // @ts-ignore
 export const STORAGE = networks[STORAGE_NETWORK_ID.toString() as NetworksId].storage
