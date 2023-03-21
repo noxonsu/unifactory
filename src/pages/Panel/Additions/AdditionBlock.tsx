@@ -15,13 +15,20 @@ const StyledNumList = styled.ol`
   }
 `
 
-const StyledOption = styled.div<{ isPurchased?: boolean }>`
+const StyledOption = styled.div<{ isPurchased?: boolean; isLocked?: boolean }>`
   padding: 14px;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   border-radius: 1.25rem;
-  border: 1px solid ${({ theme, isPurchased }) => (isPurchased ? theme.green2 : theme.blue2)};
+  border: 1px solid
+    ${({ theme, isPurchased, isLocked }) => {
+      if (isLocked) return theme.primaryText1
+      if (isPurchased) return theme.green2
+      return theme.blue2
+    }};
+
+  ${({ isLocked }) => isLocked && 'opacity: 0.6;'}
 
   :not(:last-child) {
     margin-bottom: 8px;
@@ -65,11 +72,21 @@ type Props = {
   cryptoCost?: number
   assetName: string
   usdCost?: number
-  isPurchased: boolean | undefined
-  onPayment: () => void
+  isPurchased?: boolean
+  isLocked?: boolean
+  onPayment: () => Promise<void>
 }
 
-const AdditionBlock: FC<Props> = ({ name, description, cryptoCost, assetName, usdCost, isPurchased, onPayment }) => {
+const AdditionBlock: FC<Props> = ({
+  name,
+  description,
+  cryptoCost,
+  assetName,
+  usdCost,
+  isPurchased,
+  isLocked,
+  onPayment,
+}) => {
   const { t } = useTranslation()
   const addPopup = useAddPopup()
 
@@ -105,7 +122,7 @@ const AdditionBlock: FC<Props> = ({ name, description, cryptoCost, assetName, us
   }
 
   return (
-    <StyledOption isPurchased={isPurchased}>
+    <StyledOption isPurchased={isPurchased} isLocked={isLocked}>
       <ConfirmationModal
         open={showConfirm}
         onDismiss={onDismissConfirmation}
@@ -144,7 +161,9 @@ const AdditionBlock: FC<Props> = ({ name, description, cryptoCost, assetName, us
       {isPurchased ? (
         <StyledLabel>{t('purchased')}</StyledLabel>
       ) : (
-        <StyledPurchaseButton onClick={onConfirm}>{t('buy')}</StyledPurchaseButton>
+        <StyledPurchaseButton onClick={onConfirm} disabled={isLocked}>
+          {t('buy')}
+        </StyledPurchaseButton>
       )}
     </StyledOption>
   )

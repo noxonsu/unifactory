@@ -54,41 +54,6 @@ export default function Popups() {
 
   const noDomainInfo = !admin
 
-  // popup component testing
-  // const zero = '0x0000000000000000000000000000000000000000000000000000000000000000'
-
-  // if (!activePopups.length) {
-  //   activePopups.push({
-  //     key: zero,
-  //     show: true,
-  //     content: {
-  //       txn: {
-  //         hash: zero,
-  //         success: true,
-  //         // summary: 'Test popup',
-  //         summary: 'Test popup popup popup popup popup popup popup popup popup popup popup popup popup',
-  //       },
-  //     },
-  //     removeAfterMs: Infinity,
-  //   })
-  // }
-
-  // if (!activePopups.length) {
-  //   activePopups.push({
-  //     key: zero,
-  //     show: true,
-  //     removeAfterMs: Infinity,
-  //     content: {
-  //       error: {
-  //         message: 'Error message with useless information. No point to read this stuff',
-  //         // message:
-  //         //   'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid aperiam commodi cumque ea esse ex impedit iste labore modi mollitia nostrum, obcaecati qui saepe tempore tenetur unde, vel veritatis vitae?',
-  //         code: 1234,
-  //       },
-  //     },
-  //   })
-  // }
-
   return (
     <>
       <FixedPopupColumn gap="20px" noPadding={appManagement || noDomainInfo} extraPadding={false}>

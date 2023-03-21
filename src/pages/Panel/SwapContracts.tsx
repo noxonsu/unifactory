@@ -265,16 +265,7 @@ function SwapContracts(props: any) {
             },
           },
         },
-        onReceipt: (receipt, success) => {
-          if (success) {
-            dispatch(
-              updateAppOptions([
-                { key: 'factory', value: factory },
-                { key: 'router', value: router },
-              ])
-            )
-          }
-        },
+        onReceipt: (_, success) => success && window.location.reload(),
       })
     } catch (error) {
       console.error(error)
@@ -346,8 +337,20 @@ function SwapContracts(props: any) {
 
   const updateFeesToAdmin = (event: any) => setAllFeesToAdmin(event.target.checked)
 
+  const updateOnoutFee = () => {
+    dispatch(
+      updateAppOptions([
+        {
+          key: 'onoutFeeTo',
+          value: originFeeAddress,
+        },
+      ])
+    )
+  }
+
   const saveOption = async (method: string) => {
     const values: unknown[] = []
+    let onSave: VoidFunction
 
     switch (method) {
       case FactoryMethod.setFeeToSetter:
@@ -358,6 +361,7 @@ function SwapContracts(props: any) {
         break
       case FactoryMethod.setOnoutFeeTo:
         values.push(originFeeAddress)
+        onSave = updateOnoutFee
         break
       case FactoryMethod.setAllFeeToProtocol:
         values.push(allFeesToAdmin)
@@ -388,6 +392,7 @@ function SwapContracts(props: any) {
             }
           )
         },
+        onReceipt: (_, success) => success && onSave(),
       })
     } catch (error) {
       const REJECT = 4001

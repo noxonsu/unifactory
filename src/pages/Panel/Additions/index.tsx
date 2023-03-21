@@ -10,7 +10,7 @@ import { useActiveWeb3React } from 'hooks'
 import { updateAppOptions } from 'state/application/actions'
 import { useAppState } from 'state/application/hooks'
 import { useTransactionAdder } from 'state/transactions/hooks'
-import { SUPPORTED_WALLETS, THIRTY_SECONDS_IN_MS } from '../../../constants'
+import { THIRTY_SECONDS_IN_MS } from '../../../constants'
 import { Addition, AdditionName, paidAdditions, requiredPaymentNetworkId, onoutUrl } from '../../../constants/onout'
 import { switchInjectedNetwork } from 'utils/wallet'
 import cache from 'utils/cache'
@@ -57,7 +57,7 @@ const requiredPaymentNetwork = networks[requiredPaymentNetworkId]
 const Upgrade: FC = () => {
   const { t } = useTranslation()
   const { library } = useWeb3React()
-  const { account, chainId, activate } = useActiveWeb3React()
+  const { account, chainId, activate, connector } = useActiveWeb3React()
   const { additions } = useAppState()
   const dispatch = useDispatch()
   const addTransaction = useTransactionAdder()
@@ -111,17 +111,10 @@ const Upgrade: FC = () => {
   const [isNetworkPending, setIsNetworkPending] = useState(false)
 
   const switchToRequiredPaymentNetwork = async () => {
-    // @todo how to find the current wallet type?
-    const { connector } = SUPPORTED_WALLETS.INJECTED // SUPPORTED_WALLETS[key]
-
     setIsNetworkPending(true)
 
     if (connector instanceof InjectedConnector) {
-      const result = await switchInjectedNetwork(requiredPaymentNetworkId)
-
-      if (!result) {
-        //
-      }
+      await switchInjectedNetwork(requiredPaymentNetworkId)
     } // if the connector is walletconnect and the user has already tried to connect, manually reset the connector
     else if (connector instanceof WalletConnectConnector && connector.walletConnectProvider?.wc?.uri) {
       connector.walletConnectProvider = undefined
@@ -208,9 +201,9 @@ const Upgrade: FC = () => {
     }
   }
 
-  const buyCopyrightSwitching = () => {
+  const buyCopyrightSwitching = async () => {
     if (library && account) {
-      onout.payment({
+      await onout.payment({
         forWhat: 'Copyright switching',
         library,
         from: account,
@@ -226,9 +219,9 @@ const Upgrade: FC = () => {
     }
   }
 
-  const buyPremiumVersion = () => {
+  const buyPremiumVersion = async () => {
     if (library && account) {
-      onout.payment({
+      await onout.payment({
         forWhat: 'Premium version',
         library,
         from: account,
@@ -274,6 +267,7 @@ const Upgrade: FC = () => {
           cryptoCost={cryptoPrices.switchCopyright}
           isPurchased={additions[Addition.switchCopyright]?.isValid}
           onPayment={buyCopyrightSwitching}
+          isLocked={additions[Addition.premiumVersion]?.isValid}
         />
         <AdditionBlock
           name={t('premiumVersion')}

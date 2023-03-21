@@ -147,8 +147,9 @@ export const setFactoryOption = async (params: {
   method: string
   values: unknown[]
   onHash?: (hash: string) => void
+  onReceipt?: (receipt: object, success: boolean) => void
 }) => {
-  const { library, from, factoryAddress, method, values, onHash } = params
+  const { library, from, factoryAddress, method, values, onHash, onReceipt } = params
   const factory = getContractInstance(library.provider, factoryAddress, Factory.abi)
 
   return new Promise((resolve, reject) => {
@@ -158,6 +159,9 @@ export const setFactoryOption = async (params: {
       })
       .on('transactionHash', (hash: string) => {
         if (typeof onHash === 'function') onHash(hash)
+      })
+      .on('receipt', (receipt: any) => {
+        if (typeof onReceipt === 'function') onReceipt(receipt, receipt?.status)
       })
       .then(resolve)
       .catch(reject)
