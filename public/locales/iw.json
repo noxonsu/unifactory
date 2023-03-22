@@ -296,5 +296,6 @@
   "disableSourceCopyright": "השבת Onout זכויות יוצרים",
   "reset": "איפוס",
   "onoutFeeIsDisabled": "Onout הזנה מושבתת",
+  "doNotForgetDisableOnoutFee": "אל תשכח להשבית onout דמי לאחר רכישת גרסת פרימיום",
   "addTokenToMetamask": "הוסף את {{tokenSymbol}} ל- Metamask"
 }

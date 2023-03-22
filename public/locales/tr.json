@@ -303,5 +303,6 @@
   "disableSourceCopyright": "Devre dışı Bırak Onout telif hakkı",
   "reset": "Sıfırlamak",
   "onoutFeeIsDisabled": "Onout besleme devre dışı bırakıldı",
+  "doNotForgetDisableOnoutFee": "Devre dışı bırakmayı unutma onout premium sürümü satın aldıktan sonra ücret",
   "addTokenToMetamask": "Metamask'a {{tokenSymbol}} ekleyin"
 }

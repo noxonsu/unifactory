@@ -295,5 +295,6 @@
   "disableSourceCopyright": "Отключить авторское право Onout",
   "reset": "Сброс",
   "onoutFeeIsDisabled": "Onout комиссия отключена",
+  "doNotForgetDisableOnoutFee": "Не забудьте отключить onout комиссию после покупки премиум-версии",
   "addTokenToMetamask": "Добавить {{tokenSymbol}} в Metamask"
 }

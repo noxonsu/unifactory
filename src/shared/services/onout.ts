@@ -62,7 +62,7 @@ const sendTx = async ({
     const txWithoutGasLimit = {
       to,
       from,
-      value: ethers.utils.parseEther('0.00001'), // ethers.utils.parseEther(cryptoAmount),
+      value: ethers.utils.parseEther(cryptoAmount),
     }
     const percentToAddToGasLimit = 5
     const gasLimit = (await signer.estimateGas(txWithoutGasLimit)).mul(100 + percentToAddToGasLimit).div(100)

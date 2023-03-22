@@ -69,6 +69,7 @@ const StyledLabel = styled.span`
 type Props = {
   name: JSX.Element
   description?: string
+  notice?: string
   cryptoCost?: number
   assetName: string
   usdCost?: number
@@ -80,6 +81,7 @@ type Props = {
 const AdditionBlock: FC<Props> = ({
   name,
   description,
+  notice,
   cryptoCost,
   assetName,
   usdCost,
@@ -147,6 +149,7 @@ const AdditionBlock: FC<Props> = ({
           {name}
           {description && <QuestionHelper text={description} />}
         </StyledText>
+        {notice && <StyledText>{notice}</StyledText>}
         <span>
           {typeof cryptoCost === 'number' ? (
             <b>

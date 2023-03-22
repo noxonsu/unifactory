@@ -304,5 +304,6 @@
   "disableSourceCopyright": "Deaktivieren Onout urheberrechte",
   "reset": "Zurücksetzen",
   "onoutFeeIsDisabled": "Onout feed ist deaktiviert",
+  "doNotForgetDisableOnoutFee": "Vergiss nicht zu deaktivieren onout gebühr nach dem Kauf der Premium-Version",
   "addTokenToMetamask": "Fügen Sie {{tokenSymbol}} zu Metamask hinzu"
 }
