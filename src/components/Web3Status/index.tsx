@@ -27,8 +27,8 @@ const IconWrapper = styled.div<{ size?: number }>`
   align-items: center;
   justify-content: center;
   & > * {
-    height: ${({ size }) => (size ? size + 'px' : '32px')};
-    width: ${({ size }) => (size ? size + 'px' : '32px')};
+    height: ${({ size }) => (size ? `${size}px` : '32px')};
+    width: ${({ size }) => (size ? `${size}px` : '32px')};
   }
 `
 
@@ -229,7 +229,7 @@ export default function Web3Status() {
   const pending = sortedRecentTransactions.filter((tx) => !tx.receipt).map((tx) => tx.hash)
   const confirmed = sortedRecentTransactions.filter((tx) => tx.receipt).map((tx) => tx.hash)
 
-  if (!contextNetwork.active && !active) {
+  if (!(contextNetwork.active || active)) {
     return null
   }
 

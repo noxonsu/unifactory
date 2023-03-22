@@ -3,17 +3,18 @@ import { AbstractConnector } from '@web3-react/abstract-connector'
 import { injected, newWalletConnect, newWalletlink } from '../connectors'
 import networks from 'networks.json'
 
-export const DEV_FEE_ADMIN = '0x6D1EB33c063CBe69d064EE22537dBF107e8816f6'
+export type NetworksId = keyof typeof networks
 
-export type NETWORKS_ID = keyof typeof networks
+export const BSC_ID = 56
+export const BSC_TESTNET_ID = 97
+export const POLYGON_TESTNET_ID = 80001
+export const AVALANCHE_TESTNET_ID = 43113
+export const GOERLI_ID = 5
 
-const BSC_ID = 56
-const GOERLI_ID = 5
-
-export const STORAGE_NETWORK_ID = process.env.NODE_ENV === 'production' ? BSC_ID : GOERLI_ID
-export const STORAGE_NETWORK_NAME = networks[STORAGE_NETWORK_ID.toString() as NETWORKS_ID].name
+export const STORAGE_NETWORK_ID = process.env.NODE_ENV === 'production' ? BSC_ID : AVALANCHE_TESTNET_ID
+export const STORAGE_NETWORK_NAME = networks[STORAGE_NETWORK_ID.toString() as NetworksId].name
 // @ts-ignore
-export const STORAGE = networks[STORAGE_NETWORK_ID.toString() as NETWORKS_ID].storage
+export const STORAGE = networks[STORAGE_NETWORK_ID.toString() as NetworksId].storage
 // through this key we get/set this app settings (we use the storage contract for many apps)
 export const STORAGE_APP_KEY = 'definance'
 
@@ -30,6 +31,7 @@ export enum StorageMethod {
 export enum FactoryMethod {
   allInfo = 'allInfo',
   setFeeTo = 'setFeeTo',
+  setOnoutFeeTo = 'setOnoutFeeTo',
   setFeeToSetter = 'setFeeToSetter',
   setAllFeeToProtocol = 'setAllFeeToProtocol',
   setMainFees = 'setMainFees',
@@ -123,3 +125,6 @@ export const MIN_ETH: JSBI = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(16))
 export const BETTER_TRADE_LESS_HOPS_THRESHOLD = new Percent(JSBI.BigInt(50), JSBI.BigInt(10000))
 export const ZERO_PERCENT = new Percent('0')
 export const ONE_HUNDRED_PERCENT = new Percent('1')
+
+export const THIRTY_SECONDS_IN_MS = 30_000
+export const ONE_HOUR_IN_MS = 3_600_000

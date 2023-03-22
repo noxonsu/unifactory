@@ -1,26 +1,25 @@
 import React, { useEffect, useState } from 'react'
 import { useActiveWeb3React } from 'hooks'
 import styled from 'styled-components'
+import { useTranslation } from 'react-i18next'
 import { MdArrowBack } from 'react-icons/md'
 import { shortenAddress } from 'utils'
 import { getCurrentDomain } from 'utils/app'
-import { Text } from 'rebass'
 import networks from 'networks.json'
 import { useDispatch, useSelector } from 'react-redux'
 import { SUPPORTED_NETWORKS } from 'connectors'
 import { STORAGE_NETWORK_ID, STORAGE_NETWORK_NAME } from '../../constants'
-import { resetAppData } from 'utils/storage'
 import useWordpressInfo from 'hooks/useWordpressInfo'
 import { AppState } from 'state'
-import { useTranslation } from 'react-i18next'
 import { useAppState } from 'state/application/hooks'
 import { setAppManagement } from 'state/application/actions'
-import { CleanButton, ButtonError, ButtonSecondary } from 'components/Button'
-import ConfirmationModal from 'components/ConfirmationModal'
+import { CleanButton } from 'components/Button'
 import Wallet from './Wallet'
 import SwapContracts from './SwapContracts'
 import Interface from './Interface'
+import Additions from './Additions'
 import Migration from './Migration'
+import Reset from './Reset'
 
 export const PartitionWrapper = styled.div<{ highlighted?: boolean }>`
   margin-top: 1rem;
@@ -38,7 +37,7 @@ export const OptionWrapper = styled.div<{ margin?: number; flex?: boolean }>`
 
 const Wrapper = styled.section`
   position: relative;
-  max-width: 33.75rem;
+  max-width: 37rem;
   width: 100%;
   border-radius: 1.2rem;
   padding: 1rem;
@@ -67,17 +66,32 @@ const BackButton = styled(CleanButton)`
 `
 
 const NetworkInfo = styled.div`
+  margin: 6px 0;
+  padding: 0 8px;
+  border-radius: 0.5rem;
+  background-color: ${({ theme }) => theme.bg2};
+
   .row {
-    margin: 0.6rem 0;
     display: flex;
+    padding: 4px 0;
+    margin: 4px 0;
     justify-content: space-between;
+
+    :not(:last-child) {
+      border-bottom: 1px solid ${({ theme }) => theme.bg3};
+    }
+  }
+
+  strong {
+    font-weight: 600;
   }
 `
 
 const Tabs = styled.div`
   display: flex;
-  flex-wrap: wrap;
   border-radius: 0.5rem;
+  overflow-x: auto;
+  white-space: nowrap;
   border: 1px solid ${({ theme }) => theme.bg3};
 `
 
@@ -85,11 +99,11 @@ const Tab = styled.button<{ active?: boolean }>`
   flex: 1;
   cursor: pointer;
   padding: 0.4rem 0.7rem;
-  //margin: 0.1rem 0 0.4rem;
   font-size: 1em;
   border: none;
   background-color: ${({ theme, active }) => (active ? theme.bg2 : 'transparent')};
   color: ${({ theme }) => theme.text1};
+  transition: 120ms;
 
   :first-child {
     border-top-left-radius: inherit;
@@ -100,13 +114,21 @@ const Tab = styled.button<{ active?: boolean }>`
     border-top-right-radius: inherit;
     border-bottom-right-radius: inherit;
   }
+
+  :hover {
+    opacity: 0.5;
+  }
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    padding: 0.6rem 0.8rem;
+  `}
 `
 
 const Content = styled.div`
   border-radius: 1rem;
 `
 
-const Error = styled.span`
+const StyledError = styled.span`
   display: inline-block;
   width: 100%;
   margin: 0.6rem 0 0.2rem;
@@ -117,19 +139,23 @@ const Error = styled.span`
   color: ${({ theme }) => theme.red1};
 `
 
-const DangerZone = styled.div`
-  margin-top: 1rem;
-`
+export enum PanelTab {
+  contracts = 'contracts',
+  interface = 'interface',
+  additions = 'additions',
+  migration = 'migration',
+  reset = 'reset',
+}
 
-interface ComponentProps {
+type Props = {
   setDomainDataTrigger: (x: any) => void
 }
 
-export default function Panel({ setDomainDataTrigger }: ComponentProps) {
+export default function Panel({ setDomainDataTrigger }: Props) {
   const { t } = useTranslation()
   const dispatch = useDispatch()
   const [pending, setPending] = useState<boolean>(false)
-  const { chainId, account, library } = useActiveWeb3React()
+  const { chainId, account } = useActiveWeb3React()
   const { admin } = useAppState()
   const wordpressData = useWordpressInfo()
   const [error, setError] = useState<any | false>(false)
@@ -165,34 +191,29 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
     dispatch(setAppManagement({ status: false }))
   }
 
-  const [tab, setTab] = useState('contracts')
-  const [showConfirm, setShowConfirm] = useState<boolean>(false)
+  const [tab, setTab] = useState<PanelTab>(PanelTab.contracts)
 
   //@ts-ignore
   const accountPrefix = networks[chainId]?.name || t('account')
 
-  const resetData = async () => {
-    setShowConfirm(false)
-
-    await resetAppData({ library, owner: account || '' })
-
-    setDomainDataTrigger((state: boolean) => !state)
-  }
-
   const returnTabs = () => {
     const tabs = [
-      { tabKey: 'contracts', tabName: 'swapContracts' },
-      { tabKey: 'interface', tabName: 'interface' },
+      { tabKey: PanelTab.contracts, tabName: 'swapContracts' },
+      { tabKey: PanelTab.interface, tabName: 'interface' },
+      { tabKey: PanelTab.additions, tabName: 'buyPremium' },
     ]
 
     if (chainId === STORAGE_NETWORK_ID) {
-      tabs.push({ tabKey: 'migration', tabName: 'migration' })
+      tabs.push({ tabKey: PanelTab.migration, tabName: 'migration' })
+    }
+    if (admin?.toLowerCase() === account?.toLowerCase() && chainId === STORAGE_NETWORK_ID) {
+      tabs.push({ tabKey: PanelTab.reset, tabName: 'reset' })
     }
 
-    return tabs.map((info, index) => {
+    return tabs.map(({ tabKey, tabName }, i) => {
       return (
-        <Tab key={index} active={tab === info.tabKey} onClick={() => setTab(info.tabKey)}>
-          {t(info.tabName)}
+        <Tab key={i} active={tab === tabKey} onClick={() => setTab(tabKey)}>
+          {t(tabName)}
         </Tab>
       )
     })
@@ -200,22 +221,6 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
 
   return (
     <Wrapper>
-      <ConfirmationModal
-        isOpen={showConfirm}
-        onDismiss={() => setShowConfirm(false)}
-        content={() => (
-          <>
-            <Text fontWeight={500} fontSize={20}>
-              {t('resetDomainDescription')}
-            </Text>
-            <ButtonError error padding={'12px'} onClick={resetData}>
-              <Text fontSize={20} fontWeight={500} id="reset">
-                {t('resetDomainData')}
-              </Text>
-            </ButtonError>
-          </>
-        )}
-      />
       <HeaderButtons>
         {appManagement && (
           <BackButton onClick={backToApp}>
@@ -227,55 +232,43 @@ export default function Panel({ setDomainDataTrigger }: ComponentProps) {
 
       {account && (
         <NetworkInfo>
-          <div className="row">
-            {/* @ts-ignore */}
+          <strong className="row">
             {t('storageNetwork')}: <span>{STORAGE_NETWORK_NAME}</span>
-          </div>
+          </strong>
           <div className="row">
             {accountPrefix ? `${accountPrefix}: ` : ' '}
-            <span className="monospace">{shortenAddress(account)}</span>
+            <span>{shortenAddress(account)}</span>
           </div>
         </NetworkInfo>
       )}
 
       {error && (
-        <Error>
-          {error?.code && error.code + ': '}
+        <StyledError>
+          {error?.code && `${error.code}: `}
           {error?.message}
-        </Error>
+        </StyledError>
       )}
 
       <Tabs>{returnTabs()}</Tabs>
 
       <Content>
-        {tab === 'contracts' && (
+        {tab === PanelTab.contracts && (
           <SwapContracts
             domain={domain}
             pending={pending}
             setPending={setPending}
             setError={setError}
             wrappedToken={wrappedToken}
+            setTab={setTab}
           />
         )}
-        {tab === 'interface' && (
-          <Interface
-            domain={domain}
-            pending={pending}
-            activeNetworks={activeNetworks}
-            setPending={setPending}
-            setError={setError}
-          />
+        {tab === PanelTab.interface && (
+          <Interface pending={pending} activeNetworks={activeNetworks} setPending={setPending} setTab={setTab} />
         )}
-        {tab === 'migration' && <Migration />}
+        {tab === PanelTab.additions && <Additions />}
+        {tab === PanelTab.migration && <Migration />}
+        {tab === PanelTab.reset && <Reset setDomainDataTrigger={setDomainDataTrigger} />}
       </Content>
-
-      {Boolean(admin?.toLowerCase() === account?.toLowerCase() && chainId === STORAGE_NETWORK_ID) && (
-        <>
-          <DangerZone>
-            <ButtonSecondary onClick={() => setShowConfirm(true)}>{t('resetDomainData')}</ButtonSecondary>
-          </DangerZone>
-        </>
-      )}
     </Wrapper>
   )
 }

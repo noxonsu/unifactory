@@ -1,6 +1,7 @@
 import { createReducer, nanoid } from '@reduxjs/toolkit'
 import { TokenList } from '@uniswap/token-lists/dist/types'
 import { SUPPORTED_NETWORKS } from '../../connectors'
+import { Addition } from '../../constants/onout'
 import {
   setAppManagement,
   retrieveDomainData,
@@ -55,6 +56,16 @@ export type StorageState = {
   addressesOfTokenLists: string[]
   disableSourceCopyright: boolean
   defaultSwapCurrency: { input: string; output: string }
+  onoutFeeTo: string
+  additions: Partial<
+    Record<
+      Addition,
+      {
+        key: string
+        isValid: boolean
+      }
+    >
+  >
 }
 
 export type ApplicationState = StorageState & {
@@ -97,6 +108,8 @@ const initialState: ApplicationState = {
   socialLinks: [],
   addressesOfTokenLists: [],
   defaultSwapCurrency: { input: '', output: '' },
+  onoutFeeTo: '',
+  additions: {},
   // --------------------------
   appManagement: false,
   blockNumber: {},
@@ -153,7 +166,7 @@ export default createReducer(initialState, (builder) =>
     .addCase(setOpenModal, (state, action) => {
       state.openModal = action.payload
     })
-    .addCase(addPopup, (state, { payload: { content, key, removeAfterMs = 15000 } }) => {
+    .addCase(addPopup, (state, { payload: { content, key, removeAfterMs = 15_000 } }) => {
       state.popupList = (key ? state.popupList.filter((popup) => popup.key !== key) : state.popupList).concat([
         {
           key: key || nanoid(),

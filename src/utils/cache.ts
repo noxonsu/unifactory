@@ -1,17 +1,52 @@
-export const cache: {
-  [area: string]: {
-    [key: string]: any
-  }
-} = {}
+type CacheItem<T = unknown> =
+  | {
+      value: T
+      deadline?: number
+    }
+  | undefined
 
-export const addValue = (area: string, key: string, value: any) => {
+interface Cache {
+  [area: string]: {
+    [key: string]: CacheItem
+  }
+}
+
+const cache: Cache = {}
+
+const get = <T>(area: string, key: string) => {
+  return cache[area]?.[key] as CacheItem<T>
+}
+
+const add = <T = unknown>({
+  area,
+  key,
+  value,
+  deadline = Infinity,
+}: {
+  area: string
+  key: string
+  value: T
+  deadline?: number
+}) => {
   if (area && key && value) {
     cache[area] = {
-      [key]: value,
+      ...cache[area],
+      [key]: {
+        value,
+        deadline,
+      },
     }
   }
 }
 
-export const removeValue = (area: string, key: string) => {
-  if (cache[area]?.[key]) delete cache[key]
+const remove = (area: string, key: string) => {
+  if (cache[area]?.[key]) {
+    cache[area][key] = undefined
+  }
+}
+
+export default {
+  get,
+  add,
+  remove,
 }

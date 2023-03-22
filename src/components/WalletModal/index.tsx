@@ -268,7 +268,7 @@ export default function WalletModal({
   }
 
   function getAvailableWallets() {
-    const isMetamask = window.ethereum && window.ethereum.isMetaMask
+    const isMetamask = window.ethereum?.isMetaMask
     const availableOptions = Object.keys(SUPPORTED_WALLETS).map((key) => {
       const option = SUPPORTED_WALLETS[key]
 
@@ -296,7 +296,7 @@ export default function WalletModal({
               header={option.name}
               subheader={null}
               size={45}
-              icon={require('../../assets/images/' + option.iconName)}
+              icon={require(`../../assets/images/${option.iconName}`)}
             />
           )
         }
@@ -351,7 +351,7 @@ export default function WalletModal({
             link={option.href}
             header={option.name}
             subheader={null} //use option.descriptio to bring back multi-line
-            icon={require('../../assets/images/' + option.iconName)}
+            icon={require(`../../assets/images/${option.iconName}`)}
             size={45}
           />
         )
@@ -427,7 +427,7 @@ export default function WalletModal({
             />
           ) : (
             <>
-              {!Boolean(hasWallet) ? (
+              {!hasWallet ? (
                 t('noConnectionMethodsAvailable')
               ) : (
                 <OptionsWrapped>

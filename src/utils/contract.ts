@@ -5,9 +5,12 @@ import { ethers } from 'ethers'
 import TokenAbi from 'human-standard-token-abi'
 import Factory from 'contracts/build/Factory.json'
 import RouterV2 from 'contracts/build/RouterV2.json'
-import { cache, addValue } from './cache'
+import { ONE_HOUR_IN_MS } from '../constants'
+import cache from './cache'
 import { getWeb3Library } from './getLibrary'
 import networks from 'networks.json'
+
+const noop = () => {}
 
 export const getContractInstance = (provider: any, address: string, abi: any) => {
   const web3 = getWeb3Library(provider)
@@ -15,8 +18,15 @@ export const getContractInstance = (provider: any, address: string, abi: any) =>
   return new web3.eth.Contract(abi, address)
 }
 
-const deployContract = async (params: any) => {
-  const { abi, byteCode, library, onDeploy = () => {}, onHash = () => {}, deployArguments } = params
+const deployContract = async (params: {
+  abi: any
+  byteCode: string
+  library: Web3Provider
+  onDeploy?: (v: unknown) => void
+  onHash?: (h: string) => void
+  deployArguments: unknown[]
+}) => {
+  const { abi, byteCode, library, onDeploy = noop, onHash = noop, deployArguments } = params
 
   let contract
   let accounts
@@ -50,20 +60,30 @@ const deployContract = async (params: any) => {
   }
 }
 
-export const deployFactory = async (params: any) => {
-  const { library, onHash, admin, devFeeAdmin } = params
+export const deployFactory = async (params: {
+  library: Web3Provider
+  onHash?: (h: string) => void
+  admin: string
+  originFeeAddress: string
+}) => {
+  const { library, onHash, admin, originFeeAddress } = params
   const { abi, bytecode } = Factory
 
   return deployContract({
     abi,
     byteCode: bytecode,
-    deployArguments: [admin, devFeeAdmin],
+    deployArguments: [admin, originFeeAddress],
     library,
     onHash,
   })
 }
 
-export const deployRouter = async (params: any) => {
+export const deployRouter = async (params: {
+  library: Web3Provider
+  factory: string
+  onHash?: (h: string) => void
+  wrappedToken: string
+}) => {
   const { library, factory, onHash, wrappedToken } = params
   const { abi, bytecode } = RouterV2
 
@@ -81,19 +101,20 @@ export const deploySwapContracts = async (params: {
   chainId: number
   library: Web3Provider
   wrappedToken: string
-  devFeeAdmin: string
+  originFeeAddress: string
   onFactoryHash?: (hash: string) => void
   onRouterHash?: (hash: string) => void
   onSuccessfulDeploy?: (params: { chainId: number; factory: string; router: string }) => void
 }) => {
-  const { admin, chainId, library, wrappedToken, devFeeAdmin, onFactoryHash, onRouterHash, onSuccessfulDeploy } = params
+  const { admin, chainId, library, wrappedToken, originFeeAddress, onFactoryHash, onRouterHash, onSuccessfulDeploy } =
+    params
 
   try {
     const factory = await deployFactory({
       onHash: onFactoryHash,
       library,
       admin,
-      devFeeAdmin,
+      originFeeAddress,
     })
 
     if (factory) {
@@ -124,10 +145,11 @@ export const setFactoryOption = async (params: {
   from: string
   factoryAddress: string
   method: string
-  values: any[]
+  values: unknown[]
   onHash?: (hash: string) => void
+  onReceipt?: (receipt: object, success: boolean) => void
 }) => {
-  const { library, from, factoryAddress, method, values, onHash } = params
+  const { library, from, factoryAddress, method, values, onHash, onReceipt } = params
   const factory = getContractInstance(library.provider, factoryAddress, Factory.abi)
 
   return new Promise((resolve, reject) => {
@@ -137,6 +159,9 @@ export const setFactoryOption = async (params: {
       })
       .on('transactionHash', (hash: string) => {
         if (typeof onHash === 'function') onHash(hash)
+      })
+      .on('receipt', (receipt: any) => {
+        if (typeof onReceipt === 'function') onReceipt(receipt, receipt?.status)
       })
       .then(resolve)
       .catch(reject)
@@ -159,8 +184,11 @@ export const isValidAddress = (address: string) => {
 }
 
 export const isContract = async (provider: any, address: string) => {
-  if (cache.isContract && cache.isContract[address]) {
-    return cache.isContract[address]
+  const contractItem = cache.get('isContract', address)
+  const now = Date.now()
+
+  if (contractItem?.value && contractItem?.deadline && contractItem.deadline > now) {
+    return contractItem?.value
   }
 
   if (!isValidAddressFormat(address)) return false
@@ -168,11 +196,20 @@ export const isContract = async (provider: any, address: string) => {
   const codeAtAddress = await provider.getCode(address)
   const codeIsEmpty = !codeAtAddress || codeAtAddress === '0x' || codeAtAddress === '0x0'
 
-  if (!cache.isContract) cache.isContract = {}
-
-  addValue('isContract', address, !codeIsEmpty)
+  cache.add({
+    area: 'isContract',
+    key: address,
+    value: !codeIsEmpty,
+    deadline: now + ONE_HOUR_IN_MS,
+  })
 
   return !codeIsEmpty
+}
+
+interface TokenInfo {
+  name: string
+  symbol: string
+  decimals: number
 }
 
 export const returnTokenInfo = async (chainId: string, address: string) => {
@@ -184,19 +221,24 @@ export const returnTokenInfo = async (chainId: string, address: string) => {
   const result = await isContract(provider, address)
 
   if (result) {
-    if (cache.tokenInfo && cache.tokenInfo[address]) {
-      return cache.tokenInfo[address]
-    }
+    const tokenItem = cache.get<TokenInfo>('tokenInfo', address)
+
+    if (tokenItem?.value) return tokenItem.value
+
     //@ts-ignore
     const contract = new Contract(address, TokenAbi, provider)
     const name = await contract.name()
     const symbol = await contract.symbol()
     const decimals = await contract.decimals()
 
-    addValue('tokenInfo', address, {
-      name,
-      symbol,
-      decimals,
+    cache.add<TokenInfo>({
+      area: 'tokenInfo',
+      key: address,
+      value: {
+        name,
+        symbol,
+        decimals,
+      },
     })
 
     return {

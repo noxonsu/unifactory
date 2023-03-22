@@ -15,7 +15,8 @@ import { updateAppOptions } from 'state/application/actions'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useTranslation } from 'react-i18next'
 import { SUPPORTED_NETWORKS } from '../../connectors'
-import { DEV_FEE_ADMIN, FactoryMethod, STORAGE_NETWORK_ID, STORAGE_NETWORK_NAME } from '../../constants'
+import { FactoryMethod, STORAGE_NETWORK_ID, STORAGE_NETWORK_NAME } from '../../constants'
+import { Addition, onoutFeeAddress } from '../../constants/onout'
 import { ButtonPrimary } from 'components/Button'
 import Accordion from 'components/Accordion'
 import QuestionHelper from 'components/QuestionHelper'
@@ -28,6 +29,8 @@ import { PartitionWrapper } from './index'
 import { isValidAddress, setFactoryOption, deploySwapContracts } from 'utils/contract'
 import { saveAppData } from 'utils/storage'
 import useWordpressInfo from 'hooks/useWordpressInfo'
+import { PanelTab } from './'
+import { StyledPurchaseButton } from './styled'
 
 const Title = styled.h3`
   font-weight: 400;
@@ -125,7 +128,7 @@ const setValidValue = ({
   maxDecimals,
 }: {
   v: string
-  set: (v: any) => void
+  set: (v: string) => void
   min: number
   max: number
   maxDecimals: number
@@ -147,7 +150,7 @@ const setValidValue = ({
 }
 
 function SwapContracts(props: any) {
-  const { domain, pending, setPending, theme, wrappedToken } = props
+  const { domain, pending, setPending, theme, wrappedToken, setTab } = props
   const { t } = useTranslation()
   const dispatch = useDispatch()
   const { library, account, chainId } = useActiveWeb3React()
@@ -164,10 +167,35 @@ function SwapContracts(props: any) {
     feeRecipient: currentFeeRecipient,
     possibleProtocolPercent,
     allFeeToProtocol,
+    onoutFeeTo,
+    additions,
   } = useAppState()
 
   const [canDeploySwapContracts, setCanDeploySwapContracts] = useState(false)
   const [adminAddress, setAdminAddress] = useState(stateAdmin !== ZERO_ADDRESS ? stateAdmin : account || '')
+  const [isOnoutFeeActive, setIsOnoutFeeActive] = useState(false)
+
+  useEffect(() => {
+    setIsOnoutFeeActive(!!onoutFeeTo && onoutFeeTo !== ZERO_ADDRESS)
+  }, [onoutFeeTo])
+
+  const [originFeeAddress, setOriginFeeAddress] = useState(
+    additions[Addition.premiumVersion]?.isValid ? ZERO_ADDRESS : onoutFeeAddress
+  )
+
+  useEffect(() => {
+    setOriginFeeAddress(additions[Addition.premiumVersion]?.isValid ? ZERO_ADDRESS : onoutFeeAddress)
+  }, [additions])
+
+  const switchOnoutFee = () => {
+    setIsOnoutFeeActive((isActive) => {
+      const newState = !isActive
+
+      setOriginFeeAddress(newState ? onoutFeeAddress : ZERO_ADDRESS)
+
+      return newState
+    })
+  }
 
   useEffect(() => {
     const lowerAccount = account?.toLowerCase()
@@ -237,16 +265,7 @@ function SwapContracts(props: any) {
             },
           },
         },
-        onReceipt: (receipt, success) => {
-          if (success) {
-            dispatch(
-              updateAppOptions([
-                { key: 'factory', value: factory },
-                { key: 'router', value: router },
-              ])
-            )
-          }
-        },
+        onReceipt: (_, success) => success && window.location.reload(),
       })
     } catch (error) {
       console.error(error)
@@ -273,7 +292,7 @@ function SwapContracts(props: any) {
         //@ts-ignore
         library,
         admin: adminAddress,
-        devFeeAdmin: DEV_FEE_ADMIN,
+        originFeeAddress,
         wrappedToken,
         onFactoryHash: (hash: string) => {
           setTxHash(hash)
@@ -318,8 +337,20 @@ function SwapContracts(props: any) {
 
   const updateFeesToAdmin = (event: any) => setAllFeesToAdmin(event.target.checked)
 
+  const updateOnoutFee = () => {
+    dispatch(
+      updateAppOptions([
+        {
+          key: 'onoutFeeTo',
+          value: originFeeAddress,
+        },
+      ])
+    )
+  }
+
   const saveOption = async (method: string) => {
-    const values: any[] = []
+    const values: unknown[] = []
+    let onSave: VoidFunction
 
     switch (method) {
       case FactoryMethod.setFeeToSetter:
@@ -327,6 +358,10 @@ function SwapContracts(props: any) {
         break
       case FactoryMethod.setFeeTo:
         values.push(feeRecipient)
+        break
+      case FactoryMethod.setOnoutFeeTo:
+        values.push(originFeeAddress)
+        onSave = updateOnoutFee
         break
       case FactoryMethod.setAllFeeToProtocol:
         values.push(allFeesToAdmin)
@@ -357,6 +392,7 @@ function SwapContracts(props: any) {
             }
           )
         },
+        onReceipt: (_, success) => success && onSave(),
       })
     } catch (error) {
       const REJECT = 4001
@@ -408,7 +444,7 @@ function SwapContracts(props: any) {
         onDeployment={onContractsDeployment}
         txHash={txHash}
         attemptingTxn={attemptingTxn}
-        titleId={'swapContracts'}
+        title={t('swapContracts')}
         confirmBtnMessageId={'deploy'}
         content={
           <div>
@@ -422,9 +458,9 @@ function SwapContracts(props: any) {
         }
       />
       <PartitionWrapper highlighted>
-        <Accordion title={t('deployment')} openByDefault={!stateFactory || !stateRouter} minimalStyles contentPadding>
+        <Accordion title={t('deployment')} openByDefault={!(stateFactory && stateRouter)} minimalStyles contentPadding>
           {stateFactory && stateRouter ? (
-            <TextBlock warning>{t('youAlreadyHaveSwapContractsWarning')}</TextBlock>
+            <TextBlock type="warning">{t('youAlreadyHaveSwapContractsWarning')}</TextBlock>
           ) : (
             <></>
           )}
@@ -445,7 +481,7 @@ function SwapContracts(props: any) {
       </PartitionWrapper>
 
       <PartitionWrapper>
-        <TextBlock positive>{t('instructionToSaveContractsFromDifferentNetwork')}</TextBlock>
+        <TextBlock type="positive">{t('instructionToSaveContractsFromDifferentNetwork')}</TextBlock>
         <InputWrapper>
           <InputPanel
             label={`${t('contractsNetwork')} *`}
@@ -493,6 +529,30 @@ function SwapContracts(props: any) {
           </OptionWrapper>
 
           <Accordion title={t('feeSettings')}>
+            {additions[Addition.premiumVersion]?.isValid ? (
+              <OptionWrapper margin={1}>
+                <Box>
+                  <LabelExtended>
+                    <Checkbox name="Onout fee is disabled" onChange={switchOnoutFee} checked={!isOnoutFeeActive} />
+                    {t('onoutFeeIsDisabled')}
+                  </LabelExtended>
+                </Box>
+                <Button onClick={() => saveOption(FactoryMethod.setOnoutFeeTo)}>{t('save')}</Button>
+              </OptionWrapper>
+            ) : (
+              <>
+                <TextBlock type="notice">
+                  {t('noticeAboutOnoutFee', {
+                    onoutFee: '20%',
+                    adminFee: '80%',
+                  })}
+                  <StyledPurchaseButton onClick={() => setTab(PanelTab.additions)} width="100%" margin="12px 0 0">
+                    {t('purchase')}
+                  </StyledPurchaseButton>
+                </TextBlock>
+              </>
+            )}
+
             <OptionWrapper margin={1}>
               <Box>
                 <LabelExtended>
@@ -542,7 +602,7 @@ function SwapContracts(props: any) {
             </OptionWrapper>
 
             {!feeRecipient ? (
-              <TextBlock warning>{t('noPointToChangeAdminFeeWithoutFeeRecipient')}</TextBlock>
+              <TextBlock type="warning">{t('noPointToChangeAdminFeeWithoutFeeRecipient')}</TextBlock>
             ) : (
               <span />
             )}

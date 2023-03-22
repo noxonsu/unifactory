@@ -13,7 +13,7 @@ export const addInjectedNetwork = async (chainId: number) => {
   //@ts-ignore
   const network = networks[chainId]
 
-  if (!network || !window.ethereum?.request) return false
+  if (!(network && window.ethereum?.request)) return false
 
   const successfulResult = null
   const { name, baseCurrency, rpc, explorer } = network

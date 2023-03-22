@@ -2,18 +2,15 @@ import { FlattenSimpleInterpolation, ThemedCssFunction } from 'styled-components
 
 export type Color = string
 export interface Colors {
-  // base
   white: Color
   black: Color
 
-  // text
   text1: Color
   text2: Color
   text3: Color
   text4: Color
   text5: Color
 
-  // backgrounds / greys
   bg1: Color
   bg2: Color
   bg3: Color
@@ -23,7 +20,6 @@ export interface Colors {
   modalBG: Color
   advancedBG: Color
 
-  //blues
   primary1: Color
   primary2: Color
   primary3: Color
@@ -32,17 +28,19 @@ export interface Colors {
 
   primaryText1: Color
 
-  // other
   red1: Color
+  red1Soft: Color
   red2: Color
   red3: Color
   green1: Color
+  green1Soft: Color
   green2: Color
   yellow1: Color
   yellow2: Color
   yellow3: Color
   blue1: Color
   blue2: Color
+  blue2Soft: Color
   white1: Color
 }
 
