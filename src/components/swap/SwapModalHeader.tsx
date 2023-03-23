@@ -124,12 +124,9 @@ export default function SwapModalHeader({
         </RowFixed>
       </RowBetween>
       {showAddButton && (
-        <RowBetween align="flex-end">
-          <TruncatedText></TruncatedText>
-          <RowFixed gap={'0px'}>
-            <ButtonAdd onClick={addOutputToMetamask} title={t('addToMetamask')} />
-          </RowFixed>
-        </RowBetween>
+        <div>
+          <ButtonAdd style={{ margin: '0 auto' }} onClick={addOutputToMetamask} title={t('addTokenToMetamask', { tokenSymbol: trade.outputAmount.currency.symbol })} />
+        </div>
       )}
       {showAcceptChanges ? (
         <SwapShowAcceptChanges justify="flex-start" gap={'0px'}>
