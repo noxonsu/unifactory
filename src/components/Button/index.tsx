@@ -189,12 +189,12 @@ const ButtonAddStyle = styled(CleanButton)<{ disabled?: boolean }>`
   ${({ disabled }) => (disabled ? "pointer-events: none; opacity: 0.6;" : '')}
 `
 
-export function ButtonAdd({ onClick, disabled }: { onClick: () => void; disabled?: boolean }) {
+export function ButtonAdd({ onClick, disabled, title }: { onClick: () => void; disabled?: boolean; title?: string }) {
   const { t } = useTranslation()
 
   return (
-    <ButtonAddStyle onClick={onClick} disabled={disabled} title={t('add')}>
-      {t('add')}
+    <ButtonAddStyle onClick={onClick} disabled={disabled} title={t(title || 'add')}>
+      {t(title || 'add')}
     </ButtonAddStyle>
   )
 }

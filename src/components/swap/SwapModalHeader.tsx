@@ -8,7 +8,7 @@ import { Field } from 'state/swap/actions'
 import { useAppState } from 'state/application/hooks'
 import { useBaseCurrency } from 'hooks/useCurrency'
 import { TYPE } from 'theme'
-import { ButtonPrimary } from '../Button'
+import { ButtonPrimary, ButtonAdd } from '../Button'
 import { isAddress, shortenAddress } from 'utils'
 import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown, warningSeverity } from 'utils/prices'
 import { AutoColumn } from '../Column'
@@ -43,6 +43,40 @@ export default function SwapModalHeader({
   const priceImpactSeverity = warningSeverity(priceImpactWithoutFee)
 
   const theme = useContext(ThemeContext)
+  
+  // @ts-ignore
+  const showAddButton = !!trade?.outputAmount?.token?.address
+  const addOutputToMetamask = () => {
+    const {
+      address,
+      symbol,
+      decimals,
+      logoURI
+    // @ts-ignore
+    } = trade?.outputAmount?.token
+    try {
+      window.ethereum
+        ?.request?.({
+          method: 'wallet_watchAsset',
+          params: {
+            type: 'ERC20',
+            options: {
+              address,
+              symbol,
+              decimals,
+              image: logoURI,
+            },
+          },
+        })
+        .then((wasAdded: boolean) => {
+          if (wasAdded) {
+            /* ok */
+          }
+        })
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   return (
     <AutoColumn gap={'md'} style={{ marginTop: '20px' }}>
@@ -89,6 +123,14 @@ export default function SwapModalHeader({
           </Text>
         </RowFixed>
       </RowBetween>
+      {showAddButton && (
+        <RowBetween align="flex-end">
+          <TruncatedText></TruncatedText>
+          <RowFixed gap={'0px'}>
+            <ButtonAdd onClick={addOutputToMetamask} title={t('addToMetamask')} />
+          </RowFixed>
+        </RowBetween>
+      )}
       {showAcceptChanges ? (
         <SwapShowAcceptChanges justify="flex-start" gap={'0px'}>
           <RowBetween>
