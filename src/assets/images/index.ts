@@ -84,4 +84,6 @@ export const CURRENCY = {
   19845: BTCIX,
   534: CNDL,
   2021: EDG,
+  
+  1442: ETH,
 }
