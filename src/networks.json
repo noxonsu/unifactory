@@ -348,5 +348,23 @@
       "name": "Wrapped ETH",
       "symbol": "WETH"
     }
+  },
+  "1101": {
+    "name": "Polygon zkEVM",
+    "rpc": "https://zkevm-rpc.com",
+    "chainId": 1101,
+    "explorer": "https://zkevm.polygonscan.com",
+    "color": "#D64F4A",
+    "multicall": "0x10DcBEe8afA39a847707e16Aea5eb34c6b01aBA9",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "ETH",
+      "symbol": "ETH"
+    },
+    "wrappedToken": {
+      "address": "0x4F9A0e7FD2Bf6067db6994CF12E4495Df938E6e9",
+      "name": "Wrapped ETH",
+      "symbol": "WETH"
+    }
   }
 }

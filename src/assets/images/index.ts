@@ -86,4 +86,5 @@ export const CURRENCY = {
   2021: EDG,
   
   1442: ETH,
+  1101: ETH,
 }
