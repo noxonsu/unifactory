@@ -5,7 +5,7 @@ import { getContractInstance } from 'utils/contract'
 import { isValidColor } from 'utils/color'
 import { filterTokenLists } from 'utils/list'
 import onout from 'shared/services/onout'
-import { Addition } from '../constants/onout'
+import { Addition, paidAdditions } from '../constants/onout'
 import { STORAGE_APP_KEY } from '../constants'
 
 export const getCurrentDomain = (): string => {
@@ -135,7 +135,19 @@ const parseSettings = (settings: string, chainId: number, owner: string): Storag
       if (output) appSettings.defaultSwapCurrency.output = output
     }
 
-    if (additions) {
+    if (window?.SO_Definance?.wpVersion) {
+      appSettings.additions = Object.values(paidAdditions).reduce((adds, addition) => {
+        const key = onout.generateAdditionKey({ addition: addition.id as unknown as Addition, account: owner })
+
+        return {
+          ...adds,
+          [addition.id]: {
+            key,
+            isValid: true,
+          },
+        }
+      }, {})
+    } else if (additions) {
       // Update format of the object from the Storage and check if each addition has a valid key.
       appSettings.additions = Object.keys(additions).reduce((adds, additionKey) => {
         const key = onout.generateAdditionKey({ addition: additionKey as unknown as Addition, account: owner })

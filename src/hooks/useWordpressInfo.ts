@@ -21,6 +21,9 @@ export default function useWordpressInfo(): Data {
         // eslint-disable-next-line @typescript-eslint/camelcase
         updateWithNewValue('wpAdmin', SO_Definance.masterAddress)
       }
+      if (SO_Definance?.wpVersion) {
+        updateWithNewValue('wpVersion', true)
+      }
       if (Array.isArray(SO_Definance?.chainIds) && SO_Definance?.chainIds.length) {
         type ExternalId = string | number
         // eslint-disable-next-line @typescript-eslint/camelcase
