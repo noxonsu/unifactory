@@ -297,5 +297,6 @@
   "reset": "איפוס",
   "onoutFeeIsDisabled": "Onout הזנה מושבתת",
   "doNotForgetDisableOnoutFee": "אל תשכח להשבית onout דמי לאחר רכישת גרסת פרימיום",
-  "addTokenToMetamask": "הוסף את {{tokenSymbol}} ל- Metamask"
+  "addTokenToMetamask": "הוסף את {{tokenSymbol}} ל- Metamask",
+  "ifYouAlreadyHaveFactorySpecifyIt": "אם כבר יש לך חוזה יצרן, השתמש בו למטה כדי להימנע מיצירת חוזה חדש"
 }

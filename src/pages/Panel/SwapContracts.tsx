@@ -213,6 +213,7 @@ function SwapContracts(props: any) {
 
   const [admin, setAdmin] = useState(stateAdmin !== ZERO_ADDRESS ? stateAdmin : '')
   const [feeRecipient, setFeeRecipient] = useState(currentFeeRecipient || '')
+
   const [allFeesToAdmin, setAllFeesToAdmin] = useState(allFeeToProtocol)
   const [totalFee, setTotalFee] = useState<number | string>(
     convertFee(Number(currentTotalFee), TOTAL_FEE_RATIO, Representations.interface) || ''
@@ -231,6 +232,7 @@ function SwapContracts(props: any) {
 
   const [userContractsChainId, setUserContractsChainId] = useState(chainId && !!contracts[chainId || 0] ? chainId : '')
   const [userFactory, setUserFactory] = useState(contracts[chainId || 0]?.factory || '')
+  const [deployUserFactory, setDeployUserFactory] = useState('')
   const [userRouter, setUserRouter] = useState(contracts[chainId || 0]?.router || '')
   const [canSaveSwapContracts, setCanSaveSwapContracts] = useState(false)
 
@@ -291,6 +293,7 @@ function SwapContracts(props: any) {
         chainId,
         //@ts-ignore
         library,
+        hasFactory: (deployUserFactory !== '') ? deployUserFactory : false,
         admin: adminAddress,
         originFeeAddress,
         wrappedToken,
@@ -454,6 +457,10 @@ function SwapContracts(props: any) {
               <li>{t('deployRouterContract')}</li>
               <li>{t('saveInfoToDomainRegistry')}</li>
             </NumList>
+            {t('ifYouAlreadyHaveFactorySpecifyIt')}
+            <InputWrapper>
+              <InputPanel label="Factory *" value={deployUserFactory} onChange={setDeployUserFactory} />
+            </InputWrapper>
           </div>
         }
       />

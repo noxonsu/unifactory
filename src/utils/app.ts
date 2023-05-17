@@ -9,6 +9,7 @@ import { Addition } from '../constants/onout'
 import { STORAGE_APP_KEY } from '../constants'
 
 export const getCurrentDomain = (): string => {
+  return 'uni-eneeseene'
   return window.location.hostname || document.location.host || ''
 }
 

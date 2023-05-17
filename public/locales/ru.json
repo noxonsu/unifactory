@@ -296,5 +296,6 @@
   "reset": "Сброс",
   "onoutFeeIsDisabled": "Onout комиссия отключена",
   "doNotForgetDisableOnoutFee": "Не забудьте отключить onout комиссию после покупки премиум-версии",
-  "addTokenToMetamask": "Добавить {{tokenSymbol}} в Metamask"
+  "addTokenToMetamask": "Добавить {{tokenSymbol}} в Metamask",
+  "ifYouAlreadyHaveFactorySpecifyIt": "Если у вас уже есть контракт Factory, укажите его ниже, чтобы не создавать новый"
 }
