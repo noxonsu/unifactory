@@ -130,6 +130,7 @@ export const deploySwapContracts = async (params: {
       const router = await deployRouter({
         onHash: onRouterHash,
         library,
+        // @ts-ignore
         factory: factoryAddress,
         wrappedToken,
       })
@@ -137,6 +138,7 @@ export const deploySwapContracts = async (params: {
       if (typeof onSuccessfulDeploy === 'function') {
         onSuccessfulDeploy({
           chainId,
+          // @ts-ignore
           factory: factoryAddress,
           router: router.options.address,
         })

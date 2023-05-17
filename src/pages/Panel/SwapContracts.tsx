@@ -293,6 +293,7 @@ function SwapContracts(props: any) {
         chainId,
         //@ts-ignore
         library,
+        //@ts-ignore
         hasFactory: (deployUserFactory !== '') ? deployUserFactory : false,
         admin: adminAddress,
         originFeeAddress,
