@@ -460,7 +460,7 @@ function SwapContracts(props: any) {
             </NumList>
             {t('ifYouAlreadyHaveFactorySpecifyIt')}
             <InputWrapper>
-              <InputPanel label="Factory *" value={deployUserFactory} onChange={setDeployUserFactory} />
+              <InputPanel label="Factory (Optional)" placeholder={`0x...`} value={deployUserFactory} onChange={setDeployUserFactory} />
             </InputWrapper>
           </div>
         }

@@ -75,6 +75,7 @@ export default function AddressInputPanel({
   value,
   onChange,
   error,
+  placeholder,
 }: {
   id?: string
   label?: string
@@ -85,6 +86,7 @@ export default function AddressInputPanel({
   step?: number
   error?: boolean
   value: string | number
+  placeholder?: string
   onChange?: (value: string) => void
 }) {
   const theme = useContext(ThemeContext)
@@ -119,7 +121,7 @@ export default function AddressInputPanel({
               autoCorrect="off"
               autoCapitalize="off"
               spellCheck="false"
-              placeholder="..."
+              placeholder={placeholder || `...`}
               onChange={disabled ? () => {} : handleInput}
               value={value}
               min={min}
