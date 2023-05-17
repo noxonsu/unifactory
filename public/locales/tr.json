@@ -304,5 +304,6 @@
   "reset": "Sıfırlamak",
   "onoutFeeIsDisabled": "Onout besleme devre dışı bırakıldı",
   "doNotForgetDisableOnoutFee": "Devre dışı bırakmayı unutma onout premium sürümü satın aldıktan sonra ücret",
-  "addTokenToMetamask": "Metamask'a {{tokenSymbol}} ekleyin"
+  "addTokenToMetamask": "Metamask'a {{tokenSymbol}} ekleyin",
+  "ifYouAlreadyHaveFactorySpecifyIt": "Halihazırda bir fabrika sözleşmeniz varsa, yeni bir sözleşme oluşturmaktan kaçınmak için aşağıdaki sözleşmeyi kullanın."
 }
