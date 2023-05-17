@@ -105,7 +105,7 @@ export const deploySwapContracts = async (params: {
   onFactoryHash?: (hash: string) => void
   onRouterHash?: (hash: string) => void
   onSuccessfulDeploy?: (params: { chainId: number; factory: string; router: string }) => void
-  hasFactory?: string
+  hasFactory?: string | boolean
 }) => {
   const { admin, chainId, library, wrappedToken, originFeeAddress, onFactoryHash, onRouterHash, onSuccessfulDeploy, hasFactory } =
     params
