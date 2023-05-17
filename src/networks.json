@@ -22,7 +22,7 @@
     "name": "Cronos",
     "rpc": "https://evm.cronos.org",
     "chainId": 25,
-    "explorer": "https://cronoscan.com/",
+    "explorer": "https://cronoscan.com/", 
     "color": "#072D4C",
     "multicall": "0x79D5C019F2515Cbc0596170Da44FCd26412c4f83",
     "baseCurrency": {
