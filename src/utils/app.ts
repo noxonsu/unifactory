@@ -8,7 +8,11 @@ import onout from 'shared/services/onout'
 import { Addition } from '../constants/onout'
 import { STORAGE_APP_KEY } from '../constants'
 
+
 export const getCurrentDomain = (): string => {
+  if (process.env.NODE_ENV === "development" && process.env.REACT_APP_DEV_DOMAIN) {
+    return process.env.REACT_APP_DEV_DOMAIN
+  }
   return window.location.hostname || document.location.host || ''
 }
 
