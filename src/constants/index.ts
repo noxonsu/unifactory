@@ -12,10 +12,35 @@ export const AVALANCHE_TESTNET_ID = 43113
 export const POLIGON_ZKEVM_TESTNET_ID = 1442
 export const GOERLI_ID = 5
 
-export const STORAGE_NETWORK_ID = process.env.NODE_ENV === 'production' ? BSC_ID : GOERLI_ID //POLIGON_ZKEVM_TESTNET_ID // AVALANCHE_TESTNET_ID // POLIGON_ZKEVM_TESTNET_ID
+/*
+  exists storage networks
+  56 - BSC mainnet
+  5 - Gorli
+  97 - BSC testnet
+  80001 - Polygon testnet
+  43113 - Avalanche testnet
+  1442 - Polygon zkEVM-testnet
+*/
+
+// @ts-ignore
+const CUSTOM_STORAGE_ID = window?.DEX_SETTINGS?.STORAGE_CHAINID || false
+const CUSTOM_STORAGE_ADDRESS = (CUSTOM_STORAGE_ID !== false)
+  ? (window?.DEX_SETTINGS?.STORAGE_ADDRESS)
+    ? window?.DEX_SETTINGS?.STORAGE_ADDRESS
+    // @ts-ignore
+    : (networks[CUSTOM_STORAGE_ID.toString() as NetworksId])
+      // @ts-ignore
+      ? networks[CUSTOM_STORAGE_ID.toString() as NetworksId].storage
+      : false
+  : false
+
+export const STORAGE_NETWORK_ID = (CUSTOM_STORAGE_ID && CUSTOM_STORAGE_ADDRESS)
+  ? CUSTOM_STORAGE_ID
+  : process.env.NODE_ENV === 'production' ? BSC_ID : GOERLI_ID //POLIGON_ZKEVM_TESTNET_ID // AVALANCHE_TESTNET_ID // POLIGON_ZKEVM_TESTNET_ID
 export const STORAGE_NETWORK_NAME = networks[STORAGE_NETWORK_ID.toString() as NetworksId].name
 // @ts-ignore
-export const STORAGE = networks[STORAGE_NETWORK_ID.toString() as NetworksId].storage
+export const STORAGE = CUSTOM_STORAGE_ADDRESS || networks[STORAGE_NETWORK_ID.toString() as NetworksId].storage
+
 // through this key we get/set this app settings (we use the storage contract for many apps)
 export const STORAGE_APP_KEY = 'definance'
 
