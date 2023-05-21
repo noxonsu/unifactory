@@ -243,7 +243,7 @@ function SwapContracts(props: any) {
       userFactory.toLowerCase() !== userRouter.toLowerCase()
 
     setCanSaveSwapContracts(
-      chainId === STORAGE_NETWORK_ID &&
+      Number(chainId) === STORAGE_NETWORK_ID &&
         userContractsChainId in SUPPORTED_NETWORKS &&
         isValidAddress(userFactory) &&
         isValidAddress(userRouter) &&
@@ -317,7 +317,7 @@ function SwapContracts(props: any) {
           )
         },
         onSuccessfulDeploy: async ({ chainId, factory, router }) => {
-          if (chainId === STORAGE_NETWORK_ID) {
+          if (Number(chainId) === STORAGE_NETWORK_ID) {
             await saveContractsData(chainId, factory, router)
           } else {
             setUserContractsChainId(String(chainId))
@@ -504,7 +504,7 @@ function SwapContracts(props: any) {
           <InputPanel label="Router *" value={userRouter} onChange={setUserRouter} />
         </InputWrapper>
         <Button onClick={saveSwapContracts} disabled={pending || !canSaveSwapContracts}>
-          {t(chainId === STORAGE_NETWORK_ID ? 'saveSwapContracts' : 'switchToNetwork', {
+          {t(Number(chainId) === STORAGE_NETWORK_ID ? 'saveSwapContracts' : 'switchToNetwork', {
             network: STORAGE_NETWORK_NAME,
           })}
         </Button>
