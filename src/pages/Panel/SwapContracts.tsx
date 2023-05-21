@@ -503,6 +503,8 @@ function SwapContracts(props: any) {
         <InputWrapper>
           <InputPanel label="Router *" value={userRouter} onChange={setUserRouter} />
         </InputWrapper>
+        <div>CHAIN_ID:{chainId}</div>
+        <div>STORAGE_ID:{STORAGE_NETWORK_ID}</div>
         <Button onClick={saveSwapContracts} disabled={pending || !canSaveSwapContracts}>
           {t(Number(chainId) === STORAGE_NETWORK_ID ? 'saveSwapContracts' : 'switchToNetwork', {
             network: STORAGE_NETWORK_NAME,
