@@ -21,15 +21,14 @@ export function computeTradePriceBreakdown(
 
   // for each hop in our trade, take away the x*y=k price impact from base fee
   // e.g. Case with 0.3% fee for 3 tokens/2 hops: 1 - ((1 - 0.03) * (1 - 0.03))
-  const realizedLPFee =
-    !(trade && INPUT_FRACTION_AFTER_FEE)
-      ? undefined
-      : ONE_HUNDRED_PERCENT.subtract(
-          trade.route.pairs.reduce<Fraction>(
-            (currentFee: Fraction): Fraction => currentFee.multiply(INPUT_FRACTION_AFTER_FEE),
-            ONE_HUNDRED_PERCENT
-          )
+  const realizedLPFee = !(trade && INPUT_FRACTION_AFTER_FEE)
+    ? undefined
+    : ONE_HUNDRED_PERCENT.subtract(
+        trade.route.pairs.reduce<Fraction>(
+          (currentFee: Fraction): Fraction => currentFee.multiply(INPUT_FRACTION_AFTER_FEE),
+          ONE_HUNDRED_PERCENT
         )
+      )
 
   // remove lp fees from price impact
   const priceImpactWithoutFeeFraction = trade && realizedLPFee ? trade.priceImpact.subtract(realizedLPFee) : undefined

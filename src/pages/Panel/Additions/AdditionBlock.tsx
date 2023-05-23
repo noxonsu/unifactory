@@ -221,7 +221,7 @@ const AdditionBlock: FC<Props> = ({
       {!isPurchased && (
         <StyledActivation>
           <div className="inputZone">
-            {t('Do you already have an additional key? Use it for activation')}:
+            {t('useKeyForAdditionActivation')}:
             <ActivationInput
               placeholder="l1Wc9..."
               type="string"

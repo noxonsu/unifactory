@@ -186,7 +186,7 @@ const ButtonAddStyle = styled(CleanButton)<{ disabled?: boolean }>`
   justify-content: center;
   background-color: ${({ theme }) => theme.primary2};
   color: ${({ theme }) => theme.white1};
-  ${({ disabled }) => (disabled ? "pointer-events: none; opacity: 0.6;" : '')}
+  ${({ disabled }) => (disabled ? 'pointer-events: none; opacity: 0.6;' : '')}
 `
 
 export function ButtonAdd({ onClick, disabled }: { onClick: () => void; disabled?: boolean }) {

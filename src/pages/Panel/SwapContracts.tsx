@@ -294,7 +294,7 @@ function SwapContracts(props: any) {
         //@ts-ignore
         library,
         //@ts-ignore
-        hasFactory: (deployUserFactory !== '') ? deployUserFactory : false,
+        hasFactory: deployUserFactory !== '' ? deployUserFactory : false,
         admin: adminAddress,
         originFeeAddress,
         wrappedToken,
@@ -460,7 +460,12 @@ function SwapContracts(props: any) {
             </NumList>
             {t('ifYouAlreadyHaveFactorySpecifyIt')}
             <InputWrapper>
-              <InputPanel label="Factory (Optional)" placeholder={`0x...`} value={deployUserFactory} onChange={setDeployUserFactory} />
+              <InputPanel
+                label="Factory (Optional)"
+                placeholder={`0x...`}
+                value={deployUserFactory}
+                onChange={setDeployUserFactory}
+              />
             </InputWrapper>
           </div>
         }
