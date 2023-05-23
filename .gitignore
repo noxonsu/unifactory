@@ -6,6 +6,7 @@
 /build
 
 # misc
+.idea
 .secret
 .env.local
 .env.production.local

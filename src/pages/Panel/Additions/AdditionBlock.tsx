@@ -1,5 +1,5 @@
-import React, { FC, useState, useCallback } from 'react'
-import styled from 'styled-components'
+import React, { FC, useState, useCallback, useEffect } from 'react'
+import styled, { css } from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import Big from 'big.js'
 import { useAddPopup } from 'state/application/hooks'
@@ -15,11 +15,19 @@ const StyledNumList = styled.ol`
   }
 `
 
-const StyledOption = styled.div<{ isPurchased?: boolean; isLocked?: boolean }>`
-  padding: 14px;
+const commonPluginStyle = css`
+  padding: 6px;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    flex-direction: column;
+  `}
+`
+
+const StyledOption = styled.div<{ isPurchased?: boolean; isLocked?: boolean }>`
+  padding: 8px;
   border-radius: 1.25rem;
   border: 1px solid
     ${({ theme, isPurchased, isLocked }) => {
@@ -33,10 +41,10 @@ const StyledOption = styled.div<{ isPurchased?: boolean; isLocked?: boolean }>`
   :not(:last-child) {
     margin-bottom: 8px;
   }
+`
 
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    flex-direction: column;
-  `}
+const StyledPurchase = styled.div`
+  ${commonPluginStyle};
 `
 
 const StyledDescription = styled.div`
@@ -66,6 +74,28 @@ const StyledLabel = styled.span`
   `}
 `
 
+const StyledActivation = styled.div`
+  ${commonPluginStyle};
+  border-top: 1px solid ${({ theme }) => theme.bg3};
+
+  .inputZone {
+    display: flex;
+    flex-direction: column;
+  }
+`
+
+const ActivationInput = styled.input`
+  margin: 12px 14px 0 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid ${({ theme }) => theme.bg3};
+  font-size: inherit;
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    margin: 12px 0;
+  `}
+`
+
 type Props = {
   name: JSX.Element
   description?: string
@@ -76,6 +106,8 @@ type Props = {
   isPurchased?: boolean
   isLocked?: boolean
   onPayment: () => Promise<void>
+  onActivation: (key: string) => Promise<void>
+  requiredKey: string
 }
 
 const AdditionBlock: FC<Props> = ({
@@ -88,6 +120,8 @@ const AdditionBlock: FC<Props> = ({
   isPurchased,
   isLocked,
   onPayment,
+  onActivation,
+  requiredKey,
 }) => {
   const { t } = useTranslation()
   const addPopup = useAddPopup()
@@ -123,6 +157,19 @@ const AdditionBlock: FC<Props> = ({
     setAttemptingTx(false)
   }
 
+  const [activationKey, setActivationKey] = useState('')
+  const [isKeyValid, setIsKeyValid] = useState(activationKey === requiredKey)
+
+  useEffect(() => {
+    setIsKeyValid(activationKey === requiredKey)
+  }, [activationKey, requiredKey])
+
+  const activate = async () => {
+    setAttemptingTx(true)
+    await onActivation(activationKey)
+    setAttemptingTx(false)
+  }
+
   return (
     <StyledOption isPurchased={isPurchased} isLocked={isLocked}>
       <ConfirmationModal
@@ -144,29 +191,49 @@ const AdditionBlock: FC<Props> = ({
         }
       />
 
-      <StyledDescription>
-        <StyledText>
-          {name}
-          {description && <QuestionHelper text={description} />}
-        </StyledText>
-        {notice && <StyledText>{notice}</StyledText>}
-        <span>
-          {typeof cryptoCost === 'number' ? (
-            <b>
-              {new Big(cryptoCost).toPrecision(6)} {assetName}
-            </b>
-          ) : (
-            '...'
-          )}{' '}
-          {typeof usdCost === 'number' && <>(${usdCost})</>}
-        </span>
-      </StyledDescription>
-      {isPurchased ? (
-        <StyledLabel>{t('purchased')}</StyledLabel>
-      ) : (
-        <StyledPurchaseButton onClick={onConfirm} disabled={isLocked}>
-          {t('buy')}
-        </StyledPurchaseButton>
+      <StyledPurchase>
+        <StyledDescription>
+          <StyledText>
+            {name}
+            {description && <QuestionHelper text={description} />}
+          </StyledText>
+          {notice && <StyledText>{notice}</StyledText>}
+          <span>
+            {typeof cryptoCost === 'number' ? (
+              <b>
+                {new Big(cryptoCost).toPrecision(6)} {assetName}
+              </b>
+            ) : (
+              '...'
+            )}{' '}
+            {typeof usdCost === 'number' && <>(${usdCost})</>}
+          </span>
+        </StyledDescription>
+        {isPurchased ? (
+          <StyledLabel>{t('purchased')}</StyledLabel>
+        ) : (
+          <StyledPurchaseButton onClick={onConfirm} disabled={isLocked}>
+            {t('buy')}
+          </StyledPurchaseButton>
+        )}
+      </StyledPurchase>
+
+      {!isPurchased && (
+        <StyledActivation>
+          <div className="inputZone">
+            {t('useKeyForAdditionActivation')}:
+            <ActivationInput
+              placeholder="l1Wc9..."
+              type="string"
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setActivationKey(event.target.value)
+              }}
+            />
+          </div>
+          <StyledPurchaseButton onClick={activate} disabled={isLocked || !isKeyValid}>
+            {attemptingTx ? '...' : t('activate')}
+          </StyledPurchaseButton>
+        </StyledActivation>
       )}
     </StyledOption>
   )
