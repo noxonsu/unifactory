@@ -28,10 +28,9 @@ const validator = new Promise<Ajv>(async (resolve) => {
 
 export async function validatedTokenList(json: TokenList): Promise<TokenList> {
   const validate = (await validator).getSchema(ValidationSchema.LIST)
+  const result = validate?.(json)
 
-  if (validate?.(json)) {
-    return json
-  }
+  if (result) return json
 
   throw new Error(`Token list failed validation`)
 }

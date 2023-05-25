@@ -9,6 +9,7 @@ import { ZERO_ADDRESS } from 'sdk'
 import useWordpressInfo from 'hooks/useWordpressInfo'
 import { useAppState } from 'state/application/hooks'
 import { retrieveDomainData } from 'state/application/actions'
+import { enableList } from 'state/lists/actions'
 import { fetchDomainData, getCurrentDomain } from 'utils/app'
 import { useStorageContract } from 'hooks/useContract'
 import { SUPPORTED_CHAIN_IDS } from '../connectors'
@@ -150,6 +151,10 @@ export default function App() {
         if (data) {
           dispatch(retrieveDomainData(data))
           setDomainData(data)
+
+          if (data.addressesOfTokenLists?.length) {
+            data.addressesOfTokenLists.forEach((l) => dispatch(enableList(l)))
+          }
         }
 
         setLoading(false)
