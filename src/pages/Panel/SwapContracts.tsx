@@ -237,17 +237,25 @@ function SwapContracts(props: any) {
   const [canSaveSwapContracts, setCanSaveSwapContracts] = useState(false)
 
   useEffect(() => {
+    /*
     const differentContracts =
       userFactory.toLowerCase() !== contracts[chainId || 0]?.factory?.toLowerCase() &&
       userRouter.toLowerCase() !== contracts[chainId || 0]?.router?.toLowerCase() &&
       userFactory.toLowerCase() !== userRouter.toLowerCase()
-
+    */
     setCanSaveSwapContracts(
       chainId === STORAGE_NETWORK_ID &&
         userContractsChainId in SUPPORTED_NETWORKS &&
         isValidAddress(userFactory) &&
-        isValidAddress(userRouter) &&
+        isValidAddress(userRouter)
+        // Bug: На разных сетях могут быть сгенерированны контракты с одинаковым адресом
+        // Сначала сделали контракты для BSC
+        // Потом для арбитра
+        // Включаем BSC но не можем сохранить для арбитра (адреса у контрактов одинаковые)
+        // Времено выключено, нужно искать другое решение
+        /* &&
         differentContracts
+        */
     )
   }, [chainId, userContractsChainId, userFactory, userRouter, contracts])
 
