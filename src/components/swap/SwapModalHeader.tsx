@@ -43,7 +43,7 @@ export default function SwapModalHeader({
   const priceImpactSeverity = warningSeverity(priceImpactWithoutFee)
 
   const theme = useContext(ThemeContext)
-  
+
   // @ts-ignore
   const showAddButton = !!trade?.outputAmount?.token?.address
   const addOutputToMetamask = () => {
@@ -51,8 +51,8 @@ export default function SwapModalHeader({
       address,
       symbol,
       decimals,
-      logoURI
-    // @ts-ignore
+      logoURI,
+      // @ts-ignore
     } = trade?.outputAmount?.token
     try {
       window.ethereum
@@ -125,7 +125,11 @@ export default function SwapModalHeader({
       </RowBetween>
       {showAddButton && (
         <div>
-          <ButtonAdd style={{ margin: '0 auto' }} onClick={addOutputToMetamask} title={t('addTokenToMetamask', { tokenSymbol: trade.outputAmount.currency.symbol })} />
+          <ButtonAdd
+            style={{ margin: '0 auto' }}
+            onClick={addOutputToMetamask}
+            title={t('addTokenToMetamask', { tokenSymbol: trade.outputAmount.currency.symbol })}
+          />
         </div>
       )}
       {showAcceptChanges ? (
