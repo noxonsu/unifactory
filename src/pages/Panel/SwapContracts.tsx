@@ -502,7 +502,7 @@ function SwapContracts(props: any) {
       </PartitionWrapper>
 
       <PartitionWrapper>
-        <TextBlock type="positive">{t('instructionToSaveContractsFromDifferentNetwork')}</TextBlock>
+        <TextBlock type="warning">{t('instructionToSaveContractsFromDifferentNetwork')}</TextBlock>
         <InputWrapper>
           <InputPanel
             label={`${t('contractsNetwork')} *`}

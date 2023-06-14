@@ -1,5 +1,6 @@
 import { TokenList } from '@uniswap/token-lists'
-import { Ajv } from 'ajv'
+import ajv, { Ajv } from 'ajv'
+import tokenListSchema from '@uniswap/token-lists/src/tokenlist.schema.json'
 import contenthashToUri from './contenthashToUri'
 import { parseENSAddress } from './parseENSAddress'
 import uriToHttp from './uriToHttp'
@@ -10,14 +11,13 @@ enum ValidationSchema {
 }
 
 const validator = new Promise<Ajv>(async (resolve) => {
-  const [ajv, schema] = await Promise.all([import('ajv'), import('@uniswap/token-lists/src/tokenlist.schema.json')])
-  const validator = new ajv.default({ allErrors: true })
-    .addSchema(schema, ValidationSchema.LIST)
+  const validator = new ajv({ allErrors: false, verbose: true, validateSchema: 'log' })
+    .addSchema(tokenListSchema, ValidationSchema.LIST)
     // Adds a meta scheme of Pick<TokenList, 'tokens'>
     .addSchema(
       {
-        ...schema,
-        $id: schema.$id + '#tokens',
+        ...tokenListSchema,
+        $id: tokenListSchema.$id + '#tokens',
         required: ['tokens'],
       },
       ValidationSchema.TOKENS
@@ -26,13 +26,16 @@ const validator = new Promise<Ajv>(async (resolve) => {
   resolve(validator)
 })
 
-export async function validatedTokenList(json: TokenList): Promise<TokenList> {
+export async function validatedTokenList(json: TokenList): Promise<TokenList | void> {
   const validate = (await validator).getSchema(ValidationSchema.LIST)
   const result = validate?.(json)
 
   if (result) return json
 
-  throw new Error(`Token list failed validation`)
+  console.group('%c Token list failed validation', 'background: brown; color: yellow;')
+  console.log('json', json)
+  console.log('result', result)
+  console.groupEnd()
 }
 
 export function returnValidList(json: TokenList) {
