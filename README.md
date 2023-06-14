@@ -35,3 +35,4 @@ Infrastructure is the key element of the blockchain success. Decentralised appli
 1. merge to master
 2. push build to https://github.com/appsource/dex  (html files). see https://github.com/appsource/dex#to-update  
 3. push build to https://github.com/noxonsu/definance (see readme)
+

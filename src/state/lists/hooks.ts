@@ -52,7 +52,12 @@ export function listToTokenMap(list: TokenList): TokenAddressMap {
       const token = new WrappedTokenInfo(tokenInfo, tags)
 
       if (tokenMap[token.chainId]?.[token.address] !== undefined) {
-        throw Error('Duplicate tokens.')
+        console.group('%c Duplicate tokens', 'background: brown; color: yellow;')
+        console.log('Chain ID', token.chainId)
+        console.log('Token', token.address)
+        console.groupEnd()
+
+        return tokenMap
       }
 
       return {

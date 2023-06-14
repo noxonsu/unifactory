@@ -19,9 +19,8 @@ import AME from './ame.png'
 import BTCIX from './btcix.png'
 import CNDL from './cndl.svg'
 import EDG from './edg.svg'
-
 import FKW from './fkw.png'
-
+import OZO from './ozo.png'
 
 export const CURRENCY = {
   ETH,
@@ -45,8 +44,9 @@ export const CURRENCY = {
   BTCIX,
   CNDL,
   EDG,
-
   FKW,
+  OZO,
+
   // ------------
 
   1: ETH,
@@ -95,4 +95,7 @@ export const CURRENCY = {
   // Fokawa 
   40821: FKW,
   5163: FKW,
+
+  4000: OZO,
+  401: OZO,
 }

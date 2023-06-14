@@ -20,6 +20,7 @@ import Interface from './Interface'
 import Additions from './Additions'
 import Migration from './Migration'
 import Reset from './Reset'
+import TextBlock from 'components/TextBlock'
 
 export const PartitionWrapper = styled.div<{ highlighted?: boolean }>`
   margin-top: 1rem;
@@ -232,6 +233,9 @@ export default function Panel({ setDomainDataTrigger }: Props) {
 
       {account && (
         <NetworkInfo>
+          <span className="row">
+            <TextBlock type="positive">{t('descriptionAboutStorageNetworkUsage')}</TextBlock>
+          </span>
           <strong className="row">
             {t('storageNetwork')}: <span>{STORAGE_NETWORK_NAME}</span>
           </strong>

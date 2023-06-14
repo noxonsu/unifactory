@@ -43,7 +43,7 @@ git clone https://github.com/noxonsu/unifactory
 
 > In the end do not forget to verify `multicall` and `wrappedToken` contracts in the network explorer. If it's not verified yet.
 
-3. Add a network logo in the `src/assets/images/<chain symbol>.png` (**.png** or **.svg** formats). Import a new logo image in ``src/assets/images/index.ts` in the same directory.
+3. Add a network logo in the `src/assets/images/<chain symbol>.png` (**.png** or **.svg** formats). Import a new logo image in `src/assets/images/index.ts` in the same directory.
 
 4. Start locally and test it. Make screenshots along the way.
 
