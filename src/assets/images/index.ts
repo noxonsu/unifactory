@@ -20,6 +20,9 @@ import BTCIX from './btcix.png'
 import CNDL from './cndl.svg'
 import EDG from './edg.svg'
 
+import FKW from './fkw.png'
+
+
 export const CURRENCY = {
   ETH,
   BNB,
@@ -43,6 +46,7 @@ export const CURRENCY = {
   CNDL,
   EDG,
 
+  FKW,
   // ------------
 
   1: ETH,
@@ -55,7 +59,7 @@ export const CURRENCY = {
   137: MATIC,
   80001: MATIC,
   42161: ARBITRUM,
-  421611: ARBITRUM,
+  421613: ARBITRUM,
   10: OPTIMISTIC_ETH,
   69: OPTIMISTIC_ETH,
   100: XDAI,
@@ -84,4 +88,11 @@ export const CURRENCY = {
   19845: BTCIX,
   534: CNDL,
   2021: EDG,
+  
+  1442: ETH,
+  1101: ETH,
+
+  // Fokawa 
+  40821: FKW,
+  5163: FKW,
 }

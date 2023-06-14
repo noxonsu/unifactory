@@ -213,6 +213,7 @@ function SwapContracts(props: any) {
 
   const [admin, setAdmin] = useState(stateAdmin !== ZERO_ADDRESS ? stateAdmin : '')
   const [feeRecipient, setFeeRecipient] = useState(currentFeeRecipient || '')
+
   const [allFeesToAdmin, setAllFeesToAdmin] = useState(allFeeToProtocol)
   const [totalFee, setTotalFee] = useState<number | string>(
     convertFee(Number(currentTotalFee), TOTAL_FEE_RATIO, Representations.interface) || ''
@@ -231,21 +232,30 @@ function SwapContracts(props: any) {
 
   const [userContractsChainId, setUserContractsChainId] = useState(chainId && !!contracts[chainId || 0] ? chainId : '')
   const [userFactory, setUserFactory] = useState(contracts[chainId || 0]?.factory || '')
+  const [deployUserFactory, setDeployUserFactory] = useState('')
   const [userRouter, setUserRouter] = useState(contracts[chainId || 0]?.router || '')
   const [canSaveSwapContracts, setCanSaveSwapContracts] = useState(false)
 
   useEffect(() => {
+    /*
     const differentContracts =
       userFactory.toLowerCase() !== contracts[chainId || 0]?.factory?.toLowerCase() &&
       userRouter.toLowerCase() !== contracts[chainId || 0]?.router?.toLowerCase() &&
       userFactory.toLowerCase() !== userRouter.toLowerCase()
-
+    */
     setCanSaveSwapContracts(
       chainId === STORAGE_NETWORK_ID &&
         userContractsChainId in SUPPORTED_NETWORKS &&
         isValidAddress(userFactory) &&
-        isValidAddress(userRouter) &&
+        isValidAddress(userRouter)
+        // Bug: На разных сетях могут быть сгенерированны контракты с одинаковым адресом
+        // Сначала сделали контракты для BSC
+        // Потом для арбитра
+        // Включаем BSC но не можем сохранить для арбитра (адреса у контрактов одинаковые)
+        // Времено выключено, нужно искать другое решение
+        /* &&
         differentContracts
+        */
     )
   }, [chainId, userContractsChainId, userFactory, userRouter, contracts])
 
@@ -291,6 +301,8 @@ function SwapContracts(props: any) {
         chainId,
         //@ts-ignore
         library,
+        //@ts-ignore
+        hasFactory: deployUserFactory !== '' ? deployUserFactory : false,
         admin: adminAddress,
         originFeeAddress,
         wrappedToken,
@@ -454,6 +466,15 @@ function SwapContracts(props: any) {
               <li>{t('deployRouterContract')}</li>
               <li>{t('saveInfoToDomainRegistry')}</li>
             </NumList>
+            {t('ifYouAlreadyHaveFactorySpecifyIt')}
+            <InputWrapper>
+              <InputPanel
+                label="Factory (Optional)"
+                placeholder={`0x...`}
+                value={deployUserFactory}
+                onChange={setDeployUserFactory}
+              />
+            </InputWrapper>
           </div>
         }
       />

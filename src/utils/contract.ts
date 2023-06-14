@@ -105,30 +105,50 @@ export const deploySwapContracts = async (params: {
   onFactoryHash?: (hash: string) => void
   onRouterHash?: (hash: string) => void
   onSuccessfulDeploy?: (params: { chainId: number; factory: string; router: string }) => void
+  hasFactory?: string | boolean
 }) => {
-  const { admin, chainId, library, wrappedToken, originFeeAddress, onFactoryHash, onRouterHash, onSuccessfulDeploy } =
-    params
+  const {
+    admin,
+    chainId,
+    library,
+    wrappedToken,
+    originFeeAddress,
+    onFactoryHash,
+    onRouterHash,
+    onSuccessfulDeploy,
+    hasFactory,
+  } = params
 
   try {
-    const factory = await deployFactory({
-      onHash: onFactoryHash,
-      library,
-      admin,
-      originFeeAddress,
-    })
+    let factoryAddress = null
 
-    if (factory) {
+    if (!hasFactory) {
+      const factory = await deployFactory({
+        onHash: onFactoryHash,
+        library,
+        admin,
+        originFeeAddress,
+      })
+
+      if (factory) factoryAddress = factory.options.address
+    } else {
+      factoryAddress = hasFactory
+    }
+
+    if (factoryAddress) {
       const router = await deployRouter({
         onHash: onRouterHash,
         library,
-        factory: factory.options.address,
+        // @ts-ignore
+        factory: factoryAddress,
         wrappedToken,
       })
 
       if (typeof onSuccessfulDeploy === 'function') {
         onSuccessfulDeploy({
           chainId,
-          factory: factory.options.address,
+          // @ts-ignore
+          factory: factoryAddress,
           router: router.options.address,
         })
       }

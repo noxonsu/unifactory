@@ -1,8 +1,7 @@
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { useDispatch } from 'react-redux'
-import { useWeb3React } from '@web3-react/core'
-import { UnsupportedChainIdError } from '@web3-react/core'
+import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import { InjectedConnector } from '@web3-react/injected-connector'
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 import { useTranslation } from 'react-i18next'
@@ -11,7 +10,7 @@ import { updateAppOptions } from 'state/application/actions'
 import { useAppState } from 'state/application/hooks'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { THIRTY_SECONDS_IN_MS } from '../../../constants'
-import { Addition, AdditionName, paidAdditions, requiredPaymentNetworkId, onoutUrl } from '../../../constants/onout'
+import { Addition, AdditionName, onoutUrl, paidAdditions, requiredPaymentNetworkId } from '../../../constants/onout'
 import { switchInjectedNetwork } from 'utils/wallet'
 import cache from 'utils/cache'
 import { saveAppData } from 'utils/storage'
@@ -61,6 +60,9 @@ const Upgrade: FC = () => {
   const { additions } = useAppState()
   const dispatch = useDispatch()
   const addTransaction = useTransactionAdder()
+
+  const premiumKey = onout.generateAdditionKey({ addition: Addition.premiumVersion, account: account || '' })
+  const copyrightKey = onout.generateAdditionKey({ addition: Addition.switchCopyright, account: account || '' })
 
   const [paymentCryptoPrice, setPaymentCryptoPrice] = useState<number | undefined>()
 
@@ -147,7 +149,33 @@ const Upgrade: FC = () => {
     )
   }
 
-  const saveAdditionKey = async ({
+  const saveAdditionKey = async (addition: Addition, additionKey: string) => {
+    if (account) {
+      await saveAppData({
+        //@ts-ignore
+        library,
+        owner: account,
+        data: {
+          additions: {
+            [addition]: additionKey,
+          },
+        },
+        onHash: (hash: string) => {
+          addTransaction(
+            { hash },
+            {
+              summary: 'Addition key was saved',
+            }
+          )
+        },
+        onReceipt: (_, success) => {
+          if (success) updateAdditionStateInfo(addition, additionKey)
+        },
+      })
+    }
+  }
+
+  const activateAddition = async ({
     hash,
     isSuccess,
     summaryName,
@@ -177,27 +205,7 @@ const Upgrade: FC = () => {
         })
       )
 
-      await saveAppData({
-        //@ts-ignore
-        library,
-        owner: account,
-        data: {
-          additions: {
-            [addition]: additionKey,
-          },
-        },
-        onHash: (hash: string) => {
-          addTransaction(
-            { hash },
-            {
-              summary: 'Addition key was saved',
-            }
-          )
-        },
-        onReceipt: (_, success) => {
-          if (success) updateAdditionStateInfo(addition, additionKey)
-        },
-      })
+      await saveAdditionKey(addition, additionKey)
     }
   }
 
@@ -209,7 +217,7 @@ const Upgrade: FC = () => {
         from: account,
         cryptoAmount: String(cryptoPrices.switchCopyright),
         onComplete: async ({ hash, isSuccess }) =>
-          saveAdditionKey({
+          activateAddition({
             hash,
             isSuccess,
             summaryName: 'copyright switching',
@@ -227,7 +235,7 @@ const Upgrade: FC = () => {
         from: account,
         cryptoAmount: String(cryptoPrices.premiumVersion),
         onComplete: ({ hash, isSuccess }) =>
-          saveAdditionKey({
+          activateAddition({
             hash,
             isSuccess,
             summaryName: 'premium version',
@@ -267,6 +275,8 @@ const Upgrade: FC = () => {
           cryptoCost={cryptoPrices.switchCopyright}
           isPurchased={additions[Addition.switchCopyright]?.isValid}
           onPayment={buyCopyrightSwitching}
+          onActivation={(key: string) => saveAdditionKey(Addition.switchCopyright, key)}
+          requiredKey={copyrightKey}
           isLocked={additions[Addition.premiumVersion]?.isValid}
         />
         <AdditionBlock
@@ -278,6 +288,8 @@ const Upgrade: FC = () => {
           cryptoCost={cryptoPrices.premiumVersion}
           isPurchased={additions[Addition.premiumVersion]?.isValid}
           onPayment={buyPremiumVersion}
+          requiredKey={premiumKey}
+          onActivation={(key: string) => saveAdditionKey(Addition.premiumVersion, key)}
         />
       </StyledAdditions>
     </StyledWrapper>
