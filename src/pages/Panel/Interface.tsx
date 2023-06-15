@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import validUrl from 'valid-url'
 import styled from 'styled-components'
+import { useDispatch } from 'react-redux'
 import { useActiveWeb3React } from 'hooks'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useAddPopup, useAppState } from 'state/application/hooks'
+import { updateAppOptions } from 'state/application/actions'
 import { ButtonPrimary } from 'components/Button'
 import { TokenLists } from './TokenLists'
 import Accordion from 'components/Accordion'
@@ -41,12 +43,14 @@ type Props = {
   setPending: (v: boolean) => void
   activeNetworks: Record<string, any>[]
   setTab: (t: PanelTab) => void
+  switchToNetwork: (chainId: number) => void
 }
 
 export default function Interface(props: Props) {
-  const { pending, setPending, activeNetworks, setTab } = props
+  const { pending, setPending, activeNetworks, setTab, switchToNetwork } = props
   const { t } = useTranslation()
   const { library, chainId, account } = useActiveWeb3React()
+  const dispatch = useDispatch()
   const addTransaction = useTransactionAdder()
   const addPopup = useAddPopup()
 
@@ -146,6 +150,7 @@ export default function Interface(props: Props) {
   const [socialLinks, setSocialLinks] = useState<string[]>(stateSocialLinks)
   const [addressesOfTokenLists, setAddressesOfTokenLists] = useState<string[]>(stateAddressesOfTokenLists)
   const [tokenLists, setTokenLists] = useState<any>(stateTokenListsByChain)
+
   const [disableSourceCopyright, setDisableSourceCopyright] = useState<boolean>(stateDisableSourceCopyright)
   const [swapInputCurrency, setSwapInputCurrency] = useState(defaultSwapCurrency.input || '')
   const [swapOutputCurrency, setSwapOutputCurrency] = useState(defaultSwapCurrency.output || '')
@@ -300,6 +305,43 @@ export default function Interface(props: Props) {
         },
       },
     }))
+  }
+
+  const deleteTokenList = async (chainId: string, listId: string) => {
+    if (tokenLists[chainId]?.[listId]) {
+      const {
+        // @ts-ignore: skip error about unsed token list (_)
+        [chainId]: { [listId]: _ },
+        ...remainingLists
+      } = tokenLists
+
+      setTokenLists(remainingLists)
+
+      await saveAppData({
+        //@ts-ignore
+        library,
+        owner: account || '',
+        data: {
+          tokenLists: remainingLists,
+        },
+        onHash: (hash: string) => {
+          addTransaction(
+            { hash },
+            {
+              summary: `Token list was removed`,
+            }
+          )
+          dispatch(
+            updateAppOptions([
+              {
+                key: 'tokenListsByChain',
+                value: remainingLists,
+              },
+            ])
+          )
+        },
+      })
+    }
   }
 
   return (
@@ -457,7 +499,13 @@ export default function Interface(props: Props) {
         </Button>
 
         <Title>{t('tokenLists')}</Title>
-        <TokenLists pending={pending} setPending={setPending} tokenLists={tokenLists} />
+        <TokenLists
+          pending={pending}
+          setPending={setPending}
+          tokenLists={tokenLists}
+          deleteTokenList={deleteTokenList}
+          switchToNetwork={switchToNetwork}
+        />
 
         <OptionWrapper margin={0.4}>
           <Input

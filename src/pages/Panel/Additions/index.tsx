@@ -1,9 +1,7 @@
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { useDispatch } from 'react-redux'
-import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
-import { InjectedConnector } from '@web3-react/injected-connector'
-import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
+import { useWeb3React } from '@web3-react/core'
 import { useTranslation } from 'react-i18next'
 import { useActiveWeb3React } from 'hooks'
 import { updateAppOptions } from 'state/application/actions'
@@ -11,7 +9,6 @@ import { useAppState } from 'state/application/hooks'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { THIRTY_SECONDS_IN_MS } from '../../../constants'
 import { Addition, AdditionName, onoutUrl, paidAdditions, requiredPaymentNetworkId } from '../../../constants/onout'
-import { switchInjectedNetwork } from 'utils/wallet'
 import cache from 'utils/cache'
 import { saveAppData } from 'utils/storage'
 import onout from 'shared/services/onout'
@@ -53,10 +50,15 @@ const Button = styled(ButtonPrimary)`
 
 const requiredPaymentNetwork = networks[requiredPaymentNetworkId]
 
-const Upgrade: FC = () => {
+type Props = {
+  switchToNetwork: (chainId: number) => void
+  pending: boolean
+}
+
+const Upgrade: FC<Props> = ({ switchToNetwork, pending }) => {
   const { t } = useTranslation()
   const { library } = useWeb3React()
-  const { account, chainId, activate, connector } = useActiveWeb3React()
+  const { account, chainId } = useActiveWeb3React()
   const { additions } = useAppState()
   const dispatch = useDispatch()
   const addTransaction = useTransactionAdder()
@@ -109,28 +111,6 @@ const Upgrade: FC = () => {
 
     return prices
   }, [paymentCryptoPrice])
-
-  const [isNetworkPending, setIsNetworkPending] = useState(false)
-
-  const switchToRequiredPaymentNetwork = async () => {
-    setIsNetworkPending(true)
-
-    if (connector instanceof InjectedConnector) {
-      await switchInjectedNetwork(requiredPaymentNetworkId)
-    } // if the connector is walletconnect and the user has already tried to connect, manually reset the connector
-    else if (connector instanceof WalletConnectConnector && connector.walletConnectProvider?.wc?.uri) {
-      connector.walletConnectProvider = undefined
-    }
-
-    connector &&
-      activate(connector, undefined, true).catch((error) => {
-        if (error instanceof UnsupportedChainIdError) {
-          activate(connector)
-        }
-      })
-
-    setIsNetworkPending(false)
-  }
 
   const updateAdditionStateInfo = (addition: Addition, key: string) => {
     dispatch(
@@ -254,8 +234,8 @@ const Upgrade: FC = () => {
           <TextBlock type="notice">
             {t('youHaveToUseNetworkForPayment', { requiredNetwork: requiredPaymentNetwork.name })}
           </TextBlock>
-          <Button onClick={switchToRequiredPaymentNetwork} disabled={isNetworkPending}>
-            {isNetworkPending ? t('pending') : t('switchToNetwork', { network: requiredPaymentNetwork.name })}
+          <Button onClick={() => switchToNetwork(requiredPaymentNetwork.chainId)} disabled={pending}>
+            {pending ? t('pending') : t('switchToNetwork', { network: requiredPaymentNetwork.name })}
           </Button>
         </StyledNotification>
       )}
