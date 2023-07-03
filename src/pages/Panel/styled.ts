@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { ButtonEmpty } from 'components/Button'
 
 export const StyledPurchaseButton = styled(ButtonEmpty)<{ width?: string; margin?: string }>`
@@ -23,4 +23,21 @@ export const StyledOnoutLink = styled.a`
   font-size: 18px;
   text-decoration: none;
   color: ${({ theme }) => theme.blue2};
+`
+
+const listStyles = css`
+  padding: 0 0 0 22px;
+  margin: 8px 0;
+
+  li:not(:last-child) {
+    margin-bottom: 6.4px;
+  }
+`
+
+export const List = styled.ul`
+  ${listStyles}
+`
+
+export const NumList = styled.ol`
+  ${listStyles}
 `

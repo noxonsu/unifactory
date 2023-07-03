@@ -270,7 +270,7 @@ export default function Panel({ setDomainDataTrigger }: Props) {
           <Interface pending={pending} activeNetworks={activeNetworks} setPending={setPending} setTab={setTab} />
         )}
         {tab === PanelTab.additions && <Additions />}
-        {tab === PanelTab.migration && <Migration />}
+        {tab === PanelTab.migration && <Migration pending={pending} setPending={setPending} />}
         {tab === PanelTab.reset && <Reset setDomainDataTrigger={setDomainDataTrigger} />}
       </Content>
     </Wrapper>
