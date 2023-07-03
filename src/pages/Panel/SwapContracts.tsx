@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import isNumber from 'is-number'
-import styled, { withTheme, css } from 'styled-components'
+import styled, { withTheme } from 'styled-components'
 import { BigNumber } from 'bignumber.js'
 import { Box } from 'rebass'
 import { Label, Checkbox } from '@rebass/forms'
@@ -30,27 +30,11 @@ import { isValidAddress, setFactoryOption, deploySwapContracts } from 'utils/con
 import { saveAppData } from 'utils/storage'
 import useWordpressInfo from 'hooks/useWordpressInfo'
 import { PanelTab } from './'
-import { StyledPurchaseButton } from './styled'
+import { StyledPurchaseButton, List, NumList } from './styled'
 
 const Title = styled.h3`
   font-weight: 400;
   margin: 0 0 0.5rem;
-`
-
-const listStyles = css`
-  padding: 0 0 0 1rem;
-
-  li:not(:last-child) {
-    margin-bottom: 0.4rem;
-  }
-`
-
-const List = styled.ul`
-  ${listStyles}
-`
-
-const NumList = styled.ol`
-  ${listStyles}
 `
 
 const LabelExtended = styled(Label)`
