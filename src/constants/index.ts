@@ -40,7 +40,7 @@ export enum FactoryMethod {
   setProtocolFee = 'setProtocolFee',
 }
 
-export const DOMAIN_REGEXP = /^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+$/
+export const DOMAIN_REGEXP = /^([a-zA-Z0-9][a-zA-Z0-9-_]*\.)*[a-zA-Z0-9]*[a-zA-Z0-9-_]*[[a-zA-Z0-9]+$/
 
 export const HEX_COLOR_REGEXP = /^#([\dA-F]{3}){1,2}$/i
 export const RGB_COLOR_REGEXP = /^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/
