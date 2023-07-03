@@ -4,6 +4,7 @@ import isNumber from 'is-number'
 type Data = null | {
   wpAdmin?: string
   wpNetworkIds?: number[]
+  wpVersion?: boolean
 }
 
 export default function useWordpressInfo(): Data {
@@ -32,6 +33,10 @@ export default function useWordpressInfo(): Data {
             validatedIds.map((id: ExternalId) => Number(id))
           )
         }
+      }
+      if (SO_Definance?.wpVersion) {
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        updateWithNewValue('wpVersion', SO_Definance.wpVersion)
       }
     }
   }, [])
