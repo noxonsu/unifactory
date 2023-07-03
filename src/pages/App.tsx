@@ -145,7 +145,7 @@ export default function App() {
 
     try {
       const start = async () => {
-        const data = await fetchDomainData(chainId, library, storage)
+        const data = await fetchDomainData({ chainId, library, storage })
 
         if (data) {
           dispatch(retrieveDomainData(data))
