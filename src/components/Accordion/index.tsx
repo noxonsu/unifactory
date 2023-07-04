@@ -54,6 +54,7 @@ export default function Accordion({
   contentPadding = false,
   minimalStyles,
   openByDefault,
+  className,
 }: {
   title: string
   children: JSX.Element | JSX.Element[]
@@ -63,11 +64,18 @@ export default function Accordion({
   contentPadding?: boolean
   minimalStyles?: boolean
   openByDefault?: boolean
+  className?: string
 }) {
   const [open, setOpen] = useState<boolean>(openByDefault ?? false)
 
   return (
-    <Wrapper padding={padding} margin={margin} borderRadius={borderRadius} minimalStyles={minimalStyles}>
+    <Wrapper
+      padding={padding}
+      margin={margin}
+      borderRadius={borderRadius}
+      minimalStyles={minimalStyles}
+      className={className}
+    >
       <Header onClick={() => setOpen(!open)}>
         <Title>{title}</Title>
         <ArrowWrapper>{open ? <MdOutlineKeyboardArrowUp /> : <MdOutlineKeyboardArrowDown />}</ArrowWrapper>

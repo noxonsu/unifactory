@@ -19,7 +19,7 @@ import ColorSelector from 'components/ColorSelector'
 import TextBlock from 'components/TextBlock'
 import NetworkRelatedSettings from './NetworkRelatedSettings'
 import { OptionWrapper } from './index'
-import { STORAGE_NETWORK_ID, STORAGE_NETWORK_NAME } from '../../constants'
+import { STORAGE_NETWORK_ID, STORAGE_NETWORK_NAME, ERROR_CODE } from '../../constants'
 import { Addition, onoutUrl } from '../../constants/onout'
 import { PanelTab } from './'
 import { StyledPurchaseButton, StyledOnoutLink } from './styled'
@@ -230,55 +230,61 @@ export default function Interface(props: Props) {
     )
   }, [settingsChanged, isValidLogo, isValidFavicon, isValidBackground, areColorsValid, chainId])
 
-  const saveSettings = async () => {
+  const asyncCallbackWithCatch = async (callback: (params: any) => Promise<unknown>, params: any) => {
     setPending(true)
 
     try {
-      const newSettings = {
-        projectName,
-        logoUrl,
-        faviconUrl,
-        backgroundUrl,
-        brandColor,
-        navigationLinks,
-        menuLinks,
-        socialLinks,
-        addressesOfTokenLists,
-        disableSourceCopyright,
-        defaultSwapCurrency: {
-          input: swapInputCurrency,
-          output: swapOutputCurrency,
-        },
-        backgroundColorDark,
-        backgroundColorLight,
-        textColorDark,
-        textColorLight,
-      }
-
-      await saveAppData({
-        //@ts-ignore
-        library,
-        owner: account || '',
-        data: newSettings,
-        onHash: (hash: string) => {
-          addTransaction(
-            { hash },
-            {
-              summary: `Chain ${chainId}. Settings saved`,
-            }
-          )
-        },
-      })
+      await callback(params)
     } catch (error) {
-      addPopup({
-        error: {
-          message: error.message,
-          code: error.code,
-        },
-      })
+      if (error?.code !== ERROR_CODE.rejectedTx) {
+        addPopup({
+          error: {
+            message: error.message,
+            code: error.code,
+          },
+        })
+      }
     }
 
     setPending(false)
+  }
+
+  const saveSettings = async () => {
+    const newSettings = {
+      projectName,
+      logoUrl,
+      faviconUrl,
+      backgroundUrl,
+      brandColor,
+      navigationLinks,
+      menuLinks,
+      socialLinks,
+      addressesOfTokenLists,
+      disableSourceCopyright,
+      defaultSwapCurrency: {
+        input: swapInputCurrency,
+        output: swapOutputCurrency,
+      },
+      backgroundColorDark,
+      backgroundColorLight,
+      textColorDark,
+      textColorLight,
+    }
+
+    asyncCallbackWithCatch(saveAppData, {
+      //@ts-ignore
+      library,
+      owner: account || '',
+      data: newSettings,
+      onHash: (hash: string) => {
+        addTransaction(
+          { hash },
+          {
+            summary: `Chain ${chainId}. Settings saved`,
+          }
+        )
+      },
+    })
   }
 
   const [newListChainId, setNewListChainId] = useState('')
@@ -299,12 +305,14 @@ export default function Interface(props: Props) {
       [newListChainId]: {
         ...oldData[newListChainId],
         [newListId]: {
-          name: 'Template list',
+          name: 'Template-list',
           logoURI: '',
           tokens: [],
         },
       },
     }))
+    setNewListChainId('')
+    setNewListId('')
   }
 
   const deleteTokenList = async (chainId: string, listId: string) => {
@@ -315,9 +323,7 @@ export default function Interface(props: Props) {
         ...remainingLists
       } = tokenLists
 
-      setTokenLists(remainingLists)
-
-      await saveAppData({
+      asyncCallbackWithCatch(saveAppData, {
         //@ts-ignore
         library,
         owner: account || '',
@@ -339,6 +345,9 @@ export default function Interface(props: Props) {
               },
             ])
           )
+        },
+        onReceipt: (_: any, success: boolean) => {
+          if (success) setTokenLists(remainingLists)
         },
       })
     }

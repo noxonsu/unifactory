@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react'
 import { RiCloseFill } from 'react-icons/ri'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useAddPopup } from 'state/application/hooks'
+import { useAppState } from 'state/application/hooks'
 import styled from 'styled-components'
-import { ButtonPrimary, CleanButton } from 'components/Button'
+import { ButtonPrimary, CleanButton, ButtonError } from 'components/Button'
 import Input from 'components/Input'
 import InputPanel from 'components/InputPanel'
 import Accordion from 'components/Accordion'
@@ -36,6 +37,20 @@ const RemoveButton = styled(CleanButton)`
 const Button = styled(ButtonPrimary)`
   font-size: 0.8em;
   margin-top: 0.3rem;
+`
+
+const DeleteListButton = styled(ButtonError)`
+  font-size: 0.8em;
+  margin-top: 0.3rem;
+`
+
+const Row = styled.div`
+  display: flex;
+  gap: 0.3rem;
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    flex-wrap: wrap;
+  `}
 `
 
 const makeListStructure = (chaniId: string, listId: string, list: { name: string; logoURI: string; tokens: any[] }) => {
@@ -71,11 +86,22 @@ type Props = {
 }
 
 export function TokenList(props: Props) {
-  const { listChainId, listId, list, activeWeb3React, setPending, isNewList, deleteTokenList, switchToNetwork } = props
+  const {
+    listChainId,
+    listId,
+    list,
+    activeWeb3React,
+    setPending,
+    isNewList,
+    deleteTokenList,
+    switchToNetwork,
+    pending,
+  } = props
   const { library, chainId, account } = activeWeb3React
   const { t } = useTranslation()
   const addTransaction = useTransactionAdder()
   const addPopup = useAddPopup()
+  const { tokenListsByChain: stateTokenListsByChain } = useAppState()
 
   const [sourceListStructure] = useState(makeListStructure(listChainId, listId, list))
   const [needToUpdate, setNeedToUpdate] = useState(false)
@@ -222,9 +248,10 @@ export function TokenList(props: Props) {
     setPending(false)
   }
 
+  const onDeleteList = () => deleteTokenList(tokenListChainId, tokenListId)
+
   return (
-    <Accordion title={list.name}>
-      <button onClick={() => deleteTokenList(tokenListChainId, tokenListId)}>Remove it</button>
+    <Accordion title={list.name} className={`${pending ? 'disabled' : ''}`}>
       <Input
         label={`${t('listNetworkId')} *`}
         questionHelper={t('listNetworkIdDescription')}
@@ -280,9 +307,19 @@ export function TokenList(props: Props) {
           {t('switchToNetwork', { network: STORAGE_NETWORK_NAME })}
         </Button>
       ) : (
-        <Button onClick={saveTokenList} disabled={!canSaveTokenList}>
-          {isNewList ? t('saveTokenList') : t('updateTokenList')}
-        </Button>
+        <Row>
+          <Button onClick={saveTokenList} disabled={!canSaveTokenList}>
+            {isNewList ? t('saveTokenList') : t('updateTokenList')}
+          </Button>
+          {/* we don't add new lists in the state until they are saved with transaction
+            so if they're there it means the user has saved them and we can delete it
+          */}
+          {!!stateTokenListsByChain[listChainId]?.[listId] && (
+            <DeleteListButton onClick={onDeleteList} error>
+              {t('deleteTokenList')}
+            </DeleteListButton>
+          )}
+        </Row>
       )}
     </Accordion>
   )
