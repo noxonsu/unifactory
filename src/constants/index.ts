@@ -127,5 +127,9 @@ export const BETTER_TRADE_LESS_HOPS_THRESHOLD = new Percent(JSBI.BigInt(50), JSB
 export const ZERO_PERCENT = new Percent('0')
 export const ONE_HUNDRED_PERCENT = new Percent('1')
 
+export enum ERROR_CODE {
+  rejectedTx = 4001,
+}
+
 export const THIRTY_SECONDS_IN_MS = 30_000
 export const ONE_HOUR_IN_MS = 3_600_000

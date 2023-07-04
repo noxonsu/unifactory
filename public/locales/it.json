@@ -311,6 +311,7 @@
   "descriptionOfEndOfMigration": "La migrazione è completa. È ora possibile aprire questa applicazione nel nuovo dominio. Dopo aver ricaricato questa pagina, i dati non saranno più disponibili.",
   "saveDataForNewDomain": "Salvare i dati per un nuovo dominio",
   "deleteDataForOldDomain": "Cancellare i dati del vecchio dominio",
+  "deleteTokenList": "Cancellare l'elenco dei token",
   "descriptionAboutStorageNetworkUsage": "La rete Storage è utilizzata per memorizzare i dati dell'applicazione, come contratti smart, colori, elenchi di token, ecc. Se viene richiesto di cambiare rete, molto probabilmente è necessario passare alla rete Storage per poter salvare i dati. Per motivi di sicurezza non utilizziamo server centralizzati.",
   "ifYouAlreadyHaveFactorySpecifyIt": "Se hai già un contratto di fabbrica usalo qui sotto per evitare di crearne uno nuovo"
 }

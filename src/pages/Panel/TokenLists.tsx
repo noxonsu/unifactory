@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useActiveWeb3React } from 'hooks'
 import styled from 'styled-components'
 import { TokenList } from './TokenList'
@@ -11,13 +11,10 @@ const ListWrapper = styled.div`
 `
 
 export function TokenLists(props: any) {
-  const { tokenLists, pending, setPending } = props
+  const { tokenLists, pending, setPending, deleteTokenList, switchToNetwork } = props
   const { t } = useTranslation()
   const activeWeb3React = useActiveWeb3React()
-
-  const [chainIds, setChainIds] = useState(Object.keys(tokenLists))
-
-  useEffect(() => setChainIds(Object.keys(tokenLists)), [tokenLists])
+  const chainIds = Object.keys(tokenLists)
 
   return (
     <section>
@@ -37,6 +34,8 @@ export function TokenLists(props: any) {
                   pending={pending}
                   setPending={setPending}
                   isNewList={!list.timestamp}
+                  deleteTokenList={deleteTokenList}
+                  switchToNetwork={switchToNetwork}
                 />
               )
             })}

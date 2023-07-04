@@ -311,6 +311,7 @@
   "descriptionOfEndOfMigration": "The migration is complete. You can now open this application in the new domain. After reloading this page, the data will not be available.",
   "saveDataForNewDomain": "Save data for a new domain",
   "deleteDataForOldDomain": "Delete data for the old domain",
+  "deleteTokenList": "Delete token list",
   "descriptionAboutStorageNetworkUsage": "Storage network is used to store application data such as smart contracts, colors, token lists, etc. If you see a request to switch the network, it is most likely necessary to switch to the Storage network so that you can save your data. We do not use centralized servers for security reasons.",
   "ifYouAlreadyHaveFactorySpecifyIt": "If you already have a factory contract use it below to avoid creating a new one"
 }

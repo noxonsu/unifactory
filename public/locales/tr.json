@@ -311,6 +311,7 @@
   "descriptionOfEndOfMigration": "Geçiş işlemi tamamlanmıştır. Artık bu uygulamayı yeni etki alanında açabilirsiniz. Bu sayfa yeniden yüklendikten sonra veriler mevcut olmayacaktır.",
   "saveDataForNewDomain": "Yeni bir alan adı için verileri kaydetme",
   "deleteDataForOldDomain": "Eski alan adı için verileri silme",
+  "deleteTokenList": "Belirteç listesini sil",
   "descriptionAboutStorageNetworkUsage": "Depolama ağı akıllı sözleşmeler, renkler, token listeleri vb. gibi uygulama verilerini depolamak için kullanılır. Ağı değiştirmek için bir istek görürseniz, verilerinizi kaydedebilmeniz için büyük olasılıkla Depolama ağına geçmeniz gerekir. Güvenlik nedeniyle merkezi sunucular kullanmıyoruz.",
   "ifYouAlreadyHaveFactorySpecifyIt": "Halihazırda bir fabrika sözleşmeniz varsa, yeni bir sözleşme oluşturmaktan kaçınmak için aşağıdaki sözleşmeyi kullanın."
 }

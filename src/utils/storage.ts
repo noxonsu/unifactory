@@ -45,13 +45,14 @@ const makeBaseStructure = (data: { [k: string]: any }) => {
   if (!data[STORAGE_APP_KEY]) {
     data[STORAGE_APP_KEY] = {}
   }
-
+  if (!data[STORAGE_APP_KEY].contracts) {
+    data[STORAGE_APP_KEY].contracts = {}
+  }
   if (!data[STORAGE_APP_KEY].tokenLists) {
     data[STORAGE_APP_KEY].tokenLists = {}
   }
-
-  if (!data[STORAGE_APP_KEY].tokenLists) {
-    data[STORAGE_APP_KEY].tokenLists = {}
+  if (!data[STORAGE_APP_KEY].additions) {
+    data[STORAGE_APP_KEY].additions = {}
   }
 
   return data
@@ -67,7 +68,17 @@ const updateData = (oldData: Data, newData: Data) => {
 
   let result
 
-  if (newData.tokenList) {
+  // Update all token lists
+  if (newData.tokenLists) {
+    result = {
+      ...oldData,
+      [STORAGE_APP_KEY]: {
+        ...oldData[STORAGE_APP_KEY],
+        tokenLists: newData.tokenLists,
+      },
+    }
+    // Update or add one token list
+  } else if (newData.tokenList) {
     const { oldChainId, oldId, chainId, id } = newData.tokenList
 
     const tokenLists = {

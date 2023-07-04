@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import validUrl from 'valid-url'
 import styled from 'styled-components'
+import { useDispatch } from 'react-redux'
 import { useActiveWeb3React } from 'hooks'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useAddPopup, useAppState } from 'state/application/hooks'
+import { updateAppOptions } from 'state/application/actions'
 import { ButtonPrimary } from 'components/Button'
 import { TokenLists } from './TokenLists'
 import Accordion from 'components/Accordion'
@@ -17,7 +19,7 @@ import ColorSelector from 'components/ColorSelector'
 import TextBlock from 'components/TextBlock'
 import NetworkRelatedSettings from './NetworkRelatedSettings'
 import { OptionWrapper } from './index'
-import { STORAGE_NETWORK_ID, STORAGE_NETWORK_NAME } from '../../constants'
+import { STORAGE_NETWORK_ID, STORAGE_NETWORK_NAME, ERROR_CODE } from '../../constants'
 import { Addition, onoutUrl } from '../../constants/onout'
 import { PanelTab } from './'
 import { StyledPurchaseButton, StyledOnoutLink } from './styled'
@@ -41,12 +43,14 @@ type Props = {
   setPending: (v: boolean) => void
   activeNetworks: Record<string, any>[]
   setTab: (t: PanelTab) => void
+  switchToNetwork: (chainId: number) => void
 }
 
 export default function Interface(props: Props) {
-  const { pending, setPending, activeNetworks, setTab } = props
+  const { pending, setPending, activeNetworks, setTab, switchToNetwork } = props
   const { t } = useTranslation()
   const { library, chainId, account } = useActiveWeb3React()
+  const dispatch = useDispatch()
   const addTransaction = useTransactionAdder()
   const addPopup = useAddPopup()
 
@@ -146,6 +150,7 @@ export default function Interface(props: Props) {
   const [socialLinks, setSocialLinks] = useState<string[]>(stateSocialLinks)
   const [addressesOfTokenLists, setAddressesOfTokenLists] = useState<string[]>(stateAddressesOfTokenLists)
   const [tokenLists, setTokenLists] = useState<any>(stateTokenListsByChain)
+
   const [disableSourceCopyright, setDisableSourceCopyright] = useState<boolean>(stateDisableSourceCopyright)
   const [swapInputCurrency, setSwapInputCurrency] = useState(defaultSwapCurrency.input || '')
   const [swapOutputCurrency, setSwapOutputCurrency] = useState(defaultSwapCurrency.output || '')
@@ -225,55 +230,61 @@ export default function Interface(props: Props) {
     )
   }, [settingsChanged, isValidLogo, isValidFavicon, isValidBackground, areColorsValid, chainId])
 
-  const saveSettings = async () => {
+  const asyncCallbackWithCatch = async (callback: (params: any) => Promise<unknown>, params: any) => {
     setPending(true)
 
     try {
-      const newSettings = {
-        projectName,
-        logoUrl,
-        faviconUrl,
-        backgroundUrl,
-        brandColor,
-        navigationLinks,
-        menuLinks,
-        socialLinks,
-        addressesOfTokenLists,
-        disableSourceCopyright,
-        defaultSwapCurrency: {
-          input: swapInputCurrency,
-          output: swapOutputCurrency,
-        },
-        backgroundColorDark,
-        backgroundColorLight,
-        textColorDark,
-        textColorLight,
-      }
-
-      await saveAppData({
-        //@ts-ignore
-        library,
-        owner: account || '',
-        data: newSettings,
-        onHash: (hash: string) => {
-          addTransaction(
-            { hash },
-            {
-              summary: `Chain ${chainId}. Settings saved`,
-            }
-          )
-        },
-      })
+      await callback(params)
     } catch (error) {
-      addPopup({
-        error: {
-          message: error.message,
-          code: error.code,
-        },
-      })
+      if (error?.code !== ERROR_CODE.rejectedTx) {
+        addPopup({
+          error: {
+            message: error.message,
+            code: error.code,
+          },
+        })
+      }
     }
 
     setPending(false)
+  }
+
+  const saveSettings = async () => {
+    const newSettings = {
+      projectName,
+      logoUrl,
+      faviconUrl,
+      backgroundUrl,
+      brandColor,
+      navigationLinks,
+      menuLinks,
+      socialLinks,
+      addressesOfTokenLists,
+      disableSourceCopyright,
+      defaultSwapCurrency: {
+        input: swapInputCurrency,
+        output: swapOutputCurrency,
+      },
+      backgroundColorDark,
+      backgroundColorLight,
+      textColorDark,
+      textColorLight,
+    }
+
+    asyncCallbackWithCatch(saveAppData, {
+      //@ts-ignore
+      library,
+      owner: account || '',
+      data: newSettings,
+      onHash: (hash: string) => {
+        addTransaction(
+          { hash },
+          {
+            summary: `Chain ${chainId}. Settings saved`,
+          }
+        )
+      },
+    })
   }
 
   const [newListChainId, setNewListChainId] = useState('')
@@ -294,12 +305,52 @@ export default function Interface(props: Props) {
       [newListChainId]: {
         ...oldData[newListChainId],
         [newListId]: {
-          name: 'Template list',
+          name: 'Template-list',
           logoURI: '',
           tokens: [],
         },
       },
     }))
+    setNewListChainId('')
+    setNewListId('')
+  }
+
+  const deleteTokenList = async (chainId: string, listId: string) => {
+    if (tokenLists[chainId]?.[listId]) {
+      const {
+        // @ts-ignore: skip error about unsed token list (_)
+        [chainId]: { [listId]: _ },
+        ...remainingLists
+      } = tokenLists
+
+      asyncCallbackWithCatch(saveAppData, {
+        //@ts-ignore
+        library,
+        owner: account || '',
+        data: {
+          tokenLists: remainingLists,
+        },
+        onHash: (hash: string) => {
+          addTransaction(
+            { hash },
+            {
+              summary: `Token list was removed`,
+            }
+          )
+          dispatch(
+            updateAppOptions([
+              {
+                key: 'tokenListsByChain',
+                value: remainingLists,
+              },
+            ])
+          )
+        },
+        onReceipt: (_: any, success: boolean) => {
+          if (success) setTokenLists(remainingLists)
+        },
+      })
+    }
   }
 
   return (
@@ -457,7 +508,13 @@ export default function Interface(props: Props) {
         </Button>
 
         <Title>{t('tokenLists')}</Title>
-        <TokenLists pending={pending} setPending={setPending} tokenLists={tokenLists} />
+        <TokenLists
+          pending={pending}
+          setPending={setPending}
+          tokenLists={tokenLists}
+          deleteTokenList={deleteTokenList}
+          switchToNetwork={switchToNetwork}
+        />
 
         <OptionWrapper margin={0.4}>
           <Input

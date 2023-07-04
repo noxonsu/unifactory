@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { useActiveWeb3React } from 'hooks'
 import styled from 'styled-components'
+import { InjectedConnector } from '@web3-react/injected-connector'
+import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
+import { UnsupportedChainIdError } from '@web3-react/core'
 import { useTranslation } from 'react-i18next'
 import { MdArrowBack } from 'react-icons/md'
 import { shortenAddress } from 'utils'
 import { getCurrentDomain } from 'utils/app'
+import { switchInjectedNetwork } from 'utils/wallet'
 import networks from 'networks.json'
 import { useDispatch, useSelector } from 'react-redux'
 import { SUPPORTED_NETWORKS } from 'connectors'
@@ -14,13 +18,13 @@ import { AppState } from 'state'
 import { useAppState } from 'state/application/hooks'
 import { setAppManagement } from 'state/application/actions'
 import { CleanButton } from 'components/Button'
+import TextBlock from 'components/TextBlock'
 import Wallet from './Wallet'
 import SwapContracts from './SwapContracts'
 import Interface from './Interface'
 import Additions from './Additions'
 import Migration from './Migration'
 import Reset from './Reset'
-import TextBlock from 'components/TextBlock'
 
 export const PartitionWrapper = styled.div<{ highlighted?: boolean }>`
   margin-top: 1rem;
@@ -156,12 +160,32 @@ export default function Panel({ setDomainDataTrigger }: Props) {
   const { t } = useTranslation()
   const dispatch = useDispatch()
   const [pending, setPending] = useState<boolean>(false)
-  const { chainId, account } = useActiveWeb3React()
+  const { chainId, account, connector, activate } = useActiveWeb3React()
   const { admin } = useAppState()
   const wordpressData = useWordpressInfo()
   const [error, setError] = useState<any | false>(false)
   const [domain] = useState(getCurrentDomain())
   const [activeNetworks, setActiveNetworks] = useState<any[]>([])
+
+  const switchToNetwork = async (chainId: number) => {
+    setPending(true)
+
+    if (connector instanceof InjectedConnector) {
+      await switchInjectedNetwork(chainId)
+    } // if the connector is walletconnect and the user has already tried to connect, manually reset the connector
+    else if (connector instanceof WalletConnectConnector && connector.walletConnectProvider?.wc?.uri) {
+      connector.walletConnectProvider = undefined
+    }
+
+    connector &&
+      activate(connector, undefined, true).catch((error) => {
+        if (error instanceof UnsupportedChainIdError) {
+          activate(connector)
+        }
+      })
+
+    setPending(false)
+  }
 
   useEffect(() => {
     if (wordpressData) {
@@ -269,9 +293,15 @@ export default function Panel({ setDomainDataTrigger }: Props) {
           />
         )}
         {tab === PanelTab.interface && (
-          <Interface pending={pending} activeNetworks={activeNetworks} setPending={setPending} setTab={setTab} />
+          <Interface
+            pending={pending}
+            activeNetworks={activeNetworks}
+            setPending={setPending}
+            setTab={setTab}
+            switchToNetwork={switchToNetwork}
+          />
         )}
-        {tab === PanelTab.additions && <Additions />}
+        {tab === PanelTab.additions && <Additions switchToNetwork={switchToNetwork} pending={pending} />}
         {tab === PanelTab.migration && <Migration pending={pending} setPending={setPending} />}
         {tab === PanelTab.reset && <Reset setDomainDataTrigger={setDomainDataTrigger} />}
       </Content>
