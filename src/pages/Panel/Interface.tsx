@@ -319,7 +319,7 @@ export default function Interface(props: Props) {
     if (tokenLists[chainId]?.[listId]) {
       const {
         // @ts-ignore: skip error about unsed token list (_)
-        [chainId]: { [listId]: _ },
+        [chainId]: { [listId]: _ }, // eslint-disable-line
         ...remainingLists
       } = tokenLists
 
