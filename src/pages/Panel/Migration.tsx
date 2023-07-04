@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useActiveWeb3React } from 'hooks'
+import { useTransactionAdder } from 'state/transactions/hooks'
+import { useAddPopup } from 'state/application/hooks'
 import InputPanel from 'components/InputPanel'
 import { ButtonPrimary } from 'components/Button'
 import TextBlock from 'components/TextBlock'
@@ -8,10 +10,19 @@ import { OptionWrapper } from './index'
 import { migrateToNewDomain } from 'utils/storage'
 import { getCurrentDomain } from 'utils/app'
 import { DOMAIN_REGEXP } from '../../constants'
+import { NumList } from './styled'
 
-export default function Migration() {
+type Props = {
+  pending: boolean
+  setPending: (v: boolean) => void
+}
+
+export default function Migration(props: Props) {
+  const { pending, setPending } = props
   const { library, account } = useActiveWeb3React()
   const { t } = useTranslation()
+  const addTransaction = useTransactionAdder()
+  const addPopup = useAddPopup()
   const [oldDomain] = useState(getCurrentDomain())
   const [newDomain, setNewDomain] = useState('')
   const [isValidDomain, setIsValidDomain] = useState(false)
@@ -30,18 +41,37 @@ export default function Migration() {
   const startMigration = async () => {
     if (!account) return
 
+    setPending(true)
+
     try {
-      const result = await migrateToNewDomain({
+      const { hash } = await migrateToNewDomain({
         oldDomain,
         newDomain,
         library,
         owner: account,
       })
 
-      console.log('result', result)
+      if (hash) {
+        addTransaction(
+          { hash },
+          {
+            summary: t('descriptionOfEndOfMigration'),
+          }
+        )
+      }
     } catch (error) {
+      console.group('%c migration error', 'color: red')
       console.error(error)
+      console.groupEnd()
+      addPopup({
+        error: {
+          message: error.message,
+          code: error.code,
+        },
+      })
     }
+
+    setPending(false)
   }
 
   return (
@@ -58,7 +88,14 @@ export default function Migration() {
           error={!!newDomain && !isValidDomain}
         />
       </OptionWrapper>
-      <ButtonPrimary onClick={startMigration} disabled={!canStartMigration}>
+      <div>
+        {t('youHaveToConfirmTheseTxs')}
+        <NumList>
+          <li>{t('saveDataForNewDomain')}</li>
+          <li>{t('deleteDataForOldDomain')}</li>
+        </NumList>
+      </div>
+      <ButtonPrimary onClick={startMigration} disabled={pending || !canStartMigration}>
         {t('migrateToNewDomain')}
       </ButtonPrimary>
     </section>

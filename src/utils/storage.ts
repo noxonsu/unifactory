@@ -185,16 +185,18 @@ export const migrateToNewDomain = async ({
   try {
     const storage = getStorage(library, STORAGE)
     const { info } = await storage.methods[StorageMethod.getData](oldDomain.toLowerCase()).call()
-
-    await storage.methods[StorageMethod.setKeyData](newDomain.toLowerCase(), {
+    const receipt = await storage.methods[StorageMethod.setKeyData](newDomain.toLowerCase(), {
       owner,
       info,
     }).send({
       from: owner,
     })
+
     await storage.methods[StorageMethod.clearKeyData](oldDomain.toLowerCase()).send({
       from: owner,
     })
+
+    return { hash: receipt?.transactionHash || '' }
   } catch (error) {
     console.error(error)
     throw error

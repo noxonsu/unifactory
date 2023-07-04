@@ -4,8 +4,9 @@ import { StorageState } from 'state/application/reducer'
 import { getContractInstance } from 'utils/contract'
 import { isValidColor } from 'utils/color'
 import { filterTokenLists } from 'utils/list'
+import { getWordpressData } from './wordpress'
 import onout from 'shared/services/onout'
-import { Addition } from '../constants/onout'
+import { Addition, paidAdditions } from '../constants/onout'
 import { STORAGE_APP_KEY } from '../constants'
 
 export const getCurrentDomain = (): string => {
@@ -51,7 +52,7 @@ const defaultSettings = (): StorageState => ({
   additions: {},
 })
 
-const parseSettings = (settings: string, chainId: number, owner: string): StorageState => {
+const parseSettings = (settings: string, chainId: number, owner: string, wpVersion: boolean = false): StorageState => {
   const appSettings = defaultSettings()
 
   try {
@@ -138,7 +139,18 @@ const parseSettings = (settings: string, chainId: number, owner: string): Storag
       if (output) appSettings.defaultSwapCurrency.output = output
     }
 
-    if (additions) {
+    if (wpVersion) {
+      appSettings.additions = Object.values(paidAdditions).reduce(
+        (adds, { id }: { id: Addition }) => ({
+          ...adds,
+          [id]: {
+            key: onout.generateAdditionKey({ addition: id, account: owner }),
+            isValid: true,
+          },
+        }),
+        {}
+      )
+    } else if (additions) {
       // Update format of the object from the Storage and check if each addition has a valid key.
       appSettings.additions = Object.keys(additions).reduce((adds, additionKey) => {
         const key = onout.generateAdditionKey({ addition: additionKey as unknown as Addition, account: owner })
@@ -162,12 +174,16 @@ const parseSettings = (settings: string, chainId: number, owner: string): Storag
   return appSettings
 }
 
-export const fetchDomainData = async (
-  chainId: undefined | number,
-  library: unknown,
-  storage: any,
+export const fetchDomainData = async ({
+  chainId,
+  library,
+  storage,
+}: {
+  chainId: undefined | number
+  library: unknown
+  storage: any
   trigger?: boolean
-): Promise<StorageState | null> => {
+}): Promise<StorageState | null> => {
   let fullData = defaultSettings()
 
   try {
@@ -178,8 +194,9 @@ export const fetchDomainData = async (
     }
 
     const { info, owner } = await storage.methods.getData(currentDomain).call()
+    const { wpVersion } = getWordpressData()
 
-    const settings = parseSettings(info || '{}', chainId || 0, owner)
+    const settings = parseSettings(info || '{}', chainId || 0, owner, wpVersion)
     const { factory } = settings
 
     fullData = { ...settings, admin: owner === ZERO_ADDRESS ? '' : owner }

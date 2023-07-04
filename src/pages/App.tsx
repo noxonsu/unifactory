@@ -29,7 +29,6 @@ import {
   RedirectToAddLiquidity,
 } from './AddLiquidity/redirects'
 import Pool from './Pool'
-import Pools from './Pools'
 import PoolFinder from './PoolFinder'
 import RemoveLiquidity from './RemoveLiquidity'
 import { RedirectOldRemoveLiquidityPathStructure } from './RemoveLiquidity/redirects'
@@ -146,7 +145,7 @@ export default function App() {
 
     try {
       const start = async () => {
-        const data = await fetchDomainData(chainId, library, storage)
+        const data = await fetchDomainData({ chainId, library, storage })
 
         if (data) {
           dispatch(retrieveDomainData(data))
@@ -217,7 +216,6 @@ export default function App() {
                         <Route exact strict path="/claim" component={OpenClaimAddressModalAndRedirectToSwap} />
                         <Route exact strict path="/find" component={PoolFinder} />
                         <Route exact strict path="/pool" component={Pool} />
-                        <Route exact strict path="/pools" component={Pools} />
                         <Route exact strict path="/create" component={RedirectToAddLiquidity} />
                         <Route exact path="/add" component={AddLiquidity} />
                         <Route exact path="/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />

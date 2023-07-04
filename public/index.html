@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <link rel="shortcut icon" id="favicon" type="image/png" href="%PUBLIC_URL%/favicon.png" />
-    <link rel="apple-touch-icon" sizes="192x192" href="%PUBLIC_URL%/images/192x192_App_Icon.png" />
-    <link rel="apple-touch-icon" sizes="512x512" href="%PUBLIC_URL%/images/512x512_App_Icon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000" />
-    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <meta charset="utf-8"/>
+    <link rel="shortcut icon" id="favicon" type="image/png" href="%PUBLIC_URL%/favicon.png"/>
+    <link rel="apple-touch-icon" sizes="192x192" href="%PUBLIC_URL%/images/192x192_App_Icon.png"/>
+    <link rel="apple-touch-icon" sizes="512x512" href="%PUBLIC_URL%/images/512x512_App_Icon.png"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="theme-color" content="#000"/>
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"/>
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json"/>
     <title>Exchange</title>
     <script>
       const { hostname, protocol, href } = window.location
       const domain = hostname || document.location.host
       const DOMAIN_TITLES = {
         'internethedgefund.com': 'IHF Swap',
-        'eeecex.net': 'eeecEx',
+        'eeecex.net': 'eeecEx'
       }
 
       if (!!DOMAIN_TITLES[domain]) {
@@ -34,7 +34,9 @@
         favicon.rel = 'shortcut icon'
         favicon.id = 'favicon'
         favicon.type = 'image/png'
-        document.getElementsByTagName('head')[0].appendChild(favicon)
+        document
+          .getElementsByTagName('head')[0]
+          .appendChild(favicon)
       }
 
       const faviconUrl = localStorage.getItem('faviconUrl')

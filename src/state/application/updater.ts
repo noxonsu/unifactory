@@ -3,16 +3,14 @@ import { useDispatch } from 'react-redux'
 import { useActiveWeb3React } from 'hooks'
 import { filterTokenLists } from 'utils/list'
 import useDebounce from 'hooks/useDebounce'
-import { useFactoryContract } from 'hooks/useContract'
 import useIsWindowVisible from 'hooks/useIsWindowVisible'
 import { useAppState } from './hooks'
-import { updateBlockNumber, updateActivePools, updateAppOptions } from './actions'
+import { updateBlockNumber, updateAppOptions } from './actions'
 
 export default function Updater(): null {
   const { library, chainId, account } = useActiveWeb3React()
   const dispatch = useDispatch()
-  const { contracts, factory, tokenListsByChain } = useAppState()
-  const factoryContract = useFactoryContract(factory)
+  const { contracts, tokenListsByChain } = useAppState()
   const windowVisible = useIsWindowVisible()
 
   const [state, setState] = useState<{ chainId: number | undefined; blockNumber: number | null }>({
@@ -34,28 +32,6 @@ export default function Updater(): null {
   )
 
   // attach/detach listeners
-
-  useEffect(() => {
-    const update = async () => {
-      if (factory && factoryContract) {
-        const poolsLength = await factoryContract.allPairsLength()
-
-        if (poolsLength) {
-          const pools = []
-
-          for (let i = 0; i < poolsLength; i += 1) {
-            const poolAddress = await factoryContract.allPairs(i)
-
-            pools.push(poolAddress)
-          }
-
-          dispatch(updateActivePools({ pools }))
-        }
-      }
-    }
-
-    update()
-  }, [chainId, factory, factoryContract, dispatch])
 
   useEffect(() => {
     if (chainId && contracts[chainId]) {
