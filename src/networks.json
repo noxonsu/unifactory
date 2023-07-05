@@ -273,6 +273,24 @@
       "symbol": "WEDG"
     }
   },
+  "21004": {
+    "name": "C4EI",
+    "rpc": "https://rpc.c4ei.net/",
+    "chainId": 21004,
+    "explorer": "https://exp.c4ei.net/",
+    "color": "#8247E5",
+    "multicall": "0x60f48cEF903cFe08BE451470e8B6dA6E12A41083",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "C4ei",
+      "symbol": "C4EI"
+    },
+    "wrappedToken": {
+      "address": "0x4b1f75a8681Faa3833e3B214FC20BAcd91c421D8",
+      "name": "Wrapped C4ei",
+      "symbol": "WC4EI"
+    }
+  },
   "97": {
     "name": "BSC testnet",
     "rpc": "https://data-seed-prebsc-1-s2.binance.org:8545",
