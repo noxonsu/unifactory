@@ -22,6 +22,7 @@ import EDG from './edg.svg'
 import FKW from './fkw.png'
 import OZO from './ozo.png'
 import BASE_ETH from './baseEth.svg'
+import OP_BNB from './opbnb.svg'
 
 export const CURRENCY = {
   ETH,
@@ -48,6 +49,7 @@ export const CURRENCY = {
   FKW,
   OZO,
   BASE_ETH,
+  OP_BNB,
 
   // ------------
 
@@ -104,4 +106,6 @@ export const CURRENCY = {
   // Base
   8453: BASE_ETH,
   84531: BASE_ETH,
+  // opBNB
+  5611: OP_BNB,
 }

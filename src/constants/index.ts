@@ -7,6 +7,7 @@ export type NetworksId = keyof typeof networks
 
 export const BSC_ID = 56
 export const BSC_TESTNET_ID = 97
+export const OPBNB_TESTNET_ID = 5611
 export const POLYGON_TESTNET_ID = 80001
 export const AVALANCHE_TESTNET_ID = 43113
 export const POLIGON_ZKEVM_TESTNET_ID = 1442
