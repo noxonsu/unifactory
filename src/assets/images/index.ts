@@ -108,4 +108,5 @@ export const CURRENCY = {
   84531: BASE_ETH,
   // opBNB
   5611: OP_BNB,
+  204: OP_BNB,
 }
