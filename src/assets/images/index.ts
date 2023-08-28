@@ -23,6 +23,7 @@ import FKW from './fkw.png'
 import OZO from './ozo.png'
 import BASE_ETH from './baseEth.svg'
 import OP_BNB from './opbnb.svg'
+import SHIBARIUM from './shibarium.png'
 
 export const CURRENCY = {
   ETH,
@@ -109,4 +110,6 @@ export const CURRENCY = {
   // opBNB
   5611: OP_BNB,
   204: OP_BNB,
+  // Shibarium
+  109: SHIBARIUM,
 }
