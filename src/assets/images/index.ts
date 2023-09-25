@@ -24,6 +24,8 @@ import OZO from './ozo.png'
 import BASE_ETH from './baseEth.svg'
 import OP_BNB from './opbnb.svg'
 import SHIBARIUM from './shibarium.png'
+import GUAPX from './guapx.png'
+
 
 export const CURRENCY = {
   ETH,
@@ -51,6 +53,8 @@ export const CURRENCY = {
   OZO,
   BASE_ETH,
   OP_BNB,
+  
+  GUAPX,
 
   // ------------
 
@@ -112,4 +116,6 @@ export const CURRENCY = {
   204: OP_BNB,
   // Shibarium
   109: SHIBARIUM,
+  // Guapcoin X Chain
+  71111: GUAPX,
 }
