@@ -18,6 +18,25 @@
       "symbol": "WETH"
     }
   },
+  "71111 ": {
+    "name": "Guapcoin X Chain",
+    "rpc": "https://rpc-mainnet.guapcoinx.com -",
+    "chainId": 71111 ,
+    "explorer": "https://explorer.guapcoinx.com/",
+    "color": "#072D4C",
+    "storage": "0xd4a711333C41cC01B005dBE5389BcFb99D4f5d64",
+    "multicall": "0x83048f0Bf34FEeD8CEd419455a4320A735a92e9d",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "GUAPX",
+      "symbol": "GUAPX"
+    },
+    "wrappedToken": {
+      "address": "0xb9b990517e07A07d18A753DE6b539F950F1B24a5",
+      "name": "Wrapped GUAPX",
+      "symbol": "WGUAPX"
+    }
+  },
   "25": {
     "name": "Cronos",
     "rpc": "https://evm.cronos.org",
