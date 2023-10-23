@@ -87,12 +87,7 @@ export default function Footer() {
   const year = new Date().getFullYear()
   const copyright = `© ${projectName} ${year}`
   const SourceCopyright = (
-    <>
-      Powered by{' '}
-      <a href="https://onout.org/dex" target="_blank" rel="noopener noreferrer">
-        OnOut - no-code tool for creating DEX
-      </a>
-    </>
+    
   )
 
   return (
