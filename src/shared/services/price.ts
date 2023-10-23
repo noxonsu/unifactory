@@ -1,6 +1,6 @@
 import { originUrl } from '../../constants/onout'
 
-const MAX_PERCENT = 100
+const MAX_PERCENT = 0
 const USD_TICKET = 'USD'
 
 const fetchCryptoPrice = async ({
