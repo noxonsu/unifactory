@@ -2,7 +2,7 @@ import { POLYGON_TESTNET_ID, BSC_ID } from './'
 
 export const onoutUrl = 'https://onout.org'
 export const originUrl = 'https://noxon.wpmix.net'
-export const onoutFeeAddress = '0xDf50EF7E506536354e7a805442dcBF25c7Ac249B'
+export const onoutFeeAddress = '0xd8731cbfCa3B08e2d781e8B5CeB04e72C3A01a41'
 
 export const requiredPaymentNetworkId = process.env.NODE_ENV === 'production' ? BSC_ID : POLYGON_TESTNET_ID
 
@@ -23,10 +23,10 @@ export const paidAdditions: {
 } = {
   switchCopyright: {
     id: Addition.switchCopyright,
-    usdCost: 30,
+    usdCost: 0,
   },
   premiumVersion: {
     id: Addition.premiumVersion,
-    usdCost: 1_000,
+    usdCost: 0,
   },
 }
