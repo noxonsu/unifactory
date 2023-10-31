@@ -612,7 +612,7 @@
     }
   },
   7001: {
-    name: "Zetschain Testnet",
+    name: "Zetachain Testnet",
     rpc: "https://zetachain-athens-evm.blockpi.network/v1/rpc/public",
     chainId: 7001  ,
     explorer: "https://zetachain-athens-3.blockscout.com/",
