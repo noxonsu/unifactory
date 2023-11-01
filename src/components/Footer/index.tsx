@@ -5,8 +5,8 @@ import { useAppState } from 'state/application/hooks'
 import Polling from '../Header/Polling'
 import { TiSocialInstagram } from 'react-icons/ti'
 import { FaTelegramPlane } from 'react-icons/fa'
+import { RiTwitterXLine } from 'react-icons/ri'
 import { BsQuestionCircle } from 'react-icons/bs'
-import { SiTwitter } from 'react-icons/si'
 import { AiOutlineYoutube } from 'react-icons/ai'
 import { BsFacebook, BsGithub, BsDiscord, BsMedium, BsReddit, BsLinkedin, BsLightningChargeFill } from 'react-icons/bs'
 
@@ -66,7 +66,7 @@ const returnIconByUri = (uri: string) => {
   let icon = <BsQuestionCircle title={uri} />
 
   if (uri.length) {
-    if (lowerUri.match(/twitter/)) icon = <SiTwitter title="Twitter" />
+    if (lowerUri.match(/twitter/) || lowerUri.match(/x.com/)) icon = <RiTwitterXLine title="Twitter" />
     if (lowerUri.match(/instagram/)) icon = <TiSocialInstagram title="Instagram" />
     if (lowerUri.match(/t\.me/)) icon = <FaTelegramPlane title="Telegram" />
     if (lowerUri.match(/youtube/)) icon = <AiOutlineYoutube title="Youtube" />
