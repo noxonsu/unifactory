@@ -24,8 +24,13 @@ import OZO from './ozo.png'
 import BASE_ETH from './baseEth.svg'
 import OP_BNB from './opbnb.svg'
 import SHIBARIUM from './shibarium.png'
+import GUAPX from './guapx.png'
+import SCROLL_ETH from './scroll.io.png'
+import Q from './q.png'
+
 
 export const CURRENCY = {
+  SCROLL_ETH,
   ETH,
   BNB,
   MATIC,
@@ -51,6 +56,8 @@ export const CURRENCY = {
   OZO,
   BASE_ETH,
   OP_BNB,
+  Q,
+  GUAPX,
 
   // ------------
 
@@ -112,4 +119,10 @@ export const CURRENCY = {
   204: OP_BNB,
   // Shibarium
   109: SHIBARIUM,
+  71111: GUAPX,
+  534352: SCROLL_ETH, // Mainnet
+  534351: SCROLL_ETH, // Testnet
+  // Q
+  35441: Q, // Mainnet
+  35443: Q, // Testnet
 }
