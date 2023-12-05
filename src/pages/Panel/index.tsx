@@ -290,6 +290,7 @@ export default function Panel({ setDomainDataTrigger }: Props) {
             setError={setError}
             wrappedToken={wrappedToken}
             setTab={setTab}
+            switchToNetwork={switchToNetwork}
           />
         )}
         {tab === PanelTab.interface && (
