@@ -55,7 +55,7 @@ type Props = {
   pending: boolean
 }
 
-const Upgrade: FC<Props> = ({ switchToNetwork, pending }) => {
+const Additions: FC<Props> = ({ switchToNetwork, pending }) => {
   const { t } = useTranslation()
   const { library } = useWeb3React()
   const { account, chainId } = useActiveWeb3React()
@@ -276,4 +276,4 @@ const Upgrade: FC<Props> = ({ switchToNetwork, pending }) => {
   )
 }
 
-export default Upgrade
+export default Additions

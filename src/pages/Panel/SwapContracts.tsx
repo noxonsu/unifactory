@@ -134,7 +134,7 @@ const setValidValue = ({
 }
 
 function SwapContracts(props: any) {
-  const { domain, pending, setPending, theme, wrappedToken, setTab } = props
+  const { domain, pending, setPending, theme, wrappedToken, setTab, switchToNetwork } = props
   const { t } = useTranslation()
   const dispatch = useDispatch()
   const { library, account, chainId } = useActiveWeb3React()
@@ -500,11 +500,22 @@ function SwapContracts(props: any) {
         <InputWrapper>
           <InputPanel label="Router *" value={userRouter} onChange={setUserRouter} />
         </InputWrapper>
-        <Button onClick={saveSwapContracts} disabled={pending || !canSaveSwapContracts}>
-          {t(chainId === STORAGE_NETWORK_ID ? 'saveSwapContracts' : 'switchToNetwork', {
-            network: STORAGE_NETWORK_NAME,
-          })}
-        </Button>
+        {chainId === STORAGE_NETWORK_ID ? (
+          <Button onClick={saveSwapContracts} disabled={pending || !canSaveSwapContracts}>
+            {t('saveSwapContracts')}
+          </Button>
+        ) : (
+          <>
+            <Button onClick={() => switchToNetwork(STORAGE_NETWORK_ID)} disabled={pending}>
+              {t('switchToNetwork', {
+                network: STORAGE_NETWORK_NAME,
+              })}
+            </Button>
+            <TextBlock type="notice">
+              {t('questionWhyToSwitchToStorageNetwork')} {t('answerWhyToSwitchToStorageNetwork')}
+            </TextBlock>
+          </>
+        )}
       </PartitionWrapper>
 
       <PartitionWrapper>
