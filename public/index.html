@@ -21,6 +21,14 @@
       if (!!DOMAIN_TITLES[domain]) {
         document.title = DOMAIN_TITLES[domain]
       }
+      
+      // if $_GET['ref'] is set, save it to localStorage
+      if (window.location.search) {
+        const ref = window.location.search.split('?ref=')[1]
+        if (ref) {
+          localStorage.setItem('ref', ref)
+        }
+      }
 
       if (hostname !== 'localhost' && protocol !== 'https:') {
         location.replace(`https:${href.substring(protocol.length)}`)

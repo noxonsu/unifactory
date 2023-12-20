@@ -127,6 +127,38 @@ export default function Connection({ domainData, isAvailableNetwork, setDomainDa
     )
   }, [needToConfigure, wordpressData, account, admin])
 
+  useEffect(() => {
+    if (active && account && typeof window.ONOUT_refport !== 'undefined') {
+
+
+      const reporturl = window.ONOUT_refport;
+      const referrer = localStorage.getItem('ref') || '';
+      // Send AJAX call to refport.onout.org
+      console.log(`Sending AJAX call to ${reporturl} with referrer ${referrer}`);
+      fetch(reporturl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          address: account,
+          referrer: referrer,
+          chatidForRefport: window.ONOUT_chatidForRefport,
+          mydomain: window.location.hostname
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          // Handle the response data
+          console.log(data);
+        })
+        .catch((error) => {
+          // Handle any errors
+          console.error(error);
+        });
+    }
+  }, [active, account])
+  
   return (
     <Wrapper>
       {!isAvailableNetwork ? (
