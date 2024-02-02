@@ -9,6 +9,7 @@ import { BsQuestionCircle } from 'react-icons/bs'
 import { SiTwitter } from 'react-icons/si'
 import { AiOutlineYoutube } from 'react-icons/ai'
 import { BsFacebook, BsGithub, BsDiscord, BsMedium, BsReddit, BsLinkedin, BsLightningChargeFill } from 'react-icons/bs'
+import Copyright from 'components/Copyright'
 
 const FooterWrapper = styled.div`
   padding: 0.3rem;
@@ -28,7 +29,7 @@ const Content = styled.div`
   justify-content: center;
 `
 
-const Copyright = styled.p<{ pale?: boolean }>`
+const StyledCopyright = styled.p<{ pale?: boolean }>`
   margin: 0 0 0.7rem 0;
   text-align: center;
   ${({ pale }) => (pale ? `opacity: 0.92; font-size: 0.96em;` : '')}
@@ -86,20 +87,12 @@ export default function Footer() {
   const { projectName, socialLinks, disableSourceCopyright } = useAppState()
   const year = new Date().getFullYear()
   const copyright = `© ${projectName} ${year}`
-  const SourceCopyright = (
-    <>
-      Powered by{' '}
-      <a href="https://onout.org/dex" target="_blank" rel="noopener noreferrer">
-        OnOut - no-code tool for creating DEX
-      </a>
-    </>
-  )
 
   return (
     <FooterWrapper>
       <Content>
-        {projectName && <Copyright>{copyright}</Copyright>}
-        {!disableSourceCopyright && <Copyright pale>{SourceCopyright}</Copyright>}
+        {projectName && <StyledCopyright>{copyright}</StyledCopyright>}
+        {!disableSourceCopyright && <StyledCopyright pale>{<Copyright />}</StyledCopyright>}
 
         {socialLinks.length ? (
           <SocialLinksWrapper>
