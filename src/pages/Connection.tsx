@@ -8,6 +8,7 @@ import networks from 'networks.json'
 import { SUPPORTED_NETWORKS } from 'connectors'
 import AppBody from './AppBody'
 import Panel from './Panel'
+import Copyright from 'components/Copyright'
 import Web3Status from 'components/Web3Status'
 import { AppDispatch } from 'state'
 import { ApplicationModal, setOpenModal } from '../state/application/actions'
@@ -84,6 +85,11 @@ const SupportedNetworksList = styled.ul`
   }
 `
 
+const StyledCopyright = styled.div`
+  padding: 20px 0;
+  text-align: center;
+`
+
 const unavailableOrZeroAddr = (value: string | undefined) => !value || value === ZERO_ADDRESS
 
 interface ComponentProps {
@@ -97,7 +103,7 @@ export default function Connection({ domainData, isAvailableNetwork, setDomainDa
   const wordpressData = useWordpressInfo()
   const { t } = useTranslation()
   const dispatch = useDispatch<AppDispatch>()
-  const { admin, factory, router } = useAppState()
+  const { admin, factory, router, disableSourceCopyright } = useAppState()
   const [needToConfigure, setNeedToConfigure] = useState(false)
 
   useEffect(() => {
@@ -129,12 +135,10 @@ export default function Connection({ domainData, isAvailableNetwork, setDomainDa
 
   useEffect(() => {
     if (active && account && typeof window.ONOUT_refport !== 'undefined') {
-
-
-      const reporturl = window.ONOUT_refport;
-      const referrer = localStorage.getItem('ref') || '';
+      const reporturl = window.ONOUT_refport
+      const referrer = localStorage.getItem('ref') || ''
       // Send AJAX call to refport.onout.org
-      console.log(`Sending AJAX call to ${reporturl} with referrer ${referrer}`);
+      console.log(`Sending AJAX call to ${reporturl} with referrer ${referrer}`)
       fetch(reporturl, {
         method: 'POST',
         headers: {
@@ -144,21 +148,21 @@ export default function Connection({ domainData, isAvailableNetwork, setDomainDa
           address: account,
           referrer: referrer,
           chatidForRefport: window.ONOUT_chatidForRefport,
-          mydomain: window.location.hostname
+          mydomain: window.location.hostname,
         }),
       })
         .then((response) => response.json())
         .then((data) => {
           // Handle the response data
-          console.log(data);
+          console.log(data)
         })
         .catch((error) => {
           // Handle any errors
-          console.error(error);
-        });
+          console.error(error)
+        })
     }
   }, [active, account])
-  
+
   return (
     <Wrapper>
       {!isAvailableNetwork ? (
@@ -216,17 +220,25 @@ export default function Connection({ domainData, isAvailableNetwork, setDomainDa
           )}
         </>
       ) : (
-        <AppBody>
-          <ContentWrapper>
-            <WalletIconWrapper>
-              <FaWallet size="2.4rem" className="icon" />
-            </WalletIconWrapper>
-            <Title>{t('toGetStartedConnectWallet')}</Title>
-            <NetworkStatus>
-              <Web3Status />
-            </NetworkStatus>
-          </ContentWrapper>
-        </AppBody>
+        <>
+          <AppBody>
+            <ContentWrapper>
+              <WalletIconWrapper>
+                <FaWallet size="2.4rem" className="icon" />
+              </WalletIconWrapper>
+              <Title>{t('toGetStartedConnectWallet')}</Title>
+              <NetworkStatus>
+                <Web3Status />
+              </NetworkStatus>
+            </ContentWrapper>
+          </AppBody>
+
+          {!disableSourceCopyright && (
+            <StyledCopyright>
+              <Copyright />
+            </StyledCopyright>
+          )}
+        </>
       )}
     </Wrapper>
   )
