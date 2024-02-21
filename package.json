@@ -18,7 +18,7 @@
     "@ethersproject/solidity": "^5.5.0",
     "@popperjs/core": "2.9.2",
     "@reach/dialog": "0.15.0",
-    "@reach/portal": "0.15.0",
+    "@reach/portal": "0.18.0",
     "@reduxjs/toolkit": "1.6.0",
     "@types/big.js": "^6.1.2",
     "@types/color": "^3.0.2",
