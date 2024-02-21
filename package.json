@@ -131,7 +131,7 @@
     "react-color": "^2.19.3",
     "react-helmet-async": "^1.2.2",
     "react-icons": "^4.3.1",
-    "serve": "^13.0.2",
+    "serve": "^14.2.1",
     "tiny-invariant": "^1.2.0",
     "tiny-warning": "^1.0.3",
     "toformat": "^2.0.0",
