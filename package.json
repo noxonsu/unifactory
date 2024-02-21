@@ -126,7 +126,7 @@
     "is-number": "^7.0.0",
     "jsbi": "^4.1.0",
     "minify-json": "^1.0.0",
-    "puppeteer": "^13.0.0",
+    "puppeteer": "^22.1.0",
     "rc-slider": "^9.7.5",
     "react-color": "^2.19.3",
     "react-helmet-async": "^1.2.2",
