@@ -41,7 +41,7 @@
     "@types/rebass": "4.0.14",
     "@types/rebass__forms": "^4.0.6",
     "@types/styled-components": "5.1.10",
-    "@types/valid-url": "^1.0.3",
+    "@types/valid-url": "^1.0.7",
     "@types/wcag-contrast": "3.0.0",
     "@typescript-eslint/eslint-plugin": "2.34.0",
     "@typescript-eslint/parser": "2.34.0",
