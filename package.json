@@ -19,7 +19,7 @@
     "@popperjs/core": "2.9.2",
     "@reach/dialog": "0.15.0",
     "@reach/portal": "0.15.0",
-    "@reduxjs/toolkit": "1.6.0",
+    "@reduxjs/toolkit": "2.2.1",
     "@types/big.js": "^6.1.2",
     "@types/color": "^3.0.2",
     "@types/is-number": "^7.0.2",
