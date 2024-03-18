@@ -113,7 +113,7 @@
     "minify-contracts-build": "npx minify-json ./src/contracts/build"
   },
   "dependencies": {
-    "@chainsafe/dappeteer": "^2.3.0",
+    "@chainsafe/dappeteer": "^5.2.1",
     "@rebass/forms": "^4.0.6",
     "@types/react-helmet-async": "^1.0.3",
     "@uniswap/v2-core": "^1.0.1",
