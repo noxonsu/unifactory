@@ -618,8 +618,6 @@
     "explorer": "https://blastscan.io/",
     "color": "#FCFC03",
     "multicall": "",
-    "storage": "",
-    "exstorage": "",
     "baseCurrency": {
       "decimals": 18,
       "name": "ETH",
@@ -637,9 +635,7 @@
     "chainId": 168587773,
     "explorer": "https://testnet.blastscan.io",
     "color": "#FCFC03",
-    "multicall": "",
-    "storage": "",
-    "exstorage": "",
+    "multicall": "0xC397E78Ff03cf0c85389A51a4996bAd772B9066E",
     "baseCurrency": {
       "decimals": 18,
       "name": "ETH",
