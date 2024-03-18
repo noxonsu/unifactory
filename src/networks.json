@@ -610,5 +610,45 @@
       "name": "Wrapped Q",
       "symbol": "WQ"
     }
+  },
+  "81457": {
+    "name": "Blast",
+    "rpc": "https://rpc.blast.io",
+    "chainId": 81457,
+    "explorer": "https://blastscan.io/",
+    "color": "#FCFC03",
+    "multicall": "",
+    "storage": "",
+    "exstorage": "",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "ETH",
+      "symbol": "ETH"
+    },
+    "wrappedToken": {
+      "address": "0x4300000000000000000000000000000000000004",
+      "name": "Wrapped Ether",
+      "symbol": "WETH"
+    }
+  },
+  "168587773": {
+    "name": "Blast Sepolia",
+    "rpc": "https://sepolia.blast.io",
+    "chainId": 168587773,
+    "explorer": "https://testnet.blastscan.io",
+    "color": "#FCFC03",
+    "multicall": "",
+    "storage": "",
+    "exstorage": "",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "ETH",
+      "symbol": "ETH"
+    },
+    "wrappedToken": {
+      "address": "0x4200000000000000000000000000000000000023",
+      "name": "Wrapped Ether",
+      "symbol": "WETH"
+    }
   }
 }
