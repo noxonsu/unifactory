@@ -617,7 +617,7 @@
     "chainId": 81457,
     "explorer": "https://blastscan.io/",
     "color": "#FCFC03",
-    "multicall": "",
+    "multicall": "0xEF65BF9e225A4B606aa5C46f944De35f566e58e4",
     "baseCurrency": {
       "decimals": 18,
       "name": "ETH",
