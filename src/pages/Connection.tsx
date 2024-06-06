@@ -215,6 +215,7 @@ export default function Connection({ domainData, isAvailableNetwork, setDomainDa
             <AppBody>
               <SupportedNetworksWrapper>
                 <h3>{t('appIsNotReadyYet')}</h3>
+                <p>Configure: {chainId}</p>
               </SupportedNetworksWrapper>
             </AppBody>
           )}

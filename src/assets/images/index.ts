@@ -28,7 +28,7 @@ import GUAPX from './guapx.png'
 import SCROLL_ETH from './scroll.io.png'
 import Q from './q.png'
 import BLAST from './blast.svg'
-
+import CORE from './core.png'
 
 export const CURRENCY = {
   SCROLL_ETH,
@@ -60,6 +60,7 @@ export const CURRENCY = {
   Q,
   GUAPX,
   BLAST,
+  CORE,
 
   // ------------
 
@@ -128,6 +129,8 @@ export const CURRENCY = {
   35441: Q, // Mainnet
   35443: Q, // Testnet
 
-  81457 :BLAST,
+  81457: BLAST,
   168587773: BLAST,
+
+  1116: CORE,
 }
