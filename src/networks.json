@@ -664,5 +664,23 @@
       "name": "Wrapped CORE",
       "symbol": "WCORE"
     }
+  },
+  "2078": {
+    "name": "Parodychain",
+    "rpc": "https://fraa-flashbox-4392-rpc.a.stagenet.tanssi.network",
+    "chainId": 2078,
+    "explorer": "https://parodyscan.xyz",
+    "color": "#FF9211",
+    "multicall": "0x0e694875e9376A00A8222CD4E769b61B4416CD43",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "PDY",
+      "symbol": "PDY"
+    },
+    "wrappedToken": {
+      "address": "0x816e6e9A48d2a88971debbcbbB80E50850e123f1",
+      "name": "Wrapped PDY",
+      "symbol": "WPDY"
+    }
   }
 }
