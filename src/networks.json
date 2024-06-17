@@ -671,7 +671,7 @@
     "chainId": 2078,
     "explorer": "https://parodyscan.xyz",
     "color": "#FF9211",
-    "multicall": "0x0e694875e9376A00A8222CD4E769b61B4416CD43",
+    "multicall": "0x609310f1014A6f3A26243C26B3027C86B7f5776f",
     "baseCurrency": {
       "decimals": 18,
       "name": "PDY",
