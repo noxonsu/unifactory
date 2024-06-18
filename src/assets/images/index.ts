@@ -29,6 +29,7 @@ import SCROLL_ETH from './scroll.io.png'
 import Q from './q.png'
 import BLAST from './blast.svg'
 import CORE from './core.png'
+import PDY from './parody-logo.png'
 
 export const CURRENCY = {
   SCROLL_ETH,
@@ -61,6 +62,7 @@ export const CURRENCY = {
   GUAPX,
   BLAST,
   CORE,
+  PDY,
 
   // ------------
 
@@ -133,4 +135,5 @@ export const CURRENCY = {
   168587773: BLAST,
 
   1116: CORE,
+  2078: PDY,
 }

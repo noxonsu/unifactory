@@ -9,7 +9,7 @@ Admin can create own DEX. Add logo, change colors, use own domain name, add/edit
 
 It's free, 20% of your revenue (your fee) will forward to our development fund. We will use this to support the software up to date.
 
-# Can i trust you?
+# Can i trust you? 
 
 This tool was developed by the team who made MCW wallet ([trusted by 1000+ webmasters](https://codecanyon.net/item/multicurrency-crypto-wallet-and-exchange-widgets-for-wordpress/23532064)). We use uniswap.org sources with small changes, you can check the sources of smartcontract after deployment then compare it with the verified uniswap's contracts. We don't have access to the pools. We do our best to prevent all damages to our users, anywayг use this software at your own risk. Join Our Discord https://discord.gg/Nhgfdkvemz
 
