@@ -719,5 +719,25 @@
       "name": "Wrapped VSG",
       "symbol": "WVSG"
     }
+  },
+  "420042": {
+    "name": "Vector Smart Chain",
+    "rpc": "https://rpc.vscblockchain.org",
+    "chainId": 420042,
+    "explorer": "https://explorer.vscblockchain.org/",
+    "color": "#FF9211",
+    "multicall": "0x48d7ac38530697aDB91061B6D141C8c763edE565",
+    "storage": "0xfdd7067530db45CFF766Fe2C26e3590C3B320C4c",
+    "exstorage": "0x809F55B913094eDD168cE23fCe1288Efe94a6500",
+    "baseCurrency": {
+      "decimals": 18,
+      "name": "VSG",
+      "symbol": "VSG"
+    },
+    "wrappedToken": {
+      "address": "0x83048f0Bf34FEeD8CEd419455a4320A735a92e9d",
+      "name": "Wrapped VSG",
+      "symbol": "WVSG"
+    }
   }
 }

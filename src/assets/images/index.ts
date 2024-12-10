@@ -139,4 +139,5 @@ export const CURRENCY = {
   2078: PDY,
   
   420044: VSG,
+  420042: VSG,
 }
