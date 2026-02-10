@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { ZERO_ADDRESS, ZERO_HASH } from '../sdk/constants'
 import FACTORY from 'contracts/build/Factory.json'
 import { StorageState } from 'state/application/reducer'
@@ -10,6 +11,8 @@ import { Addition, paidAdditions } from '../constants/onout'
 import { STORAGE_APP_KEY } from '../constants'
 
 export const getCurrentDomain = (): string => {
+  return 'test.eneeseene'
+  //return 'app.lobsterswap.com'
   if (process.env.NODE_ENV === 'development' && process.env.REACT_APP_DEV_DOMAIN) {
     return process.env.REACT_APP_DEV_DOMAIN
   }
@@ -93,7 +96,7 @@ const parseSettings = (settings: string, chainId: number, owner: string, wpVersi
       defaultSwapCurrency,
       additions,
     } = parsedSettings
-
+console.log('>> parsedSettings', parsedSettings, settingsJSON, owner)
     appSettings.contracts = contracts
 
     if (contracts[chainId]) {
@@ -138,7 +141,7 @@ const parseSettings = (settings: string, chainId: number, owner: string, wpVersi
       if (input) appSettings.defaultSwapCurrency.input = input
       if (output) appSettings.defaultSwapCurrency.output = output
     }
-
+console.log('>>> appSettings', appSettings)
     if (wpVersion) {
       appSettings.additions = Object.values(paidAdditions).reduce(
         (adds, { id }: { id: Addition }) => ({

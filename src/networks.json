@@ -75,7 +75,7 @@
   },
   "56": {
     "name": "BSC",
-    "rpc": "https://bscrpc.com/",
+    "rpc": "https://bsc-dataseed.bnbchain.org",
     "chainId": 56,
     "explorer": "https://bscscan.com",
     "color": "#CC9B00",
@@ -446,14 +446,15 @@
     "chainId": 4000,
     "explorer": "https://ozonescan.io",
     "color": "#80DC2E",
-    "multicall": "0x48d7ac38530697aDB91061B6D141C8c763edE565",
+    "storage": "0x59bEbB443D5518BF167922e7cD2B42D2bd2b2330",
+    "multicall": "0x9d42e2cE827f5Bf95D0207982c93f1eD3E0030Af",
     "baseCurrency": {
       "decimals": 18,
       "name": "OZO",
       "symbol": "OZO"
     },
     "wrappedToken": {
-      "address": "0x83048f0Bf34FEeD8CEd419455a4320A735a92e9d",
+      "address": "0x1c9c85cA10493f8D0A768bd10b1F22362B272e98",
       "name": "Wrapped OZO",
       "symbol": "WOZO"
     }
