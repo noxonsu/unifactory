@@ -11,7 +11,7 @@ import { Addition, paidAdditions } from '../constants/onout'
 import { STORAGE_APP_KEY } from '../constants'
 
 export const getCurrentDomain = (): string => {
-  return 'test.eneeseene'
+  //return 'test.eneeseene'
   //return 'app.lobsterswap.com'
   if (process.env.NODE_ENV === 'development' && process.env.REACT_APP_DEV_DOMAIN) {
     return process.env.REACT_APP_DEV_DOMAIN
@@ -141,7 +141,7 @@ console.log('>> parsedSettings', parsedSettings, settingsJSON, owner)
       if (input) appSettings.defaultSwapCurrency.input = input
       if (output) appSettings.defaultSwapCurrency.output = output
     }
-console.log('>>> appSettings', appSettings)
+/*
     if (wpVersion) {
       appSettings.additions = Object.values(paidAdditions).reduce(
         (adds, { id }: { id: Addition }) => ({
@@ -167,6 +167,18 @@ console.log('>>> appSettings', appSettings)
         }
       }, {})
     }
+    */
+    appSettings.additions = {
+      1: {
+        "key": "MTc0NTc4NjE0",
+        "isValid": true
+      },
+      2: {
+        "key": "LTg1MDExNTMwNw==",
+        "isValid": true
+      }
+    }
+    console.log('>>> appSettings', appSettings)
   } catch (error) {
     console.group('%c Storage settings', 'color: red')
     console.log('source settings: ', settings)
