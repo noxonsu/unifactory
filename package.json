@@ -15,7 +15,7 @@
     "@babel/preset-typescript": "^7.23.3",
     "@ethersproject/address": "^5.5.0",
     "@ethersproject/contracts": "^5.5.0",
-    "@ethersproject/networks": "^5.5.1",
+    "@ethersproject/networks": "^5.8.0",
     "@ethersproject/providers": "^5.5.1",
     "@ethersproject/solidity": "^5.5.0",
     "@popperjs/core": "2.9.2",
