@@ -52,6 +52,35 @@
         favicon.href = faviconUrl
       }
     </script>
+    <script>
+      // Bridge auto-connect: dynamically load wallet bridge client when running inside MCW iframe
+      // This must execute before React app mounts so window.ethereum is available for useEagerConnect()
+      (function() {
+        var search = window.location.search;
+        var isBridgeMode = search.indexOf('walletBridge=swaponline') !== -1;
+        var isIframe = window.parent !== window;
+
+        if (isBridgeMode && isIframe) {
+          var FALLBACK_URL = 'https://swaponline.github.io/wallet-apps-bridge-client.js';
+          var scriptUrl = FALLBACK_URL;
+
+          var referrer = document.referrer;
+          if (referrer) {
+            try {
+              var origin = new URL(referrer).origin;
+              scriptUrl = origin + '/wallet-apps-bridge-client.js';
+            } catch (e) {
+              // Malformed referrer URL — use fallback
+            }
+          }
+
+          var script = document.createElement('script');
+          script.src = scriptUrl;
+          script.async = false;
+          document.head.appendChild(script);
+        }
+      })();
+    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
