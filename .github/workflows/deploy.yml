@@ -1,43 +1,144 @@
-name: Build and Deploy Unifactory DEX
+name: Deploy Unifactory DEX
 
 on:
   push:
-    branches: [ main, master ]
+    branches:
+      - main
+      - master
   workflow_dispatch:
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+
     steps:
-      - name: Checkout unifactory
+      - name: Checkout code
         uses: actions/checkout@v3
-        with:
-          path: unifactory
 
-      - name: Checkout appsource/dex
-        uses: actions/checkout@v3
-        with:
-          repository: appsource/dex
-          token: ${{ secrets.APPSOURCE_TOKEN }}
-          path: appsource-dex
-
-      - name: Setup Node 16
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version-file: '.nvmrc'
+          cache: 'npm'
 
-      - name: Build unifactory
+      - name: Generate version
+        id: version
         run: |
-          cd unifactory
-          npm install --legacy-peer-deps
-          npm run build
+          VERSION=$(date -u +%Y%m%d%H%M)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Generated version: $VERSION"
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Build with build_clean
+        run: npm run build_clean
+
+      - name: Verify build output
+        run: |
+          if [ ! -d "build" ]; then
+            echo "Error: build directory not found"
+            exit 1
+          fi
+          if [ ! -f "build/index.html" ]; then
+            echo "Error: build/index.html not found"
+            exit 1
+          fi
+          echo "Build output verified"
+          ls -la build/
+
+      - name: Upload static files to server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "build/*"
+          target: "/var/www/html/dex-new/"
+          strip_components: 1
+          rm: true
+
+      - name: Switch to new deployment (blue-green)
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            # Preserve admin panel if it exists
+            if [ -d "/var/www/html/dex/admin" ]; then
+              echo "Backing up admin panel..."
+              cp -r /var/www/html/dex/admin /tmp/dex-admin-backup
+            fi
+
+            # Atomic switch to new deployment
+            ln -sfn /var/www/html/dex-new /var/www/html/dex
+
+            # Restore admin panel
+            if [ -d "/tmp/dex-admin-backup" ]; then
+              echo "Restoring admin panel..."
+              mkdir -p /var/www/html/dex/admin
+              cp -r /tmp/dex-admin-backup/* /var/www/html/dex/admin/
+              rm -rf /tmp/dex-admin-backup
+            fi
+
+            echo "Deployment switched to dex-new"
+            ls -la /var/www/html/ | grep dex
+
+      - name: Health check
+        run: |
+          echo "Waiting 10 seconds for deployment to settle..."
+          sleep 10
+
+          # Check if DEX loads
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://dex.wpmix.net || echo "000")
+
+          if [ "$HTTP_CODE" = "200" ]; then
+            echo "✓ Health check passed (HTTP $HTTP_CODE)"
+          else
+            echo "⚠ Warning: Health check returned HTTP $HTTP_CODE (non-blocking)"
+          fi
 
       - name: Deploy to appsource/dex
+        continue-on-error: true
         run: |
-          rsync -av --delete unifactory/build/ appsource-dex/ --exclude='.git' --exclude='README.md'
+          # Clone appsource/dex
+          git clone https://${{ secrets.APPSOURCE_TOKEN }}@github.com/appsource/dex.git appsource-dex
+
+          # Copy build files
+          rsync -av --delete build/ appsource-dex/ --exclude='.git' --exclude='README.md'
+
+          # Commit and push
           cd appsource-dex
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git add .
-          git commit -m "Auto-deploy from unifactory $(date '+%Y-%m-%d %H:%M:%S')" || echo "No changes"
+          git commit -m "Auto-deploy from unifactory v${{ env.VERSION }}
+
+          Deployed: $(date '+%Y-%m-%d %H:%M:%S')
+
+          Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>" || echo "No changes"
           git push
+
+      - name: Notify completion
+        if: success()
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "✓ Unifactory DEX deployment complete"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Version: ${{ env.VERSION }}"
+          echo "Demo: https://dex.wpmix.net"
+          echo "Appsource: https://appsource.github.io/dex"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+      - name: Notify failure
+        if: failure()
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "✗ Unifactory DEX deployment failed"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Version: ${{ env.VERSION }}"
+          echo "Check workflow logs for details"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
