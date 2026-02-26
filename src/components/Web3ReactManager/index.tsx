@@ -3,7 +3,7 @@ import { useWeb3React } from '@web3-react/core'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 
-import { network } from '../../connectors'
+import { injected, network } from '../../connectors'
 import { useEagerConnect, useInactiveListener } from '../../hooks'
 import { NetworkContextName } from '../../constants'
 import Loader from '../Loader'
@@ -21,7 +21,7 @@ const Message = styled.h2`
 
 export default function Web3ReactManager({ children }: { children: JSX.Element | JSX.Element[] }) {
   const { t } = useTranslation()
-  const { active } = useWeb3React()
+  const { active, activate } = useWeb3React()
   const { active: networkActive, error: networkError, activate: activateNetwork } = useWeb3React(NetworkContextName)
 
   // try to eagerly connect to an injected provider, if it exists and has granted access already
@@ -36,6 +36,29 @@ export default function Web3ReactManager({ children }: { children: JSX.Element |
 
   // when there's no account connected, react to logins (broadly speaking) on the injected provider, if it exists
   useInactiveListener(!triedEager)
+
+  // listen for bridgeReady event from MCW wallet bridge provider
+  // handles late bridge handshake completion (after initial eager connect attempt)
+  useEffect(() => {
+    const ethereum = (window as any).ethereum
+    if (!ethereum?.isSwapWalletAppsBridge || !ethereum.addEventListener) {
+      return
+    }
+
+    const handleBridgeReady = () => {
+      if (!active) {
+        activate(injected, undefined, true).catch((error: Error) => {
+          console.error('Failed to activate after bridgeReady event', error)
+        })
+      }
+    }
+
+    ethereum.addEventListener('bridgeReady', handleBridgeReady)
+
+    return () => {
+      ethereum.removeEventListener('bridgeReady', handleBridgeReady)
+    }
+  }, [active, activate])
 
   // handle delayed loader state
   const [showLoader, setShowLoader] = useState(false)
