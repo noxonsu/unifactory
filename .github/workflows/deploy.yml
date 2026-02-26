@@ -30,7 +30,7 @@ jobs:
           echo "Generated version: $VERSION"
 
       - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+        run: npm install --legacy-peer-deps
 
       - name: Build with build_clean
         run: npm run build_clean
