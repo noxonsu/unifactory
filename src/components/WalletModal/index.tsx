@@ -212,6 +212,14 @@ export default function WalletModal({
     }
   }, [setWalletView, active, error, connector, walletModalOpen, activePrevious, connectorPrevious])
 
+  // Suppress modal in bridge mode: when the app is running inside MCW's Apps iframe
+  // with an active wallet connection, the modal is redundant since the wallet is already
+  // connected via the bridge. If bridge is active but wallet is NOT connected, allow the
+  // modal to show as a fallback for manual wallet connection.
+  if (window.ethereum?.isSwapWalletAppsBridge && active) {
+    return null
+  }
+
   const tryActivation = async (connector: AbstractConnector | undefined) => {
     setPendingWallet(connector) // set wallet for pending view
     setWalletView(WALLET_VIEWS.PENDING)
