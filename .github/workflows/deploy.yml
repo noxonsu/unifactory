@@ -100,27 +100,6 @@ jobs:
             echo "⚠ Warning: Health check returned HTTP $HTTP_CODE (non-blocking)"
           fi
 
-      - name: Deploy to appsource/dex
-        continue-on-error: true
-        run: |
-          # Clone appsource/dex
-          git clone https://${{ secrets.APPSOURCE_TOKEN }}@github.com/appsource/dex.git appsource-dex
-
-          # Copy build files
-          rsync -av --delete build/ appsource-dex/ --exclude='.git' --exclude='README.md'
-
-          # Commit and push
-          cd appsource-dex
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-          git add .
-          git commit -m "Auto-deploy from unifactory v${{ env.VERSION }}
-
-          Deployed: $(date '+%Y-%m-%d %H:%M:%S')
-
-          Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>" || echo "No changes"
-          git push
-
       - name: Notify completion
         if: success()
         run: |
@@ -129,7 +108,6 @@ jobs:
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           echo "Version: ${{ env.VERSION }}"
           echo "Demo: https://dex.wpmix.net"
-          echo "Appsource: https://appsource.github.io/dex"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
       - name: Notify failure
