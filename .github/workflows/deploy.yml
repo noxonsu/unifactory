@@ -1,0 +1,42 @@
+name: Build and Deploy Unifactory DEX
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout unifactory
+        uses: actions/checkout@v3
+        path: unifactory
+
+      - name: Checkout appsource/dex
+        uses: actions/checkout@v3
+        with:
+          repository: appsource/dex
+          token: ${{ secrets.APPSOURCE_TOKEN }}
+          path: appsource-dex
+
+      - name: Setup Node 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Build unifactory
+        run: |
+          cd unifactory
+          npm install --legacy-peer-deps
+          npm run build
+
+      - name: Deploy to appsource/dex
+        run: |
+          rsync -av --delete unifactory/build/ appsource-dex/ --exclude='.git' --exclude='README.md'
+          cd appsource-dex
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add .
+          git commit -m "Auto-deploy from unifactory $(date '+%Y-%m-%d %H:%M:%S')" || echo "No changes"
+          git push
