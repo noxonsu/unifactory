@@ -11,7 +11,8 @@ jobs:
     steps:
       - name: Checkout unifactory
         uses: actions/checkout@v3
-        path: unifactory
+        with:
+          path: unifactory
 
       - name: Checkout appsource/dex
         uses: actions/checkout@v3
