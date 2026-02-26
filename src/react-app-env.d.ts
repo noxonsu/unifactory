@@ -7,6 +7,7 @@ declare module 'jazzicon' {
 interface Window {
   ethereum?: {
     isMetaMask?: true
+    isSwapWalletAppsBridge?: boolean
     on?: (...args: any[]) => void
     removeListener?: (...args: any[]) => void
     request?: (config: any) => any
