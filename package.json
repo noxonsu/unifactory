@@ -19,7 +19,7 @@
     "@ethersproject/providers": "^5.5.1",
     "@ethersproject/solidity": "^5.5.0",
     "@popperjs/core": "2.9.2",
-    "@reach/dialog": "0.15.0",
+    "@reach/dialog": "0.18.0",
     "@reach/portal": "0.15.0",
     "@reduxjs/toolkit": "1.6.0",
     "@testing-library/jest-dom": "^5.17.0",
