@@ -40,3 +40,21 @@ Infrastructure is the key element of the blockchain success. Decentralised appli
 2. push build to https://github.com/appsource/dex  (html files). see https://github.com/appsource/dex#to-update  
 3. push build to https://github.com/noxonsu/definance (see readme)
 
+
+---
+
+## Ecosystem
+
+This project is part of the [onout.org](https://onout.org) open-source DeFi toolkit:
+
+| Product | Description |
+|---------|-------------|
+| [Wallet](https://onout.org/wallet/) | Multi-currency crypto wallet + P2P swap |
+| **[DEX](https://onout.org/dex/)** | ← this project — create your own DEX |
+| [Farming](https://onout.org/farming/) | ERC20 staking & yield farming |
+| [CrossChain](https://onout.org/crosschain/) | Cross-chain bridge |
+| [DAO Widget](https://onout.org/dao/) | Create your own DAO (Snapshot fork) |
+| [NFTsy](https://onout.org/nft/) | NFT showcase plugin |
+| [PredictionMarket](https://onout.org/predictionmarket/) | Prediction market platform |
+| [Launchpad](https://onout.org/launchpad/) | IDO Launchpad |
+| [Lottery](https://onout.org/lottery/) | Crypto lottery |
