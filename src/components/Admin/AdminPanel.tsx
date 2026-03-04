@@ -73,8 +73,8 @@ export default function AdminPanel() {
   }
 
   return (
-    <div className="bg-gray-900 rounded-3xl border border-gray-800 p-6 max-w-lg w-full mx-auto">
-      <h2 className="text-lg font-semibold text-white mb-1">Admin Panel</h2>
+    <div className="bg-white dark:bg-gray-900 rounded-3xl border border-gray-200 dark:border-gray-800 p-6 max-w-lg w-full mx-auto shadow-sm">
+      <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Admin Panel</h2>
       <p className="text-xs text-gray-500 mb-6">
         Domain: <span className="text-gray-300 font-mono">{domain || getCurrentDomain()}</span>
         {config?.admin && (
@@ -86,7 +86,7 @@ export default function AdminPanel() {
 
       {/* Contracts section */}
       <section className="mb-6">
-        <h3 className="text-sm font-medium text-gray-300 mb-3">
+        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
           Contracts (Chain ID: {chainId})
         </h3>
         <div className="space-y-3">
@@ -99,15 +99,15 @@ export default function AdminPanel() {
             ] as const
           ).map(({ key, label, hint }) => (
             <div key={key}>
-              <label className="text-xs text-gray-400 mb-1 block">
+              <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">
                 {label}
-                <span className="ml-2 text-gray-600">{hint}</span>
+                <span className="ml-2 text-gray-400 dark:text-gray-600">{hint}</span>
               </label>
               <input
                 value={contracts[key]}
                 onChange={(e) => setContracts((prev) => ({ ...prev, [key]: e.target.value }))}
                 placeholder="0x..."
-                className="w-full bg-gray-800 text-white rounded-xl px-3 py-2 text-sm border border-gray-700 font-mono"
+                className="w-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl px-3 py-2 text-sm border border-gray-200 dark:border-gray-700 font-mono"
               />
             </div>
           ))}
@@ -116,19 +116,19 @@ export default function AdminPanel() {
 
       {/* Branding section */}
       <section className="mb-6">
-        <h3 className="text-sm font-medium text-gray-300 mb-3">Branding</h3>
+        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Branding</h3>
         <div className="space-y-3">
           <div>
-            <label className="text-xs text-gray-400 mb-1 block">Project Name</label>
+            <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">Project Name</label>
             <input
               value={branding.projectName}
               onChange={(e) => setBranding((prev) => ({ ...prev, projectName: e.target.value }))}
               placeholder="My DEX"
-              className="w-full bg-gray-800 text-white rounded-xl px-3 py-2 text-sm border border-gray-700"
+              className="w-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl px-3 py-2 text-sm border border-gray-200 dark:border-gray-700"
             />
           </div>
           <div>
-            <label className="text-xs text-gray-400 mb-1 block">Brand Color</label>
+            <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">Brand Color</label>
             <div className="flex items-center gap-3">
               <input
                 type="color"
@@ -140,27 +140,27 @@ export default function AdminPanel() {
                 value={branding.brandColor}
                 onChange={(e) => setBranding((prev) => ({ ...prev, brandColor: e.target.value }))}
                 placeholder="#2172E5"
-                className="flex-1 bg-gray-800 text-white rounded-xl px-3 py-2 text-sm border border-gray-700 font-mono"
+                className="flex-1 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl px-3 py-2 text-sm border border-gray-200 dark:border-gray-700 font-mono"
               />
             </div>
           </div>
           <div>
-            <label className="text-xs text-gray-400 mb-1 block">Logo URL</label>
+            <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">Logo URL</label>
             <input
               value={branding.logo}
               onChange={(e) => setBranding((prev) => ({ ...prev, logo: e.target.value }))}
               placeholder="https://..."
-              className="w-full bg-gray-800 text-white rounded-xl px-3 py-2 text-sm border border-gray-700"
+              className="w-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl px-3 py-2 text-sm border border-gray-200 dark:border-gray-700"
             />
           </div>
         </div>
       </section>
 
       {error && (
-        <div className="mb-4 p-3 bg-red-900/30 border border-red-700/50 rounded-xl text-sm text-red-300">{error}</div>
+        <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700/50 rounded-xl text-sm text-red-600 dark:text-red-300">{error}</div>
       )}
       {success && (
-        <div className="mb-4 p-3 bg-green-900/30 border border-green-700/50 rounded-xl text-sm text-green-300">
+        <div className="mb-4 p-3 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700/50 rounded-xl text-sm text-green-700 dark:text-green-300">
           ✓ Config saved to BSC Storage!
         </div>
       )}
@@ -168,7 +168,7 @@ export default function AdminPanel() {
       <button
         onClick={handleSave}
         disabled={!isConnected || saving}
-        className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-2xl transition-colors"
+        className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-gray-200 dark:disabled:bg-gray-700 disabled:text-gray-400 dark:disabled:text-gray-500 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-2xl transition-colors"
       >
         {saving ? 'Saving to BSC Storage...' : !isConnected ? 'Connect Wallet to Save' : 'Save Configuration'}
       </button>

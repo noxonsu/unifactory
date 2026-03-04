@@ -148,15 +148,15 @@ export default function SwapWidget() {
   const notConfigured = !contracts.router
 
   return (
-    <div className="bg-gray-900 rounded-3xl border border-gray-800 p-4 max-w-md w-full mx-auto">
+    <div className="bg-white dark:bg-gray-900 rounded-3xl border border-gray-200 dark:border-gray-800 p-4 max-w-md w-full mx-auto shadow-sm">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-white">Swap</h2>
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Swap</h2>
         <div className="flex items-center gap-2">
           <span className="text-xs text-gray-500">Fee tier:</span>
           <select
             value={feeTier}
             onChange={(e) => setFeeTier(Number(e.target.value) as any)}
-            className="bg-gray-800 text-gray-300 text-xs rounded-lg px-2 py-1 border border-gray-700"
+            className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-xs rounded-lg px-2 py-1 border border-gray-200 dark:border-gray-700"
           >
             <option value={500}>0.05%</option>
             <option value={3000}>0.3%</option>
@@ -166,9 +166,9 @@ export default function SwapWidget() {
       </div>
 
       {notConfigured && (
-        <div className="mb-4 p-3 bg-yellow-900/30 border border-yellow-700/50 rounded-xl text-xs text-yellow-300">
+        <div className="mb-4 p-3 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-700/50 rounded-xl text-xs text-yellow-700 dark:text-yellow-300">
           DEX not configured for this domain. Go to{' '}
-          <a href="/admin" className="underline">Admin</a> to set up contracts.
+          <a href="#/admin" className="underline">Admin</a> to set up contracts.
         </div>
       )}
 
@@ -185,7 +185,7 @@ export default function SwapWidget() {
         <div className="flex justify-center">
           <button
             onClick={handleFlip}
-            className="bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-xl p-2 transition-colors"
+            className="bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 rounded-xl p-2 transition-colors"
           >
             <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4" />
@@ -206,13 +206,13 @@ export default function SwapWidget() {
       </div>
 
       {error && (
-        <div className="mt-3 p-3 bg-red-900/30 border border-red-700/50 rounded-xl text-sm text-red-300">
+        <div className="mt-3 p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700/50 rounded-xl text-sm text-red-600 dark:text-red-300">
           {error}
         </div>
       )}
 
       {txHash && (
-        <div className="mt-3 p-3 bg-green-900/30 border border-green-700/50 rounded-xl text-sm text-green-300">
+        <div className="mt-3 p-3 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700/50 rounded-xl text-sm text-green-700 dark:text-green-300">
           Swap submitted!{' '}
           <a
             href={`https://testnet.bscscan.com/tx/${txHash}`}
@@ -228,7 +228,7 @@ export default function SwapWidget() {
       <button
         onClick={handleSwap}
         disabled={!isConnected || !amountIn || !amountOut || swapLoading || notConfigured}
-        className="mt-4 w-full bg-blue-600 hover:bg-blue-500 disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed text-white font-semibold py-4 rounded-2xl transition-colors text-lg"
+        className="mt-4 w-full bg-blue-600 hover:bg-blue-500 disabled:bg-gray-200 dark:disabled:bg-gray-700 disabled:text-gray-400 dark:disabled:text-gray-500 disabled:cursor-not-allowed text-white font-semibold py-4 rounded-2xl transition-colors text-lg"
       >
         {swapLoading
           ? 'Swapping...'

@@ -31,11 +31,12 @@ const bscTestnet = {
 }
 
 // PancakeSwap V3 on BSC Testnet (chain 97)
+// Source: https://developer.pancakeswap.finance/contracts/v3/addresses
 const PCS_V3 = {
-  factory:  '0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865',
-  router:   '0x9a489505a00cE272eAa5e07Dba6491314CaE3796',
-  quoter:   '0xbC203d7f83677c7ed3F7acEc959963E7F4ECC5C2',
-  // positionManager: not deployed on BSC testnet
+  factory:         '0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865',
+  router:          '0x9a489505a00cE272eAa5e07Dba6491314CaE3796',
+  quoter:          '0xbC203d7f83677c7ed3F7acEc959963E7F4ECC5C2',
+  positionManager: '0x427bF5b37357632377eCbEC9de3626C71A5396c1', // NonfungiblePositionManager (GOR/BSC testnet)
 }
 
 // Tokens with existing WBNB/BUSD pool (fee 500) on BSC testnet
@@ -47,8 +48,22 @@ const TOKEN_LIST_97 = {
   default: {
     name: 'BSC Testnet Default',
     tokens: [
-      { address: WBNB, symbol: 'WBNB', name: 'Wrapped BNB', decimals: 18, chainId: 97 },
-      { address: BUSD, symbol: 'BUSD', name: 'Binance USD', decimals: 18, chainId: 97 },
+      {
+        address: WBNB,
+        symbol: 'WBNB',
+        name: 'Wrapped BNB',
+        decimals: 18,
+        chainId: 97,
+        logoURI: 'https://tokens.pancakeswap.finance/images/symbol/bnb.png',
+      },
+      {
+        address: BUSD,
+        symbol: 'BUSD',
+        name: 'Binance USD',
+        decimals: 18,
+        chainId: 97,
+        logoURI: 'https://tokens.pancakeswap.finance/images/symbol/busd.png',
+      },
     ],
   },
 }
