@@ -75,7 +75,7 @@ jobs:
         with:
           personal_token: ${{ secrets.APPSOURCE_TOKEN }}
           external_repository: appsource/dex
-          publish_branch: main
+          publish_branch: gh-pages
           publish_dir: ./build
           force_orphan: true
 
