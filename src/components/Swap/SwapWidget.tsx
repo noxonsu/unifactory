@@ -12,11 +12,13 @@ const DEFAULT_TOKENS = [
     address: '0x703f112Bda4Cc6cb9c5FB4B2e6140f6D8374F10b',
     symbol: 'WEENUS',
     decimals: 18,
+    logoURI: undefined as string | undefined,
   },
   {
     address: '0x348236484ce96A293E210260b90bBFb228D6d1Fc',
     symbol: 'USDT',
     decimals: 6,
+    logoURI: undefined as string | undefined,
   },
 ]
 
@@ -44,7 +46,12 @@ export default function SwapWidget() {
       if (list?.tokens) {
         list.tokens.forEach((t: any) => {
           if (!tokens.find((x) => x.address.toLowerCase() === t.address?.toLowerCase())) {
-            tokens.push({ address: t.address, symbol: t.symbol, decimals: t.decimals })
+            tokens.push({
+              address: t.address,
+              symbol: t.symbol,
+              decimals: t.decimals,
+              logoURI: t.logoURI,
+            })
           }
         })
       }

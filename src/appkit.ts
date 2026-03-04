@@ -12,6 +12,17 @@ import { http, fallback } from 'wagmi'
 
 const projectId = 'a23677c4af3139b4eccb52981f76ad94'
 
+// Read theme from URL ?theme=light|dark (before the # hash)
+const _urlTheme = new URLSearchParams(window.location.search).get('theme')
+const _themeMode: 'light' | 'dark' = _urlTheme === 'light' ? 'light' : 'dark'
+
+// Apply to document so Tailwind dark: classes respond
+if (_themeMode === 'dark') {
+  document.documentElement.classList.add('dark')
+} else {
+  document.documentElement.classList.remove('dark')
+}
+
 export const networks: [AppKitNetwork, ...AppKitNetwork[]] = [
   bscTestnet,
   bsc,
@@ -46,7 +57,7 @@ export const modal = createAppKit({
     url: 'https://appsource.github.io/dex',
     icons: ['https://appsource.github.io/dex/favicon.png'],
   },
-  themeMode: 'dark',
+  themeMode: _themeMode,
   features: { analytics: false },
 })
 

@@ -75,7 +75,11 @@ export default function PoolWidget() {
   const v3Available = isV3Mode(contracts)
 
   const handleAddLiquidity = async () => {
-    if (!address || !contracts.positionManager) return
+    if (!address) return
+    if (!contracts.positionManager) {
+      setError('NonfungiblePositionManager not configured. Add positionManager address in Admin.')
+      return
+    }
 
     setLoading(true)
     setError(null)
@@ -130,23 +134,48 @@ export default function PoolWidget() {
     }
   }
 
-  if (!v3Available) {
+  if (!contracts.router) {
     return (
       <div className="bg-gray-900 rounded-3xl border border-gray-800 p-6 max-w-md w-full mx-auto">
         <h2 className="text-lg font-semibold text-white mb-4">Add Liquidity</h2>
         <div className="p-4 bg-yellow-900/30 border border-yellow-700/50 rounded-xl text-sm text-yellow-300">
-          {contracts.router
-            ? 'V3 Position Manager not configured. Set positionManager address in Admin.'
-            : 'DEX contracts not configured for this domain. Go to Admin to set up.'}
+          DEX contracts not configured for this domain. Go to{' '}
+          <a href="#/admin" className="underline">Admin</a> to set up.
         </div>
       </div>
     )
   }
 
+  if (!v3Available) {
+    return (
+      <div className="bg-gray-900 rounded-3xl border border-gray-800 p-6 max-w-md w-full mx-auto">
+        <h2 className="text-lg font-semibold text-white mb-4">Add Liquidity</h2>
+        <div className="p-4 bg-yellow-900/30 border border-yellow-700/50 rounded-xl text-sm text-yellow-300">
+          V2 mode detected. Liquidity pools require V3 contracts (QuoterV2 + NonfungiblePositionManager).
+          Add <strong>Quoter</strong> and <strong>Position Manager</strong> addresses in{' '}
+          <a href="#/admin" className="underline">Admin</a>.
+        </div>
+      </div>
+    )
+  }
+
+  const hasPositionManager = !!contracts.positionManager
+
   return (
     <div className="bg-gray-900 rounded-3xl border border-gray-800 p-4 max-w-md w-full mx-auto">
       <h2 className="text-lg font-semibold text-white mb-4">Add Liquidity (V3)</h2>
       <p className="text-xs text-gray-500 mb-4">Full-range position. Tokens ordered: token0 &lt; token1 by address.</p>
+
+      {!hasPositionManager && (
+        <div className="mb-4 p-3 bg-yellow-900/30 border border-yellow-700/50 rounded-xl text-xs text-yellow-300">
+          NonfungiblePositionManager not configured. Add it in{' '}
+          <a href="#/admin" className="underline">Admin</a> to enable liquidity.
+          <div className="mt-1 text-yellow-500">
+            BSC Mainnet: PancakeSwap V3 NonfungiblePositionManager{' '}
+            <span className="font-mono">0x46A15B0b27311cedF172AB29E4f4766fbE7F4364</span>
+          </div>
+        </div>
+      )}
 
       <div className="space-y-3">
         <div>
@@ -215,10 +244,16 @@ export default function PoolWidget() {
 
       <button
         onClick={handleAddLiquidity}
-        disabled={!isConnected || !token0 || !token1 || !amount0 || !amount1 || loading}
+        disabled={!isConnected || !token0 || !token1 || !amount0 || !amount1 || loading || !hasPositionManager}
         className="mt-4 w-full bg-blue-600 hover:bg-blue-500 disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed text-white font-semibold py-4 rounded-2xl transition-colors"
       >
-        {loading ? 'Adding...' : !isConnected ? 'Connect Wallet' : 'Add Liquidity'}
+        {loading
+          ? 'Adding...'
+          : !isConnected
+          ? 'Connect Wallet'
+          : !hasPositionManager
+          ? 'Position Manager Not Configured'
+          : 'Add Liquidity'}
       </button>
     </div>
   )
