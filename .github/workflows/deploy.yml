@@ -16,6 +16,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Verify SKILL.md exists
+        run: |
+          if [ ! -f SKILL.md ]; then
+            echo "❌ SKILL.md is required — document how agents manage this product"
+            exit 1
+          fi
+          echo "✓ SKILL.md found"
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:

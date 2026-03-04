@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "build_clean": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prepare": "git config core.hooksPath .husky 2>/dev/null || true"
   },
   "dependencies": {
     "@reown/appkit": "^1.8.19",

@@ -1,0 +1,7 @@
+#!/bin/sh
+# Unifactory pre-commit hook
+
+if [ ! -f SKILL.md ]; then
+  echo "❌ SKILL.md not found! Create SKILL.md documenting how agents manage this product."
+  exit 1
+fi
