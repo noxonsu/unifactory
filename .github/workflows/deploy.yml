@@ -55,44 +55,16 @@ jobs:
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "build/*"
-          target: "/var/www/html/dex-new/"
+          target: "/var/www/dex.onout.org/"
           strip_components: 1
           rm: true
-
-      - name: Switch to new deployment (blue-green)
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.DEPLOY_HOST }}
-          username: ${{ secrets.DEPLOY_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            # Preserve admin panel if it exists
-            if [ -d "/var/www/html/dex/admin" ]; then
-              echo "Backing up admin panel..."
-              cp -r /var/www/html/dex/admin /tmp/dex-admin-backup
-            fi
-
-            # Atomic switch to new deployment
-            ln -sfn /var/www/html/dex-new /var/www/html/dex
-
-            # Restore admin panel
-            if [ -d "/tmp/dex-admin-backup" ]; then
-              echo "Restoring admin panel..."
-              mkdir -p /var/www/html/dex/admin
-              cp -r /tmp/dex-admin-backup/* /var/www/html/dex/admin/
-              rm -rf /tmp/dex-admin-backup
-            fi
-
-            echo "Deployment switched to dex-new"
-            ls -la /var/www/html/ | grep dex
 
       - name: Health check
         run: |
           echo "Waiting 10 seconds for deployment to settle..."
           sleep 10
 
-          # Check if DEX loads
-          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://dex.wpmix.net || echo "000")
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://dex.onout.org/ || echo "000")
 
           if [ "$HTTP_CODE" = "200" ]; then
             echo "✓ Health check passed (HTTP $HTTP_CODE)"
@@ -107,7 +79,7 @@ jobs:
           echo "✓ Unifactory DEX deployment complete"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           echo "Version: ${{ env.VERSION }}"
-          echo "Demo: https://dex.wpmix.net"
+          echo "Demo: https://dex.onout.org"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
       - name: Notify failure
