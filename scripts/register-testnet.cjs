@@ -20,7 +20,7 @@ if (!PRIVATE_KEY) {
   process.exit(1)
 }
 
-const DOMAIN = process.env.DOMAIN || 'dex.onout.org'
+const DOMAIN = process.env.DOMAIN || 'appsource.github.io'
 
 const bscTestnet = {
   id: 97,
@@ -147,7 +147,7 @@ const STORAGE_ABI = [
 
   if (receipt.status === 'success') {
     console.log(`\n✓ Domain '${DOMAIN}' registered on BSC Testnet Storage!`)
-    console.log(`  Now open dex.onout.org, switch wallet to BSC Testnet (97),`)
+    console.log(`  Now open appsource.github.io/dex, switch wallet to BSC Testnet (97),`)
     console.log(`  and the DEX will load PancakeSwap V3 contracts.`)
   }
 })().catch(e => { console.error(e.message); process.exit(1) })

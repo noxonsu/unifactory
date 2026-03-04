@@ -5,8 +5,8 @@
 UniFactory is a white-label DEX built on Uniswap V3 SDK, React 18, Vite, wagmi v2, and Reown AppKit.
 Configuration is stored in a BSC Storage smart contract, keyed by domain name.
 
-**Live demo:** https://dex.onout.org
-**Repo:** https://github.com/noxonsu/unifactory
+**Live demo:** https://appsource.github.io/dex
+**Repo:** https://github.com/appsource/dex
 **Storage contract (BSC):** `0xa7472f384339D37EfE505a1A71619212495A973A`
 **Storage key:** `definance` (hardcoded app namespace)
 
@@ -149,20 +149,14 @@ await client.writeContract({
 client-domain.com  A  95.217.227.164
 ```
 
-### Step 4: Configure Nginx (if new vhost needed)
+### Step 4: GitHub Pages (static hosting)
 
-The existing nginx on VM104 serves `/var/www/dex.onout.org/` as the default DEX.
-For a separate domain, add a vhost that also serves the same build directory.
+The DEX is deployed to GitHub Pages via CI:
+- Repo: `appsource/dex` (gh-pages branch)
+- URL: `https://appsource.github.io/dex`
+- CI: `.github/workflows/deploy.yml` (push to main → auto deploy)
 
-```nginx
-server {
-    listen 80;
-    server_name client-domain.com;
-    root /var/www/dex.onout.org;
-    index index.html;
-    try_files $uri $uri/ /index.html;
-}
-```
+For a custom domain, use a CNAME in the `appsource/dex` repo settings.
 
 ---
 
@@ -174,7 +168,7 @@ npm install
 npm run dev          # starts at http://localhost:5173
 
 # Test with specific domain config:
-echo "VITE_DEV_DOMAIN=dex.onout.org" > .env.local
+echo "VITE_DEV_DOMAIN=appsource.github.io" > .env.local
 npm run dev
 ```
 

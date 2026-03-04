@@ -43,8 +43,8 @@ export const modal = createAppKit({
   metadata: {
     name: 'UniFactory DEX',
     description: 'Decentralized Exchange powered by Uniswap V3',
-    url: 'https://dex.onout.org',
-    icons: ['https://dex.onout.org/favicon.png'],
+    url: 'https://appsource.github.io/dex',
+    icons: ['https://appsource.github.io/dex/favicon.png'],
   },
   themeMode: 'dark',
   features: { analytics: false },

@@ -9,10 +9,10 @@
  *   4. Swap page shows token inputs
  *   5. Pool page is accessible
  *   6. Admin page is accessible
- *   7. Contract read from BSC Storage (dex.onout.org config)
+ *   7. Contract read from BSC Storage (appsource.github.io config)
  *
  * Run:
- *   node tests/e2e/dex.test.js
+ *   node tests/e2e/dex.test.cjs
  *
  * Uses puppeteer from ~/MultiCurrencyWallet/node_modules/puppeteer
  */
@@ -239,7 +239,7 @@ function assert(condition, msg) {
     })
 
     // ── Test 9: BSC Storage contract readable ──
-    await test('BSC Storage: can read dex.onout.org config', async () => {
+    await test('BSC Storage: can read appsource.github.io config', async () => {
       // This test uses direct RPC call (no browser)
       const { createPublicClient, http } = require('viem')
       const { bsc } = require('viem/chains')
@@ -260,12 +260,12 @@ function assert(condition, msg) {
         address: '0xa7472f384339D37EfE505a1A71619212495A973A',
         abi: STORAGE_ABI,
         functionName: 'getData',
-        args: ['dex.onout.org'],
+        args: ['appsource.github.io'],
       })
 
       assert(result !== null, 'Storage returned null')
       const data = JSON.parse(result.info || '{}')
-      assert(data.definance?.contracts, 'No contracts in Storage for dex.onout.org')
+      assert(data.definance?.contracts, 'No contracts in Storage for appsource.github.io')
       const chains = Object.keys(data.definance.contracts)
       assert(chains.length > 0, 'No chain contracts configured')
       console.log(`\n    Configured chains: ${chains.join(', ')}`)
@@ -332,7 +332,7 @@ function assert(condition, msg) {
     })
 
     // ── Test 12: BSC Testnet Storage has chain 97 config ──
-    await test('BSC Testnet Storage: dex.onout.org has chain 97 config', async () => {
+    await test('BSC Testnet Storage: appsource.github.io has chain 97 config', async () => {
       const { createPublicClient, http } = require('viem')
       const bscTestnet = {
         id: 97, name: 'BSC Testnet',
@@ -352,10 +352,10 @@ function assert(condition, msg) {
         address: '0x91a0DCC7a78Da02244212D36eAFd9E0dBB3174B4',
         abi: STORAGE_ABI,
         functionName: 'getData',
-        args: ['dex.onout.org'],
+        args: ['appsource.github.io'],
       })
 
-      assert(result.info, 'No Storage data for dex.onout.org on BSC testnet')
+      assert(result.info, 'No Storage data for appsource.github.io on BSC testnet')
       const data = JSON.parse(result.info)
       assert(data.definance?.contracts?.['97'], 'No chain 97 contracts in Storage')
       assert(data.definance.contracts['97'].quoter, 'No quoter in chain 97 config (V3 mode required)')
