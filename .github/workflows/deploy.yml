@@ -19,12 +19,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version-file: '.nvmrc'
+          node-version: '20'
 
       - name: Generate version
         id: version
         run: |
-          VERSION="2.$(date -u +%y.%m%d)"
+          VERSION="3.$(date -u +%y.%m%d)"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Generated version: $VERSION"
