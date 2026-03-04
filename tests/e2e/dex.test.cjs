@@ -7,9 +7,14 @@
  *   2. Header with nav links is visible
  *   3. Connect Wallet button (AppKit) is present
  *   4. Swap page shows token inputs
- *   5. Pool page is accessible
- *   6. Admin page is accessible
- *   7. Contract read from BSC Storage (appsource.github.io config)
+ *   5. Swap: flip button works
+ *   6. Pool page is accessible
+ *   7. Admin page is accessible
+ *   8. Admin shows contract address inputs
+ *   9. BSC Storage contract readable (appsource.github.io config)
+ *  10. BSC Testnet Storage contracts accessible
+ *  11. BSC Testnet QuoterV2 returns WBNB→BUSD price
+ *  12. BSC Testnet Storage has chain 97 config with positionManager
  *
  * Run:
  *   node tests/e2e/dex.test.cjs
@@ -29,6 +34,9 @@ if (!fs.existsSync(SCREENSHOTS_DIR)) fs.mkdirSync(SCREENSHOTS_DIR, { recursive: 
 
 const BUILD_DIR = path.resolve(__dirname, '../../build')
 
+// Vite base path for GitHub Pages (from vite.config.ts: base: '/dex/')
+const BASE_PATH = '/dex'
+
 function timeOut(ms) { return new Promise(r => setTimeout(r, ms)) }
 
 async function screenshot(page, name) {
@@ -37,7 +45,7 @@ async function screenshot(page, name) {
   console.log(`  📷 ${path.relative(process.cwd(), file)}`)
 }
 
-// Static file server — serves build/ and handles SPA routing
+// Static file server — serves build/ with /dex/ base path support
 function startServer(root, port) {
   return new Promise((resolve, reject) => {
     const MIME = {
@@ -52,6 +60,12 @@ function startServer(root, port) {
     }
     const server = http.createServer((req, res) => {
       let urlPath = req.url.split('?')[0]
+
+      // Strip /dex prefix (matches vite base: '/dex/')
+      if (urlPath.startsWith(BASE_PATH)) {
+        urlPath = urlPath.slice(BASE_PATH.length) || '/'
+      }
+
       let filePath = path.join(root, urlPath)
 
       // SPA fallback: if file not found, serve index.html
@@ -107,9 +121,11 @@ function assert(condition, msg) {
 
   const PORT = 5180
   const BASE_URL = `http://localhost:${PORT}`
+  // App is at /dex/ (Vite base), HashRouter routes are #/swap etc.
+  const APP_URL = `${BASE_URL}${BASE_PATH}/`
 
   const server = await startServer(BUILD_DIR, PORT)
-  console.log(`  Server started at ${BASE_URL}\n`)
+  console.log(`  Server started at ${APP_URL}\n`)
 
   const browser = await puppeteer.launch({
     headless: true,
@@ -126,17 +142,19 @@ function assert(condition, msg) {
   try {
     // ── Test 1: App loads ──
     await test('App loads without critical errors', async () => {
-      await page.goto(`${BASE_URL}/swap`, { waitUntil: 'networkidle0', timeout: 30000 })
-      await timeOut(2000)
+      await page.goto(`${APP_URL}#/swap`, { waitUntil: 'networkidle0', timeout: 30000 })
+      await timeOut(3000) // Wait for React + AppKit to initialize
       await screenshot(page, '01-swap-page')
 
       const criticalErrors = jsErrors.filter(
-        e => !e.includes('ResizeObserver') && // browser quirk
+        e => !e.includes('ResizeObserver') &&
              !e.includes('chrome-extension') &&
              !e.includes('favicon') &&
-             !e.includes('Failed to fetch') // ok for Storage read without network
+             !e.includes('Failed to fetch') &&
+             !e.includes('net::ERR') &&
+             !e.includes('ERR_') &&
+             !e.includes('Network request failed')
       )
-      // Allow network errors (no wallet, no RPC in test env) — just no JS crashes
       const jsCrashes = criticalErrors.filter(e =>
         e.includes('is not a function') ||
         e.includes('Cannot read') ||
@@ -160,13 +178,11 @@ function assert(condition, msg) {
 
     // ── Test 3: AppKit button ──
     await test('Connect Wallet button (AppKit) is present', async () => {
-      // AppKit renders <appkit-button> web component
       const btn = await page.$('appkit-button')
       if (!btn) {
-        // fallback: check for w3m-button or text
-        const bodyText = await page.evaluate(() => document.body.innerHTML)
+        const bodyHtml = await page.evaluate(() => document.body.innerHTML)
         assert(
-          bodyText.includes('appkit-button') || bodyText.includes('w3m-button') || bodyText.includes('Connect'),
+          bodyHtml.includes('appkit-button') || bodyHtml.includes('w3m-button') || bodyHtml.includes('Connect'),
           'No AppKit button found on page'
         )
       }
@@ -174,23 +190,24 @@ function assert(condition, msg) {
 
     // ── Test 4: Swap form inputs ──
     await test('Swap page shows token inputs', async () => {
-      await page.goto(`${BASE_URL}/swap`, { waitUntil: 'networkidle0', timeout: 15000 })
-      await timeOut(1500)
+      await page.goto(`${APP_URL}#/swap`, { waitUntil: 'networkidle0', timeout: 15000 })
+      await timeOut(2000)
       await screenshot(page, '02-swap-form')
 
+      // Number inputs for amounts
       const inputs = await page.$$('input[type="number"], input[placeholder="0.0"]')
       assert(inputs.length >= 1, `Expected at least 1 numeric input on swap page, got ${inputs.length}`)
 
+      // Token selector buttons (replaced <select> with custom <button> dropdown)
       const text = await page.evaluate(() => document.body.textContent || '')
-      assert(text.includes('Swap') || text.includes('pay') || text.includes('Pay'), 'Swap labels not found')
+      assert(
+        text.includes('You pay') || text.includes('Swap') || text.includes('pay'),
+        `Swap labels not found. Got: ${text.slice(0, 100)}`
+      )
     })
 
     // ── Test 5: Flip button works ──
     await test('Swap: flip button reverses tokens', async () => {
-      // Get initial token values
-      const selects = await page.$$('select')
-      const initialValues = await Promise.all(selects.map(s => s.evaluate(el => el.value)))
-
       // Click flip button (SVG arrow button between inputs)
       const flipBtn = await page.$('button svg path[d*="M7 16V4"]')
       const flipBtnParent = flipBtn
@@ -202,13 +219,13 @@ function assert(condition, msg) {
         await timeOut(300)
         await screenshot(page, '03-swap-flipped')
       }
-      // Test passes even if flip button not found — it's a soft check
+      // Soft check — passes even if flip button not found
     })
 
     // ── Test 6: Pool page ──
     await test('Pool page is accessible', async () => {
-      await page.goto(`${BASE_URL}/pool`, { waitUntil: 'networkidle0', timeout: 15000 })
-      await timeOut(1000)
+      await page.goto(`${APP_URL}#/pool`, { waitUntil: 'networkidle0', timeout: 15000 })
+      await timeOut(2000)
       await screenshot(page, '04-pool-page')
 
       const text = await page.evaluate(() => document.body.textContent || '')
@@ -220,8 +237,8 @@ function assert(condition, msg) {
 
     // ── Test 7: Admin page ──
     await test('Admin page is accessible', async () => {
-      await page.goto(`${BASE_URL}/admin`, { waitUntil: 'networkidle0', timeout: 15000 })
-      await timeOut(1000)
+      await page.goto(`${APP_URL}#/admin`, { waitUntil: 'networkidle0', timeout: 15000 })
+      await timeOut(2000)
       await screenshot(page, '05-admin-page')
 
       const text = await page.evaluate(() => document.body.textContent || '')
@@ -240,7 +257,6 @@ function assert(condition, msg) {
 
     // ── Test 9: BSC Storage contract readable ──
     await test('BSC Storage: can read appsource.github.io config', async () => {
-      // This test uses direct RPC call (no browser)
       const { createPublicClient, http } = require('viem')
       const { bsc } = require('viem/chains')
       const client = createPublicClient({
@@ -290,6 +306,11 @@ function assert(condition, msg) {
       const quoterCode = await client.getCode({ address: PCS_QUOTER_V2 })
       assert(quoterCode && quoterCode !== '0x', 'PancakeSwap QuoterV2 not deployed on BSC testnet')
       console.log('    PancakeSwap QuoterV2: ✓')
+
+      const PCS_POSITION_MANAGER = '0x427bF5b37357632377eCbEC9de3626C71A5396c1'
+      const pmCode = await client.getCode({ address: PCS_POSITION_MANAGER })
+      assert(pmCode && pmCode !== '0x', 'PancakeSwap NonfungiblePositionManager not deployed on BSC testnet')
+      console.log('    PancakeSwap NonfungiblePositionManager: ✓')
     })
 
     // ── Test 11: BSC Testnet QuoterV2 returns price for WBNB/BUSD ──
@@ -331,8 +352,8 @@ function assert(condition, msg) {
       console.log(`\n    0.01 WBNB → ${formatEther(amountOut)} BUSD ✓`)
     })
 
-    // ── Test 12: BSC Testnet Storage has chain 97 config ──
-    await test('BSC Testnet Storage: appsource.github.io has chain 97 config', async () => {
+    // ── Test 12: BSC Testnet Storage has chain 97 config with positionManager ──
+    await test('BSC Testnet Storage: appsource.github.io has chain 97 config with positionManager', async () => {
       const { createPublicClient, http } = require('viem')
       const bscTestnet = {
         id: 97, name: 'BSC Testnet',
@@ -357,9 +378,11 @@ function assert(condition, msg) {
 
       assert(result.info, 'No Storage data for appsource.github.io on BSC testnet')
       const data = JSON.parse(result.info)
-      assert(data.definance?.contracts?.['97'], 'No chain 97 contracts in Storage')
-      assert(data.definance.contracts['97'].quoter, 'No quoter in chain 97 config (V3 mode required)')
-      console.log('\n    Storage chain 97:', JSON.stringify(data.definance.contracts['97']))
+      const c97 = data.definance?.contracts?.['97']
+      assert(c97, 'No chain 97 contracts in Storage')
+      assert(c97.quoter, 'No quoter in chain 97 config (V3 mode required)')
+      assert(c97.positionManager, 'No positionManager in chain 97 config')
+      console.log('\n    Storage chain 97:', JSON.stringify(c97))
     })
 
   } finally {
