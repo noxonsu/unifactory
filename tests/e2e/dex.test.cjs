@@ -292,6 +292,76 @@ function assert(condition, msg) {
       console.log('    PancakeSwap QuoterV2: ✓')
     })
 
+    // ── Test 11: BSC Testnet QuoterV2 returns price for WBNB/BUSD ──
+    await test('BSC Testnet: QuoterV2 returns WBNB→BUSD price', async () => {
+      const { createPublicClient, http, parseEther, formatEther } = require('viem')
+      const bscTestnet = {
+        id: 97, name: 'BSC Testnet',
+        nativeCurrency: { decimals: 18, name: 'BNB', symbol: 'tBNB' },
+        rpcUrls: { default: { http: ['https://bsc-testnet-rpc.publicnode.com'] } }
+      }
+      const client = createPublicClient({ chain: bscTestnet, transport: http('https://bsc-testnet-rpc.publicnode.com') })
+
+      const QUOTER_ABI = [{
+        inputs: [{ components: [
+          { name: 'tokenIn', type: 'address' }, { name: 'tokenOut', type: 'address' },
+          { name: 'amountIn', type: 'uint256' }, { name: 'fee', type: 'uint24' },
+          { name: 'sqrtPriceLimitX96', type: 'uint160' },
+        ], name: 'params', type: 'tuple' }],
+        name: 'quoteExactInputSingle',
+        outputs: [{ name: 'amountOut', type: 'uint256' }, { name: 's', type: 'uint160' }, { name: 'i', type: 'uint32' }, { name: 'g', type: 'uint256' }],
+        stateMutability: 'nonpayable', type: 'function'
+      }]
+
+      const result = await client.simulateContract({
+        address: '0xbC203d7f83677c7ed3F7acEc959963E7F4ECC5C2',
+        abi: QUOTER_ABI,
+        functionName: 'quoteExactInputSingle',
+        args: [{
+          tokenIn:  '0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd', // WBNB
+          tokenOut: '0xeD24FC36d5Ee211Ea25A80239Fb8C4Cfd80f12Ee', // BUSD
+          amountIn: parseEther('0.01'),
+          fee: 500,
+          sqrtPriceLimitX96: 0n,
+        }],
+      })
+
+      const amountOut = result.result[0]
+      assert(amountOut > 0n, 'QuoterV2 returned 0 amountOut')
+      console.log(`\n    0.01 WBNB → ${formatEther(amountOut)} BUSD ✓`)
+    })
+
+    // ── Test 12: BSC Testnet Storage has chain 97 config ──
+    await test('BSC Testnet Storage: dex.onout.org has chain 97 config', async () => {
+      const { createPublicClient, http } = require('viem')
+      const bscTestnet = {
+        id: 97, name: 'BSC Testnet',
+        nativeCurrency: { decimals: 18, name: 'BNB', symbol: 'tBNB' },
+        rpcUrls: { default: { http: ['https://bsc-testnet-rpc.publicnode.com'] } }
+      }
+      const client = createPublicClient({ chain: bscTestnet, transport: http('https://bsc-testnet-rpc.publicnode.com') })
+
+      const STORAGE_ABI = [{
+        inputs: [{ type: 'string', name: '_key' }],
+        name: 'getData',
+        outputs: [{ components: [{ name: 'owner', type: 'address' }, { name: 'info', type: 'string' }], type: 'tuple' }],
+        stateMutability: 'view', type: 'function',
+      }]
+
+      const result = await client.readContract({
+        address: '0x91a0DCC7a78Da02244212D36eAFd9E0dBB3174B4',
+        abi: STORAGE_ABI,
+        functionName: 'getData',
+        args: ['dex.onout.org'],
+      })
+
+      assert(result.info, 'No Storage data for dex.onout.org on BSC testnet')
+      const data = JSON.parse(result.info)
+      assert(data.definance?.contracts?.['97'], 'No chain 97 contracts in Storage')
+      assert(data.definance.contracts['97'].quoter, 'No quoter in chain 97 config (V3 mode required)')
+      console.log('\n    Storage chain 97:', JSON.stringify(data.definance.contracts['97']))
+    })
+
   } finally {
     await browser.close()
     server.close()

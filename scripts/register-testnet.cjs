@@ -12,7 +12,7 @@
  */
 
 const { createPublicClient, createWalletClient, http } = require('viem')
-const { privateKeyToAccount } = require('viem/accounts')
+const { privateKeyToAccount } = require('/root/unifactory/node_modules/viem/_cjs/accounts/index.js')
 
 const PRIVATE_KEY = process.env.PRIVATE_KEY
 if (!PRIVATE_KEY) {
@@ -32,10 +32,25 @@ const bscTestnet = {
 
 // PancakeSwap V3 on BSC Testnet (chain 97)
 const PCS_V3 = {
-  factory:         '0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865',
-  router:          '0x9a489505a00cE272eAa5e07Dba6491314CaE3796',
-  quoter:          '0xbC203d7f83677c7ed3F7acEc959963E7F4ECC5C2',
-  // positionManager: not deployed on testnet — skip for now
+  factory:  '0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865',
+  router:   '0x9a489505a00cE272eAa5e07Dba6491314CaE3796',
+  quoter:   '0xbC203d7f83677c7ed3F7acEc959963E7F4ECC5C2',
+  // positionManager: not deployed on BSC testnet
+}
+
+// Tokens with existing WBNB/BUSD pool (fee 500) on BSC testnet
+// Pool: 0xa0172eaa8aC038FaDC47129F8dFE9d20c3073Ea9
+const WBNB = '0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd'
+const BUSD = '0xeD24FC36d5Ee211Ea25A80239Fb8C4Cfd80f12Ee'
+
+const TOKEN_LIST_97 = {
+  default: {
+    name: 'BSC Testnet Default',
+    tokens: [
+      { address: WBNB, symbol: 'WBNB', name: 'Wrapped BNB', decimals: 18, chainId: 97 },
+      { address: BUSD, symbol: 'BUSD', name: 'Binance USD', decimals: 18, chainId: 97 },
+    ],
+  },
 }
 
 const STORAGE_ADDRESS = '0x91a0DCC7a78Da02244212D36eAFd9E0dBB3174B4' // BSC Testnet Storage
@@ -101,6 +116,14 @@ const STORAGE_ABI = [
       contracts: {
         ...(existingApp.contracts || {}),
         '97': PCS_V3,
+      },
+      tokenLists: {
+        ...(existingApp.tokenLists || {}),
+        '97': TOKEN_LIST_97,
+      },
+      defaultSwapCurrency: {
+        input: WBNB,
+        output: BUSD,
       },
       projectName: existingApp.projectName || 'UniFactory DEX',
     },
