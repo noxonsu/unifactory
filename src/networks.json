@@ -75,7 +75,7 @@
   },
   "56": {
     "name": "BSC",
-    "rpc": "https://bscrpc.com/",
+    "rpc": "https://bsc-rpc.publicnode.com",
     "chainId": 56,
     "explorer": "https://bscscan.com",
     "color": "#CC9B00",
