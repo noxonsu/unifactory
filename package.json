@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "build_clean": "vite build",
+    "build:wp": "BUILD_TARGET=wp vite build",
     "preview": "vite preview",
     "prepare": "git config core.hooksPath .husky 2>/dev/null || true"
   },

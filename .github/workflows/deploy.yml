@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Deploy UniFactory DEX
 
 on:
   push:
@@ -51,26 +51,160 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Generated version: $VERSION"
 
+      - name: Update version in plugin file
+        run: |
+          sed -i "s/^ \* Version: .*/ * Version: ${{ env.VERSION }}/" wordpress/unifactory-dex.php
+          sed -i "s/define( 'UNIFACTORY_VER', '.*'/define( 'UNIFACTORY_VER', '${{ env.VERSION }}'/" wordpress/unifactory-dex.php
+          echo "Updated wordpress/unifactory-dex.php:"
+          grep -E "Version:|UNIFACTORY_VER" wordpress/unifactory-dex.php
+
       - name: Install dependencies
         run: npm install --legacy-peer-deps
 
-      - name: Build
+      # ── Build 1: GitHub Pages (code-split, base=/dex/) ──────────────────
+
+      - name: Build for GitHub Pages
         run: npm run build
 
-      - name: Verify build output
+      - name: Verify GitHub Pages build
         run: |
-          if [ ! -d "build" ]; then
-            echo "Error: build directory not found"
-            exit 1
-          fi
           if [ ! -f "build/index.html" ]; then
             echo "Error: build/index.html not found"
             exit 1
           fi
-          echo "Build output verified"
+          echo "✓ GitHub Pages build verified"
           ls -la build/
 
-      - name: Deploy to GitHub Pages
+      # ── Build 2: WordPress plugin (relative base, predictable names) ─────
+
+      - name: Build for WordPress
+        run: npm run build:wp
+
+      - name: Verify WordPress build
+        run: |
+          if [ ! -f "build-wp/app.js" ]; then
+            echo "Error: build-wp/app.js not found"
+            exit 1
+          fi
+          echo "✓ WordPress build verified"
+          ls -la build-wp/ && ls -la build-wp/assets/ || true
+
+      - name: Copy WordPress build into plugin folder
+        run: |
+          rm -rf wordpress/build
+          mkdir -p wordpress/build
+          cp -r build-wp/* wordpress/build/
+          echo "✓ WordPress build copied to wordpress/build/"
+          ls -la wordpress/build/
+
+      # ── info.json for WP auto-update ─────────────────────────────────────
+
+      - name: Create info.json
+        run: |
+          COMMIT_MSG=$(git log -1 --pretty=format:'%s')
+          TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S")
+          VERSION="${{ env.VERSION }}"
+
+          jq -n \
+            --arg name "UniFactory DEX" \
+            --arg version "$VERSION" \
+            --arg dl "https://definance.wpmix.net/updates/unifactory-dex-v${VERSION}.zip" \
+            --arg updated "$TIMESTAMP" \
+            --arg msg "$COMMIT_MSG" \
+            '{
+              name: $name,
+              version: $version,
+              tested: "6.7",
+              requires: "5.0",
+              requires_php: "7.4",
+              download_url: $dl,
+              last_updated: $updated,
+              sections: {
+                description: "White-label Uniswap V3 decentralized exchange for WordPress. Configuration stored on-chain via BSC Storage contract.",
+                installation: "Upload the plugin to /wp-content/plugins/unifactory-dex/, activate it, then open WP Admin → UniFactory DEX to configure the URL slug.",
+                changelog: ("<h4>" + $version + "</h4><ul><li>" + $msg + "</li></ul>")
+              }
+            }' > info.json
+
+          echo "Generated info.json:"
+          cat info.json
+          jq . info.json > /dev/null && echo "✓ Valid JSON"
+
+      # ── Package WordPress plugin ZIP ──────────────────────────────────────
+
+      - name: Create WordPress plugin package
+        run: |
+          mkdir -p unifactory-dex-package/unifactory-dex
+          cp -r wordpress/* unifactory-dex-package/unifactory-dex/
+
+          if [ -f "README.md" ]; then cp README.md unifactory-dex-package/unifactory-dex/; fi
+          if [ -f "LICENCE" ]; then cp LICENCE unifactory-dex-package/unifactory-dex/; fi
+
+          echo "Package structure:"
+          ls -la unifactory-dex-package/unifactory-dex/
+
+          cd unifactory-dex-package
+          zip -r ../unifactory-dex-v${{ env.VERSION }}.zip unifactory-dex
+          cd ..
+
+          if [ ! -f "unifactory-dex-v${{ env.VERSION }}.zip" ]; then
+            echo "Error: ZIP not created"; exit 1
+          fi
+
+          echo "✓ Package: unifactory-dex-v${{ env.VERSION }}.zip"
+          ls -lh unifactory-dex-v${{ env.VERSION }}.zip
+          echo "ZIP contents:"
+          unzip -l unifactory-dex-v${{ env.VERSION }}.zip | head -30
+
+      # ── Upload to server ──────────────────────────────────────────────────
+
+      - name: Upload ZIP and info.json to server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "unifactory-dex-v${{ env.VERSION }}.zip,info.json"
+          target: "/home/definance/incoming/"
+
+      - name: Deploy WordPress plugin to definance.wpmix.net
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            UPDATES_DIR="/home/definance/web/definance.wpmix.net/public_html/updates"
+            PLUGIN_DIR="/home/definance/web/definance.wpmix.net/public_html/wp-content/plugins/unifactory-dex"
+            ZIP="/home/definance/incoming/unifactory-dex-v${{ env.VERSION }}.zip"
+
+            mkdir -p "$UPDATES_DIR"
+
+            # Copy info.json
+            cp /home/definance/incoming/info.json "$UPDATES_DIR/unifactory-dex-info.json"
+            chmod 644 "$UPDATES_DIR/unifactory-dex-info.json"
+            echo "✓ info.json updated"
+
+            # Copy ZIP to updates dir (for download by WP auto-updater)
+            cp "$ZIP" "$UPDATES_DIR/"
+            chmod 644 "$UPDATES_DIR/unifactory-dex-v${{ env.VERSION }}.zip"
+            echo "✓ ZIP at $UPDATES_DIR/unifactory-dex-v${{ env.VERSION }}.zip"
+
+            # Install plugin directly into WP
+            rm -rf /tmp/unifactory-extract
+            mkdir -p /tmp/unifactory-extract
+            unzip -o "$ZIP" -d /tmp/unifactory-extract/ > /dev/null
+            mkdir -p "$PLUGIN_DIR"
+            rsync -a --delete /tmp/unifactory-extract/unifactory-dex/ "$PLUGIN_DIR/"
+            chown -R www-data:www-data "$PLUGIN_DIR/" 2>/dev/null || true
+            rm -rf /tmp/unifactory-extract "$ZIP"
+            echo "✓ Plugin installed to $PLUGIN_DIR"
+
+            grep "UNIFACTORY_VER\|Version:" "$PLUGIN_DIR/unifactory-dex.php" | head -2
+
+      # ── Deploy static demo to GitHub Pages ───────────────────────────────
+
+      - name: Deploy to GitHub Pages (appsource/dex)
         uses: peaceiris/actions-gh-pages@v3
         with:
           personal_token: ${{ secrets.APPSOURCE_TOKEN }}
@@ -79,19 +213,57 @@ jobs:
           publish_dir: ./build
           force_orphan: true
 
+      # ── Health checks ─────────────────────────────────────────────────────
+
+      - name: Health check — GitHub Pages
+        run: |
+          sleep 10
+          CODE=$(curl -s -o /dev/null -w "%{http_code}" https://appsource.github.io/dex/ || echo "000")
+          if [ "$CODE" = "200" ]; then
+            echo "✓ appsource.github.io/dex OK (HTTP $CODE)"
+          else
+            echo "⚠ appsource.github.io/dex HTTP $CODE"
+          fi
+
+      - name: Health check — WP plugin info.json
+        run: |
+          CODE=$(curl -s -o /dev/null -w "%{http_code}" https://definance.wpmix.net/updates/unifactory-dex-info.json || echo "000")
+          if [ "$CODE" = "200" ]; then
+            echo "✓ WP update info.json OK (HTTP $CODE)"
+          else
+            echo "⚠ WP update info.json HTTP $CODE (non-blocking)"
+          fi
+
+      - name: Health check — BSC Storage (dex.onout.org domain)
+        run: |
+          PAYLOAD='{"jsonrpc":"2.0","method":"eth_call","params":[{"to":"0xa7472f384339D37EfE505a1A71619212495A973A","data":"0x20965255000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000000d6465782e6f6e6f75742e6f726700000000000000000000000000000000000000"},"latest"],"id":1}'
+          RESPONSE=$(curl -sf -X POST "https://bsc-rpc.publicnode.com" -H 'Content-Type: application/json' -d "$PAYLOAD" 2>/dev/null || echo "FAILED")
+          if echo "$RESPONSE" | grep -q '"result"'; then
+            echo "✓ BSC Storage contract responds"
+          else
+            echo "⚠ BSC Storage check failed"
+          fi
+
+      # ── Notify ────────────────────────────────────────────────────────────
+
       - name: Notify completion
         if: success()
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "✓ UniFactory DEX deployed to GitHub Pages"
+          echo "✓ UniFactory DEX deployment complete"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "Version: ${{ env.VERSION }}"
-          echo "URL: https://appsource.github.io/dex"
+          echo "Version:  ${{ env.VERSION }}"
+          echo "Static:   https://appsource.github.io/dex"
+          echo "WP demo:  https://definance.wpmix.net/dex/"
+          echo "WP ZIP:   https://definance.wpmix.net/updates/unifactory-dex-v${{ env.VERSION }}.zip"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
       - name: Notify failure
         if: failure()
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "✗ Deployment failed"
+          echo "✗ UniFactory DEX deployment failed"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Version: ${{ env.VERSION }}"
+          echo "Check workflow logs for details"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
