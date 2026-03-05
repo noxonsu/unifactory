@@ -70,6 +70,8 @@ interface Token { address: string; symbol: string; logoURI?: string }
 
 function TokenIcon({ logoURI, symbol }: { logoURI?: string; symbol: string }) {
   const [failed, setFailed] = useState(false)
+  // Reset failed state when logoURI changes (React reuses component instances)
+  useEffect(() => { setFailed(false) }, [logoURI])
   if (logoURI && !failed) {
     return <img src={logoURI} alt={symbol} className="w-5 h-5 rounded-full flex-shrink-0" onError={() => setFailed(true)} />
   }
@@ -189,6 +191,17 @@ export default function PoolWidget() {
 
   const getTokenDecimals = (addr: string) =>
     tokenList.find((t) => t.address.toLowerCase() === addr.toLowerCase())?.decimals ?? 18
+
+  // Auto-select preferred default tokens when list loads: USDT + WBTC (or first two)
+  const PREFERRED = ['USDT', 'WBTC']
+  useEffect(() => {
+    if (tokenList.length < 2) return
+    const findBySymbol = (sym: string) => tokenList.find((t) => t.symbol.toUpperCase() === sym)
+    const pick0 = findBySymbol(PREFERRED[0]) ?? tokenList[0]
+    const pick1 = findBySymbol(PREFERRED[1]) ?? tokenList.find((t) => t.address !== pick0.address) ?? tokenList[1]
+    setToken0((prev) => prev || pick0.address)
+    setToken1((prev) => prev || pick1.address)
+  }, [tokenList.length]) // re-run when list first populates
 
   const handleAddLiquidity = async () => {
     if (!address) return
