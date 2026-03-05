@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { useAccount, useChainId, useWriteContract } from 'wagmi'
+import { useAccount, useChainId, useWriteContract, useDeployContract, usePublicClient } from 'wagmi'
 import { useStorageConfig } from '../../hooks/useStorageConfig'
 import { saveAppData, STORAGE_BY_CHAIN, getCurrentDomain } from '../../storage/contract'
+import { STORAGE_ABI, STORAGE_BYTECODE } from '../../storage/abi'
 
 interface ChainContractsForm {
   factory: string
@@ -10,19 +11,13 @@ interface ChainContractsForm {
   positionManager: string
 }
 
-// Known public V3 contract presets per chain
-const V3_PRESETS: Record<number, { name: string; contracts: ChainContractsForm }> = {
-  56: {
-    name: 'PancakeSwap V3 (BSC Mainnet)',
-    contracts: {
-      factory:         '0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865',
-      router:          '0x13f4EA83D0bd40E75C8222255bc855a974568Dd4',
-      quoter:          '0xB048Bbc1Ee6b733FFfCFb9e9CeF7375518e25997',
-      positionManager: '0x46A15B0b27311cedF172AB29E4f4766fbE7F4364',
-    },
-  },
-  97: {
-    name: 'PancakeSwap V3 (BSC Testnet)',
+// All known public V3 presets (chain-agnostic list — user picks manually)
+const V3_PRESETS: { id: string; dex: string; network: string; chainId: number; contracts: ChainContractsForm }[] = [
+  {
+    id: 'pcs-testnet',
+    dex: 'PancakeSwap V3',
+    network: 'BSC Testnet',
+    chainId: 97,
     contracts: {
       factory:         '0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865',
       router:          '0x9a489505a00cE272eAa5e07Dba6491314CaE3796',
@@ -30,8 +25,23 @@ const V3_PRESETS: Record<number, { name: string; contracts: ChainContractsForm }
       positionManager: '0x427bF5b37357632377eCbEC9de3626C71A5396c1',
     },
   },
-  1: {
-    name: 'Uniswap V3 (Ethereum)',
+  {
+    id: 'pcs-mainnet',
+    dex: 'PancakeSwap V3',
+    network: 'BSC Mainnet',
+    chainId: 56,
+    contracts: {
+      factory:         '0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865',
+      router:          '0x13f4EA83D0bd40E75C8222255bc855a974568Dd4',
+      quoter:          '0xB048Bbc1Ee6b733FFfCFb9e9CeF7375518e25997',
+      positionManager: '0x46A15B0b27311cedF172AB29E4f4766fbE7F4364',
+    },
+  },
+  {
+    id: 'uni-eth',
+    dex: 'Uniswap V3',
+    network: 'Ethereum',
+    chainId: 1,
     contracts: {
       factory:         '0x1F98431c8aD98523631AE4a59f267346ea31F984',
       router:          '0xE592427A0AEce92De3Edee1F18E0157C05861564',
@@ -39,13 +49,27 @@ const V3_PRESETS: Record<number, { name: string; contracts: ChainContractsForm }
       positionManager: '0xC36442b4a4522E871399CD717aBDD847Ab11FE88',
     },
   },
-}
+]
+
+const DEPLOY_GUIDE = `# Deploy your own V3 contracts
+
+## Option 1: script (BSC Testnet)
+PRIVATE_KEY=0x... node scripts/register-testnet.cjs
+
+## Option 2: Hardhat / Foundry
+https://github.com/Uniswap/v3-core — deploy Factory
+https://github.com/Uniswap/v3-periphery — deploy Router, QuoterV2, NonfungiblePositionManager
+
+## BSC Testnet faucet
+https://testnet.bnbchain.org/faucet-smart`
 
 export default function AdminPanel() {
   const { address, isConnected } = useAccount()
   const chainId = useChainId()
   const { config, domain } = useStorageConfig()
   const { writeContractAsync } = useWriteContract()
+  const { deployContractAsync } = useDeployContract()
+  const publicClient = usePublicClient()
 
   const existingContracts = config?.contracts?.[String(chainId)] || {}
 
@@ -64,9 +88,32 @@ export default function AdminPanel() {
   const [saveStatus, setSaveStatus] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+  const [deployOpen, setDeployOpen] = useState(false)
+  const [deployingStorage, setDeployingStorage] = useState(false)
+  const [deployedStorageAddr, setDeployedStorageAddr] = useState<string | null>(null)
 
   const storageSupported = !!STORAGE_BY_CHAIN[chainId]
-  const preset = V3_PRESETS[chainId]
+
+  const handleDeployStorage = async () => {
+    if (!address || !publicClient) return
+    setDeployingStorage(true)
+    setError(null)
+    try {
+      const hash = await deployContractAsync({
+        abi: STORAGE_ABI,
+        bytecode: STORAGE_BYTECODE,
+        args: [],
+      })
+      const receipt = await publicClient.waitForTransactionReceipt({ hash })
+      if (receipt.contractAddress) {
+        setDeployedStorageAddr(receipt.contractAddress)
+      }
+    } catch (e: any) {
+      setError(e?.shortMessage || e?.message || 'Deploy failed')
+    } finally {
+      setDeployingStorage(false)
+    }
+  }
 
   const handleSave = async () => {
     if (!address) { setError('Connect wallet to save'); return }
@@ -126,24 +173,86 @@ export default function AdminPanel() {
 
       {/* Contracts section */}
       <section className="mb-6">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
-            Contracts — Chain {chainId}
-          </h3>
-          {preset && (
+        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+          Contracts — Chain {chainId}
+        </h3>
+
+        {!storageSupported && !deployedStorageAddr && (
+          <div className="mb-3 p-3 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-700/50 rounded-xl text-xs text-yellow-700 dark:text-yellow-300">
+            <p className="mb-2">Chain {chainId} has no Storage contract yet.</p>
+            <p className="mb-3 text-yellow-600 dark:text-yellow-400">
+              You can deploy one — we'll add it to the supported list after you send us the address.
+            </p>
             <button
               type="button"
-              onClick={() => setContracts(preset.contracts)}
-              className="text-xs bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 border border-blue-200 dark:border-blue-700 rounded-lg px-3 py-1.5 font-medium transition-colors"
+              onClick={handleDeployStorage}
+              disabled={!isConnected || deployingStorage}
+              className="w-full bg-yellow-500 hover:bg-yellow-400 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-2 rounded-xl transition-colors text-xs"
             >
-              Use {preset.name}
+              {deployingStorage ? 'Deploying Storage contract…' : 'Deploy Storage contract on this chain'}
             </button>
-          )}
+          </div>
+        )}
+
+        {deployedStorageAddr && (
+          <div className="mb-3 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700/50 rounded-xl text-xs">
+            <p className="text-green-700 dark:text-green-400 font-medium mb-2">✓ Storage contract deployed!</p>
+            <p className="text-gray-600 dark:text-gray-400 mb-1">Address on chain {chainId}:</p>
+            <code
+              className="block bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg px-2 py-1.5 font-mono text-[11px] break-all cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              onClick={() => navigator.clipboard.writeText(deployedStorageAddr)}
+              title="Click to copy"
+            >
+              {deployedStorageAddr}
+            </code>
+            <p className="mt-2 text-yellow-600 dark:text-yellow-500">
+              Send this address to the team — we'll add chain {chainId} to the supported list.
+            </p>
+          </div>
+        )}
+
+        {/* Preset chips */}
+        <div className="mb-3">
+          <p className="text-xs text-gray-400 dark:text-gray-500 mb-2">Known deployments:</p>
+          <div className="flex flex-wrap gap-2">
+            {V3_PRESETS.map((p) => {
+              const isCurrent = p.chainId === chainId
+              return (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => setContracts(p.contracts)}
+                  className={`text-xs rounded-lg px-3 py-1.5 font-medium border transition-colors ${
+                    isCurrent
+                      ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-700 hover:bg-blue-100 dark:hover:bg-blue-900/50'
+                      : 'bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
+                  }`}
+                >
+                  {p.dex}
+                  <span className={`ml-1.5 ${isCurrent ? 'text-blue-400 dark:text-blue-500' : 'text-gray-400 dark:text-gray-500'}`}>
+                    {p.network}
+                  </span>
+                </button>
+              )
+            })}
+            <button
+              type="button"
+              onClick={() => setDeployOpen((o) => !o)}
+              className="text-xs rounded-lg px-3 py-1.5 font-medium border border-dashed border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:border-gray-400 dark:hover:border-gray-500 transition-colors"
+            >
+              Deploy your own ↗
+            </button>
+          </div>
         </div>
 
-        {!storageSupported && (
-          <div className="mb-3 p-3 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-700/50 rounded-xl text-xs text-yellow-700 dark:text-yellow-300">
-            Chain {chainId} has no Storage contract. Switch wallet to BSC Mainnet (56) or BSC Testnet (97) to save.
+        {/* Deploy guide */}
+        {deployOpen && (
+          <div className="mb-3 p-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Deploy your own V3 contracts</span>
+              <button type="button" onClick={() => setDeployOpen(false)} className="text-gray-400 hover:text-gray-600 text-xs">✕</button>
+            </div>
+            <pre className="text-[11px] text-gray-600 dark:text-gray-400 whitespace-pre-wrap leading-relaxed font-mono overflow-x-auto">{DEPLOY_GUIDE}</pre>
           </div>
         )}
 
@@ -170,22 +279,6 @@ export default function AdminPanel() {
             </div>
           ))}
         </div>
-
-        {/* Other chain presets */}
-        {Object.entries(V3_PRESETS).filter(([cid]) => Number(cid) !== chainId).length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-2">
-            {Object.entries(V3_PRESETS).filter(([cid]) => Number(cid) !== chainId).map(([cid, p]) => (
-              <button
-                key={cid}
-                type="button"
-                onClick={() => setContracts(p.contracts)}
-                className="text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 underline"
-              >
-                Copy {p.name}
-              </button>
-            ))}
-          </div>
-        )}
       </section>
 
       {/* Branding section */}
