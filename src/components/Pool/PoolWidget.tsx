@@ -83,7 +83,7 @@ function TokenIcon({ logoURI, symbol }: { logoURI?: string; symbol: string }) {
 function TokenPicker({ value, onChange, tokenList }: { value: string; onChange: (a: string) => void; tokenList: Token[] }) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
-  const selected = tokenList.find((t) => t.address.toLowerCase() === value.toLowerCase())
+  const selected = value ? tokenList.find((t) => t.address.toLowerCase() === value.toLowerCase()) : undefined
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -94,26 +94,26 @@ function TokenPicker({ value, onChange, tokenList }: { value: string; onChange: 
   }, [])
 
   return (
-    <div className="relative flex-1" ref={ref}>
+    <div className="relative flex-1 min-w-0" ref={ref}>
       {tokenList.length > 0 ? (
         <>
           <button
             type="button"
             onClick={() => setOpen((o) => !o)}
-            className="w-full flex items-center gap-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-white rounded-2xl px-4 py-3 font-medium transition-colors border border-gray-200 dark:border-gray-700"
+            className="w-full flex items-center gap-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-white rounded-2xl px-3 py-3 font-medium transition-colors border border-gray-200 dark:border-gray-700"
           >
             {selected ? (
               <TokenIcon logoURI={selected.logoURI} symbol={selected.symbol} />
             ) : (
-              <span className="w-5 h-5 rounded-full bg-gray-300 dark:bg-gray-600 flex-shrink-0" />
+              <span className="w-5 h-5 rounded-full bg-gray-300 dark:bg-gray-600 flex-shrink-0 inline-flex items-center justify-center text-[9px] text-gray-500 dark:text-gray-400 font-bold">?</span>
             )}
-            <span className="flex-1 text-left text-sm truncate">{selected?.symbol ?? 'Select token'}</span>
+            <span className="flex-1 text-left text-sm truncate min-w-0">{selected?.symbol ?? 'Select'}</span>
             <svg className={`w-4 h-4 text-gray-400 flex-shrink-0 transition-transform ${open ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
           </button>
           {open && (
-            <div className="absolute left-0 top-full mt-1 z-50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl overflow-auto max-h-52 min-w-full shadow-xl">
+            <div className="absolute left-0 right-0 top-full mt-1 z-50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl overflow-auto max-h-52 shadow-xl">
               {tokenList.map((t) => (
                 <button
                   key={t.address}
@@ -124,9 +124,9 @@ function TokenPicker({ value, onChange, tokenList }: { value: string; onChange: 
                   }`}
                 >
                   <TokenIcon logoURI={t.logoURI} symbol={t.symbol} />
-                  <div>
+                  <div className="min-w-0">
                     <div className="text-gray-900 dark:text-white font-medium">{t.symbol}</div>
-                    <div className="text-gray-400 text-xs font-mono">{t.address.slice(0, 6)}…{t.address.slice(-4)}</div>
+                    <div className="text-gray-400 text-xs font-mono truncate">{t.address.slice(0, 6)}…{t.address.slice(-4)}</div>
                   </div>
                 </button>
               ))}
@@ -156,8 +156,8 @@ export default function PoolWidget() {
   const { config } = useStorageConfig()
   const { writeContractAsync } = useWriteContract()
 
-  const [token0, setToken0] = useState(DEFAULT_TOKENS[0].address)
-  const [token1, setToken1] = useState(DEFAULT_TOKENS[1].address)
+  const [token0, setToken0] = useState('')
+  const [token1, setToken1] = useState('')
   const [amount0, setAmount0] = useState('')
   const [amount1, setAmount1] = useState('')
   const [fee, setFee] = useState(3000)
