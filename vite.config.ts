@@ -7,8 +7,9 @@ const isWP = process.env.BUILD_TARGET === 'wp'
 export default defineConfig({
   plugins: [react()],
 
-  // GitHub Pages: /dex/  |  WordPress plugin: ./ (relative, served from plugin dir)
-  base: isWP ? './' : '/dex/',
+  // WordPress plugin: ./ (relative, served from plugin dir)
+  // dex.onout.org (CNAME root): / (absolute from domain root)
+  base: isWP ? './' : '/',
 
   resolve: {
     alias: {
@@ -30,7 +31,7 @@ export default defineConfig({
               info.name?.endsWith('.css') ? 'assets/app.css' : 'assets/[name].[ext]',
           }
         : {
-            // Code-split for GitHub Pages (better caching)
+            // Code-split for dex.onout.org (better caching)
             manualChunks: {
               react: ['react', 'react-dom'],
               wagmi: ['wagmi', 'viem'],
