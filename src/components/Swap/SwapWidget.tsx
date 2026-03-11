@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useAccount } from 'wagmi'
-import { formatUnits } from 'viem'
+import { formatUnits, parseUnits } from 'viem'
 import { useSwap, FEE_TIERS } from '../../hooks/useSwap'
 import { useStorageConfig } from '../../hooks/useStorageConfig'
 import { isV3Mode } from '../../storage/types'
@@ -31,6 +31,7 @@ export default function SwapWidget() {
   const [tokenOut, setTokenOut] = useState(DEFAULT_TOKENS[1].address)
   const [amountIn, setAmountIn] = useState('')
   const [amountOut, setAmountOut] = useState('')
+  const [quoteStale, setQuoteStale] = useState(false)
   const [feeTier, setFeeTier] = useState<500 | 3000 | 10000>(3000)
   const [quoteLoading, setQuoteLoading] = useState(false)
   const [swapLoading, setSwapLoading] = useState(false)
@@ -65,6 +66,13 @@ export default function SwapWidget() {
 
   const v3Available = isV3Mode(contracts)
 
+  // Clear amountOut immediately when amountIn changes to prevent stale swap
+  const handleAmountInChange = (value: string) => {
+    setAmountIn(value)
+    setAmountOut('')
+    setQuoteStale(true)
+  }
+
   // Debounced quote fetch
   const fetchQuote = useCallback(async () => {
     if (!amountIn || !tokenIn || !tokenOut || tokenIn === tokenOut) {
@@ -89,13 +97,16 @@ export default function SwapWidget() {
       if (result) {
         const outDecimals = getTokenDecimals(tokenOut)
         setAmountOut(formatUnits(result, outDecimals))
+        setQuoteStale(false)
       } else {
         setAmountOut('')
+        setQuoteStale(false)
         setError('No liquidity for this pair/fee tier')
       }
     } catch (e: any) {
       setError(e?.message || 'Quote failed')
       setAmountOut('')
+      setQuoteStale(false)
     } finally {
       setQuoteLoading(false)
     }
@@ -118,7 +129,8 @@ export default function SwapWidget() {
     setTxHash(null)
     try {
       const outDecimals = getTokenDecimals(tokenOut)
-      const amountOutMin = BigInt(Math.floor(parseFloat(amountOut) * 0.995 * 10 ** outDecimals))
+      // Pass the raw quoted amountOut; slippage (50bps default) is applied once in executeSwap
+      const amountOutMin = parseUnits(amountOut, outDecimals)
       const hash = await executeSwap({
         tokenIn,
         tokenInDecimals: getTokenDecimals(tokenIn),
@@ -176,7 +188,7 @@ export default function SwapWidget() {
         <TokenInput
           label="You pay"
           value={amountIn}
-          onChange={setAmountIn}
+          onChange={handleAmountInChange}
           tokenAddress={tokenIn}
           onTokenChange={setTokenIn}
           tokenList={tokenList}
@@ -227,7 +239,7 @@ export default function SwapWidget() {
 
       <button
         onClick={handleSwap}
-        disabled={!isConnected || !amountIn || !amountOut || swapLoading || notConfigured}
+        disabled={!isConnected || !amountIn || !amountOut || quoteStale || quoteLoading || swapLoading || notConfigured}
         className="mt-4 w-full bg-blue-600 hover:bg-blue-500 disabled:bg-gray-200 dark:disabled:bg-gray-700 disabled:text-gray-400 dark:disabled:text-gray-500 disabled:cursor-not-allowed text-white font-semibold py-4 rounded-2xl transition-colors text-lg"
       >
         {swapLoading
@@ -238,7 +250,7 @@ export default function SwapWidget() {
           ? 'Not Configured'
           : !amountIn
           ? 'Enter amount'
-          : quoteLoading
+          : quoteLoading || quoteStale
           ? 'Getting price...'
           : 'Swap'}
       </button>

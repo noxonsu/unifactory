@@ -46,10 +46,10 @@ export const getCurrentDomain = (): string => {
   return window.location.hostname || document.location.host || ''
 }
 
-export const fetchDomainData = async (domain: string): Promise<StorageConfig | null> => {
+export const fetchDomainData = async (domain: string, chainId: number = DEFAULT_CHAIN_ID): Promise<StorageConfig | null> => {
   try {
-    const { address: storageAddress } = getClientForChain(DEFAULT_CHAIN_ID)
-    const result = await bscClient.readContract({
+    const { client, address: storageAddress } = getClientForChain(chainId)
+    const result = await client.readContract({
       address: storageAddress as `0x${string}`,
       abi: STORAGE_ABI,
       functionName: 'getData',

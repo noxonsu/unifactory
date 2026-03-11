@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { isAddress } from 'viem'
 import { useAccount, useChainId, useWriteContract, useDeployContract, usePublicClient } from 'wagmi'
 import { useStorageConfig } from '../../hooks/useStorageConfig'
 import { saveAppData, STORAGE_BY_CHAIN, getCurrentDomain } from '../../storage/contract'
@@ -120,6 +121,21 @@ export default function AdminPanel() {
     if (!storageSupported) {
       setError(`Chain ${chainId} not supported. Switch to BSC Mainnet (56) or BSC Testnet (97).`)
       return
+    }
+
+    // Validate all address fields before saving
+    const addressFields: { key: keyof ChainContractsForm; label: string }[] = [
+      { key: 'factory', label: 'Factory' },
+      { key: 'router', label: 'Router' },
+      { key: 'quoter', label: 'Quoter' },
+      { key: 'positionManager', label: 'Position Manager' },
+    ]
+    for (const { key, label } of addressFields) {
+      const val = contracts[key]
+      if (val && !isAddress(val)) {
+        setError(`Invalid address for ${label}: "${val}"`)
+        return
+      }
     }
 
     setSaving(true)

@@ -76,6 +76,16 @@ const ERC20_ABI = [
     stateMutability: 'view',
     type: 'function',
   },
+  {
+    inputs: [
+      { name: 'owner', type: 'address' },
+      { name: 'spender', type: 'address' },
+    ],
+    name: 'allowance',
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
 ] as const
 
 // Common fee tiers for V3
@@ -174,16 +184,35 @@ export function useSwap() {
       const slippage = params.slippageBps ?? 50
       const minOut = (params.amountOutMinimum * BigInt(10000 - slippage)) / BigInt(10000)
 
-      // Step 1: Approve
-      const approveTx = await writeContractAsync({
+      if (!publicClient) throw new Error('No public client')
+
+      // Step 1: Check allowance — approve only if needed, with zero-reset for non-zero insufficient allowance
+      const currentAllowance = await publicClient.readContract({
         address: params.tokenIn as Hex,
         abi: ERC20_ABI,
-        functionName: 'approve',
-        args: [contracts.router as Hex, amountInWei],
-      })
+        functionName: 'allowance',
+        args: [address, contracts.router as Hex],
+      }) as bigint
 
-      if (!publicClient) throw new Error('No public client')
-      await publicClient.waitForTransactionReceipt({ hash: approveTx })
+      if (currentAllowance < amountInWei) {
+        if (currentAllowance > BigInt(0)) {
+          // Reset to zero first (required by some ERC20 tokens e.g. USDT)
+          const resetTx = await writeContractAsync({
+            address: params.tokenIn as Hex,
+            abi: ERC20_ABI,
+            functionName: 'approve',
+            args: [contracts.router as Hex, BigInt(0)],
+          })
+          await publicClient.waitForTransactionReceipt({ hash: resetTx })
+        }
+        const approveTx = await writeContractAsync({
+          address: params.tokenIn as Hex,
+          abi: ERC20_ABI,
+          functionName: 'approve',
+          args: [contracts.router as Hex, amountInWei],
+        })
+        await publicClient.waitForTransactionReceipt({ hash: approveTx })
+      }
 
       // Step 2: Swap
       const swapTx = await writeContractAsync({
